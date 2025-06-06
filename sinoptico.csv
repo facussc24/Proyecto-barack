@@ -1,0 +1,40 @@
+﻿ID;ParentID;Tipo;Secuencia;Ensamble / Subensamble / Operación;Cliente;Vehículo;RefInterno;versión;Imagen;Pzas/h;Unidad;Sourcing;Código
+1;;Pieza Final;1;PRODUCTO A;PWA;X1000;9001;v.1;imgA.jpg;10;Un;LC;COD-A
+2;1;Subensamble;1;SubA 1;PWA;X1000;9001;v.1;;0;;;0
+3;2;Insumo;1;Corte 1;PWA;X1000;9001;v.1;;5;Un;LC;
+4;2;Insumo;2;Hilo 120;PWA;X1000;9001;v.1;;2;Un;LC;
+5;2;Insumo;3;Refuerzo B/N;PWA;X1000;9001;v.1;;3;Un;LC;
+6;1;Subensamble;2;SubA 2;PWA;X1000;9001;v.1;;0;;;0
+7;6;Insumo;1;Corte 2;PWA;X1000;9001;v.1;;4;Un;LC;
+8;6;Insumo;2;Hilo 150;PWA;X1000;9001;v.1;;1;Un;LC;
+9;6;Insumo;3;Aplix;PWA;X1000;9001;v.1;;2;Un;LC;
+;;;;;;;;;;;;;
+10;;Pieza Final;1;PRODUCTO B;PWB;X2000;9002;v.1;imgB.jpg;20;Un;LC;COD-B
+11;10;Subensamble;1;SubB 1;PWB;X2000;9002;v.1;;0;;;0
+12;11;Insumo;1;Corte 1;PWB;X2000;9002;v.1;;6;Un;LC;
+13;11;Insumo;2;Hilo 120;PWB;X2000;9002;v.1;;3;Un;LC;
+14;11;Insumo;3;Hilo 180;PWB;X2000;9002;v.1;;1;Un;LC;
+15;10;Subensamble;2;SubB 2;PWB;X2000;9002;v.1;;0;;;0
+16;15;Insumo;1;Refuerzo Fieltro;PWB;X2000;9002;v.1;;2;Un;LC;
+17;15;Insumo;2;Hilo 120;PWB;X2000;9002;v.1;;5;Un;LC;
+18;15;Insumo;3;Aplix;PWB;X2000;9002;v.1;;3;Un;LC;
+;;;;;;;;;;;;;
+19;;Pieza Final;1;PRODUCTO C;PWC;X3000;9003;v.1;imgC.jpg;15;Un;LC;COD-C
+20;19;Subensamble;1;SubC 1;PWC;X3000;9003;v.1;;0;;;0
+21;20;Insumo;1;Corte 3;PWC;X3000;9003;v.1;;7;Un;LC;
+22;20;Insumo;2;Hilo 120;PWC;X3000;9003;v.1;;4;Un;LC;
+23;20;Insumo;3;Refuerzo B/N;PWC;X3000;9003;v.1;;2;Un;LC;
+24;19;Subensamble;2;SubC 2;PWC;X3000;9003;v.1;;0;;;0
+25;24;Insumo;1;Hilo 200;PWC;X3000;9003;v.1;;3;Un;LC;
+26;24;Insumo;2;Aplix;PWC;X3000;9003;v.1;;2;Un;LC;
+27;24;Insumo;3;Hilo 120;PWC;X3000;9003;v.1;;5;Un;LC;
+;;;;;;;;;;;;;
+28;;Pieza Final;1;PRODUCTO D;PWD;X4000;9004;v.1;imgD.jpg;18;Un;LC;COD-D
+29;28;Subensamble;1;SubD 1;PWD;X4000;9004;v.1;;0;;;0
+30;29;Insumo;1;Corte 1;PWD;X4000;9004;v.1;;8;Un;LC;
+31;29;Insumo;2;Hilo 120;PWD;X4000;9004;v.1;;6;Un;LC;
+32;29;Insumo;3;Refuerzo B/N;PWD;X4000;9004;v.1;;2;Un;LC;
+33;28;Subensamble;2;SubD 2;PWD;X4000;9004;v.1;;0;;;0
+34;33;Insumo;1;Hilo 120;PWD;X4000;9004;v.1;;7;Un;LC;
+35;33;Insumo;2;Aplix;PWD;X4000;9004;v.1;;5;Un;LC;
+36;33;Insumo;3;Hilo 180;PWD;X4000;9004;v.1;;3;Un;LC;

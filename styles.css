@@ -1,0 +1,347 @@
+/* ==============================
+   ESTILOS GENERALES
+   ============================== */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
+  color: #333;
+}
+h1 {
+  text-align: center;
+  margin: 20px 0;
+  font-size: 1.8rem;
+  color: #0d1b3d;
+}
+#mensaje {
+  margin: 15px auto;
+  max-width: 90%;
+  padding: 10px;
+  color: #ffffff;
+  background-color: #e74c3c; /* rojo para alertas */
+  display: none;
+  border-radius: 4px;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* ==============================
+   BLOQUE: Mostrar/Ocultar Columnas
+   ============================== */
+.column-toggle-container {
+  width: 95%;
+  margin: 10px auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  background-color: #ffffff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+.column-toggle-container label {
+  font-size: 0.9rem;
+  color: #0d1b3d;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.column-toggle-container input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+/* ==============================
+   FILTROS Y BOTÓN EXCEL / BOTONES GLOBALES
+   ============================== */
+.filtro-contenedor {
+  width: 95%;
+  margin: 0 auto 10px auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.filtros-texto {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+.filtros-texto label {
+  font-weight: bold;
+  color: #0d1b3d;
+  font-size: 0.95rem;
+}
+.filtros-texto input[type="text"] {
+  padding: 6px 8px;
+  font-size: 0.95rem;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  width: 200px;
+}
+.filtro-opciones {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 0.9rem;
+}
+.filtro-opciones input[type="checkbox"] {
+  margin-right: 4px;
+}
+
+#btnExcel,
+#expandirTodo,
+#colapsarTodo {
+  padding: 8px 12px;
+  font-size: 0.95rem;
+  background-color: #0d1b3d;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 8px;
+}
+#btnExcel:hover,
+#expandirTodo:hover,
+#colapsarTodo:hover {
+  background-color: #0a1a33;
+}
+
+/* ==============================
+   TABLA Y CONTENEDOR
+   ============================== */
+.tabla-contenedor {
+  width: 100%;
+  margin: 0 auto 30px auto;
+  max-height: 75vh;  /* limita la altura para scroll vertical */
+  overflow-x: auto;  /* scroll horizontal si hace falta */
+  overflow-y: auto;  /* scroll vertical si hace falta */
+  border: 1px solid #ccc;
+  background-color: #ffffff;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+table#sinoptico {
+  width: calc(100% - 2px); /* se restan 2px de borde para evitar scroll innecesario */
+  border-collapse: collapse;
+  table-layout: fixed; /* para ancho proporcional */
+}
+table#sinoptico thead th {
+  position: sticky;
+  top: 0;
+  background-color: #0d1b3d;
+  color: #ffffff;
+  padding: 12px 8px;
+  border-bottom: 2px solid #222;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  text-align: left;
+  z-index: 2;
+}
+table#sinoptico tbody tr {
+  transition: background-color 0.2s;
+}
+table#sinoptico tbody tr:nth-child(even) {
+  background-color: #fafafa;
+}
+table#sinoptico tbody tr:hover {
+  background-color: #f0f0f0;
+}
+table#sinoptico tbody td {
+  padding: 10px 8px;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 0.95rem;
+  word-wrap: break-word;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ==============================
+   COLORES POR TIPO (JERARQUÍA)
+   ============================== */
+.fila-cliente {
+  background-color: #ffd54f !important;
+} /* Amarillo suave (Cliente) */
+.fila-pieza {
+  background-color: #a6cf54 !important;
+} /* Verde suave (Producto) */
+.fila-subens {
+  background-color: #d0eaff !important;
+} /* Azul muy claro (Subensamble) */
+.fila-oper {
+  background-color: #ffffff !important;
+} /* Blanco (Insumo) */
+
+/* ==============================
+   SANGRÍA MÍNIMA PARA NIVEL 0 (CLIENTE)
+   ============================== */
+.nivel-0 td:first-child {
+  padding-left: 8px;
+  font-weight: bold;
+  border-left: none;
+}
+
+/* ==============================
+   FLECHAS (ESPACIO FIJO) POR NIVEL
+   ============================== */
+.arrow-nivel-1,
+.arrow-nivel-2,
+.arrow-nivel-3,
+.arrow-nivel-4,
+.arrow-nivel-5,
+.arrow-nivel-6 {
+  display: inline-block;
+  width: 14px;       /* reducido a 14px en lugar de 16px */
+  text-align: center;
+  margin-right: 2px; /* reducido a 2px en lugar de 4px */
+  font-weight: bold;
+}
+.arrow-nivel-1 {
+  color: #0d1b3d;
+}
+.arrow-nivel-1::before {
+  content: "\25B6"; /* ► */
+}
+.arrow-nivel-2 {
+  color: #005b9e;
+}
+.arrow-nivel-2::before {
+  content: "\21B3"; /* ↳ */
+}
+.arrow-nivel-3 {
+  color: #007bc8;
+}
+.arrow-nivel-3::before {
+  content: "\2013"; /* – */
+}
+.arrow-nivel-4 {
+  color: #007bc8;
+}
+.arrow-nivel-4::before {
+  content: "\2013";
+}
+.arrow-nivel-5 {
+  color: #007bc8;
+}
+.arrow-nivel-5::before {
+  content: "\2013";
+}
+.arrow-nivel-6 {
+  color: #007bc8;
+}
+.arrow-nivel-6::before {
+  content: "\2013";
+}
+
+/* ==============================
+   BOTONES + / –
+   ============================== */
+.toggle-btn {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin-right: 6px;
+  font-size: 14px;
+  line-height: 14px;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  color: #0d1b3d;
+}
+.toggle-btn.hidden {
+  visibility: hidden; /* si no tiene hijos, ocultar el botón */
+}
+
+/* ==============================
+   MINIATURAS DE IMAGEN
+   ============================== */
+.img-product {
+  max-width: 50px;
+  max-height: 30px;
+  object-fit: contain;
+  border-radius: 3px;
+  border: 1px solid #ccc;
+}
+
+/* ==============================
+   AJUSTES DE ANCHOS DE COLUMNA
+   ============================== */
+#sinoptico th:nth-child(1),
+#sinoptico td:nth-child(1) {
+  width: 25%;
+}
+#sinoptico th:nth-child(2),
+#sinoptico td:nth-child(2) {
+  width: 10%;
+  text-align: center;
+}
+#sinoptico th:nth-child(3),
+#sinoptico td:nth-child(3) {
+  width: 10%;
+  text-align: center;
+}
+#sinoptico th:nth-child(4),
+#sinoptico td:nth-child(4) {
+  width: 10%;
+  text-align: center;
+}
+#sinoptico th:nth-child(5),
+#sinoptico td:nth-child(5) {
+  width: 10%;
+  text-align: center;
+}
+#sinoptico th:nth-child(6),
+#sinoptico td:nth-child(6) {
+  width: 10%;
+  text-align: center;
+}
+#sinoptico th:nth-child(7),
+#sinoptico td:nth-child(7) {
+  width: 7%;
+  text-align: center;
+}
+#sinoptico th:nth-child(8),
+#sinoptico td:nth-child(8) {
+  width: 7%;
+  text-align: center;
+}
+#sinoptico th:nth-child(9),
+#sinoptico td:nth-child(9) {
+  width: 11%;
+  text-align: center;
+}
+#sinoptico th:nth-child(10),
+#sinoptico td:nth-child(10) {
+  width: 10%;
+  text-align: center;
+}
+
+/* ==============================
+   AJUSTES RESPONSIVOS (cuando la ventana sea muy estrecha)
+   ============================== */
+@media (max-width: 1200px) {
+  table#sinoptico thead th,
+  table#sinoptico tbody td {
+    padding: 8px 6px;    /* un poco menos de padding */
+    font-size: 0.9rem;   /* texto ligeramente más pequeño */
+  }
+}
+@media (max-width: 900px) {
+  table#sinoptico thead th,
+  table#sinoptico tbody td {
+    padding: 6px 4px;
+    font-size: 0.85rem;
+  }
+}
+@media (max-width: 600px) {
+  table#sinoptico thead th,
+  table#sinoptico tbody td {
+    padding: 4px 3px;
+    font-size: 0.8rem;
+  }
+}
