@@ -10,6 +10,8 @@
         height: 100%;
         margin: 0;
       }
+
+      /* Contenedor principal */
       .intro {
         background-color: #ffffff;
         color: #003366;
@@ -19,12 +21,15 @@
         align-items: center;
         height: 100%;
         text-align: center;
+        padding-top: 120px; /* espacio para la cabecera */
       }
+
       .intro h1 {
         font-size: 3rem;
         margin-bottom: 1.5rem;
         color: #003366;
       }
+
       .btn-link {
         padding: 1rem 2rem;
         background-color: #0066cc;
@@ -33,21 +38,34 @@
         border-radius: 4px;
         font-size: 1.2rem;
       }
+
       .btn-link:hover {
         background-color: #004c99;
       }
+
+      /* Cabecera con el logo */
+      header {
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding: 20px;
+        z-index: 1;
+      }
+
       .logo {
-        max-width: 300px;
-        margin-bottom: 1rem;
+        max-width: 180px;
+        height: auto;
       }
     </style>
 </head>
-<body>
-    <div class="intro">
-        <img src="LOGO BARACK.png" alt="Logo Barack" class="logo">
-        <h1>Ingeniera barack</h1>
-        <a class="btn-link" href="sinoptico.html">Ver Sinóptico de Producto</a>
-        <a class="btn-link" href="listado_maestro.html" style="margin-top:1rem;">Listado maestro de ingeniería</a>
-    </div>
-</body>
+  <body>
+      <header>
+          <img src="LOGO BARACK.png" alt="Logo Barack" class="logo">
+      </header>
+      <div class="intro">
+          <h1>Ingeniera barack</h1>
+          <a class="btn-link" href="sinoptico.html">Ver Sinóptico de Producto</a>
+          <a class="btn-link" href="listado_maestro.html" style="margin-top:1rem;">Listado maestro de ingeniería</a>
+      </div>
+  </body>
 </html>
