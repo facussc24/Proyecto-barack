@@ -10,9 +10,10 @@
         height: 100%;
         margin: 0;
       }
+      body { position: relative; }
       .intro {
-        background-color: #003366;
-        color: white;
+        background-color: #ffffff;
+        color: #003366;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -23,7 +24,7 @@
       .intro h1 {
         font-size: 3rem;
         margin-bottom: 1.5rem;
-        color: white;
+        color: #003366;
       }
       .btn-link {
         padding: 1rem 2rem;
@@ -36,10 +37,17 @@
       .btn-link:hover {
         background-color: #004c99;
       }
+      .logo {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        max-width: 200px;
+      }
     </style>
 </head>
 <body>
     <div class="intro">
+        <img src="LOGO BARACK.png" alt="Logo Barack" class="logo">
         <h1>Ingeniera barack</h1>
         <a class="btn-link" href="sinoptico.html">Ver Sinóptico de Producto</a>
         <a class="btn-link" href="listado_maestro.html" style="margin-top:1rem;">Listado maestro de ingeniería</a>
