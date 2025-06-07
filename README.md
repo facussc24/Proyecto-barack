@@ -1,6 +1,6 @@
 # Proyecto-barack
 
-This project displays a hierarchical product table. It requires the [LeaderLine](https://anseki.github.io/leader-line/) library for drawing connector lines between related rows. The library is loaded from a CDN in `index.html`.
+This project displays a hierarchical product table built with plain HTML, CSS and JavaScript.
 
 ## Launching the site
 
@@ -22,7 +22,7 @@ Then open [http://localhost:8000/index.html](http://localhost:8000/index.html) i
 
 ## Dependencies and browser requirements
 
-The page loads [PapaParse](https://www.papaparse.com/), [SheetJS](https://sheetjs.com/) and [LeaderLine](https://anseki.github.io/leader-line/) from CDNs. A browser with ES6 support (such as recent Chrome, Firefox or Edge) is required.
+The page loads [PapaParse](https://www.papaparse.com/) and [SheetJS](https://sheetjs.com/) from CDNs. A browser with ES6 support (such as recent Chrome, Firefox or Edge) is required.
 
 ## License
 
