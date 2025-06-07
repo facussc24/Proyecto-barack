@@ -289,12 +289,50 @@
         }, 40);
       }
 
+      function loadDataFromCSV(expandedIds) {
+        Papa.parse('sinoptico.csv', {
+          download: true,
+          header: true,
+          skipEmptyLines: true,
+          delimiter: ';',
+          complete(results) {
+            if (results.errors.length) {
+              console.error('Errores al parsear CSV:', results.errors);
+              tryLoadXlsx(expandedIds);
+              return;
+            }
+            const datosOriginal = results.data;
+            procesarDatos(datosOriginal, expandedIds);
+          },
+          error() {
+            tryLoadXlsx(expandedIds);
+          }
+        });
+      }
+
+      function tryLoadXlsx(expandedIds) {
+        fetch('sinoptico.xlsx')
+          .then(resp => {
+            if (!resp.ok) throw new Error('No xlsx');
+            return resp.arrayBuffer();
+          })
+          .then(buffer => {
+            const wb = XLSX.read(buffer, { type: 'array' });
+            const sheet = wb.Sheets[wb.SheetNames[0]];
+            const datosOriginal = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+            procesarDatos(datosOriginal, expandedIds);
+          })
+          .catch(err => {
+            console.error('Error al leer sinoptico.xlsx:', err);
+            mostrarMensaje('No se pudo cargar sinoptico.csv ni sinoptico.xlsx.');
+          });
+      }
+
       function loadData() {
         // Guardar IDs de filas actualmente expandidas antes de limpiar
         const expandedIds = Array.from(
           document.querySelectorAll('#sinoptico tbody .toggle-btn[data-expanded="true"]')
         ).map(btn => btn.closest('tr').getAttribute('data-id'));
-
 
         if (fs) {
           try {
@@ -305,38 +343,29 @@
               delimiter: ';'
             });
             if (results.errors.length) {
-              console.error('Errores al parsear CSV:', results.errors);
-              mostrarMensaje('Hubo errores al parsear sinoptico.csv.');
-              return;
+              throw new Error('CSV parse error');
             }
             const datosOriginal = results.data;
             procesarDatos(datosOriginal, expandedIds);
+            return;
           } catch (err) {
             console.error('Error al leer sinoptico.csv:', err);
-            mostrarMensaje('No se pudo cargar sinoptico.csv (404 o problema de ruta).');
-          }
-          return;
-        }
-
-        Papa.parse('sinoptico.csv', {
-          download: true,
-          header: true,
-          skipEmptyLines: true,
-          delimiter: ';',
-          complete(results) {
-            if (results.errors.length) {
-              console.error('Errores al parsear CSV:', results.errors);
-              mostrarMensaje('Hubo errores al parsear sinoptico.csv.');
+            try {
+              const xlsxBuffer = fs.readFileSync(pathModule.join(__dirname, 'sinoptico.xlsx'));
+              const wb = XLSX.read(xlsxBuffer, { type: 'buffer' });
+              const sheet = wb.Sheets[wb.SheetNames[0]];
+              const datosOriginal = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+              procesarDatos(datosOriginal, expandedIds);
+              return;
+            } catch (e2) {
+              console.error('Error al leer sinoptico.xlsx:', e2);
+              mostrarMensaje('No se pudo cargar sinoptico.csv ni sinoptico.xlsx.');
               return;
             }
-            const datosOriginal = results.data;
-              procesarDatos(datosOriginal, expandedIds);
-          },
-          error(err) {
-            console.error('Error al leer sinoptico.csv:', err);
-            mostrarMensaje('No se pudo cargar sinoptico.csv (404 o problema de ruta).');
           }
-        });
+        }
+
+        loadDataFromCSV(expandedIds);
       }
 
       // Llamo inmediatamente a loadData()
