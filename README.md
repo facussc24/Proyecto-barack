@@ -10,7 +10,7 @@ Because some browsers block local file reads, it is recommended to serve the fil
 python3 -m http.server
 ```
 
-Then open [http://localhost:8000/index.html](http://localhost:8000/index.html) in a modern browser.
+Then open [http://localhost:8000/index.html](http://localhost:8000/index.html) in a modern browser. From there you can navigate to the product synopsis page or the engineering master list.
 
 ## Features
 
