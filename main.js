@@ -1,5 +1,4 @@
     document.addEventListener('DOMContentLoaded', () => {
-      const linesMap = {};
       /* ==================================================
          1) Mostrar/Ocultar Columnas
       ================================================== */
@@ -136,16 +135,12 @@
         const hijos = document.querySelectorAll(`#sinoptico tbody tr[data-parent="${parentId}"]`);
         hijos.forEach(hijo => {
           hijo.style.display = '';
-          const line = linesMap[hijo.getAttribute('data-id')];
-          if (line) line.show();
         });
       }
       function hideSubtree(parentId) {
         const hijos = document.querySelectorAll(`#sinoptico tbody tr[data-parent="${parentId}"]`);
         hijos.forEach(hijo => {
           hijo.style.display = 'none';
-          const line = linesMap[hijo.getAttribute('data-id')];
-          if (line) line.hide();
           const btn = hijo.querySelector('.toggle-btn');
           if (btn) {
             btn.textContent = '+';
@@ -178,7 +173,6 @@
             tr.style.display = 'none';
           }
         });
-        Object.values(linesMap).forEach(line => line.hide());
         document.querySelectorAll('.toggle-btn').forEach(btn => {
           if (!btn.classList.contains('hidden')) {
             btn.textContent = '+';
@@ -191,7 +185,6 @@
         document.querySelectorAll('#sinoptico tbody tr').forEach(tr => {
           tr.style.display = '';
         });
-        Object.values(linesMap).forEach(line => line.show());
         document.querySelectorAll('.toggle-btn').forEach(btn => {
           if (!btn.classList.contains('hidden')) {
             btn.textContent = '–';
@@ -246,8 +239,6 @@
           document.querySelectorAll('#sinoptico tbody .toggle-btn[data-expanded="true"]')
         ).map(btn => btn.closest('tr').getAttribute('data-id'));
 
-        Object.values(linesMap).forEach(line => line.remove());
-        Object.keys(linesMap).forEach(key => delete linesMap[key]);
 
         Papa.parse('sinoptico.csv', {
           download: true,
@@ -463,15 +454,6 @@
             });
 
             document.querySelector('#sinoptico tbody').appendChild(tr);
-            const parentRow = document.querySelector(`tr[data-id="${fila.ParentID}"]`);
-            if (parentRow) {
-              const line = new LeaderLine(
-                parentRow.querySelector('.item-text'),
-                tr.querySelector('.item-text'),
-                { color: '#0d1b3d', path: 'straight' }
-              );
-              linesMap[fila.ID] = line;
-            }
             dibujarNodos(fila.ID.toString().trim(), nivel + 1);
           });
         }
