@@ -348,6 +348,7 @@
           download: true,
           header: true,
           skipEmptyLines: true,
+          delimiter: ';',
           complete(results) {
             if (results.errors.length) {
               console.error('Errores al parsear CSV:', results.errors);
