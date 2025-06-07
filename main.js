@@ -404,19 +404,16 @@
             }
 
             if (nivel === 0) {
-              // Nivel 0 (Cliente): texto en negrita, sin flecha
+              // Nivel 0 (Cliente): texto en negrita
               const spanText = document.createElement('span');
               spanText.classList.add('item-text');
               spanText.innerHTML = `<strong>${nombreItem}</strong>`;
               tdItem.appendChild(spanText);
             } else {
-              // Nivel ≥1: flecha + texto
-              const spanArrow = document.createElement('span');
-              spanArrow.classList.add(`arrow-nivel-${nivel}`);
+              // Niveles superiores: solo texto sin flecha
               const spanText = document.createElement('span');
               spanText.classList.add('item-text');
               spanText.textContent = nombreItem;
-              tdItem.appendChild(spanArrow);
               tdItem.appendChild(spanText);
             }
             tr.appendChild(tdItem);
