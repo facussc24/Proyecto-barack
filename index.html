@@ -328,6 +328,11 @@
          + Recarga automática cada 30 segundos
       ================================================== */
       function loadData() {
+        // Guardar IDs de filas actualmente expandidas antes de limpiar
+        const expandedIds = Array.from(
+          document.querySelectorAll('#sinoptico tbody .toggle-btn[data-expanded="true"]')
+        ).map(btn => btn.closest('tr').getAttribute('data-id'));
+
         Papa.parse('sinoptico.csv', {
           download: true,
           header: true,
@@ -388,11 +393,22 @@
             // 4) Ajustar indentación dinámica
             setTimeout(ajustarIndentacion, 20);
 
-            // 5) Colapsar todo (solo clientes visibles)
-            setTimeout(colapsarTodo, 40);
+            // 5) Restaurar filas expandidas antes de la recarga
+            setTimeout(() => {
+              expandedIds.forEach(id => {
+                showChildren(id);
+                const btn = document.querySelector(
+                  `#sinoptico tbody tr[data-id="${id}"] .toggle-btn`
+                );
+                if (btn) {
+                  btn.textContent = '–';
+                  btn.setAttribute('data-expanded', 'true');
+                }
+              });
 
-            // 6) Aplicar filtro actual (quizá había texto en el input)
-            aplicarFiltro();
+              // 6) Aplicar filtro actual (quizá había texto en el input)
+              aplicarFiltro();
+            }, 40);
           },
           error(err) {
             console.error('Error al leer sinoptico.csv:', err);
