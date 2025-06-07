@@ -14,17 +14,6 @@ h1 {
   font-size: 1.8rem;
   color: #0d1b3d;
 }
-.update-label {
-  position: fixed;
-  top: 5px;
-  left: 5px;
-  background-color: #ffefc2;
-  color: #0d1b3d;
-  padding: 2px 6px;
-  font-size: 0.8rem;
-  border-radius: 3px;
-  z-index: 1000;
-}
 #mensaje {
   margin: 15px auto;
   max-width: 90%;
@@ -128,7 +117,6 @@ h1 {
 .tabla-contenedor {
   width: 100%;
   margin: 0 auto 30px auto;
-  max-height: 75vh;  /* limita la altura para scroll vertical */
   overflow-x: auto;  /* scroll horizontal si hace falta */
   overflow-y: auto;  /* scroll vertical si hace falta */
   border: 1px solid #ccc;
@@ -139,7 +127,7 @@ h1 {
 table#sinoptico {
   width: calc(100% - 2px); /* se restan 2px de borde para evitar scroll innecesario */
   border-collapse: collapse;
-  table-layout: fixed; /* para ancho proporcional */
+  table-layout: auto; /* permite que las columnas se ajusten al contenido */
 }
 table#sinoptico thead th {
   position: sticky;
@@ -280,11 +268,19 @@ table#sinoptico tbody td {
 }
 
 /* ==============================
+   TEXTO DEL ÍTEM
+   ============================== */
+.item-text {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+/* ==============================
    AJUSTES DE ANCHOS DE COLUMNA
    ============================== */
 #sinoptico th:nth-child(1),
 #sinoptico td:nth-child(1) {
-  width: 40%;
+  width: 50%;
   white-space: normal;
   overflow: visible;
   text-overflow: unset;
