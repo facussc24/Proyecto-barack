@@ -1,48 +1,15 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Barack Mercosul</title>
-    <link rel="stylesheet" href="styles.css">
-    <style>
-      body, html {
-        height: 100%;
-        margin: 0;
-      }
-      .intro {
-        background-color: #003366;
-        color: white;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        height: 100%;
-        text-align: center;
-      }
-      .intro h1 {
-        font-size: 3rem;
-        margin-bottom: 1.5rem;
-        color: white;
-      }
-      .btn-link {
-        padding: 1rem 2rem;
-        background-color: #0066cc;
-        color: #fff;
-        text-decoration: none;
-        border-radius: 4px;
-        font-size: 1.2rem;
-      }
-      .btn-link:hover {
-        background-color: #004c99;
-      }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sinóptico</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="intro">
-        <h1>Barack Mercosul</h1>
-        <a class="btn-link" href="sinoptico.html">Ver Sinóptico de Producto</a>
-        <a class="btn-link" href="listado_maestro.html" style="margin-top:1rem;">Listado maestro de ingeniería</a>
-    </div>
+  <button id="expandirTodo">Expandir Todo</button>
+  <button id="colapsarTodo">Colapsar Todo</button>
+  <div id="tabla"></div>
+  <script src="renderer.js"></script>
 </body>
 </html>
