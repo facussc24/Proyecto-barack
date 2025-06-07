@@ -462,9 +462,10 @@
 
             // Celda “Item” con botón +/–, flecha y texto
             const tdItem = document.createElement('td');
-            tdItem.style.whiteSpace = 'nowrap';
-            tdItem.style.overflow = 'hidden';
-            tdItem.style.textOverflow = 'ellipsis';
+            // Permitir que el texto se muestre completo
+            tdItem.style.whiteSpace = 'normal';
+            tdItem.style.overflow = 'visible';
+            tdItem.style.textOverflow = 'unset';
 
             // ¿Tiene hijos este nodo?
             const tieneHijos =

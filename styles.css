@@ -285,6 +285,9 @@ table#sinoptico tbody td {
 #sinoptico th:nth-child(1),
 #sinoptico td:nth-child(1) {
   width: 40%;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
 }
 #sinoptico th:nth-child(2),
 #sinoptico td:nth-child(2) {
