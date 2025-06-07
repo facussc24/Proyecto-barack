@@ -7,8 +7,21 @@
     <link rel="stylesheet" href="styles.css">
     <style>
       body, html {
-        height: 100%;
         margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      /* Cabecera con el logo */
+      header {
+        padding: 20px;
+        text-align: center;
+      }
+
+      .logo {
+        max-width: 180px;
+        height: auto;
       }
 
       /* Contenedor principal */
@@ -19,15 +32,30 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        height: 100%;
         text-align: center;
-        padding-top: 120px; /* espacio para la cabecera */
+        padding: 60px 20px;
+        flex: 1;
       }
 
       .intro h1 {
         font-size: 3rem;
-        margin-bottom: 1.5rem;
+        margin-bottom: 1rem;
         color: #003366;
+      }
+
+      .tagline {
+        font-size: 1.2rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .features {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 2rem 0;
+      }
+
+      .features li {
+        margin: 0.5rem 0;
       }
 
       .btn-link {
@@ -37,24 +65,12 @@
         text-decoration: none;
         border-radius: 4px;
         font-size: 1.2rem;
+        display: inline-block;
+        margin-top: 0.5rem;
       }
 
       .btn-link:hover {
         background-color: #004c99;
-      }
-
-      /* Cabecera con el logo */
-      header {
-        position: absolute;
-        top: 0;
-        left: 0;
-        padding: 20px;
-        z-index: 1;
-      }
-
-      .logo {
-        max-width: 180px;
-        height: auto;
       }
     </style>
 </head>
@@ -62,10 +78,16 @@
       <header>
           <img src="LOGO BARACK.png" alt="Logo Barack" class="logo">
       </header>
-      <div class="intro">
-          <h1>Ingeniera barack</h1>
+      <main class="intro">
+          <h1>Ingeniería Barack</h1>
+          <p class="tagline">Soluciones integrales para la industria automotriz</p>
+          <ul class="features">
+            <li>Consulta del sinóptico de productos</li>
+            <li>Listado maestro de ingeniería</li>
+            <li>Datos actualizados automáticamente</li>
+          </ul>
           <a class="btn-link" href="sinoptico.html">Ver Sinóptico de Producto</a>
-          <a class="btn-link" href="listado_maestro.html" style="margin-top:1rem;">Listado maestro de ingeniería</a>
-      </div>
+          <a class="btn-link" href="listado_maestro.html">Listado maestro de ingeniería</a>
+      </main>
   </body>
 </html>
