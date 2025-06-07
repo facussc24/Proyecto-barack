@@ -28,18 +28,3 @@ The page loads [PapaParse](https://www.papaparse.com/) and [SheetJS](https://she
 
 This project is licensed under the [MIT License](LICENSE).
 
-## Running as an Electron app
-
-1. Install dependencies:
-   ```bash
-   npm install
-   ```
-2. Start the application in development:
-   ```bash
-   npm start
-   ```
-3. Package the app into a standalone executable:
-   ```bash
-   npx electron-packager . proyecto-barack --overwrite
-   ```
-   The generated files can be copied to any folder and run by double clicking the `.exe` on Windows.
