@@ -14,6 +14,17 @@ h1 {
   font-size: 1.8rem;
   color: #0d1b3d;
 }
+.update-label {
+  position: fixed;
+  top: 5px;
+  left: 5px;
+  background-color: #ffefc2;
+  color: #0d1b3d;
+  padding: 2px 6px;
+  font-size: 0.8rem;
+  border-radius: 3px;
+  z-index: 1000;
+}
 #mensaje {
   margin: 15px auto;
   max-width: 90%;
@@ -174,8 +185,8 @@ table#sinoptico tbody td {
   background-color: #d0eaff !important;
 } /* Azul muy claro (Subensamble) */
 .fila-oper {
-  background-color: #ffffff !important;
-} /* Blanco (Insumo) */
+  background-color: #e7f5ff !important;
+} /* Azul claro (Insumo) */
 
 /* ==============================
    SANGRÍA MÍNIMA PARA NIVEL 0 (CLIENTE)
@@ -273,7 +284,7 @@ table#sinoptico tbody td {
    ============================== */
 #sinoptico th:nth-child(1),
 #sinoptico td:nth-child(1) {
-  width: 25%;
+  width: 40%;
 }
 #sinoptico th:nth-child(2),
 #sinoptico td:nth-child(2) {
