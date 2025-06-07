@@ -1,18 +1,9 @@
- (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
-diff --git a//dev/null b/package.json
-index 0000000000000000000000000000000000000000..1590bafd71abd45682f16652dc1683d8192cca65 100644
---- a//dev/null
-+++ b/package.json
-@@ -0,0 +1,9 @@
-+{
-+  "name": "proyecto-barack",
-+  "version": "1.0.0",
-+  "description": "Sin\u00f3ptico de Producto Barack",
-+  "license": "MIT",
-+  "scripts": {
-+    "test": "echo \"No tests available\" && exit 0"
-+  }
-+}
- 
-EOF
-)
+{
+  "name": "proyecto-barack",
+  "version": "1.0.0",
+  "description": "Sinóptico de Producto Barack",
+  "license": "MIT",
+  "scripts": {
+    "test": "echo \"No tests available\" && exit 0"
+  }
+}
