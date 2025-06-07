@@ -1,101 +1,48 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sinóptico de Producto Barack</title>
-
-  <!-- Vinculamos el CSS externo -->
-  <link rel="stylesheet" href="styles.css" />
-
-  <!-- PapaParse para leer el CSV -->
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
-  <!-- SheetJS (xlsx) para exportar a Excel -->
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barack Mercosul</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+      body, html {
+        height: 100%;
+        margin: 0;
+      }
+      .intro {
+        background-color: #003366;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        text-align: center;
+      }
+      .intro h1 {
+        font-size: 3rem;
+        margin-bottom: 1.5rem;
+        color: white;
+      }
+      .btn-link {
+        padding: 1rem 2rem;
+        background-color: #0066cc;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 4px;
+        font-size: 1.2rem;
+      }
+      .btn-link:hover {
+        background-color: #004c99;
+      }
+    </style>
 </head>
 <body>
-  <h1>Sinóptico de Producto Barack</h1>
-  <div id="mensaje"></div>
-
-  <!-- ==============================
-       BLOQUE: Mostrar/Ocultar Columnas
-       ============================== -->
-  <div class="column-toggle-container">
-    <label><input type="checkbox" class="toggle-col" data-colindex="0" checked /> Ítem</label>
-    <label><input type="checkbox" class="toggle-col" data-colindex="1" checked /> Cliente</label>
-    <label><input type="checkbox" class="toggle-col" data-colindex="2" checked /> Vehículo</label>
-    <label><input type="checkbox" class="toggle-col" data-colindex="3" checked /> RefInterno</label>
-    <label><input type="checkbox" class="toggle-col" data-colindex="4" checked /> Versión</label>
-    <label><input type="checkbox" class="toggle-col" data-colindex="5" checked /> Imagen</label>
-    <label><input type="checkbox" class="toggle-col" data-colindex="6" checked /> Pzas/h</label>
-    <label><input type="checkbox" class="toggle-col" data-colindex="7" checked /> Unidad</label>
-    <label><input type="checkbox" class="toggle-col" data-colindex="8" checked /> Sourcing</label>
-    <label><input type="checkbox" class="toggle-col" data-colindex="9" checked /> Código</label>
-  </div>
-
-  <!-- ==============================
-       BLOQUE DE FILTROS + BOTONES GLOBALES + BOTÓN EXCEL
-       ============================== -->
-  <div class="filtro-contenedor">
-    <div class="filtros-texto">
-      <label for="filtroInsumo">🔍 Buscar Insumo:</label>
-      <input type="text" id="filtroInsumo" placeholder="Ej: Hilo 120, Corte 1..." />
-
-      <div class="filtro-opciones">
-        <input type="checkbox" id="chkIncluirAncestros" checked />
-        <label for="chkIncluirAncestros">Incluir jerarquía (padres)</label>
-      </div>
-      <div class="filtro-opciones">
-        <input type="checkbox" id="chkMostrarNivel0" checked />
-        <label for="chkMostrarNivel0">Mostrar Cliente (nivel 0)</label>
-      </div>
-      <div class="filtro-opciones">
-        <input type="checkbox" id="chkMostrarNivel1" checked />
-        <label for="chkMostrarNivel1">Mostrar Producto (nivel 1)</label>
-      </div>
-      <div class="filtro-opciones">
-        <input type="checkbox" id="chkMostrarNivel2" checked />
-        <label for="chkMostrarNivel2">Mostrar Subensamble (nivel 2)</label>
-      </div>
-      <div class="filtro-opciones">
-        <input type="checkbox" id="chkMostrarNivel3" checked />
-        <label for="chkMostrarNivel3">Mostrar Insumo (nivel 3)</label>
-      </div>
+    <div class="intro">
+        <h1>Barack Mercosul</h1>
+        <a class="btn-link" href="sinoptico.html">Ver Sinóptico de Producto</a>
+        <a class="btn-link" href="listado_maestro.html" style="margin-top:1rem;">Listado maestro de ingeniería</a>
     </div>
-
-    <!-- Botones globales -->
-    <button id="expandirTodo">Expandir Todo</button>
-    <button id="colapsarTodo">Colapsar Todo</button>
-    <!-- Botón para exportar la tabla visible a Excel -->
-    <button id="btnExcel">Exportar a Excel</button>
-  </div>
-
-  <!-- ==============================
-       CONTENEDOR DE LA TABLA
-       ============================== -->
-  <div class="tabla-contenedor">
-    <table id="sinoptico">
-      <thead>
-        <tr>
-          <th>Item</th>
-          <th>Cliente</th>
-          <th>Vehículo</th>
-          <th>RefInterno</th>
-          <th>Versión</th>
-          <th>Imagen</th>
-          <th>Pzas/h</th>
-          <th>Unidad</th>
-          <th>Sourcing</th>
-          <th>Código</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Aquí se insertarán las filas dinámicamente -->
-      </tbody>
-    </table>
-  </div>
-  <a href="listado_maestro.html" class="home-button">Listado maestro</a>
-
-  <script src="renderer.js" defer></script>
 </body>
 </html>
