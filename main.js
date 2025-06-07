@@ -413,13 +413,10 @@
               spanText.appendChild(strong);
               tdItem.appendChild(spanText);
             } else {
-              // Nivel ≥1: flecha + texto
-              const spanArrow = document.createElement('span');
-              spanArrow.classList.add(`arrow-nivel-${nivel}`);
+              // Nivel ≥1: solo texto sin flecha
               const spanText = document.createElement('span');
               spanText.classList.add('item-text');
               spanText.textContent = nombreItem;
-              tdItem.appendChild(spanArrow);
               tdItem.appendChild(spanText);
             }
             tr.appendChild(tdItem);
@@ -504,25 +501,19 @@
           }
           // Indent del padre
           const indentPadre = obtenerIndent(filaPadre);
-          // Medir anchos: botón toggle + flecha + texto del padre
+          // Medir anchos: botón toggle + texto del padre
           const tdPadre = filaPadre.querySelector('td:first-child');
           let anchoToggle = 0,
-            anchoArrow = 0,
             anchoText = 0;
           const spanToggle = tdPadre.querySelector('.toggle-btn:not(.hidden)');
           if (spanToggle)
             anchoToggle =
               spanToggle.offsetWidth + parseInt(getComputedStyle(spanToggle).marginRight);
-          const spanArrowPadre = tdPadre.querySelector(`[class^="arrow-nivel-"]`);
-          if (spanArrowPadre)
-            anchoArrow =
-              spanArrowPadre.offsetWidth +
-              parseInt(getComputedStyle(spanArrowPadre).marginRight);
           const spanTextPadre = tdPadre.querySelector('.item-text');
           if (spanTextPadre) anchoText = spanTextPadre.offsetWidth;
 
           const margenExtra = 4; // sólo 4px en lugar de 8px
-          const indentActual = indentPadre + anchoToggle + anchoArrow + anchoText + margenExtra;
+          const indentActual = indentPadre + anchoToggle + anchoText + margenExtra;
           indentCache[id] = indentActual;
           return indentActual;
         }
