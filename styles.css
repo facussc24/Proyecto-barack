@@ -251,6 +251,9 @@ table#sinoptico tbody td {
   cursor: pointer;
   user-select: none;
   color: #0d1b3d;
+  border: none;
+  background: none;
+  padding: 0;
 }
 .toggle-btn.hidden {
   visibility: hidden; /* si no tiene hijos, ocultar el botón */

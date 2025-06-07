@@ -250,6 +250,7 @@
           if (btn) {
             btn.textContent = '+';
             btn.setAttribute('data-expanded', 'false');
+            btn.setAttribute('aria-expanded', 'false');
           }
           const idHijo = hijo.getAttribute('data-id');
           hideSubtree(idHijo);
@@ -261,11 +262,13 @@
           // Colapsar
           btn.textContent = '+';
           btn.setAttribute('data-expanded', 'false');
+          btn.setAttribute('aria-expanded', 'false');
           hideSubtree(parentId);
         } else {
           // Expandir
           btn.textContent = '–';
           btn.setAttribute('data-expanded', 'true');
+          btn.setAttribute('aria-expanded', 'true');
           showChildren(parentId);
         }
       }
@@ -280,6 +283,7 @@
           if (!btn.classList.contains('hidden')) {
             btn.textContent = '+';
             btn.setAttribute('data-expanded', 'false');
+            btn.setAttribute('aria-expanded', 'false');
           }
         });
       }
@@ -292,6 +296,7 @@
           if (!btn.classList.contains('hidden')) {
             btn.textContent = '–';
             btn.setAttribute('data-expanded', 'true');
+            btn.setAttribute('aria-expanded', 'true');
           }
         });
       }
@@ -414,6 +419,7 @@
                 if (btn) {
                   btn.textContent = '–';
                   btn.setAttribute('data-expanded', 'true');
+                  btn.setAttribute('aria-expanded', 'true');
                 }
               });
 
@@ -482,13 +488,16 @@
             const tieneHijos =
               Array.isArray(agrupadoPorPadre[fila.ID]) &&
               agrupadoPorPadre[fila.ID].length > 0;
-            const btnToggle = document.createElement('span');
+            const btnToggle = document.createElement('button');
+            btnToggle.type = 'button';
             btnToggle.classList.add('toggle-btn');
             if (!tieneHijos) {
               btnToggle.classList.add('hidden');
             }
             btnToggle.textContent = '+'; // inicia colapsado
             btnToggle.setAttribute('data-expanded', 'false');
+            btnToggle.setAttribute('aria-expanded', 'false');
+            btnToggle.setAttribute('aria-label', 'Expand/Collapse');
             // Evento onclick
             btnToggle.addEventListener('click', () => {
               toggleNodo(btnToggle, fila.ID);
