@@ -362,7 +362,7 @@
 
             // Limpiar contenido de la tabla antes de reconstruir
             const tbody = document.querySelector('#sinoptico tbody');
-            tbody.innerHTML = '';
+            tbody.textContent = '';
 
             // 1) Crear nodos “Cliente” (nivel 0)
             const clientesMap = {};
@@ -507,7 +507,9 @@
               // Nivel 0 (Cliente): texto en negrita, sin flecha
               const spanText = document.createElement('span');
               spanText.classList.add('item-text');
-              spanText.innerHTML = `<strong>${nombreItem}</strong>`;
+              const strong = document.createElement('strong');
+              strong.textContent = nombreItem;
+              spanText.appendChild(strong);
               tdItem.appendChild(spanText);
             } else {
               // Nivel ≥1: flecha + texto
