@@ -358,3 +358,21 @@ table#sinoptico tbody td {
     font-size: 0.8rem;
   }
 }
+
+/* Botón de Inicio */
+.home-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px 16px;
+  background-color: #0d1b3d;
+  color: #fff;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+.home-button:hover {
+  background-color: #0a1a33;
+}
+
