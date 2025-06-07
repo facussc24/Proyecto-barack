@@ -1,5 +1,7 @@
     document.addEventListener('DOMContentLoaded', () => {
       const fs = window.require ? window.require("fs") : null;
+      const pathModule = window.require ? window.require("path") : null;
+      const csvFile = pathModule ? pathModule.join(__dirname, "sinoptico.csv") : "sinoptico.csv";
       /* ==================================================
          1) Mostrar/Ocultar Columnas
       ================================================== */
@@ -296,7 +298,7 @@
 
         if (fs) {
           try {
-            const csvText = fs.readFileSync('sinoptico.csv', 'utf8');
+            const csvText = fs.readFileSync(csvFile, 'utf8');
             const results = Papa.parse(csvText, {
               header: true,
               skipEmptyLines: true,
