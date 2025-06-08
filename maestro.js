@@ -2,15 +2,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const tbody = document.querySelector('#maestro tbody');
   const nameInput = document.getElementById('docName');
   const numberInput = document.getElementById('docNumber');
+  const detailInput = document.getElementById('docDetail');
   const addBtn = document.getElementById('addDoc');
   const STORAGE_KEY = 'maestroDocs';
+  const isAdmin = sessionStorage.getItem('maestroAdmin') === 'true';
 
   let docs = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
-    { name: 'Hojas de operaciones', number: '' },
-    { name: 'AMFE', number: '' },
-    { name: 'Flujograma', number: '' },
-    { name: 'Mylar', number: '' },
-    { name: 'ULM', number: '' }
+    { name: 'Hojas de operaciones', number: '', detail: '' },
+    { name: 'AMFE', number: '', detail: '' },
+    { name: 'Flujograma', number: '', detail: '' },
+    { name: 'Mylar', number: '', detail: '' },
+    { name: 'ULM', number: '', detail: '' }
   ];
 
   function save() {
@@ -28,40 +30,71 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const tdNum = document.createElement('td');
       tdNum.textContent = doc.number;
-      tdNum.addEventListener('click', () => {
-        const nuevo = prompt('Nuevo número', doc.number);
-        if (nuevo !== null) {
-          docs[idx].number = nuevo.trim();
-          save();
-          render();
-        }
-      });
+      if (isAdmin) {
+        tdNum.addEventListener('click', () => {
+          const nuevo = prompt('Nuevo número', doc.number);
+          if (nuevo !== null) {
+            docs[idx].number = nuevo.trim();
+            save();
+            render();
+          }
+        });
+      }
       tr.appendChild(tdNum);
 
+      const tdDet = document.createElement('td');
+      tdDet.textContent = doc.detail || '';
+      if (isAdmin) {
+        tdDet.addEventListener('click', () => {
+          const nuevo = prompt('Nuevo detalle', doc.detail || '');
+          if (nuevo !== null) {
+            docs[idx].detail = nuevo.trim();
+            save();
+            render();
+          }
+        });
+      }
+      tr.appendChild(tdDet);
+
       const tdAct = document.createElement('td');
-      const delBtn = document.createElement('button');
-      delBtn.textContent = 'Eliminar';
-      delBtn.addEventListener('click', () => {
-        docs.splice(idx, 1);
-        save();
-        render();
-      });
-      tdAct.appendChild(delBtn);
+      if (isAdmin) {
+        const delBtn = document.createElement('button');
+        delBtn.textContent = 'Eliminar';
+        delBtn.addEventListener('click', () => {
+          if (doc.name === 'AMFE') {
+            const count = docs.filter(d => d.name === 'AMFE').length;
+            if (count <= 1) {
+              alert('No se puede eliminar la columna AMFE');
+              return;
+            }
+          }
+          docs.splice(idx, 1);
+          save();
+          render();
+        });
+        tdAct.appendChild(delBtn);
+      }
       tr.appendChild(tdAct);
 
       tbody.appendChild(tr);
     });
+
+    // Mostrar u ocultar formulario según modo
+    const form = document.querySelector('.maestro-form');
+    form.style.display = isAdmin ? 'flex' : 'none';
   }
 
   addBtn.addEventListener('click', () => {
     const name = nameInput.value.trim();
     const num = numberInput.value.trim();
+    const det = detailInput.value.trim();
     if (!name || !num) return;
-    docs.push({ name, number: num });
+    docs.push({ name, number: num, detail: det });
     save();
     render();
     nameInput.value = '';
     numberInput.value = '';
+    detailInput.value = '';
   });
 
   render();
