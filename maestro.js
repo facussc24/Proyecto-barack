@@ -4,11 +4,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const numberInput = document.getElementById('docNumber');
   const detailInput = document.getElementById('docDetail');
   const DOC_TYPES = [
-    { name: 'Amfe', category: 'AMFE' },
-    { name: 'Hojas de operaciones', category: 'Operaciones' },
-    { name: 'Mylar', category: 'Operaciones' },
-    { name: 'Ulm', category: 'Operaciones' },
-    { name: 'Flujograma', category: 'Operaciones' }
+    { name: 'Amfe', category: 'Amfe' },
+    { name: 'Hojas de operaciones', category: 'Hojas de operaciones' },
+    { name: 'Mylar', category: 'Mylar' },
+    { name: 'Ulm', category: 'Ulm' },
+    { name: 'Flujograma', category: 'Flujograma' }
   ];
   const filterInput = document.getElementById('maestroFilter');
   const addBtn = document.getElementById('addDoc');
@@ -19,6 +19,15 @@ document.addEventListener('DOMContentLoaded', () => {
   if (Array.isArray(docs)) {
     // Remove empty placeholder entries from older versions
     docs = docs.filter(d => !(DOC_TYPES.some(t => t.name === d.name) && !d.number && !d.detail));
+    // Update old "Operaciones" categories to specific names
+    docs.forEach(d => {
+      if (d.category === 'Operaciones') {
+        const match = DOC_TYPES.find(t => t.name === d.name);
+        if (match) {
+          d.category = match.category;
+        }
+      }
+    });
   } else {
     docs = [];
   }
