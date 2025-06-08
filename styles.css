@@ -384,21 +384,34 @@ table#sinoptico tbody td {
   width: 95%;
   margin: 0 auto;
 }
-#maestro {
+
+.category-section {
+  margin-bottom: 20px;
+}
+
+.category-section summary {
+  font-weight: bold;
+  background-color: #efefef;
+  padding: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.category-section table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 15px;
+  margin-top: 8px;
   background-color: #fff;
   border-radius: 6px;
   overflow: hidden;
 }
-#maestro th,
-#maestro td {
+.category-section th,
+.category-section td {
   border: 1px solid #ccc;
   padding: 8px;
   text-align: left;
 }
-#maestro tbody tr:nth-child(even) {
+.category-section tbody tr:nth-child(even) {
   background-color: #f7f7f7;
 }
 .maestro-form {
@@ -427,13 +440,15 @@ table#sinoptico tbody td {
 .maestro-form button:hover {
   background-color: #0a1a33;
 }
-.edit-button {
-  margin-left: 10px;
-  padding: 4px 8px;
-  font-size: 0.9rem;
+.maestro-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
-.category-row th {
-  background-color: #efefef;
-  text-align: left;
+.edit-button {
+  padding: 4px 8px;
+  font-size: 0.9rem;
 }

@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const tbody = document.querySelector('#maestro tbody');
+  const maestroContainer = document.getElementById('maestro');
   const nameInput = document.getElementById('docName');
   const numberInput = document.getElementById('docNumber');
   const detailInput = document.getElementById('docDetail');
@@ -22,17 +22,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function render() {
     isAdmin = sessionStorage.getItem('maestroAdmin') === 'true';
-    tbody.textContent = '';
+    maestroContainer.textContent = '';
 
     const categories = Array.from(new Set(docs.map(d => d.category)));
     categories.forEach(cat => {
-      const header = document.createElement('tr');
-      header.className = 'category-row';
-      const th = document.createElement('th');
-      th.colSpan = 4;
-      th.textContent = cat;
-      header.appendChild(th);
-      tbody.appendChild(header);
+      const section = document.createElement('details');
+      section.className = 'category-section';
+      section.open = true;
+
+      const summary = document.createElement('summary');
+      summary.textContent = cat;
+      section.appendChild(summary);
+
+      const table = document.createElement('table');
+      const thead = document.createElement('thead');
+      const headerRow = document.createElement('tr');
+      ['Documento', 'Número', 'Detalle', 'Acciones'].forEach(text => {
+        const th = document.createElement('th');
+        th.textContent = text;
+        headerRow.appendChild(th);
+      });
+      thead.appendChild(headerRow);
+      table.appendChild(thead);
+
+      const tbody = document.createElement('tbody');
 
       docs.forEach((doc, idx) => {
         if (doc.category !== cat) return;
@@ -88,10 +101,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         tdAct.appendChild(delBtn);
       }
-        tr.appendChild(tdAct);
+      tr.appendChild(tdAct);
 
         tbody.appendChild(tr);
       });
+
+      table.appendChild(tbody);
+      section.appendChild(table);
+      maestroContainer.appendChild(section);
     });
 
     // Mostrar u ocultar formulario según modo

@@ -7,14 +7,14 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <h1>Listado maestro de ingeniería <button id="editBtn" class="edit-button">Editar</button></h1>
+  <header class="maestro-header">
+    <h1>Listado maestro de ingeniería</h1>
+    <button id="editBtn" class="edit-button">Editar</button>
+  </header>
+
   <div class="maestro-container">
-    <table id="maestro">
-      <thead>
-        <tr><th>Documento</th><th>Número</th><th>Detalle</th><th>Acciones</th></tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+    <div id="maestro"></div>
+
     <div class="maestro-form">
       <select id="docCategory">
         <option value="Operaciones">Operaciones</option>
