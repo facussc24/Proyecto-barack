@@ -431,6 +431,10 @@ table#sinoptico tbody td {
   padding: 6px;
   border: 1px solid #bbb;
   border-radius: 4px;
+  min-width: 180px;
+}
+.maestro-form optgroup {
+  font-weight: bold;
 }
 .maestro-form input {
   flex: 1;

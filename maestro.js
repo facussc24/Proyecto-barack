@@ -4,11 +4,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const numberInput = document.getElementById('docNumber');
   const detailInput = document.getElementById('docDetail');
   const DOC_TYPES = [
+    { name: 'Amfe', category: 'AMFE' },
     { name: 'Hojas de operaciones', category: 'Operaciones' },
-    { name: 'Flujograma', category: 'Operaciones' },
     { name: 'Mylar', category: 'Operaciones' },
-    { name: 'ULM', category: 'Operaciones' },
-    { name: 'AMFE', category: 'AMFE' }
+    { name: 'Ulm', category: 'Operaciones' },
+    { name: 'Flujograma', category: 'Operaciones' }
   ];
   const filterInput = document.getElementById('maestroFilter');
   const addBtn = document.getElementById('addDoc');
@@ -21,11 +21,25 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateDocOptions() {
     if (!nameInput) return;
     nameInput.innerHTML = '';
+    const def = document.createElement('option');
+    def.value = '';
+    def.textContent = 'Seleccione...';
+    def.disabled = true;
+    def.selected = true;
+    nameInput.appendChild(def);
+
+    const groups = {};
     DOC_TYPES.forEach(t => {
+      if (!groups[t.category]) {
+        const g = document.createElement('optgroup');
+        g.label = t.category;
+        groups[t.category] = g;
+        nameInput.appendChild(g);
+      }
       const opt = document.createElement('option');
       opt.value = t.name;
       opt.textContent = t.name;
-      nameInput.appendChild(opt);
+      groups[t.category].appendChild(opt);
     });
   }
 
@@ -114,10 +128,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const delBtn = document.createElement('button');
         delBtn.textContent = 'Eliminar';
         delBtn.addEventListener('click', () => {
-          if (doc.name === 'AMFE') {
-            const count = docs.filter(d => d.name === 'AMFE').length;
+          if (doc.name === 'Amfe') {
+            const count = docs.filter(d => d.name === 'Amfe').length;
             if (count <= 1) {
-              alert('No se puede eliminar la columna AMFE');
+              alert('No se puede eliminar la columna Amfe');
               return;
             }
           }
