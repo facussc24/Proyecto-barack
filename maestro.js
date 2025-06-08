@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const numberInput = document.getElementById('docNumber');
   const detailInput = document.getElementById('docDetail');
   const categorySelect = document.getElementById('docCategory');
+  const optionsList = document.getElementById('docOptions');
+  const filterInput = document.getElementById('maestroFilter');
   const addBtn = document.getElementById('addDoc');
   const STORAGE_KEY = 'maestroDocs';
   let isAdmin = sessionStorage.getItem('maestroAdmin') === 'true';
@@ -15,6 +17,30 @@ document.addEventListener('DOMContentLoaded', () => {
     { name: 'ULM', number: '', detail: '', category: 'Operaciones' },
     { name: 'AMFE', number: '', detail: '', category: 'AMFE' }
   ];
+
+  function updateDocOptions() {
+    if (!optionsList) return;
+    optionsList.innerHTML = '';
+    const names = Array.from(new Set(docs.map(d => d.name)));
+    names.forEach(n => {
+      const opt = document.createElement('option');
+      opt.value = n;
+      optionsList.appendChild(opt);
+    });
+  }
+
+  function applyFilter() {
+    if (!filterInput) return;
+    const text = filterInput.value.toLowerCase();
+    document.querySelectorAll('#maestro tbody tr').forEach(tr => {
+      const tds = tr.querySelectorAll('td');
+      const name = tds[0].textContent.toLowerCase();
+      const num = tds[1].textContent.toLowerCase();
+      const det = tds[2].textContent.toLowerCase();
+      const match = name.includes(text) || num.includes(text) || det.includes(text);
+      tr.style.display = match ? '' : 'none';
+    });
+  }
 
   function save() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(docs));
@@ -111,9 +137,13 @@ document.addEventListener('DOMContentLoaded', () => {
       maestroContainer.appendChild(section);
     });
 
+    updateDocOptions();
+
     // Mostrar u ocultar formulario según modo
     const form = document.querySelector('.maestro-form');
     form.style.display = isAdmin ? 'flex' : 'none';
+
+    applyFilter();
   }
 
   addBtn.addEventListener('click', () => {
@@ -130,6 +160,10 @@ document.addEventListener('DOMContentLoaded', () => {
     detailInput.value = '';
     categorySelect.value = 'Operaciones';
   });
+
+  if (filterInput) {
+    filterInput.addEventListener('input', applyFilter);
+  }
 
   document.addEventListener('maestro-mode', render);
   render();
