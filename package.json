@@ -1,0 +1,9 @@
+{
+  "name": "proyecto-barack",
+  "version": "1.0.0",
+  "description": "",
+  "devDependencies": {
+    "jsdom": "^22.1.0",
+    "jsdom-global": "^3.0.2"
+  }
+}
