@@ -24,6 +24,17 @@ Then open [http://localhost:8000/index.html](http://localhost:8000/index.html) i
 
 The page loads [PapaParse](https://www.papaparse.com/) and [SheetJS](https://sheetjs.com/) from CDNs. A browser with ES6 support (such as recent Chrome, Firefox or Edge) is required.
 
+## Node testing
+
+Install dev dependencies once with `npm install` and then run:
+
+```bash
+node test-maestro.js
+```
+
+This sets up a JSDOM environment so `maestro.js` can execute under Node.
+
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
