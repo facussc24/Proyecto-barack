@@ -376,3 +376,43 @@ table#sinoptico tbody td {
   background-color: #0a1a33;
 }
 
+
+/* ==============================
+   LISTADO MAESTRO
+   ============================== */
+.maestro-container {
+  width: 95%;
+  margin: 0 auto;
+}
+#maestro {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 15px;
+}
+#maestro th,
+#maestro td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+.maestro-form {
+  display: flex;
+  gap: 8px;
+}
+.maestro-form input {
+  flex: 1;
+  padding: 6px;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+}
+.maestro-form button {
+  padding: 6px 12px;
+  background-color: #0d1b3d;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.maestro-form button:hover {
+  background-color: #0a1a33;
+}

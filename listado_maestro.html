@@ -8,7 +8,20 @@
 </head>
 <body>
   <h1>Listado maestro de ingeniería</h1>
-  <p style="text-align:center; margin-top:40px; font-size:1.2rem;">Página en construcción</p>
+  <div class="maestro-container">
+    <table id="maestro">
+      <thead>
+        <tr><th>Documento</th><th>Número</th><th>Acciones</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <div class="maestro-form">
+      <input type="text" id="docName" placeholder="Documento" />
+      <input type="text" id="docNumber" placeholder="Número" />
+      <button id="addDoc">Agregar</button>
+    </div>
+  </div>
   <a href="index.html" class="home-button">Inicio</a>
+  <script src="maestro.js"></script>
 </body>
 </html>

@@ -274,8 +274,10 @@
           datosMod.push(fila);
         });
         construirSinoptico(datosMod);
-        setTimeout(ajustarIndentacion, 20);
+        // Colapsar todo para que la recarga no expanda la tabla por defecto
+        colapsarTodo();
         setTimeout(() => {
+          ajustarIndentacion();
           expandedIds.forEach(id => {
             showChildren(id);
             const btn = document.querySelector(`#sinoptico tbody tr[data-id="${id}"] .toggle-btn`);
