@@ -388,6 +388,9 @@ table#sinoptico tbody td {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 15px;
+  background-color: #fff;
+  border-radius: 6px;
+  overflow: hidden;
 }
 #maestro th,
 #maestro td {
@@ -395,9 +398,17 @@ table#sinoptico tbody td {
   padding: 8px;
   text-align: left;
 }
+#maestro tbody tr:nth-child(even) {
+  background-color: #f7f7f7;
+}
 .maestro-form {
   display: flex;
   gap: 8px;
+}
+.maestro-form select {
+  padding: 6px;
+  border: 1px solid #bbb;
+  border-radius: 4px;
 }
 .maestro-form input {
   flex: 1;
@@ -415,4 +426,14 @@ table#sinoptico tbody td {
 }
 .maestro-form button:hover {
   background-color: #0a1a33;
+}
+.edit-button {
+  margin-left: 10px;
+  padding: 4px 8px;
+  font-size: 0.9rem;
+}
+
+.category-row th {
+  background-color: #efefef;
+  text-align: left;
 }

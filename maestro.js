@@ -3,16 +3,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const nameInput = document.getElementById('docName');
   const numberInput = document.getElementById('docNumber');
   const detailInput = document.getElementById('docDetail');
+  const categorySelect = document.getElementById('docCategory');
   const addBtn = document.getElementById('addDoc');
   const STORAGE_KEY = 'maestroDocs';
-  const isAdmin = sessionStorage.getItem('maestroAdmin') === 'true';
+  let isAdmin = sessionStorage.getItem('maestroAdmin') === 'true';
 
   let docs = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
-    { name: 'Hojas de operaciones', number: '', detail: '' },
-    { name: 'AMFE', number: '', detail: '' },
-    { name: 'Flujograma', number: '', detail: '' },
-    { name: 'Mylar', number: '', detail: '' },
-    { name: 'ULM', number: '', detail: '' }
+    { name: 'Hojas de operaciones', number: '', detail: '', category: 'Operaciones' },
+    { name: 'Flujograma', number: '', detail: '', category: 'Operaciones' },
+    { name: 'Mylar', number: '', detail: '', category: 'Operaciones' },
+    { name: 'ULM', number: '', detail: '', category: 'Operaciones' },
+    { name: 'AMFE', number: '', detail: '', category: 'AMFE' }
   ];
 
   function save() {
@@ -20,13 +21,26 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function render() {
+    isAdmin = sessionStorage.getItem('maestroAdmin') === 'true';
     tbody.textContent = '';
-    docs.forEach((doc, idx) => {
-      const tr = document.createElement('tr');
 
-      const tdName = document.createElement('td');
-      tdName.textContent = doc.name;
-      tr.appendChild(tdName);
+    const categories = Array.from(new Set(docs.map(d => d.category)));
+    categories.forEach(cat => {
+      const header = document.createElement('tr');
+      header.className = 'category-row';
+      const th = document.createElement('th');
+      th.colSpan = 4;
+      th.textContent = cat;
+      header.appendChild(th);
+      tbody.appendChild(header);
+
+      docs.forEach((doc, idx) => {
+        if (doc.category !== cat) return;
+        const tr = document.createElement('tr');
+
+        const tdName = document.createElement('td');
+        tdName.textContent = doc.name;
+        tr.appendChild(tdName);
 
       const tdNum = document.createElement('td');
       tdNum.textContent = doc.number;
@@ -74,9 +88,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         tdAct.appendChild(delBtn);
       }
-      tr.appendChild(tdAct);
+        tr.appendChild(tdAct);
 
-      tbody.appendChild(tr);
+        tbody.appendChild(tr);
+      });
     });
 
     // Mostrar u ocultar formulario según modo
@@ -88,14 +103,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const name = nameInput.value.trim();
     const num = numberInput.value.trim();
     const det = detailInput.value.trim();
+    const cat = categorySelect.value;
     if (!name || !num) return;
-    docs.push({ name, number: num, detail: det });
+    docs.push({ name, number: num, detail: det, category: cat });
     save();
     render();
     nameInput.value = '';
     numberInput.value = '';
     detailInput.value = '';
+    categorySelect.value = 'Operaciones';
   });
 
+  document.addEventListener('maestro-mode', render);
   render();
 });
