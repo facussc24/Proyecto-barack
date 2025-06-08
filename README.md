@@ -19,6 +19,8 @@ Then open [http://localhost:8000/index.html](http://localhost:8000/index.html) i
 - **Expand/Collapse** – the tree of products can be expanded node by node or all at once.
 - **Automatic refresh** – `sinoptico.csv` is reloaded every 30 seconds so changes appear automatically.
 - **Excel export** – visible rows can be exported to `sinoptico.xlsx`.
+- **Dynamic categories** – the master list starts empty and new document sections
+  appear automatically when items are added.
 
 ## Dependencies and browser requirements
 
