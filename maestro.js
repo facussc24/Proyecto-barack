@@ -3,29 +3,29 @@ document.addEventListener('DOMContentLoaded', () => {
   const nameInput = document.getElementById('docName');
   const numberInput = document.getElementById('docNumber');
   const detailInput = document.getElementById('docDetail');
-  const categorySelect = document.getElementById('docCategory');
-  const optionsList = document.getElementById('docOptions');
+  const DOC_TYPES = [
+    { name: 'Hojas de operaciones', category: 'Operaciones' },
+    { name: 'Flujograma', category: 'Operaciones' },
+    { name: 'Mylar', category: 'Operaciones' },
+    { name: 'ULM', category: 'Operaciones' },
+    { name: 'AMFE', category: 'AMFE' }
+  ];
   const filterInput = document.getElementById('maestroFilter');
   const addBtn = document.getElementById('addDoc');
   const STORAGE_KEY = 'maestroDocs';
   let isAdmin = sessionStorage.getItem('maestroAdmin') === 'true';
 
-  let docs = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [
-    { name: 'Hojas de operaciones', number: '', detail: '', category: 'Operaciones' },
-    { name: 'Flujograma', number: '', detail: '', category: 'Operaciones' },
-    { name: 'Mylar', number: '', detail: '', category: 'Operaciones' },
-    { name: 'ULM', number: '', detail: '', category: 'Operaciones' },
-    { name: 'AMFE', number: '', detail: '', category: 'AMFE' }
-  ];
+  let docs = JSON.parse(localStorage.getItem(STORAGE_KEY)) ||
+    DOC_TYPES.map(t => ({ name: t.name, number: '', detail: '', category: t.category }));
 
   function updateDocOptions() {
-    if (!optionsList) return;
-    optionsList.innerHTML = '';
-    const names = Array.from(new Set(docs.map(d => d.name)));
-    names.forEach(n => {
+    if (!nameInput) return;
+    nameInput.innerHTML = '';
+    DOC_TYPES.forEach(t => {
       const opt = document.createElement('option');
-      opt.value = n;
-      optionsList.appendChild(opt);
+      opt.value = t.name;
+      opt.textContent = t.name;
+      nameInput.appendChild(opt);
     });
   }
 
@@ -147,18 +147,18 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   addBtn.addEventListener('click', () => {
-    const name = nameInput.value.trim();
+    const name = nameInput.value;
     const num = numberInput.value.trim();
     const det = detailInput.value.trim();
-    const cat = categorySelect.value;
+    const type = DOC_TYPES.find(t => t.name === name);
+    const cat = type ? type.category : 'Otros';
     if (!name || !num) return;
     docs.push({ name, number: num, detail: det, category: cat });
     save();
     render();
-    nameInput.value = '';
+    nameInput.selectedIndex = 0;
     numberInput.value = '';
     detailInput.value = '';
-    categorySelect.value = 'Operaciones';
   });
 
   if (filterInput) {
