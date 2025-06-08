@@ -385,6 +385,11 @@ table#sinoptico tbody td {
   margin: 0 auto;
 }
 
+#maestro {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
 .category-section {
   margin-bottom: 20px;
 }
