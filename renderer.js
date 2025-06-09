@@ -478,11 +478,8 @@
             tdItem.appendChild(btnToggle);
 
             let nombreItem = (fila['Descripción'] || '').toString().trim();
-            if (
-              nivel === 1 &&
-              fila.Tipo.toString().trim().toLowerCase() === 'pieza final'
-            ) {
-              nombreItem = 'Barack ' + nombreItem;
+            if (!nombreItem) {
+              nombreItem = 'N/D';
             }
 
             if (nivel === 0) {
