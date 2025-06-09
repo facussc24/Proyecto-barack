@@ -375,7 +375,7 @@
 
         if (fs) {
           try {
-            const csvText = fs.readFileSync(csvFile, 'utf8');
+            const csvText = fs.readFileSync(csvFile, { encoding: 'latin1' });
             const results = Papa.parse(csvText, {
               header: true,
               skipEmptyLines: true,
