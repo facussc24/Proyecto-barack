@@ -31,6 +31,8 @@ The list is normally stored in your browser's `localStorage`. When running in an
 - **Client grouping** – rows with a value in the `Cliente` column are grouped under that client in the product tree.
 - **Smooth animations** – buttons and rows fade and scale for a more polished experience.
 
+CSV files should be saved using UTF-8 encoding. When running the app through Node/Electron, `renderer.js` reads `data/sinoptico.csv` using Latin-1 if needed.
+
 ## Dependencies and browser requirements
 
 The page loads [PapaParse](https://www.papaparse.com/) and [SheetJS](https://sheetjs.com/) from CDNs. A browser with ES6 support (such as recent Chrome, Firefox or Edge) is required.
