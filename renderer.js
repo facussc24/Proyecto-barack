@@ -253,8 +253,64 @@
         }
         const tbody = document.querySelector('#sinoptico tbody');
         tbody.textContent = '';
-        // Utilizar directamente los datos provistos sin crear nodos de cliente
-        construirSinoptico(datosOriginal);
+
+        // ===== Crear nodos de cliente y reestructurar jerarquía =====
+        // 1) Encontrar clientes únicos a partir de la columna "Cliente"
+        const clientes = {};
+        datosOriginal.forEach(fila => {
+          const cli = (fila.Cliente || '').toString().trim();
+          if (cli && !clientes[cli]) {
+            const id = `cli-${Object.keys(clientes).length + 1}`;
+            clientes[cli] = { id, nombre: cli };
+          }
+        });
+
+        // 2) Crear filas virtuales para cada cliente detectado
+        const filasClientes = Object.values(clientes).map(cli => ({
+          ID: cli.id,
+          ParentID: '',
+          Tipo: 'Cliente',
+          Secuencia: '',
+          Descripción: cli.nombre,
+          Cliente: cli.nombre,
+          Vehículo: '',
+          RefInterno: '',
+          versión: '',
+          Imagen: '',
+          Consumo: '',
+          Unidad: '',
+          Sourcing: '',
+          Código: ''
+        }));
+
+        // 3) Reasignar las piezas finales para que cuelguen del cliente
+        const datos = datosOriginal.map(row => {
+          const r = { ...row };
+          const cli = (r.Cliente || '').toString().trim();
+          if (cli && clientes[cli] && !r.ParentID) {
+            r.ParentID = clientes[cli].id;
+          }
+          return r;
+        });
+
+        // 4) Propagar cliente a los descendientes
+        const mapId = {};
+        [...filasClientes, ...datos].forEach(f => {
+          mapId[f.ID] = f;
+        });
+        function propagateClient(fila) {
+          if (fila.Cliente) return fila.Cliente;
+          const padre = mapId[fila.ParentID];
+          if (!padre) return '';
+          const cli = propagateClient(padre);
+          fila.Cliente = cli;
+          return cli;
+        }
+        datos.forEach(propagateClient);
+
+        const datosConClientes = [...filasClientes, ...datos];
+
+        construirSinoptico(datosConClientes);
         // Colapsar todo para que la recarga no expanda la tabla por defecto
         colapsarTodo();
         setTimeout(() => {
