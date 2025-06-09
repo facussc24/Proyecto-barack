@@ -1,24 +1,35 @@
 /* ==============================
    ESTILOS GENERALES
    ============================== */
+:root {
+  --color-bg: #f4f4f4;
+  --color-text: #333;
+  --color-primary: #0d1b3d;
+  --color-primary-hover: #0a1a33;
+  --color-accent: #0066cc;
+  --color-accent-hover: #004c99;
+  --color-light: #ffffff;
+  --font-base: Arial, sans-serif;
+}
+
 body {
-  font-family: Arial, sans-serif;
+  font-family: var(--font-base);
   margin: 0;
-  padding: 0;
-  background-color: #f4f4f4;
-  color: #333;
+  padding: 60px 0 0 0;
+  background-color: var(--color-bg);
+  color: var(--color-text);
 }
 h1 {
   text-align: center;
   margin: 20px 0;
   font-size: 1.8rem;
-  color: #0d1b3d;
+  color: var(--color-primary);
 }
 #mensaje {
   margin: 15px auto;
   max-width: 90%;
   padding: 10px;
-  color: #ffffff;
+  color: var(--color-light);
   background-color: #e74c3c; /* rojo para alertas */
   display: none;
   border-radius: 4px;
@@ -35,14 +46,14 @@ h1 {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
-  background-color: #ffffff;
+  background-color: var(--color-light);
   padding: 8px 12px;
   border-radius: 6px;
   box-shadow: 0 1px 4px rgba(0,0,0,0.1);
 }
 .column-toggle-container label {
   font-size: 0.9rem;
-  color: #0d1b3d;
+  color: var(--color-primary);
   display: flex;
   align-items: center;
   gap: 4px;
@@ -73,7 +84,7 @@ h1 {
 }
 .filtros-texto label {
   font-weight: bold;
-  color: #0d1b3d;
+  color: var(--color-primary);
   font-size: 0.95rem;
 }
 .filtros-texto input[type="text"] {
@@ -98,8 +109,8 @@ h1 {
 #colapsarTodo {
   padding: 8px 12px;
   font-size: 0.95rem;
-  background-color: #0d1b3d;
-  color: #fff;
+  background-color: var(--color-primary);
+  color: var(--color-light);
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -108,7 +119,7 @@ h1 {
 #btnExcel:hover,
 #expandirTodo:hover,
 #colapsarTodo:hover {
-  background-color: #0a1a33;
+  background-color: var(--color-primary-hover);
 }
 
 /* ==============================
@@ -120,7 +131,7 @@ h1 {
   overflow-x: auto;  /* scroll horizontal si hace falta */
   overflow-y: auto;  /* scroll vertical si hace falta */
   border: 1px solid #ccc;
-  background-color: #ffffff;
+  background-color: var(--color-light);
   border-radius: 6px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
@@ -132,8 +143,8 @@ table#sinoptico {
 table#sinoptico thead th {
   position: sticky;
   top: 0;
-  background-color: #0d1b3d;
-  color: #ffffff;
+  background-color: var(--color-primary);
+  color: var(--color-light);
   padding: 12px 8px;
   border-bottom: 2px solid #222;
   font-size: 0.95rem;
@@ -201,7 +212,7 @@ table#sinoptico tbody td {
   font-weight: bold;
 }
 .arrow-nivel-1 {
-  color: #0d1b3d;
+  color: var(--color-primary);
 }
 .arrow-nivel-1::before {
   content: "\25B6"; /* ► */
@@ -250,10 +261,11 @@ table#sinoptico tbody td {
   text-align: center;
   cursor: pointer;
   user-select: none;
-  color: #0d1b3d;
+  color: var(--color-primary);
   border: none;
   background: none;
   padding: 0;
+  transition: transform 0.2s;
 }
 .toggle-btn.hidden {
   visibility: hidden; /* si no tiene hijos, ocultar el botón */
@@ -365,15 +377,15 @@ table#sinoptico tbody td {
   bottom: 20px;
   right: 20px;
   padding: 10px 16px;
-  background-color: #0d1b3d;
-  color: #fff;
+  background-color: var(--color-primary);
+  color: var(--color-light);
   border-radius: 4px;
   text-decoration: none;
   font-weight: bold;
   box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 .home-button:hover {
-  background-color: #0a1a33;
+  background-color: var(--color-primary-hover);
 }
 
 
@@ -406,7 +418,7 @@ table#sinoptico tbody td {
   width: 100%;
   border-collapse: collapse;
   margin-top: 8px;
-  background-color: #fff;
+  background-color: var(--color-light);
   border-radius: 6px;
   overflow: hidden;
 }
@@ -449,14 +461,14 @@ table#sinoptico tbody td {
 }
 .maestro-form button {
   padding: 6px 12px;
-  background-color: #0d1b3d;
-  color: #fff;
+  background-color: var(--color-primary);
+  color: var(--color-light);
   border: none;
   border-radius: 4px;
   cursor: pointer;
 }
 .maestro-form button:hover {
-  background-color: #0a1a33;
+  background-color: var(--color-primary-hover);
 }
 .maestro-header {
   display: flex;
@@ -477,6 +489,26 @@ body, html {
   min-height: 100vh;
   overflow-x: hidden;
 }
+
+.main-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: var(--color-primary);
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding: 10px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  z-index: 1000;
+}
+.main-nav a {
+  color: var(--color-light);
+  text-decoration: none;
+  font-weight: bold;
+}
+
 header {
   padding: 20px;
   text-align: center;
@@ -486,7 +518,7 @@ header {
   height: auto;
 }
 .intro {
-  background-color: #ffffff;
+  background-color: var(--color-light);
   color: #003366;
   display: flex;
   flex-direction: column;
@@ -515,14 +547,41 @@ header {
 }
 .btn-link {
   padding: 1rem 2rem;
-  background-color: #0066cc;
-  color: #fff;
+  background-color: var(--color-accent);
+  color: var(--color-light);
   text-decoration: none;
   border-radius: 4px;
   font-size: 1.2rem;
   display: inline-block;
   margin-top: 0.5rem;
+  transition: transform 0.2s;
 }
 .btn-link:hover {
-  background-color: #004c99;
+  background-color: var(--color-accent-hover);
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleUp {
+  from { transform: scale(0.95); }
+  to { transform: scale(1); }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.scale {
+  animation: scaleUp 0.2s ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-in,
+  .scale {
+    animation: none;
+  }
 }

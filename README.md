@@ -12,6 +12,8 @@ python3 -m http.server
 
 Open [http://localhost:8000/index.html](http://localhost:8000/index.html) in a modern browser to access the main menu.
 
+The admin password used in the master list can be changed editing `ADMIN_PASS` inside `config.js`.
+
 ## Using `listado_maestro.html`
 
 The **master document list** lets you organise engineering documents by category. Open `listado_maestro.html` in your browser. Click **Editar** to enable edit mode and enter the administrator password defined in `config.js`. While in edit mode you can add new rows or change existing numbers and details.
@@ -21,9 +23,10 @@ The **master document list** lets you organise engineering documents by category
 - **Column toggles** – checkboxes let you hide or show specific table columns.
 - **Filtering** – search for text and control which hierarchy levels are visible.
 - **Expand/Collapse** – the tree of products can be expanded node by node or all at once.
-- **Automatic refresh** – `sinoptico.csv` is reloaded every 30 seconds so changes appear automatically.
+- **Automatic refresh** – `data/sinoptico.csv` is reloaded every 30 seconds so changes appear automatically.
 - **Excel export** – visible rows can be exported to `sinoptico.xlsx`.
 - **Dynamic categories** – the master list starts empty and new document sections appear automatically when items are added.
+- **Smooth animations** – buttons and rows fade and scale for a more polished experience.
 
 ## Dependencies and browser requirements
 
