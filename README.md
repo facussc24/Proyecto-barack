@@ -18,6 +18,8 @@ The admin password used in the master list can be changed editing `ADMIN_PASS` i
 
 The **master document list** lets you organise engineering documents by category. Open `listado_maestro.html` in your browser. Click **Editar** to enable edit mode and enter the administrator password defined in `config.js`. While in edit mode you can add new rows or change existing numbers and details.
 
+The list is normally stored in your browser's `localStorage`. When running in an environment that exposes `window.require` (for example Electron), the table is also loaded from and saved to `no-borrar/no borrar - listado maestro.json`. This JSON file lives in the `no-borrar` folder alongside the generated Excel and CSV files, ensuring the master list persists between sessions.
+
 ## Features
 
 - **Column toggles** – checkboxes let you hide or show specific table columns.

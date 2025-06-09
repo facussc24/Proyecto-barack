@@ -15,7 +15,30 @@ document.addEventListener('DOMContentLoaded', () => {
   const STORAGE_KEY = 'maestroDocs';
   let isAdmin = sessionStorage.getItem('maestroAdmin') === 'true';
 
-  let docs = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+  // Support persistence using a JSON file when running in Electron/Node
+  let fs = null;
+  let path = null;
+  let jsonPath = null;
+  if (typeof window !== 'undefined' && typeof window.require === 'function') {
+    try {
+      fs = window.require('fs');
+      path = window.require('path');
+      jsonPath = path.join(__dirname, 'no-borrar', 'no borrar - listado maestro.json');
+    } catch (e) {
+      fs = null;
+    }
+  }
+
+  let docs = [];
+  if (fs && jsonPath && fs.existsSync(jsonPath)) {
+    try {
+      docs = JSON.parse(fs.readFileSync(jsonPath, 'utf8')) || [];
+    } catch (e) {
+      docs = [];
+    }
+  } else {
+    docs = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+  }
   if (Array.isArray(docs)) {
     // Remove empty placeholder entries from older versions
     docs = docs.filter(d => !(DOC_TYPES.some(t => t.name === d.name) && !d.number && !d.detail));
@@ -72,6 +95,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function save() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(docs));
+    if (fs && jsonPath) {
+      try {
+        fs.writeFileSync(jsonPath, JSON.stringify(docs, null, 2), 'utf8');
+      } catch (e) {
+        console.error('Error writing JSON file', e);
+      }
+    }
   }
 
   function render() {
