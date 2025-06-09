@@ -161,12 +161,14 @@
           btn.textContent = '+';
           btn.setAttribute('data-expanded', 'false');
           btn.setAttribute('aria-expanded', 'false');
+          btn.setAttribute('aria-label', 'Expandir');
           hideSubtree(parentId);
         } else {
           // Expandir
           btn.textContent = '–';
           btn.setAttribute('data-expanded', 'true');
           btn.setAttribute('aria-expanded', 'true');
+          btn.setAttribute('aria-label', 'Colapsar');
           showChildren(parentId);
         }
       }
@@ -181,6 +183,7 @@
             btn.textContent = '+';
             btn.setAttribute('data-expanded', 'false');
             btn.setAttribute('aria-expanded', 'false');
+            btn.setAttribute('aria-label', 'Expandir');
           }
         });
       }
@@ -193,6 +196,7 @@
             btn.textContent = '–';
             btn.setAttribute('data-expanded', 'true');
             btn.setAttribute('aria-expanded', 'true');
+            btn.setAttribute('aria-label', 'Colapsar');
           }
         });
       }
@@ -433,7 +437,7 @@
             btnToggle.textContent = '+'; // inicia colapsado
             btnToggle.setAttribute('data-expanded', 'false');
             btnToggle.setAttribute('aria-expanded', 'false');
-            btnToggle.setAttribute('aria-label', 'Expand/Collapse');
+            btnToggle.setAttribute('aria-label', 'Expandir');
             // Evento onclick
             btnToggle.addEventListener('click', () => {
               toggleNodo(btnToggle, fila.ID);

@@ -1,4 +1,4 @@
-﻿ID;ParentID;Tipo;Secuencia;Ensamble / Subensamble / Operación;Cliente;Vehículo;RefInterno;versión;Imagen;Pzas/h;Unidad;Sourcing;Código
+ID;ParentID;Tipo;Secuencia;Ensamble / Subensamble / Operación;Cliente;Vehículo;RefInterno;versión;Imagen;Pzas/h;Unidad;Sourcing;Código
 1;;Pieza Final;1;PRODUCTO A;PWA;X1000;9001;v.1;imgA.jpg;10;Un;LC;COD-A
 2;1;Subensamble;1;SubA 1;PWA;X1000;9001;v.1;;0;;;0
 3;2;Insumo;1;Corte 1;PWA;X1000;9001;v.1;;5;Un;LC;
