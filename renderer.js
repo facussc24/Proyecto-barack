@@ -247,6 +247,13 @@
          5) Cargar CSV y construir la tabla jerárquica
          + Recarga automática cada 30 segundos
       ================================================== */
+      function normalizarFila(fila) {
+        if (fila['Descripcin']) fila['Descripción'] = fila['Descripcin'];
+        if (fila['Vehculo']) fila['Vehículo'] = fila['Vehculo'];
+        if (fila['versin']) fila['versión'] = fila['versin'];
+        if (fila['Cdigo']) fila['Código'] = fila['Cdigo'];
+      }
+
       function procesarDatos(datosOriginal, expandedIds) {
         if (!datosOriginal.length) {
           mostrarMensaje('sinoptico.csv se cargó, pero está vacío.');
@@ -330,7 +337,8 @@
       }
 
       function loadDataFromCSV(expandedIds) {
-        Papa.parse('data/sinoptico.csv', {
+        const noCacheUrl = `data/sinoptico.csv?v=${Date.now()}`;
+        Papa.parse(noCacheUrl, {
           download: true,
           header: true,
           skipEmptyLines: true,
@@ -342,6 +350,7 @@
               return;
             }
             const datosOriginal = results.data;
+            datosOriginal.forEach(normalizarFila);
             procesarDatos(datosOriginal, expandedIds);
           },
           error() {
@@ -360,6 +369,7 @@
             const wb = XLSX.read(buffer, { type: 'array' });
             const sheet = wb.Sheets[wb.SheetNames[0]];
             const datosOriginal = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+            datosOriginal.forEach(normalizarFila);
             procesarDatos(datosOriginal, expandedIds);
           })
           .catch(err => {
@@ -386,6 +396,7 @@
               throw new Error('CSV parse error');
             }
             const datosOriginal = results.data;
+            datosOriginal.forEach(normalizarFila);
             procesarDatos(datosOriginal, expandedIds);
             return;
           } catch (err) {
@@ -395,6 +406,7 @@
               const wb = XLSX.read(xlsxBuffer, { type: 'buffer' });
               const sheet = wb.Sheets[wb.SheetNames[0]];
               const datosOriginal = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+              datosOriginal.forEach(normalizarFila);
               procesarDatos(datosOriginal, expandedIds);
               return;
             } catch (e2) {
