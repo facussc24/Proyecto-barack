@@ -253,37 +253,8 @@
         }
         const tbody = document.querySelector('#sinoptico tbody');
         tbody.textContent = '';
-        const clientesMap = {};
-        datosOriginal.forEach(fila => {
-          const cliente = fila.Cliente;
-          if (!clientesMap[cliente]) {
-            clientesMap[cliente] = {
-              ID: 'cli-' + cliente,
-              ParentID: '',
-              Tipo: 'Cliente',
-              Secuencia: '0',
-              'Ensamble / Subensamble / Operación': cliente,
-              Cliente: cliente,
-              Vehículo: '',
-              RefInterno: '',
-              Versión: '',
-              Imagen: '',
-              'Pzas/h': '',
-              Unidad: '',
-              Sourcing: '',
-              Código: ''
-            };
-          }
-        });
-        const datosMod = [];
-        Object.values(clientesMap).forEach(nodoCli => datosMod.push(nodoCli));
-        datosOriginal.forEach(fila => {
-          if (!fila.ParentID || fila.ParentID.trim() === '') {
-            fila.ParentID = 'cli-' + fila.Cliente;
-          }
-          datosMod.push(fila);
-        });
-        construirSinoptico(datosMod);
+        // Utilizar directamente los datos provistos sin crear nodos de cliente
+        construirSinoptico(datosOriginal);
         // Colapsar todo para que la recarga no expanda la tabla por defecto
         colapsarTodo();
         setTimeout(() => {
@@ -382,8 +353,8 @@
 
       // Llamo inmediatamente a loadData()
       loadData();
-      // Luego, cada 30 segundos, recargo el CSV automáticamente
-      setInterval(loadData, 30000);
+      // Deshabilitado el refresco automático para evitar que la tabla se colapse
+      // setInterval(loadData, 30000);
 
 
       // Función recursiva para poblar la tabla desde datos con "ID" y "ParentID"
@@ -450,7 +421,7 @@
             });
             tdItem.appendChild(btnToggle);
 
-            let nombreItem = (fila['Ensamble / Subensamble / Operación'] || '').toString().trim();
+            let nombreItem = (fila['Descripción'] || '').toString().trim();
             if (
               nivel === 1 &&
               fila.Tipo.toString().trim().toLowerCase() === 'pieza final'
@@ -479,7 +450,7 @@
             tr.appendChild(tdItem);
 
             // Columnas fijas: Cliente, Vehículo, RefInterno, Versión
-            ['Cliente', 'Vehículo', 'RefInterno', 'Versión'].forEach(campo => {
+            ['Cliente', 'Vehículo', 'RefInterno', 'versión'].forEach(campo => {
               const td = document.createElement('td');
               td.textContent = fila[campo] ? fila[campo].toString().trim() : '';
               td.style.textAlign = 'center';
@@ -499,8 +470,8 @@
             tdImagen.style.textAlign = 'center';
             tr.appendChild(tdImagen);
 
-            // Columnas: Pzas/h, Unidad, Sourcing, Código
-            ['Pzas/h', 'Unidad', 'Sourcing', 'Código'].forEach(campo => {
+            // Columnas: Consumo, Unidad, Sourcing, Código
+            ['Consumo', 'Unidad', 'Sourcing', 'Código'].forEach(campo => {
               const td = document.createElement('td');
               td.textContent = fila[campo] ? fila[campo].toString().trim() : '';
               td.style.textAlign = 'center';
