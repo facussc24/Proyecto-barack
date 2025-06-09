@@ -360,7 +360,7 @@
       }
 
       function tryLoadXlsx(expandedIds) {
-        fetch('sinoptico.xlsx')
+        fetch('data/sinoptico.xlsx')
           .then(resp => {
             if (!resp.ok) throw new Error('No xlsx');
             return resp.arrayBuffer();
@@ -402,7 +402,9 @@
           } catch (err) {
             console.error('Error al leer sinoptico.csv:', err);
             try {
-              const xlsxBuffer = fs.readFileSync(pathModule.join(__dirname, 'sinoptico.xlsx'));
+              const xlsxBuffer = fs.readFileSync(
+                pathModule.join(__dirname, 'data', 'sinoptico.xlsx')
+              );
               const wb = XLSX.read(xlsxBuffer, { type: 'buffer' });
               const sheet = wb.Sheets[wb.SheetNames[0]];
               const datosOriginal = XLSX.utils.sheet_to_json(sheet, { defval: '' });
