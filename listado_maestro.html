@@ -24,30 +24,31 @@
     </div>
   </div>
   <a href="index.html" class="home-button">Inicio</a>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const editBtn = document.getElementById('editBtn');
+  <script type="module">
+    import { ADMIN_PASS } from "./config.js";
+    document.addEventListener("DOMContentLoaded", () => {
+      const editBtn = document.getElementById("editBtn");
 
       function updateButton() {
-        editBtn.textContent = sessionStorage.getItem('maestroAdmin') === 'true'
-          ? 'Salir de edición'
-          : 'Editar';
+        editBtn.textContent = sessionStorage.getItem("maestroAdmin") === "true"
+          ? "Salir de edición"
+          : "Editar";
       }
 
-      editBtn.addEventListener('click', () => {
-        const isAdmin = sessionStorage.getItem('maestroAdmin') === 'true';
+      editBtn.addEventListener("click", () => {
+        const isAdmin = sessionStorage.getItem("maestroAdmin") === "true";
         if (isAdmin) {
-          sessionStorage.removeItem('maestroAdmin');
+          sessionStorage.removeItem("maestroAdmin");
           updateButton();
-          document.dispatchEvent(new CustomEvent('maestro-mode'));
+          document.dispatchEvent(new CustomEvent("maestro-mode"));
         } else {
-          const pass = prompt('Contraseña de administrador:');
-          if (pass === '1234') {
-            sessionStorage.setItem('maestroAdmin', 'true');
+          const pass = prompt("Contraseña de administrador:");
+          if (pass === ADMIN_PASS) {
+            sessionStorage.setItem("maestroAdmin", "true");
             updateButton();
-            document.dispatchEvent(new CustomEvent('maestro-mode'));
+            document.dispatchEvent(new CustomEvent("maestro-mode"));
           } else {
-            alert('Contraseña incorrecta');
+            alert("Contraseña incorrecta");
           }
         }
       });
