@@ -208,6 +208,7 @@
       }
       document.getElementById('expandirTodo').addEventListener('click', expandirTodo);
       document.getElementById('colapsarTodo').addEventListener('click', colapsarTodo);
+      document.getElementById('btnRefrescar').addEventListener('click', loadData);
 
       /* ==================================================
          4) Exportar a Excel (solo filas visibles)
