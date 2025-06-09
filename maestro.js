@@ -104,6 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
       docs.forEach((doc, idx) => {
         if (doc.category !== cat) return;
         const tr = document.createElement('tr');
+        tr.classList.add('fade-in');
 
         const tdName = document.createElement('td');
         tdName.textContent = doc.name;

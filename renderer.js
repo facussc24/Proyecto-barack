@@ -1,7 +1,7 @@
     document.addEventListener('DOMContentLoaded', () => {
       const fs = window.require ? window.require("fs") : null;
       const pathModule = window.require ? window.require("path") : null;
-      const csvFile = pathModule ? pathModule.join(__dirname, "sinoptico.csv") : "sinoptico.csv";
+      const csvFile = pathModule ? pathModule.join(__dirname, "data", "sinoptico.csv") : "data/sinoptico.csv";
       /* ==================================================
          1) Mostrar/Ocultar Columnas
       ================================================== */
@@ -138,6 +138,8 @@
         const hijos = document.querySelectorAll(`#sinoptico tbody tr[data-parent="${parentId}"]`);
         hijos.forEach(hijo => {
           hijo.style.display = '';
+          hijo.classList.add('fade-in');
+          setTimeout(() => hijo.classList.remove('fade-in'), 300);
         });
       }
       function hideSubtree(parentId) {
@@ -156,6 +158,8 @@
       }
       function toggleNodo(btn, parentId) {
         const expanded = btn.getAttribute('data-expanded') === 'true';
+        btn.classList.add('scale');
+        setTimeout(() => btn.classList.remove('scale'), 200);
         if (expanded) {
           // Colapsar
           btn.textContent = '+';
@@ -190,6 +194,8 @@
       function expandirTodo() {
         document.querySelectorAll('#sinoptico tbody tr').forEach(tr => {
           tr.style.display = '';
+          tr.classList.add('fade-in');
+          setTimeout(() => tr.classList.remove('fade-in'), 300);
         });
         document.querySelectorAll('.toggle-btn').forEach(btn => {
           if (!btn.classList.contains('hidden')) {
@@ -296,7 +302,7 @@
       }
 
       function loadDataFromCSV(expandedIds) {
-        Papa.parse('sinoptico.csv', {
+        Papa.parse('data/sinoptico.csv', {
           download: true,
           header: true,
           skipEmptyLines: true,

@@ -7,8 +7,13 @@
     <link rel="stylesheet" href="styles.css">
 </head>
   <body>
+      <nav class="main-nav">
+          <a href="index.html">Inicio</a>
+          <a href="sinoptico.html">Sinóptico</a>
+          <a href="listado_maestro.html">Listado maestro</a>
+      </nav>
       <header>
-          <img src="LOGO BARACK.png" alt="Logo Barack" class="logo">
+          <img src="images/LOGO BARACK.png" alt="Logo Barack" class="logo">
       </header>
       <main class="intro">
           <h1>Ingeniería Barack</h1>
@@ -21,5 +26,10 @@
           <a class="btn-link" href="sinoptico.html">Ver Sinóptico de Producto</a>
           <a class="btn-link" href="listado_maestro.html">Listado maestro</a>
       </main>
+      <script>
+        document.addEventListener('DOMContentLoaded', () => {
+          document.querySelector('main').classList.add('fade-in');
+        });
+      </script>
   </body>
 </html>
