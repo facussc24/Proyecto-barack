@@ -26,6 +26,7 @@ The list is normally stored in your browser's `localStorage`. When running in an
 - **Filtering** – search for text and control which hierarchy levels are visible.
 - **Expand/Collapse** – the tree of products can be expanded node by node or all at once.
 - **Automatic refresh** – `data/sinoptico.csv` is reloaded every 30 seconds so changes appear automatically.
+- **Manual refresh** – click the **Refrescar** button in `sinoptico.html` to reload data on demand.
 - **Excel export** – visible rows can be exported to `sinoptico.xlsx`.
 - **Dynamic categories** – the master list starts empty and new document sections appear automatically when items are added.
 - **Client grouping** – rows with a value in the `Cliente` column are grouped under that client in the product tree.
