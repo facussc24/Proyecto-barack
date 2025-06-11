@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "test": "node test-maestro.js"
+    "test": "node test-maestro.js && node test-renderer.js"
   },
   "devDependencies": {
+    "fuse.js": "^7.1.0",
     "jsdom": "^22.1.0",
     "jsdom-global": "^3.0.2"
   }
