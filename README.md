@@ -57,9 +57,7 @@ This creates a small DOM environment so the script can be executed without a rea
 
 ## Fuzzy search flow
 
-`listado_maestro.html` uses [Fuse.js](https://fusejs.io/) to present a drop-down of matching documents while you type. Clicking a suggestion saves the document in `sessionStorage` and opens `sinoptico.html`. Once loaded, that page expands and highlights the corresponding node automatically. A banner under the search field shows the active filter and includes a **Limpiar filtro** button to reset both pages.
-
-Fuse.js is loaded from a CDN in the HTML. Removing that script tag disables the fuzzy search feature.
+Both `listado_maestro.html` and `sinoptico.html` load [Fuse.js](https://fusejs.io/) from a CDN. In the master list a drop-down of matching documents appears while you type; picking one stores the selection in `sessionStorage` and opens `sinoptico.html`. The product view now has its own search box powered by Fuse.js. Suggestions appear without hiding the table and clicking a row fills the input and triggers the normal filter/highlight logic. Removing the Fuse.js script tags disables these fuzzy searches.
 
 ## License
 

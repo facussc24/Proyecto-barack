@@ -2,6 +2,7 @@
       const fs = window.require ? window.require("fs") : null;
       const pathModule = window.require ? window.require("path") : null;
       const csvFile = pathModule ? pathModule.join(__dirname, "data", "sinoptico.csv") : "data/sinoptico.csv";
+      let fuseSinoptico = null;
       /* ==================================================
          1) Mostrar/Ocultar Columnas
       ================================================== */
@@ -127,7 +128,28 @@
       }
 
       // Adjuntamos eventos a campos de filtro
-      document.getElementById('filtroInsumo').addEventListener('keyup', aplicarFiltro);
+      const filtroInputElem = document.getElementById('filtroInsumo');
+      if (filtroInputElem) {
+        filtroInputElem.addEventListener('input', () => {
+          if (fuseSinoptico) {
+            applyFuzzySearchSinoptico();
+          } else {
+            aplicarFiltro();
+          }
+        });
+      }
+      const clearBtn = document.getElementById('clearSearch');
+      if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+          const suggestionList = document.getElementById('sinopticoSuggestions');
+          if (suggestionList) {
+            suggestionList.style.display = 'none';
+            suggestionList.innerHTML = '';
+          }
+          if (filtroInputElem) filtroInputElem.value = '';
+          aplicarFiltro();
+        });
+      }
       document.getElementById('chkIncluirAncestros').addEventListener('change', aplicarFiltro);
       document.getElementById('chkMostrarNivel0').addEventListener('change', aplicarFiltro);
       document.getElementById('chkMostrarNivel1').addEventListener('change', aplicarFiltro);
@@ -144,6 +166,32 @@
           hijo.classList.add('fade-in');
           setTimeout(() => hijo.classList.remove('fade-in'), 300);
         });
+      }
+
+      function applyFuzzySearchSinoptico() {
+        const input = document.getElementById('filtroInsumo');
+        const suggestionList = document.getElementById('sinopticoSuggestions');
+        if (!fuseSinoptico || !input || !suggestionList) return;
+        suggestionList.innerHTML = '';
+        const text = input.value.trim();
+        if (!text) {
+          suggestionList.style.display = 'none';
+          return;
+        }
+        const results = fuseSinoptico.search(text).slice(0, 8);
+        results.forEach(res => {
+          const li = document.createElement('li');
+          const row = res.item;
+          li.textContent = `${row['Descripción']} - ${row['Código'] || ''}`.trim();
+          li.addEventListener('click', () => {
+            input.value = row['Descripción'];
+            suggestionList.style.display = 'none';
+            suggestionList.innerHTML = '';
+            aplicarFiltro();
+          });
+          suggestionList.appendChild(li);
+        });
+        suggestionList.style.display = results.length ? 'block' : 'none';
       }
       function hideSubtree(parentId) {
         const hijos = document.querySelectorAll(`#sinoptico tbody tr[data-parent="${parentId}"]`);
@@ -320,6 +368,15 @@
         datos.forEach(propagateClient);
 
         const datosConClientes = [...filasClientes, ...datos];
+
+        if (typeof Fuse !== 'undefined') {
+          fuseSinoptico = new Fuse(datosConClientes, {
+            keys: ['Descripción', 'Código', 'RefInterno'],
+            threshold: 0.4
+          });
+        } else {
+          fuseSinoptico = null;
+        }
 
         construirSinoptico(datosConClientes);
         // Colapsar todo para que la recarga no expanda la tabla por defecto
