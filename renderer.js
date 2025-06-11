@@ -422,6 +422,8 @@
                 fila.classList.add('highlight');
                 fila.scrollIntoView({ block: 'center' });
                 setTimeout(() => fila.classList.remove('highlight'), 2000);
+              } else {
+                mostrarMensaje('No se encontró el documento seleccionado', 'warning');
               }
               sessionStorage.removeItem('maestroSelectedNumber');
             }
