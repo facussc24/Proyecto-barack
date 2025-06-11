@@ -82,9 +82,18 @@
 
         // Con texto: ocultar todo y luego mostrar coincidencias + ancestros
         todasFilas.forEach(tr => (tr.style.display = 'none'));
-        todasFilas.forEach(tr => {
-          const textoFila = tr.textContent.toLowerCase();
-          if (textoFila.includes(criterio)) {
+        if (fuseSinoptico) {
+          const keywords = criterio.split(/[,\s]+/).filter(Boolean);
+          const idSet = new Set();
+          keywords.forEach(k => {
+            fuseSinoptico.search(k).forEach(res => {
+              if (res.item && res.item.ID)
+                idSet.add(res.item.ID.toString().trim());
+            });
+          });
+          todasFilas.forEach(tr => {
+            const rowId = tr.getAttribute('data-id');
+            if (!idSet.has(rowId)) return;
             const nivel = tr.classList.contains('nivel-0')
               ? 0
               : tr.classList.contains('nivel-1')
@@ -104,8 +113,33 @@
               const parentId = tr.getAttribute('data-parent');
               mostrarAncestros(parentId);
             }
-          }
-        });
+          });
+        } else {
+          todasFilas.forEach(tr => {
+            const textoFila = tr.textContent.toLowerCase();
+            if (textoFila.includes(criterio)) {
+              const nivel = tr.classList.contains('nivel-0')
+                ? 0
+                : tr.classList.contains('nivel-1')
+                ? 1
+                : tr.classList.contains('nivel-2')
+                ? 2
+                : tr.classList.contains('nivel-3')
+                ? 3
+                : 4;
+              const mostrarEste =
+                (nivel === 0 && mostrar0) ||
+                (nivel === 1 && mostrar1) ||
+                (nivel === 2 && mostrar2) ||
+                (nivel === 3 && mostrar3);
+              if (mostrarEste) tr.style.display = '';
+              if (incluirAncestros) {
+                const parentId = tr.getAttribute('data-parent');
+                mostrarAncestros(parentId);
+              }
+            }
+          });
+        }
 
         // Finalmente ocultar niveles no marcados
         todasFilas.forEach(tr => {
@@ -133,9 +167,8 @@
         filtroInputElem.addEventListener('input', () => {
           if (fuseSinoptico) {
             applyFuzzySearchSinoptico();
-          } else {
-            aplicarFiltro();
           }
+          aplicarFiltro();
         });
       }
       const clearBtn = document.getElementById('clearSearch');
@@ -168,6 +201,38 @@
         });
       }
 
+      function highlightRow(code) {
+        const filas = Array.from(document.querySelectorAll('#sinoptico tbody tr'));
+        const sel = (code || '').toString().trim().toLowerCase();
+        const fila = filas.find(tr => {
+          const td = tr.querySelector('td:last-child');
+          if (!td) return false;
+          const txt = td.textContent.trim().toLowerCase();
+          return txt === sel;
+        });
+        if (fila) {
+          let parentId = fila.getAttribute('data-parent');
+          while (parentId) {
+            showChildren(parentId);
+            const b = document.querySelector(
+              `#sinoptico tbody tr[data-id="${parentId}"] .toggle-btn`
+            );
+            if (b) {
+              b.textContent = '–';
+              b.setAttribute('data-expanded', 'true');
+              b.setAttribute('aria-expanded', 'true');
+            }
+            const parentRow = document.querySelector(
+              `#sinoptico tbody tr[data-id="${parentId}"]`
+            );
+            parentId = parentRow ? parentRow.getAttribute('data-parent') : null;
+          }
+          fila.classList.add('highlight');
+          fila.scrollIntoView({ block: 'center' });
+          setTimeout(() => fila.classList.remove('highlight'), 2000);
+        }
+      }
+
       function applyFuzzySearchSinoptico() {
         const input = document.getElementById('filtroInsumo');
         const suggestionList = document.getElementById('sinopticoSuggestions');
@@ -184,10 +249,9 @@
           const row = res.item;
           li.textContent = `${row['Descripción']} - ${row['Código'] || ''}`.trim();
           li.addEventListener('click', () => {
-            input.value = row['Descripción'];
             suggestionList.style.display = 'none';
             suggestionList.innerHTML = '';
-            aplicarFiltro();
+            highlightRow(row['Código']);
           });
           suggestionList.appendChild(li);
         });
@@ -396,39 +460,7 @@
             aplicarFiltro();
             const sel = sessionStorage.getItem('maestroSelectedNumber');
             if (sel) {
-              const filas = Array.from(
-                document.querySelectorAll('#sinoptico tbody tr')
-              );
-              const selNorm = sel.trim().toLowerCase();
-              const fila = filas.find(tr => {
-                const codigoCell = tr.querySelector('td:last-child');
-                if (!codigoCell) return false;
-                const codigoText = codigoCell.textContent.trim().toLowerCase();
-                return codigoText === selNorm;
-              });
-              if (fila) {
-                let parentId = fila.getAttribute('data-parent');
-                while (parentId) {
-                  showChildren(parentId);
-                  const b = document.querySelector(
-                    `#sinoptico tbody tr[data-id="${parentId}"] .toggle-btn`
-                  );
-                  if (b) {
-                    b.textContent = '–';
-                    b.setAttribute('data-expanded', 'true');
-                    b.setAttribute('aria-expanded', 'true');
-                  }
-                  const parentRow = document.querySelector(
-                    `#sinoptico tbody tr[data-id="${parentId}"]`
-                  );
-                  parentId = parentRow ? parentRow.getAttribute('data-parent') : null;
-                }
-                fila.classList.add('highlight');
-                fila.scrollIntoView({ block: 'center' });
-                setTimeout(() => fila.classList.remove('highlight'), 2000);
-              } else {
-                mostrarMensaje('No se encontró el documento seleccionado', 'warning');
-              }
+              highlightRow(sel);
               sessionStorage.removeItem('maestroSelectedNumber');
             }
           }, 40);
