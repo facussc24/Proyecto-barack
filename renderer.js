@@ -6,19 +6,22 @@
          1) Mostrar/Ocultar Columnas
       ================================================== */
       const toggles = document.querySelectorAll('.toggle-col');
-      toggles.forEach(chk => {
-        chk.addEventListener('change', () => {
+
+      function applyColumnVisibility() {
+        toggles.forEach(chk => {
           const colIndex = parseInt(chk.getAttribute('data-colindex'));
           const checked = chk.checked;
-          // Ocultar o mostrar <th>
           const th = document.querySelector(`#sinoptico thead th:nth-child(${colIndex + 1})`);
           if (th) th.style.display = checked ? '' : 'none';
-          // Ocultar o mostrar <td> de esa columna
-          document.querySelectorAll(`#sinoptico tbody tr`).forEach(tr => {
+          document.querySelectorAll('#sinoptico tbody tr').forEach(tr => {
             const td = tr.querySelector(`td:nth-child(${colIndex + 1})`);
             if (td) td.style.display = checked ? '' : 'none';
           });
         });
+      }
+
+      toggles.forEach(chk => {
+        chk.addEventListener('change', applyColumnVisibility);
       });
 
       /* ==================================================
@@ -321,19 +324,20 @@
         construirSinoptico(datosConClientes);
         // Colapsar todo para que la recarga no expanda la tabla por defecto
         colapsarTodo();
-        setTimeout(() => {
-          ajustarIndentacion();
-          expandedIds.forEach(id => {
-            showChildren(id);
-            const btn = document.querySelector(`#sinoptico tbody tr[data-id="${id}"] .toggle-btn`);
-            if (btn) {
-              btn.textContent = '–';
-              btn.setAttribute('data-expanded', 'true');
-              btn.setAttribute('aria-expanded', 'true');
-            }
-          });
-          aplicarFiltro();
-        }, 40);
+          setTimeout(() => {
+            ajustarIndentacion();
+            applyColumnVisibility();
+            expandedIds.forEach(id => {
+              showChildren(id);
+              const btn = document.querySelector(`#sinoptico tbody tr[data-id="${id}"] .toggle-btn`);
+              if (btn) {
+                btn.textContent = '–';
+                btn.setAttribute('data-expanded', 'true');
+                btn.setAttribute('aria-expanded', 'true');
+              }
+            });
+            aplicarFiltro();
+          }, 40);
       }
 
       function loadDataFromCSV(expandedIds) {
