@@ -115,6 +115,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  function highlightDoc(number) {
+    const rows = Array.from(document.querySelectorAll('#maestro tbody tr'));
+    const sel = (number || '').toString().trim().toLowerCase();
+    const row = rows.find(tr => {
+      const cells = tr.querySelectorAll('td');
+      return (
+        cells[1] && cells[1].textContent.trim().toLowerCase() === sel
+      );
+    });
+    if (row) {
+      row.classList.add('highlight');
+      row.scrollIntoView({ block: 'center' });
+      setTimeout(() => row.classList.remove('highlight'), 2000);
+    }
+  }
+
   function applyFilter() {
     if (!filterInput) return;
 
@@ -151,7 +167,8 @@ document.addEventListener('DOMContentLoaded', () => {
         sessionStorage.setItem('maestroSelectedNumber', doc.number);
         suggestionList.style.display = 'none';
         suggestionList.innerHTML = '';
-        window.location.href = 'sinoptico.html';
+        updateBanner();
+        highlightDoc(doc.number);
       });
       suggestionList.appendChild(li);
     });
