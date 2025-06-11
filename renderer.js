@@ -399,9 +399,13 @@
               const filas = Array.from(
                 document.querySelectorAll('#sinoptico tbody tr')
               );
-              const fila = filas.find(tr =>
-                tr.textContent.toLowerCase().includes(sel.toLowerCase())
-              );
+              const selNorm = sel.trim().toLowerCase();
+              const fila = filas.find(tr => {
+                const codigoCell = tr.querySelector('td:last-child');
+                if (!codigoCell) return false;
+                const codigoText = codigoCell.textContent.trim().toLowerCase();
+                return codigoText === selNorm;
+              });
               if (fila) {
                 let parentId = fila.getAttribute('data-parent');
                 while (parentId) {
