@@ -252,6 +252,7 @@
             suggestionList.style.display = 'none';
             suggestionList.innerHTML = '';
             highlightRow(row['Código']);
+            aplicarFiltro();
           });
           suggestionList.appendChild(li);
         });
