@@ -337,6 +337,37 @@
               }
             });
             aplicarFiltro();
+            const sel = sessionStorage.getItem('maestroSelectedNumber');
+            if (sel) {
+              const filas = Array.from(
+                document.querySelectorAll('#sinoptico tbody tr')
+              );
+              const fila = filas.find(tr =>
+                tr.textContent.toLowerCase().includes(sel.toLowerCase())
+              );
+              if (fila) {
+                let parentId = fila.getAttribute('data-parent');
+                while (parentId) {
+                  showChildren(parentId);
+                  const b = document.querySelector(
+                    `#sinoptico tbody tr[data-id="${parentId}"] .toggle-btn`
+                  );
+                  if (b) {
+                    b.textContent = '–';
+                    b.setAttribute('data-expanded', 'true');
+                    b.setAttribute('aria-expanded', 'true');
+                  }
+                  const parentRow = document.querySelector(
+                    `#sinoptico tbody tr[data-id="${parentId}"]`
+                  );
+                  parentId = parentRow ? parentRow.getAttribute('data-parent') : null;
+                }
+                fila.classList.add('highlight');
+                fila.scrollIntoView({ block: 'center' });
+                setTimeout(() => fila.classList.remove('highlight'), 2000);
+              }
+              sessionStorage.removeItem('maestroSelectedNumber');
+            }
           }, 40);
       }
 

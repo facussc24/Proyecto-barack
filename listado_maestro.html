@@ -18,7 +18,15 @@
   </header>
 
   <div class="maestro-container">
-    <input type="text" id="maestroFilter" placeholder="Buscar documento o número" class="maestro-filter" />
+    <div class="search-wrap">
+      <input type="text" id="maestroFilter" placeholder="Buscar documento o número" class="maestro-filter" />
+      <button id="clearSearch" aria-label="Limpiar búsqueda">×</button>
+      <ul id="maestroSuggestions" class="suggestions-list"></ul>
+    </div>
+    <div id="activeFilter" class="filter-banner">
+      Filtrado por: <span id="activeFilterText"></span>
+      <button id="clearFilter">Limpiar filtro</button>
+    </div>
     <div id="maestro"></div>
 
     <div class="maestro-form">
@@ -61,6 +69,7 @@
       updateButton();
     });
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2/dist/fuse.min.js"></script>
   <script src="maestro.js"></script>
 </body>
 </html>
