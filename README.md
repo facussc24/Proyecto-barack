@@ -37,7 +37,7 @@ CSV files should be saved using UTF-8 encoding. When running the app through Nod
 
 ## Dependencies and browser requirements
 
-The page loads [PapaParse](https://www.papaparse.com/) and [SheetJS](https://sheetjs.com/) from CDNs. A browser with ES6 support (such as recent Chrome, Firefox or Edge) is required.
+The page loads [PapaParse](https://www.papaparse.com/), [SheetJS](https://sheetjs.com/) and [Fuse.js](https://fusejs.io/) from CDNs. A browser with ES6 support (such as recent Chrome, Firefox or Edge) is required.
 
 ## Node testing
 
@@ -54,6 +54,12 @@ npm test
 ```
 
 This creates a small DOM environment so the script can be executed without a real browser.
+
+## Fuzzy search flow
+
+`listado_maestro.html` uses [Fuse.js](https://fusejs.io/) to present a drop-down of matching documents while you type. Clicking a suggestion saves the document in `sessionStorage` and opens `sinoptico.html`. Once loaded, that page expands and highlights the corresponding node automatically. A banner under the search field shows the active filter and includes a **Limpiar filtro** button to reset both pages.
+
+Fuse.js is loaded from a CDN in the HTML. Removing that script tag disables the fuzzy search feature.
 
 ## License
 

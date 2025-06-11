@@ -11,6 +11,11 @@ document.addEventListener('DOMContentLoaded', () => {
     { name: 'Flujograma', category: 'Flujograma' }
   ];
   const filterInput = document.getElementById('maestroFilter');
+  const suggestionList = document.getElementById('maestroSuggestions');
+  const clearSearchBtn = document.getElementById('clearSearch');
+  const banner = document.getElementById('activeFilter');
+  const bannerText = document.getElementById('activeFilterText');
+  const clearFilterBtn = document.getElementById('clearFilter');
   const addBtn = document.getElementById('addDoc');
   const STORAGE_KEY = 'maestroDocs';
   let isAdmin = sessionStorage.getItem('maestroAdmin') === 'true';
@@ -55,6 +60,23 @@ document.addEventListener('DOMContentLoaded', () => {
     docs = [];
   }
 
+  function updateBanner() {
+    if (!banner || !bannerText) return;
+    const data = sessionStorage.getItem('maestroActiveFilter');
+    if (!data) {
+      banner.style.display = 'none';
+      bannerText.textContent = '';
+      return;
+    }
+    try {
+      const doc = JSON.parse(data);
+      bannerText.textContent = `${doc.name} - ${doc.number}`;
+      banner.style.display = 'block';
+    } catch (e) {
+      banner.style.display = 'none';
+    }
+  }
+
   function updateDocOptions() {
     if (!nameInput) return;
     nameInput.innerHTML = '';
@@ -80,17 +102,60 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  let fuse = null;
+
+  function rebuildFuse() {
+    if (typeof Fuse === 'undefined') {
+      fuse = null;
+      return;
+    }
+    fuse = new Fuse(docs, {
+      keys: ['name', 'number', 'detail'],
+      threshold: 0.4
+    });
+  }
+
   function applyFilter() {
     if (!filterInput) return;
-    const text = filterInput.value.toLowerCase();
-    document.querySelectorAll('#maestro tbody tr').forEach(tr => {
-      const tds = tr.querySelectorAll('td');
-      const name = tds[0].textContent.toLowerCase();
-      const num = tds[1].textContent.toLowerCase();
-      const det = tds[2].textContent.toLowerCase();
-      const match = name.includes(text) || num.includes(text) || det.includes(text);
-      tr.style.display = match ? '' : 'none';
+
+    if (!fuse) {
+      // Fallback simple filter when Fuse.js is not available
+      const text = filterInput.value.toLowerCase();
+      document.querySelectorAll('#maestro tbody tr').forEach(tr => {
+        const tds = tr.querySelectorAll('td');
+        const name = tds[0].textContent.toLowerCase();
+        const num = tds[1].textContent.toLowerCase();
+        const det = tds[2].textContent.toLowerCase();
+        const match =
+          name.includes(text) || num.includes(text) || det.includes(text);
+        tr.style.display = match ? '' : 'none';
+      });
+      return;
+    }
+
+    const suggestionList = document.getElementById('maestroSuggestions');
+    if (!suggestionList) return;
+    suggestionList.innerHTML = '';
+    const text = filterInput.value.trim();
+    if (!text) {
+      suggestionList.style.display = 'none';
+      return;
+    }
+    const results = fuse.search(text).slice(0, 8);
+    results.forEach(res => {
+      const li = document.createElement('li');
+      const doc = res.item;
+      li.textContent = `${doc.name} - ${doc.number}`;
+      li.addEventListener('click', () => {
+        sessionStorage.setItem('maestroActiveFilter', JSON.stringify(doc));
+        sessionStorage.setItem('maestroSelectedNumber', doc.number);
+        suggestionList.style.display = 'none';
+        suggestionList.innerHTML = '';
+        window.location.href = 'sinoptico.html';
+      });
+      suggestionList.appendChild(li);
     });
+    suggestionList.style.display = results.length ? 'block' : 'none';
   }
 
   function save() {
@@ -197,12 +262,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     updateDocOptions();
+    rebuildFuse();
 
     // Mostrar u ocultar formulario según modo
     const form = document.querySelector('.maestro-form');
     form.style.display = isAdmin ? 'flex' : 'none';
 
     applyFilter();
+    updateBanner();
   }
 
   addBtn.addEventListener('click', () => {
@@ -224,6 +291,23 @@ document.addEventListener('DOMContentLoaded', () => {
     filterInput.addEventListener('input', applyFilter);
   }
 
+  if (clearSearchBtn) {
+    clearSearchBtn.addEventListener('click', () => {
+      if (suggestionList) suggestionList.style.display = 'none';
+      if (suggestionList) suggestionList.innerHTML = '';
+      filterInput.value = '';
+    });
+  }
+
+  if (clearFilterBtn) {
+    clearFilterBtn.addEventListener('click', () => {
+      sessionStorage.removeItem('maestroActiveFilter');
+      sessionStorage.removeItem('maestroSelectedNumber');
+      updateBanner();
+    });
+  }
+
   document.addEventListener('maestro-mode', render);
   render();
+  updateBanner();
 });
