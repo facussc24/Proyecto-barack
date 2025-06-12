@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Editor del Sinóptico</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <nav class="main-nav">
+    <a href="index.html">Inicio</a>
+    <a href="sinoptico.html">Sinóptico</a>
+    <a href="sinoptico_edit.html" aria-current="page">Editar sinóptico</a>
+    <a href="listado_maestro.html">Listado maestro</a>
+    <button id="toggleTheme">🌙</button>
+  </nav>
+
+  <h1>Editor del Sinóptico</h1>
+  <div class="editor-container">
+    <form id="clientForm" class="node-form">
+      <h2>Agregar cliente</h2>
+      <input type="text" id="clientDesc" placeholder="Nombre" required />
+      <button type="submit">Agregar</button>
+    </form>
+
+    <form id="productForm" class="node-form">
+      <h2>Agregar producto</h2>
+      <select id="prodClient"></select>
+      <input type="text" id="prodSeq" placeholder="Secuencia" />
+      <input type="text" id="prodDesc" placeholder="Descripción" required />
+      <button type="submit">Agregar</button>
+    </form>
+
+    <form id="subForm" class="node-form">
+      <h2>Agregar subensamble</h2>
+      <select id="subParent"></select>
+      <input type="text" id="subSeq" placeholder="Secuencia" />
+      <input type="text" id="subDesc" placeholder="Descripción" required />
+      <button type="submit">Agregar</button>
+    </form>
+
+    <form id="insForm" class="node-form">
+      <h2>Agregar insumo</h2>
+      <select id="insParent"></select>
+      <input type="text" id="insSeq" placeholder="Secuencia" />
+      <input type="text" id="insDesc" placeholder="Descripción" required />
+      <input type="text" id="insCode" placeholder="Código" />
+      <button type="submit">Agregar</button>
+    </form>
+  </div>
+
+  <script src="auth.js"></script>
+  <script src="theme.js" defer></script>
+  <script src="renderer.js" defer></script>
+  <script src="sinoptico-edit.js" defer></script>
+</body>
+</html>

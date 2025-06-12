@@ -889,7 +889,7 @@
       }
 
       window.SinopticoEditor = {
-        addNode(opts) {
+        addNode(opts, children) {
           const row = {
             ID: Date.now().toString(),
             ParentID: opts.ParentID || '',
@@ -910,6 +910,14 @@
             row.Cliente = row['Descripción'];
           }
           sinopticoData.push(row);
+          if (Array.isArray(children)) {
+            children.forEach(child => {
+              if (child) {
+                const sub = Object.assign({}, child, { ParentID: row.ID });
+                this.addNode(sub, child.children || []);
+              }
+            });
+          }
           saveSinoptico();
           loadData();
           return row.ID;

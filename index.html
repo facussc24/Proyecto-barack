@@ -11,6 +11,7 @@
       <nav class="main-nav">
           <a href="index.html" aria-current="page">Inicio</a>
           <a href="sinoptico.html">Sinóptico</a>
+          <a href="sinoptico_edit.html" id="editSinLink" style="display:none">Editar sinóptico</a>
           <a href="listado_maestro.html">Listado maestro</a>
           <a href="login.html" id="loginLink">Log in</a>
           <button id="toggleTheme">🌙</button>
@@ -37,9 +38,11 @@
         document.addEventListener('DOMContentLoaded', () => {
           document.querySelector('main').classList.add('fade-in');
           const link = document.getElementById('loginLink');
+          const editLink = document.getElementById('editSinLink');
           function update() {
             const logged = sessionStorage.getItem('isAdmin') === 'true';
             link.textContent = logged ? 'Cerrar sesión' : 'Log in';
+            if (editLink) editLink.style.display = logged ? 'inline' : 'none';
           }
           link.addEventListener('click', e => {
             if (sessionStorage.getItem('isAdmin') === 'true') {
