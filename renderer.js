@@ -397,7 +397,6 @@
       ================================================== */
       document.getElementById('btnExcel').addEventListener('click', () => {
         const filasVisibles = [];
-        // Encabezados (solo los <th> visibles)
         const encabezados = Array.from(
           document.querySelectorAll('#sinoptico thead th')
         )
@@ -405,13 +404,13 @@
           .map(th => th.textContent.trim());
         filasVisibles.push(encabezados);
 
-        // Filas visibles
         document.querySelectorAll('#sinoptico tbody tr').forEach(tr => {
           if (tr.style.display === '') {
-            // Solo las celdas <td> que correspondan a encabezados visibles
             const celdas = Array.from(tr.querySelectorAll('td'))
               .filter((td, idx) => {
-                const th = document.querySelector(`#sinoptico thead th:nth-child(${idx + 1})`);
+                const th = document.querySelector(
+                  `#sinoptico thead th:nth-child(${idx + 1})`
+                );
                 return th && th.style.display !== 'none';
               })
               .map(td => td.textContent.trim());
@@ -420,7 +419,33 @@
         });
 
         const wb = XLSX.utils.book_new();
-        const ws = XLSX.utils.aoa_to_sheet(filasVisibles);
+        const ws = {};
+        XLSX.utils.sheet_add_aoa(ws, filasVisibles, { cellStyles: true });
+
+        // Estilos para encabezados
+        encabezados.forEach((_, idx) => {
+          const addr = XLSX.utils.encode_cell({ r: 0, c: idx });
+          if (ws[addr]) {
+            ws[addr].s = {
+              font: { bold: true },
+              fill: { fgColor: { rgb: 'D9D9D9' } }
+            };
+          }
+        });
+
+        // Ajustar ancho de columnas basado en contenido
+        const colWidths = encabezados.map((header, cIdx) => {
+          const maxLen = filasVisibles.reduce((max, row) => {
+            const val = row[cIdx] || '';
+            return Math.max(max, val.toString().length);
+          }, header.length);
+          return { wch: Math.min(Math.max(maxLen + 2, 10), 30) };
+        });
+        ws['!cols'] = colWidths;
+
+        // Congelar fila de encabezado
+        ws['!freeze'] = { ySplit: 1 };
+
         XLSX.utils.book_append_sheet(wb, ws, 'Sinoptico');
         XLSX.writeFile(wb, 'sinoptico.xlsx');
       });

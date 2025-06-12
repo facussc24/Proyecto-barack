@@ -113,7 +113,6 @@ h1 {
   margin-right: 4px;
 }
 
-#btnExcel,
 #expandirTodo,
 #colapsarTodo {
   padding: 8px 12px;
@@ -125,10 +124,24 @@ h1 {
   cursor: pointer;
   margin-left: 8px;
 }
-#btnExcel:hover,
 #expandirTodo:hover,
 #colapsarTodo:hover {
   background-color: var(--color-primary-hover);
+}
+
+/* Estilo destacado para el botón de Excel */
+#btnExcel {
+  padding: 9px 14px;
+  font-size: 1rem;
+  background-color: var(--color-accent);
+  color: var(--color-light);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: 8px;
+}
+#btnExcel:hover {
+  background-color: var(--color-accent-hover);
 }
 
 /* ==============================
