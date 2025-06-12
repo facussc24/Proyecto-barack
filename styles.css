@@ -17,6 +17,13 @@
   --accent-color: var(--color-accent);
 }
 
+body.dark-mode {
+  --color-bg: #111;
+  --color-text: #e0e0e0;
+  --color-primary: #7986cb;
+  --color-accent: #00bcd4;
+}
+
 body {
   font-family: var(--font-base);
   margin: 0;
@@ -591,6 +598,9 @@ body, html {
   color: var(--color-light);
   text-decoration: none;
   font-weight: bold;
+}
+.main-nav a[aria-current="page"] {
+  text-decoration: underline;
 }
 
 header {
