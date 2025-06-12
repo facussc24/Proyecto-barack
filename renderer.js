@@ -4,6 +4,7 @@
       const jsonFile = pathModule ? pathModule.join(__dirname, "no-borrar", "sinoptico.json") : null;
       let fuseSinoptico = null;
       let sinopticoData = [];
+      const sinopticoElem = document.getElementById('sinoptico');
 
       function generarDatosIniciales() {
         return [
@@ -96,15 +97,18 @@
       window.mostrarMensaje = mostrarMensaje;
 
       function aplicarFiltro() {
-        const criterio = document
-          .getElementById('filtroInsumo')
-          .value.trim()
-          .toLowerCase();
-        const incluirAncestros = document.getElementById('chkIncluirAncestros').checked;
-        const mostrar0 = document.getElementById('chkMostrarNivel0').checked;
-        const mostrar1 = document.getElementById('chkMostrarNivel1').checked;
-        const mostrar2 = document.getElementById('chkMostrarNivel2').checked;
-        const mostrar3 = document.getElementById('chkMostrarNivel3').checked;
+        const criterioElem = document.getElementById('filtroInsumo');
+        const criterio = criterioElem ? criterioElem.value.trim().toLowerCase() : '';
+        const incluirAncestrosElem = document.getElementById('chkIncluirAncestros');
+        const incluirAncestros = incluirAncestrosElem ? incluirAncestrosElem.checked : true;
+        const mostrar0Elem = document.getElementById('chkMostrarNivel0');
+        const mostrar0 = mostrar0Elem ? mostrar0Elem.checked : true;
+        const mostrar1Elem = document.getElementById('chkMostrarNivel1');
+        const mostrar1 = mostrar1Elem ? mostrar1Elem.checked : true;
+        const mostrar2Elem = document.getElementById('chkMostrarNivel2');
+        const mostrar2 = mostrar2Elem ? mostrar2Elem.checked : true;
+        const mostrar3Elem = document.getElementById('chkMostrarNivel3');
+        const mostrar3 = mostrar3Elem ? mostrar3Elem.checked : true;
 
         const todasFilas = Array.from(document.querySelectorAll('#sinoptico tbody tr'));
         const mapIdToRow = {};
@@ -255,11 +259,16 @@
           aplicarFiltro();
         });
       }
-      document.getElementById('chkIncluirAncestros').addEventListener('change', aplicarFiltro);
-      document.getElementById('chkMostrarNivel0').addEventListener('change', aplicarFiltro);
-      document.getElementById('chkMostrarNivel1').addEventListener('change', aplicarFiltro);
-      document.getElementById('chkMostrarNivel2').addEventListener('change', aplicarFiltro);
-      document.getElementById('chkMostrarNivel3').addEventListener('change', aplicarFiltro);
+      const chkIncluir = document.getElementById('chkIncluirAncestros');
+      if (chkIncluir) chkIncluir.addEventListener('change', aplicarFiltro);
+      const chk0 = document.getElementById('chkMostrarNivel0');
+      if (chk0) chk0.addEventListener('change', aplicarFiltro);
+      const chk1 = document.getElementById('chkMostrarNivel1');
+      if (chk1) chk1.addEventListener('change', aplicarFiltro);
+      const chk2 = document.getElementById('chkMostrarNivel2');
+      if (chk2) chk2.addEventListener('change', aplicarFiltro);
+      const chk3 = document.getElementById('chkMostrarNivel3');
+      if (chk3) chk3.addEventListener('change', aplicarFiltro);
 
       /* ==================================================
          3) Botones Expandir / Colapsar (nodos + recursivo)
@@ -445,14 +454,18 @@
           }
         });
       }
-      document.getElementById('expandirTodo').addEventListener('click', expandirTodo);
-      document.getElementById('colapsarTodo').addEventListener('click', colapsarTodo);
-      document.getElementById('btnRefrescar').addEventListener('click', loadData);
+      const btnExp = document.getElementById('expandirTodo');
+      if (btnExp) btnExp.addEventListener('click', expandirTodo);
+      const btnCol = document.getElementById('colapsarTodo');
+      if (btnCol) btnCol.addEventListener('click', colapsarTodo);
+      const btnRef = document.getElementById('btnRefrescar');
+      if (btnRef) btnRef.addEventListener('click', loadData);
 
       /* ==================================================
          4) Exportar a Excel (solo filas visibles)
       ================================================== */
-      document.getElementById('btnExcel').addEventListener('click', () => {
+      const btnExcel = document.getElementById('btnExcel');
+      if (btnExcel) btnExcel.addEventListener('click', () => {
         const filasVisibles = [];
         const encabezados = Array.from(
           document.querySelectorAll('#sinoptico thead th')
@@ -618,10 +631,12 @@
         const thAct = document.getElementById('thActions');
         if (thAct) thAct.style.display = sessionStorage.getItem('sinopticoEdit') === 'true' ? '' : 'none';
         // Colapsar todo para que la recarga no expanda la tabla por defecto
-        colapsarTodo();
+        if (sinopticoElem) colapsarTodo();
           setTimeout(() => {
-            ajustarIndentacion();
-            applyColumnVisibility();
+            if (sinopticoElem) {
+              ajustarIndentacion();
+              applyColumnVisibility();
+            }
             expandedIds.forEach(id => {
               showChildren(id);
               const btn = document.querySelector(`#sinoptico tbody tr[data-id="${id}"] .toggle-btn`);
@@ -631,7 +646,7 @@
                 btn.setAttribute('aria-expanded', 'true');
               }
             });
-            aplicarFiltro();
+            if (sinopticoElem) aplicarFiltro();
             const sel = sessionStorage.getItem('maestroSelectedNumber');
             if (sel) {
               highlightRow(sel);
@@ -642,9 +657,11 @@
 
 
       function loadData() {
-        const expandedIds = Array.from(
-          document.querySelectorAll('#sinoptico tbody .toggle-btn[data-expanded="true"]')
-        ).map(btn => btn.closest('tr').getAttribute('data-id'));
+        const expandedIds = sinopticoElem
+          ? Array.from(
+              document.querySelectorAll('#sinoptico tbody .toggle-btn[data-expanded="true"]')
+            ).map(btn => btn.closest('tr').getAttribute('data-id'))
+          : [];
 
         if (fs && jsonFile) {
           try {
@@ -664,7 +681,9 @@
           sinopticoData = stored ? JSON.parse(stored) : generarDatosIniciales();
         }
 
-        procesarDatos(sinopticoData, expandedIds);
+        if (sinopticoElem) {
+          procesarDatos(sinopticoData, expandedIds);
+        }
       }
 
       // Llamo inmediatamente a loadData()
@@ -683,12 +702,12 @@
           if (!agrupadoPorPadre[padre]) agrupadoPorPadre[padre] = [];
           agrupadoPorPadre[padre].push(fila);
         });
-        // b) Ordenar cada grupo según Secuencia
+        // b) Ordenar cada grupo por Descripción (alfanumérico, sin distinguir mayúsculas)
         Object.keys(agrupadoPorPadre).forEach(key => {
           agrupadoPorPadre[key].sort((a, b) => {
-            const sa = parseInt(a.Secuencia) || 0;
-            const sb = parseInt(b.Secuencia) || 0;
-            return sa - sb;
+            const da = (a['Descripción'] || '').toString().toLowerCase();
+            const db = (b['Descripción'] || '').toString().toLowerCase();
+            return da.localeCompare(db, undefined, { numeric: true, sensitivity: 'base' });
           });
         });
 

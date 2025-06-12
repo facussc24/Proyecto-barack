@@ -21,8 +21,7 @@
     <button id="toggleTheme">🌙</button>
   </nav>
   <h1>Sinóptico de Producto Barack</h1>
-  <button id="sinopticoEditBtn" class="edit-button">Editar</button>
-  <div id="sinopticoAdmin" class="sinoptico-admin">
+  <div id="sinopticoAdmin" class="sinoptico-admin hidden">
     <select id="newParent"></select>
     <select id="newTipo">
       <option value="Producto">Producto</option>
@@ -129,76 +128,5 @@
   <script src="auth.js"></script>
   <script src="theme.js" defer></script>
   <script src="renderer.js" defer></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const editBtn = document.getElementById('sinopticoEditBtn');
-      const admin = document.getElementById('sinopticoAdmin');
-      function update() {
-        const logged = sessionStorage.getItem('isAdmin') === 'true';
-        const editing = sessionStorage.getItem('sinopticoEdit') === 'true';
-        editBtn.style.display = logged ? 'inline-block' : 'none';
-        admin.classList.toggle('hidden', !(logged && editing));
-        editBtn.textContent = editing ? 'Salir de edición' : 'Editar';
-      }
-      editBtn.addEventListener('click', () => {
-        const editing = sessionStorage.getItem('sinopticoEdit') === 'true';
-        if (editing) sessionStorage.removeItem('sinopticoEdit');
-        else sessionStorage.setItem('sinopticoEdit', 'true');
-        update();
-        document.dispatchEvent(new CustomEvent('sinoptico-mode'));
-      });
-      const parentSel = document.getElementById('newParent');
-      const tipoSel = document.getElementById('newTipo');
-      const seqInput = document.getElementById('newSecuencia');
-      const descInput = document.getElementById('newDesc');
-      const delSel = document.getElementById('deleteNode');
-
-      function fillOptions() {
-        if (!window.SinopticoEditor || !window.SinopticoEditor.getNodes) return;
-        const nodes = window.SinopticoEditor.getNodes();
-        parentSel.innerHTML = '<option value="">(raíz)</option>';
-        delSel.innerHTML = '<option value="">Seleccione nodo...</option>';
-        nodes.forEach(n => {
-          const txt = `${n.ID} - ${(n['Descripción'] || '').toString()}`;
-          const opt1 = document.createElement('option');
-          opt1.value = n.ID;
-          opt1.textContent = txt;
-          parentSel.appendChild(opt1);
-          const opt2 = document.createElement('option');
-          opt2.value = n.ID;
-          opt2.textContent = txt;
-          delSel.appendChild(opt2);
-        });
-      }
-
-      document.getElementById('addRow').addEventListener('click', () => {
-        const desc = descInput.value.trim();
-        if (!desc) return;
-        if (window.SinopticoEditor) {
-          window.SinopticoEditor.addNode({
-            ParentID: parentSel.value,
-            Tipo: tipoSel.value,
-            Secuencia: seqInput.value,
-            Descripción: desc
-          });
-          descInput.value = '';
-          seqInput.value = '';
-          fillOptions();
-        }
-      });
-
-      document.getElementById('deleteTree').addEventListener('click', () => {
-        const id = delSel.value;
-        if (id && window.SinopticoEditor) {
-          window.SinopticoEditor.deleteSubtree(id);
-          fillOptions();
-        }
-      });
-
-      document.addEventListener('sinoptico-mode', fillOptions);
-      fillOptions();
-      update();
-    });
-  </script>
 </body>
 </html>
