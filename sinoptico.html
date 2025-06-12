@@ -23,6 +23,10 @@
     <button id="toggleTheme">🌙</button>
   </nav>
   <h1>Sinóptico de Producto Barack</h1>
+  <button id="sinopticoEditBtn" class="edit-button">Editar</button>
+  <div id="sinopticoAdmin" style="display:none; margin-bottom:10px;">
+    <button id="addRow">Agregar fila</button>
+  </div>
   <div id="mensaje"></div>
 
   <!-- ==============================
@@ -103,6 +107,7 @@
           <th>Unidad</th>
           <th>Sourcing</th>
           <th>Código</th>
+          <th id="thActions" style="display:none">Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -112,7 +117,52 @@
   </div>
   <a href="index.html" class="home-button">Inicio</a>
 
+  <script src="auth.js"></script>
   <script src="theme.js" defer></script>
   <script src="renderer.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const editBtn = document.getElementById('sinopticoEditBtn');
+      const admin = document.getElementById('sinopticoAdmin');
+      function update() {
+        const logged = sessionStorage.getItem('isAdmin') === 'true';
+        const editing = sessionStorage.getItem('sinopticoEdit') === 'true';
+        editBtn.style.display = logged ? 'inline-block' : 'none';
+        admin.style.display = logged && editing ? 'block' : 'none';
+        editBtn.textContent = editing ? 'Salir de edición' : 'Editar';
+      }
+      editBtn.addEventListener('click', () => {
+        const editing = sessionStorage.getItem('sinopticoEdit') === 'true';
+        if (editing) sessionStorage.removeItem('sinopticoEdit');
+        else sessionStorage.setItem('sinopticoEdit', 'true');
+        update();
+        document.dispatchEvent(new CustomEvent('sinoptico-mode'));
+      });
+      document.getElementById('addRow').addEventListener('click', () => {
+        const desc = prompt('Descripción del item:');
+        if (!desc) return;
+        const code = prompt('Código:') || '';
+        if (window.SinopticoEditor) {
+          window.SinopticoEditor.addNode({
+            ID: Date.now().toString(),
+            ParentID: '',
+            Tipo: 'Producto',
+            Secuencia: '',
+            Descripción: desc,
+            Cliente: '',
+            Vehículo: '',
+            RefInterno: '',
+            versión: '',
+            Imagen: '',
+            Consumo: '',
+            Unidad: '',
+            Sourcing: '',
+            Código: code
+          });
+        }
+      });
+      update();
+    });
+  </script>
 </body>
 </html>

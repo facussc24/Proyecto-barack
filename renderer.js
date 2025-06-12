@@ -3,6 +3,7 @@
       const pathModule = window.require ? window.require("path") : null;
       const csvFile = pathModule ? pathModule.join(__dirname, "data", "sinoptico.csv") : "data/sinoptico.csv";
       let fuseSinoptico = null;
+      let sinopticoData = [];
       const selectedItemsContainer = document.getElementById('selectedItems');
       const selectedItems = [];
       /* ==================================================
@@ -558,6 +559,8 @@
         }
 
         construirSinoptico(datosConClientes);
+        const thAct = document.getElementById('thActions');
+        if (thAct) thAct.style.display = sessionStorage.getItem('sinopticoEdit') === 'true' ? '' : 'none';
         // Colapsar todo para que la recarga no expanda la tabla por defecto
         colapsarTodo();
           setTimeout(() => {
@@ -596,7 +599,9 @@
             }
             const datosOriginal = results.data;
             datosOriginal.forEach(normalizarFila);
-            procesarDatos(datosOriginal, expandedIds);
+            const stored = localStorage.getItem('sinopticoData');
+            sinopticoData = stored ? JSON.parse(stored) : datosOriginal;
+            procesarDatos(sinopticoData, expandedIds);
           },
           error() {
             tryLoadXlsx(expandedIds);
@@ -615,7 +620,9 @@
             const sheet = wb.Sheets[wb.SheetNames[0]];
             const datosOriginal = XLSX.utils.sheet_to_json(sheet, { defval: '' });
             datosOriginal.forEach(normalizarFila);
-            procesarDatos(datosOriginal, expandedIds);
+            const stored = localStorage.getItem('sinopticoData');
+            sinopticoData = stored ? JSON.parse(stored) : datosOriginal;
+            procesarDatos(sinopticoData, expandedIds);
           })
           .catch(err => {
             console.error('Error al leer sinoptico.xlsx:', err);
@@ -642,7 +649,9 @@
             }
             const datosOriginal = results.data;
             datosOriginal.forEach(normalizarFila);
-            procesarDatos(datosOriginal, expandedIds);
+            const stored = localStorage.getItem('sinopticoData');
+            sinopticoData = stored ? JSON.parse(stored) : datosOriginal;
+            procesarDatos(sinopticoData, expandedIds);
             return;
           } catch (err) {
             console.error('Error al leer sinoptico.csv:', err);
@@ -654,7 +663,9 @@
               const sheet = wb.Sheets[wb.SheetNames[0]];
               const datosOriginal = XLSX.utils.sheet_to_json(sheet, { defval: '' });
               datosOriginal.forEach(normalizarFila);
-              procesarDatos(datosOriginal, expandedIds);
+              const stored = localStorage.getItem('sinopticoData');
+              sinopticoData = stored ? JSON.parse(stored) : datosOriginal;
+              procesarDatos(sinopticoData, expandedIds);
               return;
             } catch (e2) {
               console.error('Error al leer sinoptico.xlsx:', e2);
@@ -694,6 +705,7 @@
 
         // c) Dibujar filas recursivamente
         function dibujarNodos(parentID, nivel) {
+          const isEditing = sessionStorage.getItem('sinopticoEdit') === 'true';
           const hijos = agrupadoPorPadre[parentID] || [];
           hijos.forEach(fila => {
             const tr = document.createElement('tr');
@@ -791,6 +803,17 @@
               tr.appendChild(td);
             });
 
+            if (isEditing) {
+              const tdAct = document.createElement('td');
+              const del = document.createElement('button');
+              del.textContent = 'Eliminar';
+              del.addEventListener('click', () => {
+                if (window.SinopticoEditor) window.SinopticoEditor.deleteSubtree(fila.ID);
+              });
+              tdAct.appendChild(del);
+              tr.appendChild(tdAct);
+            }
+
             document.querySelector('#sinoptico tbody').appendChild(tr);
             dibujarNodos(fila.ID.toString().trim(), nivel + 1);
           });
@@ -882,8 +905,46 @@
           if (nivel === 0) return;
           const indent = obtenerIndent(tr);
           const tdHijo = tr.querySelector('td:first-child');
-          tdHijo.style.paddingLeft = indent + 'px';
-        });
+        tdHijo.style.paddingLeft = indent + 'px';
+      });
       }
+
+      function saveSinoptico() {
+        localStorage.setItem('sinopticoData', JSON.stringify(sinopticoData));
+        if (fs && csvFile) {
+          try {
+            const headers = Object.keys(sinopticoData[0] || {});
+            const rows = [headers.join(';')];
+            sinopticoData.forEach(r => {
+              rows.push(headers.map(h => r[h] || '').join(';'));
+            });
+            fs.writeFileSync(csvFile, rows.join('\n'), 'latin1');
+          } catch(e) { console.error('Error guardando csv', e); }
+        }
+      }
+
+      window.SinopticoEditor = {
+        addNode(row) {
+          sinopticoData.push(row);
+          saveSinoptico();
+          loadData();
+        },
+        deleteSubtree(id) {
+          const ids = new Set();
+          (function collect(pid){
+            ids.add(pid);
+            sinopticoData.filter(r => r.ParentID === pid).forEach(r => collect(r.ID));
+          })(id);
+          sinopticoData = sinopticoData.filter(r => !ids.has(r.ID));
+          saveSinoptico();
+          loadData();
+        }
+      };
+
+      document.addEventListener('sinoptico-mode', () => {
+        const thAct = document.getElementById('thActions');
+        if (thAct) thAct.style.display = sessionStorage.getItem('sinopticoEdit') === 'true' ? '' : 'none';
+        loadData();
+      });
 
     }); // FIN DOMContentLoaded
