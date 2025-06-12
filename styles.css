@@ -20,9 +20,23 @@
 body.dark-mode {
   --color-bg: #111;
   --color-text: #e0e0e0;
-  --color-primary: #7986cb;
-  --color-accent: #00bcd4;
+  --color-primary: #003366; /* tonos más oscuros para encabezados y botones */
+  --color-accent: #005a9c;  /* azul intenso para elementos destacados */
   --color-surface-dark: #222;
+}
+
+/* mantener la hero de la página de inicio con sus colores originales */
+body.home.dark-mode {
+  --color-primary: #0d1b3d;
+  --color-accent: #0066cc;
+}
+
+/* barra de navegación más clara en modo oscuro */
+body.dark-mode .main-nav {
+  background-color: #a9c9ff;
+}
+body.dark-mode .main-nav a {
+  color: #0d1b3d;
 }
 body.dark-mode .column-toggle-container,
 body.dark-mode .tabla-contenedor,
@@ -214,6 +228,16 @@ table#sinoptico tbody td {
   text-overflow: ellipsis;
 }
 
+body.dark-mode table#sinoptico tbody tr:nth-child(even) {
+  background-color: #1a1a1a;
+}
+body.dark-mode table#sinoptico tbody tr:hover {
+  background-color: #333;
+}
+body.dark-mode table#sinoptico tbody td {
+  border-bottom: 1px solid #444;
+}
+
 /* ==============================
    COLORES POR TIPO (JERARQUÍA)
    ============================== */
@@ -229,6 +253,19 @@ table#sinoptico tbody td {
 .fila-oper {
   background-color: #e7f5ff !important;
 } /* Azul claro (Insumo) */
+
+body.dark-mode .fila-cliente {
+  background-color: #00284d !important;
+}
+body.dark-mode .fila-pieza {
+  background-color: #00325f !important;
+}
+body.dark-mode .fila-subens {
+  background-color: #003d73 !important;
+}
+body.dark-mode .fila-oper {
+  background-color: #00477d !important;
+}
 
 /* ==============================
    SANGRÍA MÍNIMA PARA NIVEL 0 (CLIENTE)
