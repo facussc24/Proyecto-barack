@@ -12,11 +12,17 @@ python3 -m http.server
 
 Open [http://localhost:8000/index.html](http://localhost:8000/index.html) in a modern browser to access the main menu.
 
-The admin password used in the master list can be changed editing `ADMIN_PASS` inside `config.js`.
+## Login and user accounts
+
+Use the **Log in** link or open `login.html` directly to access the sign‑in page. The project includes four default accounts: **PAULO**, **LEO**, **FACUNDO** and **PABLO**, all with password `1234`. After logging in an admin panel becomes visible where you can create new users or update existing passwords.
+
+Account information is stored in the browser's `localStorage` or in `no-borrar/users.json` when running under Node/Electron. Delete that file or clear the `users` entry from `localStorage` to reset all accounts.
+
+Editing the master list and the sinóptico now requires being logged in—`ADMIN_PASS` is no longer used.
 
 ## Using `listado_maestro.html`
 
-The **master document list** lets you organise engineering documents by category. Open `listado_maestro.html` in your browser. Click **Editar** to enable edit mode and enter the administrator password defined in `config.js`. While in edit mode you can add new rows or change existing numbers and details.
+The **master document list** lets you organise engineering documents by category. Open `listado_maestro.html` in your browser and click **Editar** to toggle edit mode. You must be logged in to modify the table. While in edit mode you can add new rows or change existing numbers and details.
 
 The list is normally stored in your browser's `localStorage`. When running in an environment that exposes `window.require` (for example Electron), the table is also loaded from and saved to `no-borrar/no borrar - listado maestro.json`. This JSON file lives in the `no-borrar` folder alongside the generated Excel and CSV files, ensuring the master list persists between sessions.
 
@@ -27,6 +33,7 @@ The list is normally stored in your browser's `localStorage`. When running in an
 - **Expand/Collapse** – the tree of products can be expanded node by node or all at once.
 - **Automatic refresh** – `no-borrar/sinoptico.json` is reloaded every 30 seconds so changes appear automatically.
 - **Manual refresh** – click the **Refrescar** button in `sinoptico.html` to reload data on demand.
+- **Editing modes** – once logged in you can edit the master list and the sinóptico using their respective **Editar** buttons.
 - **Excel export** – visible rows can be exported to `sinoptico.xlsx` which
   resides in the `data/` folder.
 - **Dynamic categories** – the master list starts empty and new document sections appear automatically when items are added.
