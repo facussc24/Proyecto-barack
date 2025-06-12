@@ -504,6 +504,7 @@ table#sinoptico tbody td {
   border: none;
   font-size: 1.2rem;
   cursor: pointer;
+  color: var(--color-text);
 }
 
 .suggestions-list {
@@ -536,8 +537,9 @@ table#sinoptico tbody td {
 
 .filter-banner {
   display: none;
-  background-color: #f0f8ff;
-  border: 1px solid #aac;
+  background-color: var(--color-light);
+  color: var(--color-text);
+  border: 1px solid var(--color-accent);
   padding: 6px 8px;
   margin-bottom: 8px;
   font-size: 0.9rem;
@@ -545,6 +547,10 @@ table#sinoptico tbody td {
 .filter-banner button {
   margin-left: 8px;
   padding: 2px 6px;
+  background: none;
+  border: none;
+  color: var(--color-accent);
+  cursor: pointer;
 }
 
 .highlight {
