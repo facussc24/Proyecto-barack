@@ -39,7 +39,10 @@
       }
 
       function aplicarFiltro() {
-        const criterio = document.getElementById('filtroInsumo').value.trim().toLowerCase();
+        const criterio = document
+          .getElementById('filtroInsumo')
+          .value.trim()
+          .toLowerCase();
         const incluirAncestros = document.getElementById('chkIncluirAncestros').checked;
         const mostrar0 = document.getElementById('chkMostrarNivel0').checked;
         const mostrar1 = document.getElementById('chkMostrarNivel1').checked;
@@ -62,7 +65,16 @@
           if (parentId) mostrarAncestros(parentId);
         }
 
-        if (!criterio) {
+        const keywords = [];
+        if (criterio) {
+          keywords.push(...criterio.split(/[\,\s]+/).filter(Boolean));
+        }
+        selectedItems.forEach(item => {
+          if (item.code) keywords.push(item.code);
+          if (item.text) keywords.push(item.text);
+        });
+
+        if (keywords.length === 0) {
           // Mostrar/ocultar según nivel, sin filtro de texto
           todasFilas.forEach(tr => {
             const nivel = tr.classList.contains('nivel-0')
@@ -82,10 +94,9 @@
           return;
         }
 
-        // Con texto: ocultar todo y luego mostrar coincidencias + ancestros
+        // Con texto o chips seleccionados: ocultar todo y luego mostrar coincidencias + ancestros
         todasFilas.forEach(tr => (tr.style.display = 'none'));
         if (fuseSinoptico) {
-          const keywords = criterio.split(/[,\s]+/).filter(Boolean);
           const idSet = new Set();
           keywords.forEach(k => {
             fuseSinoptico.search(k).forEach(res => {
@@ -119,7 +130,7 @@
         } else {
           todasFilas.forEach(tr => {
             const textoFila = tr.textContent.toLowerCase();
-            if (textoFila.includes(criterio)) {
+            if (keywords.some(k => textoFila.includes(k.toLowerCase()))) {
               const nivel = tr.classList.contains('nivel-0')
                 ? 0
                 : tr.classList.contains('nivel-1')
@@ -274,6 +285,7 @@
           const row = findRowByCode(code);
           if (row) row.classList.remove('highlight');
           renderSelectedChips();
+          aplicarFiltro();
         }
       }
 
