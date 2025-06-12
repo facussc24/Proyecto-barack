@@ -18,7 +18,7 @@ Use the **Log in** link or open `login.html` directly to access the sign‑in pa
 
 Account information is stored in the browser's `localStorage` or in `no-borrar/users.json` when running under Node/Electron. Delete that file or clear the `users` entry from `localStorage` to reset all accounts.
 
-Editing the master list and the sinóptico now requires being logged in—`ADMIN_PASS` is no longer used.
+Editing the master list and the sinóptico now requires being logged in—`ADMIN_PASS` is no longer used. The product table has its own **Editar** button inside `sinoptico.html`.
 
 ## Using `listado_maestro.html`
 
@@ -31,11 +31,10 @@ The list is normally stored in your browser's `localStorage`. When running in an
 - **Column toggles** – checkboxes let you hide or show specific table columns.
 - **Filtering** – search for text and control which hierarchy levels are visible.
 - **Expand/Collapse** – the tree of products can be expanded node by node or all at once.
-- **Automatic refresh** – `no-borrar/sinoptico.json` is reloaded every 30 seconds so changes appear automatically.
+- **Optional automatic refresh** – `renderer.js` includes a commented `setInterval` that would reload `no-borrar/sinoptico.json` every 30 seconds.
 - **Manual refresh** – click the **Refrescar** button in `sinoptico.html` to reload data on demand.
-- **Editing modes** – once logged in you can edit the master list and the sinóptico using their respective **Editar** buttons.
-- **Excel export** – visible rows can be exported to `sinoptico.xlsx` which
-  resides in the `data/` folder.
+- **Editing modes** – once logged in you can edit the master list and the sinóptico using their respective **Editar** buttons. The product view's control lives inside `sinoptico.html` and no password prompt is used.
+- **Excel export** – visible rows download as `sinoptico.xlsx` to your browser’s default location.
 - **Dynamic categories** – the master list starts empty and new document sections appear automatically when items are added.
 - **Client grouping** – rows with a value in the `Cliente` column are grouped under that client in the product tree.
 - **Smooth animations** – buttons and rows fade and scale for a more polished experience.
