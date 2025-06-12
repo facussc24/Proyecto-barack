@@ -706,6 +706,11 @@ select {
   margin-top: 0.5rem;
 }
 
+#selectedItems {
+  flex-basis: 100%;
+  margin-top: 4px;
+}
+
 .chip {
   background: var(--accent-color);
   color: #fff;
@@ -714,6 +719,8 @@ select {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  border: 1px solid var(--color-accent-hover);
+  font-weight: bold;
 }
 
 .chip button {
@@ -721,7 +728,7 @@ select {
   border: none;
   color: #fff;
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 1.2rem;
   line-height: 1;
 }
 
