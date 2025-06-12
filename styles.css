@@ -9,7 +9,7 @@
   --color-accent: #0066cc;
   --color-accent-hover: #004c99;
   --color-light: #ffffff;
-  --font-base: Arial, sans-serif;
+  --font-base: 'Poppins', Arial, sans-serif;
 
   /* new mappings used later in the file */
   --primary-color: var(--color-primary);
@@ -23,6 +23,10 @@ body {
   padding: 60px 0 0 0;
   background-color: var(--color-bg);
   color: var(--color-text);
+}
+
+body.home {
+  padding-top: 0;
 }
 h1 {
   text-align: center;
@@ -559,7 +563,7 @@ body, html {
   top: 0;
   left: 0;
   width: 100%;
-  background-color: var(--color-primary);
+  background-color: rgba(13, 27, 61, 0.9);
   display: flex;
   justify-content: center;
   gap: 20px;
@@ -574,12 +578,25 @@ body, html {
 }
 
 header {
-  padding: 20px;
+  padding: 0;
   text-align: center;
 }
 .logo {
   max-width: 180px;
   height: auto;
+}
+
+.hero {
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+  color: var(--color-light);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 100px 20px 40px;
+  font-family: var(--font-base);
 }
 .intro {
   background-color: var(--color-light);
