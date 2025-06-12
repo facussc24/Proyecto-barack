@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "test": "node test-maestro.js && node test-renderer.js"
+    "test": "node test-maestro.js && node test-renderer.js && node test-auth.js"
   },
   "devDependencies": {
     "fuse.js": "^7.1.0",
