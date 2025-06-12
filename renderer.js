@@ -906,6 +906,9 @@
             Sourcing: '',
             Código: opts.Código || ''
           };
+          if (row.Tipo === 'Cliente') {
+            row.Cliente = row['Descripción'];
+          }
           sinopticoData.push(row);
           saveSinoptico();
           loadData();
