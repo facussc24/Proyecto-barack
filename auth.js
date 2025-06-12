@@ -61,6 +61,8 @@
     if (typeof sessionStorage !== 'undefined') {
       sessionStorage.removeItem('isAdmin');
       sessionStorage.removeItem('currentUser');
+      sessionStorage.removeItem('sinopticoEdit');
+      sessionStorage.removeItem('maestroAdmin');
     }
   }
 
