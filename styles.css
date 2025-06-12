@@ -54,11 +54,13 @@ h1 {
   max-width: 90%;
   padding: 10px;
   color: var(--color-light);
-  background-color: #e74c3c; /* rojo para alertas */
+  background-color: #e74c3c; /* rojo por defecto */
   display: none;
   border-radius: 4px;
   font-weight: bold;
   text-align: center;
+  opacity: 0;
+  transition: opacity 0.4s ease-in-out;
 }
 
 .hidden {
