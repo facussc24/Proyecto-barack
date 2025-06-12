@@ -78,14 +78,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const id = SinopticoEditor.addNode({ ParentID: parent, Tipo: 'Pieza final', Descripción: desc });
     pForm.reset();
     fillOptions();
-    if (confirm('¿Desea agregar subproductos? (Aceptar=Sí / Cancelar=No)')) {
-      askChildren(id);
-      if (window.mostrarMensaje)
-        window.mostrarMensaje('Producto y subproductos agregados!', 'success');
-    } else {
+    // aviso para confirmar que no se agregarán subcomponentes
+    if (confirm('¿No agrega subcomponentes ni insumos a este producto?')) {
       if (window.mostrarMensaje)
         window.mostrarMensaje('Producto agregado exitosamente!', 'success');
     }
+    // si el usuario cancela, podrá seguir añadiendo subensambles o insumos
   });
 
   sForm.addEventListener('submit', e => {
