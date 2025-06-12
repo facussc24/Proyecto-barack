@@ -25,7 +25,7 @@ The list is normally stored in your browser's `localStorage`. When running in an
 - **Column toggles** – checkboxes let you hide or show specific table columns.
 - **Filtering** – search for text and control which hierarchy levels are visible.
 - **Expand/Collapse** – the tree of products can be expanded node by node or all at once.
-- **Automatic refresh** – `data/sinoptico.csv` is reloaded every 30 seconds so changes appear automatically.
+- **Automatic refresh** – `no-borrar/sinoptico.json` is reloaded every 30 seconds so changes appear automatically.
 - **Manual refresh** – click the **Refrescar** button in `sinoptico.html` to reload data on demand.
 - **Excel export** – visible rows can be exported to `sinoptico.xlsx` which
   resides in the `data/` folder.
@@ -33,11 +33,11 @@ The list is normally stored in your browser's `localStorage`. When running in an
 - **Client grouping** – rows with a value in the `Cliente` column are grouped under that client in the product tree.
 - **Smooth animations** – buttons and rows fade and scale for a more polished experience.
 
-CSV files should be saved using UTF-8 encoding. When running the app through Node/Electron, `renderer.js` reads `data/sinoptico.csv` using Latin-1 if needed.
+When running the app through Node/Electron the hierarchy is stored in `no-borrar/sinoptico.json`. Browsers fall back to `localStorage`.
 
 ## Dependencies and browser requirements
 
-The page loads [PapaParse](https://www.papaparse.com/), [SheetJS](https://sheetjs.com/) and [Fuse.js](https://fusejs.io/) from CDNs. A browser with ES6 support (such as recent Chrome, Firefox or Edge) is required.
+The page loads [SheetJS](https://sheetjs.com/) and [Fuse.js](https://fusejs.io/) from CDNs. A browser with ES6 support (such as recent Chrome, Firefox or Edge) is required.
 
 ## Node testing
 
