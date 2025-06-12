@@ -1,9 +1,46 @@
     document.addEventListener('DOMContentLoaded', () => {
       const fs = window.require ? window.require("fs") : null;
       const pathModule = window.require ? window.require("path") : null;
-      const csvFile = pathModule ? pathModule.join(__dirname, "data", "sinoptico.csv") : "data/sinoptico.csv";
+      const jsonFile = pathModule ? pathModule.join(__dirname, "no-borrar", "sinoptico.json") : null;
       let fuseSinoptico = null;
       let sinopticoData = [];
+
+      function generarDatosIniciales() {
+        return [
+          {
+            ID: '1',
+            ParentID: '',
+            Tipo: 'Cliente',
+            Secuencia: '',
+            Descripción: 'Cliente demo',
+            Cliente: 'Cliente demo',
+            Vehículo: '',
+            RefInterno: '',
+            versión: '',
+            Imagen: '',
+            Consumo: '',
+            Unidad: '',
+            Sourcing: '',
+            Código: ''
+          },
+          {
+            ID: '2',
+            ParentID: '1',
+            Tipo: 'Pieza final',
+            Secuencia: '',
+            Descripción: 'Producto demo',
+            Cliente: 'Cliente demo',
+            Vehículo: 'Modelo X',
+            RefInterno: 'REF1',
+            versión: 'v1',
+            Imagen: '',
+            Consumo: '1',
+            Unidad: 'pz',
+            Sourcing: '',
+            Código: 'P-1'
+          }
+        ];
+      }
       const selectedItemsContainer = document.getElementById('selectedItems');
       const selectedItems = [];
       /* ==================================================
@@ -487,7 +524,7 @@
 
       function procesarDatos(datosOriginal, expandedIds) {
         if (!datosOriginal.length) {
-          mostrarMensaje('sinoptico.csv se cargó, pero está vacío.');
+          mostrarMensaje('El archivo de datos está vacío.');
           return;
         }
         const tbody = document.querySelector('#sinoptico tbody');
@@ -584,98 +621,31 @@
           }, 40);
       }
 
-      function loadDataFromCSV(expandedIds) {
-        const noCacheUrl = `data/sinoptico.csv?v=${Date.now()}`;
-        Papa.parse(noCacheUrl, {
-          download: true,
-          header: true,
-          skipEmptyLines: true,
-          delimiter: ';',
-          complete(results) {
-            if (results.errors.length) {
-              console.error('Errores al parsear CSV:', results.errors);
-              tryLoadXlsx(expandedIds);
-              return;
-            }
-            const datosOriginal = results.data;
-            datosOriginal.forEach(normalizarFila);
-            const stored = localStorage.getItem('sinopticoData');
-            sinopticoData = stored ? JSON.parse(stored) : datosOriginal;
-            procesarDatos(sinopticoData, expandedIds);
-          },
-          error() {
-            tryLoadXlsx(expandedIds);
-          }
-        });
-      }
-
-      function tryLoadXlsx(expandedIds) {
-        fetch('data/sinoptico.xlsx')
-          .then(resp => {
-            if (!resp.ok) throw new Error('No xlsx');
-            return resp.arrayBuffer();
-          })
-          .then(buffer => {
-            const wb = XLSX.read(buffer, { type: 'array' });
-            const sheet = wb.Sheets[wb.SheetNames[0]];
-            const datosOriginal = XLSX.utils.sheet_to_json(sheet, { defval: '' });
-            datosOriginal.forEach(normalizarFila);
-            const stored = localStorage.getItem('sinopticoData');
-            sinopticoData = stored ? JSON.parse(stored) : datosOriginal;
-            procesarDatos(sinopticoData, expandedIds);
-          })
-          .catch(err => {
-            console.error('Error al leer sinoptico.xlsx:', err);
-            mostrarMensaje('No se pudo cargar sinoptico.csv ni sinoptico.xlsx.');
-          });
-      }
 
       function loadData() {
-        // Guardar IDs de filas actualmente expandidas antes de limpiar
         const expandedIds = Array.from(
           document.querySelectorAll('#sinoptico tbody .toggle-btn[data-expanded="true"]')
         ).map(btn => btn.closest('tr').getAttribute('data-id'));
 
-        if (fs) {
+        if (fs && jsonFile) {
           try {
-            const csvText = fs.readFileSync(csvFile, { encoding: 'latin1' });
-            const results = Papa.parse(csvText, {
-              header: true,
-              skipEmptyLines: true,
-              delimiter: ';'
-            });
-            if (results.errors.length) {
-              throw new Error('CSV parse error');
-            }
-            const datosOriginal = results.data;
-            datosOriginal.forEach(normalizarFila);
-            const stored = localStorage.getItem('sinopticoData');
-            sinopticoData = stored ? JSON.parse(stored) : datosOriginal;
-            procesarDatos(sinopticoData, expandedIds);
-            return;
-          } catch (err) {
-            console.error('Error al leer sinoptico.csv:', err);
-            try {
-              const xlsxBuffer = fs.readFileSync(
-                pathModule.join(__dirname, 'data', 'sinoptico.xlsx')
-              );
-              const wb = XLSX.read(xlsxBuffer, { type: 'buffer' });
-              const sheet = wb.Sheets[wb.SheetNames[0]];
-              const datosOriginal = XLSX.utils.sheet_to_json(sheet, { defval: '' });
-              datosOriginal.forEach(normalizarFila);
+            if (fs.existsSync(jsonFile)) {
+              sinopticoData = JSON.parse(fs.readFileSync(jsonFile, 'utf8')) || [];
+            } else {
               const stored = localStorage.getItem('sinopticoData');
-              sinopticoData = stored ? JSON.parse(stored) : datosOriginal;
-              procesarDatos(sinopticoData, expandedIds);
-              return;
-            } catch (e2) {
-              console.error('Error al leer sinoptico.xlsx:', e2);
-              mostrarMensaje('No se pudo cargar sinoptico.csv ni sinoptico.xlsx.');
-              return;
+              sinopticoData = stored ? JSON.parse(stored) : generarDatosIniciales();
+              fs.writeFileSync(jsonFile, JSON.stringify(sinopticoData, null, 2), 'utf8');
             }
+          } catch (err) {
+            console.error('Error al leer sinoptico.json:', err);
+            sinopticoData = generarDatosIniciales();
           }
+        } else {
+          const stored = localStorage.getItem('sinopticoData');
+          sinopticoData = stored ? JSON.parse(stored) : generarDatosIniciales();
         }
 
-        loadDataFromCSV(expandedIds);
+        procesarDatos(sinopticoData, expandedIds);
       }
 
       // Llamo inmediatamente a loadData()
@@ -911,15 +881,10 @@
 
       function saveSinoptico() {
         localStorage.setItem('sinopticoData', JSON.stringify(sinopticoData));
-        if (fs && csvFile) {
+        if (fs && jsonFile) {
           try {
-            const headers = Object.keys(sinopticoData[0] || {});
-            const rows = [headers.join(';')];
-            sinopticoData.forEach(r => {
-              rows.push(headers.map(h => r[h] || '').join(';'));
-            });
-            fs.writeFileSync(csvFile, rows.join('\n'), 'latin1');
-          } catch(e) { console.error('Error guardando csv', e); }
+            fs.writeFileSync(jsonFile, JSON.stringify(sinopticoData, null, 2), 'utf8');
+          } catch(e) { console.error('Error guardando json', e); }
         }
       }
 
