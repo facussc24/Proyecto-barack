@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!window.SinopticoEditor || !SinopticoEditor.getNodes) return;
     const nodes = SinopticoEditor.getNodes();
     const clients = nodes.filter(n => (n.Tipo || '').toLowerCase() === 'cliente');
-    const prodParents = nodes.filter(n => ['pieza final','producto'].includes((n.Tipo||'').toLowerCase()) || (n.Tipo||'').toLowerCase() === 'cliente');
     const subParentsList = nodes.filter(n => ['pieza final','producto','subensamble'].includes((n.Tipo||'').toLowerCase()));
 
     function populate(sel, list) {
@@ -35,6 +34,12 @@ document.addEventListener('DOMContentLoaded', () => {
     populate(prodClient, clients);
     populate(subParent, subParentsList);
     populate(insParent, subParentsList);
+
+    const hasProducts = subParentsList.length > 0;
+    const sBtn = sForm.querySelector('button[type="submit"]');
+    const iBtn = iForm.querySelector('button[type="submit"]');
+    if (sBtn) sBtn.disabled = !hasProducts;
+    if (iBtn) iBtn.disabled = !hasProducts;
   }
 
   function askChildren(parentId) {
@@ -68,9 +73,8 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     const parent = prodClient.value;
     const desc = document.getElementById('prodDesc').value.trim();
-    const seq = document.getElementById('prodSeq').value.trim();
     if (!desc) return;
-    const id = SinopticoEditor.addNode({ ParentID: parent, Tipo: 'Pieza final', Secuencia: seq, Descripción: desc });
+    const id = SinopticoEditor.addNode({ ParentID: parent, Tipo: 'Pieza final', Descripción: desc });
     pForm.reset();
     fillOptions();
     if (window.mostrarMensaje)
@@ -82,9 +86,12 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     const parent = subParent.value;
     const desc = document.getElementById('subDesc').value.trim();
-    const seq = document.getElementById('subSeq').value.trim();
+    if (!parent) {
+      if (window.mostrarMensaje) window.mostrarMensaje('Seleccione un padre', 'warning');
+      return;
+    }
     if (!desc) return;
-    const id = SinopticoEditor.addNode({ ParentID: parent, Tipo: 'Subensamble', Secuencia: seq, Descripción: desc });
+    const id = SinopticoEditor.addNode({ ParentID: parent, Tipo: 'Subensamble', Descripción: desc });
     sForm.reset();
     fillOptions();
     if (window.mostrarMensaje)
@@ -96,10 +103,13 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     const parent = insParent.value;
     const desc = document.getElementById('insDesc').value.trim();
-    const seq = document.getElementById('insSeq').value.trim();
     const code = document.getElementById('insCode').value.trim();
+    if (!parent) {
+      if (window.mostrarMensaje) window.mostrarMensaje('Seleccione un padre', 'warning');
+      return;
+    }
     if (!desc) return;
-    SinopticoEditor.addNode({ ParentID: parent, Tipo: 'Insumo', Secuencia: seq, Descripción: desc, Código: code });
+    SinopticoEditor.addNode({ ParentID: parent, Tipo: 'Insumo', Descripción: desc, Código: code });
     iForm.reset();
     fillOptions();
     if (window.mostrarMensaje)
