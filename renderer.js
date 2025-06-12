@@ -413,7 +413,11 @@
                 );
                 return th && th.style.display !== 'none';
               })
-              .map(td => td.textContent.trim());
+              .map((td, idx) => {
+                let text = td.textContent.trim();
+                if (idx === 0) text = text.replace(/^[+-]\s*/, '');
+                return text;
+              });
             filasVisibles.push(celdas);
           }
         });
