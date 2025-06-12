@@ -10,7 +10,8 @@
   <nav class="main-nav">
     <a href="index.html">Inicio</a>
     <a href="sinoptico.html">Sinóptico</a>
-    <a href="listado_maestro.html">Listado maestro</a>
+    <a href="listado_maestro.html" aria-current="page">Listado maestro</a>
+    <button id="toggleTheme">🌙</button>
   </nav>
   <header class="maestro-header">
     <h1>Listado maestro de ingeniería</h1>
@@ -19,6 +20,7 @@
 
   <div class="maestro-container">
     <div class="search-wrap">
+      <label for="maestroFilter">Buscar documento</label>
       <input type="text" id="maestroFilter" placeholder="Buscar documento o número" class="maestro-filter" />
       <button id="clearSearch" aria-label="Limpiar búsqueda">×</button>
       <ul id="maestroSuggestions" class="suggestions-list"></ul>
@@ -69,6 +71,7 @@
       updateButton();
     });
   </script>
+  <script src="theme.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2/dist/fuse.min.js"></script>
   <script src="maestro.js"></script>
 </body>
