@@ -70,11 +70,30 @@
       ================================================== */
       function mostrarMensaje(texto, tipo = 'error') {
         const div = document.getElementById('mensaje');
+        const colores = {
+          error: '#e74c3c',
+          warning: '#f39c12',
+          success: '#2ecc71'
+        };
         div.textContent = texto;
-        div.style.display = 'block';
-        div.style.backgroundColor = tipo === 'error' ? '#e74c3c' : '#f39c12';
+        div.style.backgroundColor = colores[tipo] || colores.error;
         div.style.color = '#ffffff';
+        div.style.display = 'block';
+        requestAnimationFrame(() => {
+          div.style.opacity = '1';
+        });
+        setTimeout(() => {
+          div.style.opacity = '0';
+          div.addEventListener(
+            'transitionend',
+            () => {
+              div.style.display = 'none';
+            },
+            { once: true }
+          );
+        }, 2000);
       }
+      window.mostrarMensaje = mostrarMensaje;
 
       function aplicarFiltro() {
         const criterio = document

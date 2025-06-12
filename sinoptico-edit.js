@@ -60,6 +60,8 @@ document.addEventListener('DOMContentLoaded', () => {
     SinopticoEditor.addNode({ Tipo: 'Cliente', Descripción: desc, Cliente: desc });
     cForm.reset();
     fillOptions();
+    if (window.mostrarMensaje)
+      window.mostrarMensaje('Cliente agregado exitosamente!', 'success');
   });
 
   pForm.addEventListener('submit', e => {
@@ -71,6 +73,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const id = SinopticoEditor.addNode({ ParentID: parent, Tipo: 'Pieza final', Secuencia: seq, Descripción: desc });
     pForm.reset();
     fillOptions();
+    if (window.mostrarMensaje)
+      window.mostrarMensaje('Producto agregado exitosamente!', 'success');
     if (confirm('¿Desea agregar subelementos al producto?')) askChildren(id);
   });
 
@@ -83,6 +87,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const id = SinopticoEditor.addNode({ ParentID: parent, Tipo: 'Subensamble', Secuencia: seq, Descripción: desc });
     sForm.reset();
     fillOptions();
+    if (window.mostrarMensaje)
+      window.mostrarMensaje('Subensamble agregado exitosamente!', 'success');
     if (confirm('¿Agregar subelementos a este subensamble?')) askChildren(id);
   });
 
@@ -96,6 +102,8 @@ document.addEventListener('DOMContentLoaded', () => {
     SinopticoEditor.addNode({ ParentID: parent, Tipo: 'Insumo', Secuencia: seq, Descripción: desc, Código: code });
     iForm.reset();
     fillOptions();
+    if (window.mostrarMensaje)
+      window.mostrarMensaje('Insumo agregado exitosamente!', 'success');
   });
 
   document.addEventListener('sinoptico-mode', fillOptions);
