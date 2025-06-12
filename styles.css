@@ -261,31 +261,31 @@ table#sinoptico tbody td {
   content: "\25B6"; /* ► */
 }
 .arrow-nivel-2 {
-  color: #005b9e;
+  color: var(--color-accent);
 }
 .arrow-nivel-2::before {
   content: "\21B3"; /* ↳ */
 }
 .arrow-nivel-3 {
-  color: #007bc8;
+  color: var(--color-accent);
 }
 .arrow-nivel-3::before {
   content: "\2013"; /* – */
 }
 .arrow-nivel-4 {
-  color: #007bc8;
+  color: var(--color-accent);
 }
 .arrow-nivel-4::before {
   content: "\2013";
 }
 .arrow-nivel-5 {
-  color: #007bc8;
+  color: var(--color-accent);
 }
 .arrow-nivel-5::before {
   content: "\2013";
 }
 .arrow-nivel-6 {
-  color: #007bc8;
+  color: var(--color-accent);
 }
 .arrow-nivel-6::before {
   content: "\2013";
@@ -671,7 +671,7 @@ header {
 }
 .intro {
   background-color: var(--color-light);
-  color: #003366;
+  color: var(--color-text);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -683,7 +683,7 @@ header {
 .intro h1 {
   font-size: 3rem;
   margin-bottom: 1rem;
-  color: #003366;
+  color: var(--color-primary);
 }
 .tagline {
   font-size: 1.2rem;
