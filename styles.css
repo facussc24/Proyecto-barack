@@ -61,6 +61,10 @@ h1 {
   text-align: center;
 }
 
+.hidden {
+  display: none !important;
+}
+
 /* ==============================
    BLOQUE: Mostrar/Ocultar Columnas
    ============================== */
@@ -573,6 +577,11 @@ table#sinoptico tbody td {
 .sinoptico-admin {
   display: flex;
   gap: 8px;
+  margin: 10px 0;
+  padding: 8px;
+  background-color: var(--color-light);
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 }
 .sinoptico-admin select,
 .sinoptico-admin input {
