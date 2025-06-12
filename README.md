@@ -31,11 +31,10 @@ The list is normally stored in your browser's `localStorage`. When running in an
 - **Column toggles** – checkboxes let you hide or show specific table columns.
 - **Filtering** – search for text and control which hierarchy levels are visible.
 - **Expand/Collapse** – the tree of products can be expanded node by node or all at once.
-- **Automatic refresh** – `no-borrar/sinoptico.json` is reloaded every 30 seconds so changes appear automatically.
 - **Manual refresh** – click the **Refrescar** button in `sinoptico.html` to reload data on demand.
-- **Editing modes** – once logged in you can edit the master list and the sinóptico using their respective **Editar** buttons.
-- **Excel export** – visible rows can be exported to `sinoptico.xlsx` which
-  resides in the `data/` folder.
+- **Editing modes** – once logged in you can edit the master list and the sinóptico using their respective **Editar** buttons. The product view is maintained through the interface at `sinoptico_edit.html`.
+- **Excel export** – visible rows can be saved as `sinoptico.xlsx`. The file
+  downloads to your browser's default folder.
 - **Dynamic categories** – the master list starts empty and new document sections appear automatically when items are added.
 - **Client grouping** – rows with a value in the `Cliente` column are grouped under that client in the product tree.
 - **Smooth animations** – buttons and rows fade and scale for a more polished experience.

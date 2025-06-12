@@ -22,7 +22,7 @@
   </nav>
   <h1>Sinóptico de Producto Barack</h1>
   <button id="sinopticoEditBtn" class="edit-button">Editar</button>
-  <div id="sinopticoAdmin" class="sinoptico-admin hidden">
+  <div id="sinopticoAdmin" class="sinoptico-admin">
     <select id="newParent"></select>
     <select id="newTipo">
       <option value="Producto">Producto</option>
@@ -137,7 +137,7 @@
         const logged = sessionStorage.getItem('isAdmin') === 'true';
         const editing = sessionStorage.getItem('sinopticoEdit') === 'true';
         editBtn.style.display = logged ? 'inline-block' : 'none';
-        admin.style.display = logged && editing ? 'block' : 'none';
+        admin.classList.toggle('hidden', !(logged && editing));
         editBtn.textContent = editing ? 'Salir de edición' : 'Editar';
       }
       editBtn.addEventListener('click', () => {
