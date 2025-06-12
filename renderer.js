@@ -70,8 +70,8 @@
           keywords.push(...criterio.split(/[\,\s]+/).filter(Boolean));
         }
         selectedItems.forEach(item => {
-          if (item.code) keywords.push(item.code);
-          if (item.text) keywords.push(item.text);
+          if (item.code) keywords.push(item.code.toString().trim());
+          if (item.text) keywords.push(item.text.toString().trim());
         });
 
         if (keywords.length === 0) {
@@ -291,9 +291,9 @@
 
       function addSelectedItem(row) {
         if (!row || !row['Código']) return;
-        const code = row['Código'];
+        const code = row['Código'].toString().trim();
         if (selectedItems.some(i => i.code === code)) return;
-        selectedItems.push({ code, text: row['Descripción'] });
+        selectedItems.push({ code, text: (row['Descripción'] || '').toString().trim() });
         renderSelectedChips();
         highlightRow(code, true);
       }
@@ -434,6 +434,25 @@
         if (fila['Vehculo']) fila['Vehículo'] = fila['Vehculo'];
         if (fila['versin']) fila['versión'] = fila['versin'];
         if (fila['Cdigo']) fila['Código'] = fila['Cdigo'];
+
+        // Trim whitespace on common string fields to ensure
+        // consistent matches when realizando búsquedas.
+        [
+          'Descripción',
+          'Cliente',
+          'Vehículo',
+          'RefInterno',
+          'versión',
+          'Imagen',
+          'Consumo',
+          'Unidad',
+          'Sourcing',
+          'Código'
+        ].forEach(campo => {
+          if (fila[campo]) {
+            fila[campo] = fila[campo].toString().trim();
+          }
+        });
       }
 
       function procesarDatos(datosOriginal, expandedIds) {
