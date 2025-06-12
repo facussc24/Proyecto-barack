@@ -603,7 +603,7 @@ header {
 }
 
 .hero {
-  min-height: 100vh;
+  min-height: 85vh;
   background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
   color: var(--color-light);
   display: flex;
@@ -611,11 +611,12 @@ header {
   justify-content: center;
   align-items: center;
   text-align: center;
-  padding: 100px 20px 40px;
+  padding: 60px 20px 40px;
   font-family: var(--font-base);
 }
 .hero h1 {
   font-size: 3rem;
+  color: var(--color-light);
 }
 .intro {
   background-color: var(--color-light);
