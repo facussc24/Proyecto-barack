@@ -18,7 +18,7 @@ Use the **Log in** link or open `login.html` directly to access the sign‑in pa
 
 Account information is stored in the browser's `localStorage` or in `no-borrar/users.json` when running under Node/Electron. Delete that file or clear the `users` entry from `localStorage` to reset all accounts.
 
-Editing the master list and the sinóptico now requires being logged in—`ADMIN_PASS` is no longer used.
+Editing the master list and the sinóptico now requires being logged in.
 
 ## Using `listado_maestro.html`
 
