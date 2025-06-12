@@ -31,12 +31,12 @@ body.home.dark-mode {
   --color-accent: #0066cc;
 }
 
-/* barra de navegación más clara en modo oscuro */
+/* barra de navegación en modo oscuro */
 body.dark-mode .main-nav {
-  background-color: #a9c9ff;
+  background-color: #000;
 }
 body.dark-mode .main-nav a {
-  color: #0d1b3d;
+  color: var(--color-light);
 }
 body.dark-mode .column-toggle-container,
 body.dark-mode .tabla-contenedor,
