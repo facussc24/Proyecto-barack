@@ -10,6 +10,11 @@
   --color-accent-hover: #004c99;
   --color-light: #ffffff;
   --font-base: Arial, sans-serif;
+
+  /* new mappings used later in the file */
+  --primary-color: var(--color-primary);
+  --secondary-color: var(--color-accent);
+  --accent-color: var(--color-accent);
 }
 
 body {
