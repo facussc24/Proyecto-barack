@@ -197,11 +197,11 @@ table#sinoptico tbody td {
    COLORES POR TIPO (JERARQUÍA)
    ============================== */
 .fila-cliente {
-  background-color: #ffd54f !important;
-} /* Amarillo suave (Cliente) */
+  background-color: #cce6ff !important;
+} /* Azul muy claro (Cliente) */
 .fila-pieza {
-  background-color: #a6cf54 !important;
-} /* Verde suave (Producto) */
+  background-color: #b3daff !important;
+} /* Azul claro (Producto) */
 .fila-subens {
   background-color: #d0eaff !important;
 } /* Azul muy claro (Subensamble) */
@@ -398,16 +398,19 @@ table#sinoptico tbody td {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  padding: 10px 16px;
-  background-color: var(--color-primary);
+  padding: 12px 20px;
+  font-size: 1.1rem;
+  background: linear-gradient(135deg, var(--color-accent), #80bfff);
   color: var(--color-light);
-  border-radius: 4px;
+  border-radius: 30px;
   text-decoration: none;
   font-weight: bold;
   box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  transition: transform 0.2s, background 0.2s;
 }
 .home-button:hover {
-  background-color: var(--color-primary-hover);
+  background: linear-gradient(135deg, var(--color-accent-hover), #66a3ff);
+  transform: scale(1.05);
 }
 
 
