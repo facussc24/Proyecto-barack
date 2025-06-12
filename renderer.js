@@ -3,6 +3,8 @@
       const pathModule = window.require ? window.require("path") : null;
       const csvFile = pathModule ? pathModule.join(__dirname, "data", "sinoptico.csv") : "data/sinoptico.csv";
       let fuseSinoptico = null;
+      const selectedItemsContainer = document.getElementById('selectedItems');
+      const selectedItems = [];
       /* ==================================================
          1) Mostrar/Ocultar Columnas
       ================================================== */
@@ -180,6 +182,8 @@
             suggestionList.innerHTML = '';
           }
           if (filtroInputElem) filtroInputElem.value = '';
+          selectedItems.splice(0, selectedItems.length);
+          renderSelectedChips();
           aplicarFiltro();
         });
       }
@@ -201,7 +205,7 @@
         });
       }
 
-      function highlightRow(code) {
+      function highlightRow(code, persistent) {
         const filas = Array.from(document.querySelectorAll('#sinoptico tbody tr'));
         const sel = (code || '').toString().trim().toLowerCase();
         const fila = filas.find(tr => {
@@ -229,8 +233,57 @@
           }
           fila.classList.add('highlight');
           fila.scrollIntoView({ block: 'center' });
-          setTimeout(() => fila.classList.remove('highlight'), 2000);
+          if (!persistent) {
+            setTimeout(() => fila.classList.remove('highlight'), 2000);
+          }
         }
+      }
+
+      function findRowByCode(code) {
+        const filas = Array.from(document.querySelectorAll('#sinoptico tbody tr'));
+        const sel = (code || '').toString().trim().toLowerCase();
+        return filas.find(tr => {
+          const td = tr.querySelector('td:last-child');
+          if (!td) return false;
+          const txt = td.textContent.trim().toLowerCase();
+          return txt === sel;
+        });
+      }
+
+      function renderSelectedChips() {
+        if (!selectedItemsContainer) return;
+        selectedItemsContainer.innerHTML = '';
+        selectedItems.forEach(item => {
+          const chip = document.createElement('span');
+          chip.className = 'chip';
+          chip.textContent = item.text;
+          const btn = document.createElement('button');
+          btn.innerHTML = '×';
+          btn.addEventListener('click', () => {
+            removeSelectedItem(item.code);
+          });
+          chip.appendChild(btn);
+          selectedItemsContainer.appendChild(chip);
+        });
+      }
+
+      function removeSelectedItem(code) {
+        const idx = selectedItems.findIndex(i => i.code === code);
+        if (idx !== -1) {
+          selectedItems.splice(idx, 1);
+          const row = findRowByCode(code);
+          if (row) row.classList.remove('highlight');
+          renderSelectedChips();
+        }
+      }
+
+      function addSelectedItem(row) {
+        if (!row || !row['Código']) return;
+        const code = row['Código'];
+        if (selectedItems.some(i => i.code === code)) return;
+        selectedItems.push({ code, text: row['Descripción'] });
+        renderSelectedChips();
+        highlightRow(code, true);
       }
 
       function applyFuzzySearchSinoptico() {
@@ -251,7 +304,8 @@
           li.addEventListener('click', () => {
             suggestionList.style.display = 'none';
             suggestionList.innerHTML = '';
-            highlightRow(row['Código']);
+            input.value = '';
+            addSelectedItem(row);
             aplicarFiltro();
           });
           suggestionList.appendChild(li);
