@@ -47,7 +47,7 @@ The page loads [SheetJS](https://sheetjs.com/) and [Fuse.js](https://fusejs.io/)
 
 ## Node testing
 
-Running the project in a browser is enough to use the page. Optionally you can run an automated test that executes `maestro.js` under Node using JSDOM. The tests rely on `jsdom-global`, `jsdom` and `fuse.js`, which `npm install` will download for you. Install the dev dependencies once with:
+Running the project in a browser is enough to use the page. Optionally you can run an automated test that executes `maestro.js` under Node using JSDOM. The tests rely on `jsdom-global`, `jsdom` and `fuse.js`, which `npm install` will download for you. **Make sure to run `npm install` once before executing the tests**:
 
 ```bash
 npm install

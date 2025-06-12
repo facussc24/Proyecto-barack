@@ -53,7 +53,8 @@ document.addEventListener('DOMContentLoaded', () => {
         SinopticoEditor.addNode({ ParentID: parentId, Tipo: 'Insumo', Descripción: desc });
       } else {
         const id = SinopticoEditor.addNode({ ParentID: parentId, Tipo: 'Subensamble', Descripción: desc });
-        if (confirm('¿Agregar hijos para ' + desc + '?')) askChildren(id);
+        if (confirm('¿Desea agregar subelementos a "' + desc + '"? (Aceptar=Sí / Cancelar=No)'))
+          askChildren(id);
       }
     }
   }
@@ -77,9 +78,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const id = SinopticoEditor.addNode({ ParentID: parent, Tipo: 'Pieza final', Descripción: desc });
     pForm.reset();
     fillOptions();
-    if (window.mostrarMensaje)
-      window.mostrarMensaje('Producto agregado exitosamente!', 'success');
-    if (confirm('¿Desea agregar subelementos al producto?')) askChildren(id);
+    if (confirm('¿Desea agregar subproductos? (Aceptar=Sí / Cancelar=No)')) {
+      askChildren(id);
+      if (window.mostrarMensaje)
+        window.mostrarMensaje('Producto y subproductos agregados!', 'success');
+    } else {
+      if (window.mostrarMensaje)
+        window.mostrarMensaje('Producto agregado exitosamente!', 'success');
+    }
   });
 
   sForm.addEventListener('submit', e => {
@@ -94,9 +100,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const id = SinopticoEditor.addNode({ ParentID: parent, Tipo: 'Subensamble', Descripción: desc });
     sForm.reset();
     fillOptions();
-    if (window.mostrarMensaje)
-      window.mostrarMensaje('Subensamble agregado exitosamente!', 'success');
-    if (confirm('¿Agregar subelementos a este subensamble?')) askChildren(id);
+    if (confirm('¿Agregar subelementos a este subensamble? (Aceptar=Sí / Cancelar=No)')) {
+      askChildren(id);
+      if (window.mostrarMensaje)
+        window.mostrarMensaje('Subensamble y subelementos agregados!', 'success');
+    } else {
+      if (window.mostrarMensaje)
+        window.mostrarMensaje('Subensamble agregado exitosamente!', 'success');
+    }
   });
 
   iForm.addEventListener('submit', e => {
