@@ -43,7 +43,14 @@
   <!-- ==============================
        BLOQUE DE FILTROS + BOTONES GLOBALES + BOTÓN EXCEL
        ============================== -->
-  <div class="filtro-contenedor">
+
+  <!-- ==============================
+       CONTENEDOR DE LA TABLA
+       ============================== -->
+  <div class="tabla-contenedor">
+
+  <!-- Moved inside tabla-contenedor for better layout -->
+  <div class="filtro-contenedor" id="filtrosSinoptico">
     <div class="filtros-texto">
       <label for="filtroInsumo">🔍 Buscar Insumo:</label>
       <div class="search-wrap">
@@ -81,11 +88,6 @@
     <!-- Botón para exportar la tabla visible a Excel -->
     <button id="btnExcel" aria-label="Exportar la tabla visible a Excel">Exportar a Excel</button>
   </div>
-
-  <!-- ==============================
-       CONTENEDOR DE LA TABLA
-       ============================== -->
-  <div class="tabla-contenedor">
     <table id="sinoptico">
       <thead>
         <tr>
