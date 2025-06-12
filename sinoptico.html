@@ -24,8 +24,18 @@
   </nav>
   <h1>Sinóptico de Producto Barack</h1>
   <button id="sinopticoEditBtn" class="edit-button">Editar</button>
-  <div id="sinopticoAdmin" style="display:none; margin-bottom:10px;">
-    <button id="addRow">Agregar fila</button>
+  <div id="sinopticoAdmin" class="sinoptico-admin" style="display:none; margin-bottom:10px;">
+    <select id="newParent"></select>
+    <select id="newTipo">
+      <option value="Producto">Producto</option>
+      <option value="Subensamble">Subensamble</option>
+      <option value="Insumo">Insumo</option>
+    </select>
+    <input type="text" id="newSecuencia" placeholder="Secuencia" />
+    <input type="text" id="newDesc" placeholder="Descripción" />
+    <button id="addRow">Agregar</button>
+    <select id="deleteNode"></select>
+    <button id="deleteTree">Eliminar</button>
   </div>
   <div id="mensaje"></div>
 
@@ -138,29 +148,56 @@
         update();
         document.dispatchEvent(new CustomEvent('sinoptico-mode'));
       });
+      const parentSel = document.getElementById('newParent');
+      const tipoSel = document.getElementById('newTipo');
+      const seqInput = document.getElementById('newSecuencia');
+      const descInput = document.getElementById('newDesc');
+      const delSel = document.getElementById('deleteNode');
+
+      function fillOptions() {
+        if (!window.SinopticoEditor || !window.SinopticoEditor.getNodes) return;
+        const nodes = window.SinopticoEditor.getNodes();
+        parentSel.innerHTML = '<option value="">(raíz)</option>';
+        delSel.innerHTML = '<option value="">Seleccione nodo...</option>';
+        nodes.forEach(n => {
+          const txt = `${n.ID} - ${(n['Descripción'] || '').toString()}`;
+          const opt1 = document.createElement('option');
+          opt1.value = n.ID;
+          opt1.textContent = txt;
+          parentSel.appendChild(opt1);
+          const opt2 = document.createElement('option');
+          opt2.value = n.ID;
+          opt2.textContent = txt;
+          delSel.appendChild(opt2);
+        });
+      }
+
       document.getElementById('addRow').addEventListener('click', () => {
-        const desc = prompt('Descripción del item:');
+        const desc = descInput.value.trim();
         if (!desc) return;
-        const code = prompt('Código:') || '';
         if (window.SinopticoEditor) {
           window.SinopticoEditor.addNode({
-            ID: Date.now().toString(),
-            ParentID: '',
-            Tipo: 'Producto',
-            Secuencia: '',
-            Descripción: desc,
-            Cliente: '',
-            Vehículo: '',
-            RefInterno: '',
-            versión: '',
-            Imagen: '',
-            Consumo: '',
-            Unidad: '',
-            Sourcing: '',
-            Código: code
+            ParentID: parentSel.value,
+            Tipo: tipoSel.value,
+            Secuencia: seqInput.value,
+            Descripción: desc
           });
+          descInput.value = '';
+          seqInput.value = '';
+          fillOptions();
         }
       });
+
+      document.getElementById('deleteTree').addEventListener('click', () => {
+        const id = delSel.value;
+        if (id && window.SinopticoEditor) {
+          window.SinopticoEditor.deleteSubtree(id);
+          fillOptions();
+        }
+      });
+
+      document.addEventListener('sinoptico-mode', fillOptions);
+      fillOptions();
       update();
     });
   </script>

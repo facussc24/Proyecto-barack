@@ -924,10 +924,27 @@
       }
 
       window.SinopticoEditor = {
-        addNode(row) {
+        addNode(opts) {
+          const row = {
+            ID: Date.now().toString(),
+            ParentID: opts.ParentID || '',
+            Tipo: opts.Tipo || 'Producto',
+            Secuencia: opts.Secuencia || '',
+            Descripción: opts.Descripción || '',
+            Cliente: '',
+            Vehículo: '',
+            RefInterno: '',
+            versión: '',
+            Imagen: '',
+            Consumo: '',
+            Unidad: '',
+            Sourcing: '',
+            Código: opts.Código || ''
+          };
           sinopticoData.push(row);
           saveSinoptico();
           loadData();
+          return row.ID;
         },
         deleteSubtree(id) {
           const ids = new Set();
@@ -938,6 +955,9 @@
           sinopticoData = sinopticoData.filter(r => !ids.has(r.ID));
           saveSinoptico();
           loadData();
+        },
+        getNodes() {
+          return sinopticoData.slice();
         }
       };
 
