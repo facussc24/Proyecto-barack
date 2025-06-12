@@ -22,6 +22,14 @@ body.dark-mode {
   --color-text: #e0e0e0;
   --color-primary: #7986cb;
   --color-accent: #00bcd4;
+  --color-surface-dark: #222;
+}
+body.dark-mode .column-toggle-container,
+body.dark-mode .tabla-contenedor,
+body.dark-mode .category-section table,
+body.dark-mode .intro,
+body.dark-mode .suggestions-list {
+  background-color: var(--color-surface-dark);
 }
 
 body {
@@ -69,7 +77,7 @@ h1 {
 }
 .column-toggle-container label {
   font-size: 0.9rem;
-  color: var(--color-primary);
+  color: var(--color-text);
   display: flex;
   align-items: center;
   gap: 4px;
@@ -100,7 +108,7 @@ h1 {
 }
 .filtros-texto label {
   font-weight: bold;
-  color: var(--color-primary);
+  color: var(--color-text);
   font-size: 0.95rem;
 }
 .filtros-texto input[type="text"] {
@@ -441,6 +449,7 @@ table#sinoptico tbody td {
 .category-section summary {
   font-weight: bold;
   background-color: #efefef;
+  color: var(--color-text);
   padding: 8px;
   border-radius: 4px;
   cursor: pointer;
