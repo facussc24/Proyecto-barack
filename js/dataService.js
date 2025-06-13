@@ -163,3 +163,18 @@ export function subscribeToChanges(handler) {
     document.addEventListener(DATA_CHANGED, handler);
   }
 }
+
+const api = {
+  getAll,
+  addNode,
+  updateNode,
+  deleteNode,
+  replaceAll,
+  subscribeToChanges,
+};
+
+if (hasWindow) {
+  window.dataService = api;
+}
+
+export default api;
