@@ -12,6 +12,24 @@ python3 -m http.server
 
 Open http://localhost:8000/index.html in a modern browser. All data, including the AMFE tables, is kept in your browser's localStorage.
 
+## GitHub Pages
+
+To host the page publicly you can enable **GitHub Pages**:
+
+1. Open the repository on GitHub and select **Settings**.
+2. In the **Pages** section choose the `main` branch and `/` folder, then save.
+3. After a minute or so the site will be available at
+   `https://<user>.github.io/<repo>/`.
+
+`localStorage` is tied to each domain. Data saved while using
+`http://localhost` will not appear when visiting the GitHub Pages URL and
+vice versa.
+
+To inspect or clear stored data open your browser's developer tools and
+locate the **Application** or **Storage** tab. Select the site's entry under
+**Local Storage** to view the key/value pairs or delete them (you can also run
+`localStorage.clear()` from the console).
+
 ## Login and user accounts
 
 Use the **Log in** link or open `login.html` directly to access the sign‑in page. The project includes four default accounts: **PAULO**, **LEO**, **FACUNDO** and **PABLO**, all with password `1234`. After logging in an admin panel becomes visible where you can create new users or update existing passwords.
@@ -43,6 +61,7 @@ no external dependencies. All header fields and the list of processes persist in
 - **Editing modes** – once logged in you can edit the master list and the sinóptico using their respective **Editar** buttons. The product view is maintained through the interface at `admin_menu.html`.
 - **Excel export** – visible rows can be saved as `sinoptico.xlsx`. The file
   downloads to your browser's default folder.
+- **JSON export/import** – use **Export JSON** to save the hierarchy and **Import JSON** to load a previously saved `.json` file.
 - **Dynamic categories** – the master list starts empty and new document sections appear automatically when items are added.
 - **Client grouping** – rows with a value in the `Cliente` column are grouped under that client in the product tree.
 - **Smooth animations** – buttons and rows fade and scale for a more polished experience.
@@ -88,12 +107,21 @@ This creates a small DOM environment so the scripts can be executed without a re
 
 ## Troubleshooting
 
+<<<<<< codex/add-troubleshooting-section-to-readme
 If editing pages doesn't work as expected:
 
 1. Verify the site is being served over **HTTP**, not opened directly as local files.
 2. Make sure you are logged in as an administrator before attempting to edit.
 3. Open the browser console and ensure there are no script errors.
 4. Check your browser's `localStorage` for entries such as `sinopticoData`.
+=======
+If a CDN script fails to load you will see one of the following warnings:
+
+- `Fuse.js no cargó – búsqueda deshabilitada`
+- `SheetJS no cargó – exportar a Excel deshabilitado`
+
+Ensure your browser can reach the CDN domains if these messages appear.
+>>>>>> main
 
 ## License
 
