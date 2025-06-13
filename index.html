@@ -49,6 +49,7 @@
             if (editLink) editLink.style.display = logged ? 'inline' : 'none';
             if (usersLink) usersLink.style.display = logged ? 'inline' : 'none';
           }
+          auth.restoreSession();
           link.addEventListener('click', e => {
             if (sessionStorage.getItem('isAdmin') === 'true') {
               e.preventDefault();
