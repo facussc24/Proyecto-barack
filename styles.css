@@ -49,7 +49,7 @@ body.dark-mode .suggestions-list {
 }
 
 body {
-  font-family: var(--font-base);
+  font-family: var(--font-base, sans-serif);
   margin: 0;
   padding: 60px 0 0 0;
   background-color: var(--color-bg);
@@ -733,7 +733,7 @@ body.amfe-page:not(.dark-mode) .logo {
   align-items: center;
   text-align: center;
   padding: 60px 20px 40px;
-  font-family: var(--font-base);
+  font-family: var(--font-base, sans-serif);
 }
 .hero h1 {
   font-size: 3rem;
@@ -1106,7 +1106,7 @@ select {
 
 /* ========= Flow diagram enhancements ========= */
 .flow-diagram {
-  font-family: var(--font-base);
+  font-family: var(--font-base, sans-serif);
 }
 
 .flow-diagram .tree-list,
@@ -1248,7 +1248,7 @@ select {
 /* ==============================
    CONSTRUCTOR VISUAL DE PRODUCTO
    ============================== */
-.wizard { max-width: 900px; margin: 20px auto; font-family: var(--font-base); }
+.wizard { max-width: 900px; margin: 20px auto; font-family: var(--font-base, sans-serif); }
 .wizard .progress { height: 8px; background:#e0e0e0; border-radius:4px; overflow:hidden; margin-bottom:20px; }
 .wizard .progress #progressBar { height:100%; width:0; background:linear-gradient(90deg,#4b6cb7,#182848); transition:width 0.3s; }
 .client-info { text-align:center; margin-bottom:10px; font-weight:bold; }
