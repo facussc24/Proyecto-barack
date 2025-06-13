@@ -24,9 +24,48 @@
     <button id="menuModificar">Modificar</button>
   </div>
 
-
   <div class="tabla-contenedor">
-    <table id="sinoptico">
+
+  <div class="filtro-contenedor" id="filtrosSinoptico">
+    <div class="filtros-texto">
+      <label for="filtroInsumo">🔍 Buscar Insumo:</label>
+      <div class="search-wrap">
+        <input type="text" id="filtroInsumo" placeholder="Ej: Hilo 120, Corte 1.." />
+        <button id="clearSearch" aria-label="Limpiar búsqueda">×</button>
+        <ul id="sinopticoSuggestions" class="suggestions-list"></ul>
+      </div>
+      <div id="selectedItems" class="chips"></div>
+
+      <div class="filtro-opciones">
+        <input type="checkbox" id="chkIncluirAncestros" checked />
+        <label for="chkIncluirAncestros">Incluir jerarquía (padres)</label>
+      </div>
+      <div class="filtro-opciones">
+        <input type="checkbox" id="chkMostrarNivel0" checked />
+        <label for="chkMostrarNivel0">Mostrar Nivel 0</label>
+      </div>
+      <div class="filtro-opciones">
+        <input type="checkbox" id="chkMostrarNivel1" checked />
+        <label for="chkMostrarNivel1">Mostrar Producto (nivel 1)</label>
+      </div>
+      <div class="filtro-opciones">
+        <input type="checkbox" id="chkMostrarNivel2" checked />
+        <label for="chkMostrarNivel2">Mostrar Subensamble (nivel 2)</label>
+      </div>
+      <div class="filtro-opciones">
+        <input type="checkbox" id="chkMostrarNivel3" checked />
+        <label for="chkMostrarNivel3">Mostrar Insumo (nivel 3)</label>
+      </div>
+    </div>
+
+    <button id="expandirTodo" aria-label="Expandir todas las filas">Expandir Todo</button>
+    <button id="colapsarTodo" aria-label="Colapsar todas las filas">Colapsar Todo</button>
+    <button id="btnRefrescar" aria-label="Recargar datos">Refrescar</button>
+    <button id="btnExcel" aria-label="Exportar la tabla visible a Excel">Exportar a Excel</button>
+  </div>
+
+
+  <table id="sinoptico">
       <thead>
         <tr>
           <th>Item</th>

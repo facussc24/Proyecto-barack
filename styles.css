@@ -983,14 +983,16 @@ select {
 }
 
 .editor-menu button {
-  padding: 8px 16px;
-  background-color: var(--color-primary);
+  padding: 10px 18px;
+  background: linear-gradient(135deg, var(--color-accent), var(--color-primary));
   color: var(--color-light);
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s;
 }
 
 .editor-menu button:hover {
-  background-color: var(--color-primary-hover);
+  transform: scale(1.05);
 }

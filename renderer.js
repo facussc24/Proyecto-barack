@@ -135,6 +135,13 @@
           if (item.text) keywords.push(item.text.toString().trim());
         });
 
+        const isEdit = sessionStorage.getItem('sinopticoEdit') === 'true';
+
+        if (isEdit && keywords.length === 0) {
+          todasFilas.forEach(tr => (tr.style.display = 'none'));
+          return;
+        }
+
         if (keywords.length === 0) {
           // Mostrar/ocultar según nivel, sin filtro de texto
           todasFilas.forEach(tr => {
