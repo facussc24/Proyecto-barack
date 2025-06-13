@@ -42,6 +42,7 @@
   </div>
 
   <script src="sha256.min.js"></script>
+  <script src="history_utils.js"></script>
   <script src="auth.js"></script>
   <script src="theme.js" defer></script>
   <script src="smooth-nav.js" defer></script>
@@ -67,6 +68,9 @@
         const p = document.getElementById('password').value.trim();
         const remember = document.getElementById('rememberMe').checked;
         if (auth.login(u, p, remember)) {
+          if (typeof addHistoryEntry === 'function') {
+            try { addHistoryEntry('loginHistory', { user: u, action: 'login' }); } catch(e){}
+          }
           location.href = 'index.html';
           return;
         } else {
@@ -94,6 +98,9 @@
         }
       });
       logoutBtn.addEventListener('click', () => {
+        if (typeof addHistoryEntry === 'function') {
+          try { addHistoryEntry('loginHistory', { user: sessionStorage.getItem('currentUser'), action: 'logout' }); } catch(e){}
+        }
         auth.logout();
         updatePanel();
       });

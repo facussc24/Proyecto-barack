@@ -108,6 +108,7 @@ page. It is intended as a lightweight viewer for quick look-ups.
 - **Data change event** – pages dispatch a `sinoptico-data-changed` event after
   updating the product tree so other modules can refresh their views.
 - **Cross-tab sync** – modifying the hierarchy in one tab refreshes any other open sinóptico pages via the BroadcastChannel API.
+- **Login history** – every login and logout is stored in `localStorage` and can be downloaded from `history_viewer.html`.
 Pages communicate via a BroadcastChannel so each tab reloads the latest data whenever another one saves changes.
 
 ## Listening for data changes
