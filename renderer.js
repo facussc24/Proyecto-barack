@@ -908,70 +908,28 @@ const root = typeof global !== 'undefined' ? global : globalThis;
          6) Ajustar indentación dinámica (nivel ≥ 1)
       ================================================== */
       function ajustarIndentacion() {
-        const todasFilas = Array.from(document.querySelectorAll('#sinoptico tbody tr'));
-        const mapIdToRow = {};
-        todasFilas.forEach(tr => {
+        const filas = Array.from(document.querySelectorAll('#sinoptico tbody tr'));
+
+        // Almacenar anchos de cada fila (botón, flecha, texto)
+        const widthMap = {};
+        filas.forEach(tr => {
           const id = tr.getAttribute('data-id');
-          if (id) mapIdToRow[id] = tr;
+          if (!id) return;
+          const td = tr.querySelector('td:first-child');
+          let ancho = 0;
+          const btn = td.querySelector('.toggle-btn:not(.hidden)');
+          if (btn) ancho += btn.offsetWidth + parseInt(getComputedStyle(btn).marginRight);
+          const arrow = td.querySelector('[class^="arrow-nivel-"]');
+          if (arrow) ancho += arrow.offsetWidth + parseInt(getComputedStyle(arrow).marginRight);
+          const text = td.querySelector('.item-text');
+          if (text) ancho += text.offsetWidth;
+          widthMap[id] = ancho + 12; // margen extra
         });
 
-        // Cache de indentaciones
-        const indentCache = {};
-
-        function obtenerIndent(tr) {
-          const nivel = tr.classList.contains('nivel-0')
-            ? 0
-            : tr.classList.contains('nivel-1')
-            ? 1
-            : tr.classList.contains('nivel-2')
-            ? 2
-            : tr.classList.contains('nivel-3')
-            ? 3
-            : tr.classList.contains('nivel-4')
-            ? 4
-            : tr.classList.contains('nivel-5')
-            ? 5
-            : 6;
-          if (nivel === 0) {
-            return 8; // padding-left fijo para nivel 0
-          }
+        // Calcular indentación de cada fila en un solo recorrido
+        const indentMap = {};
+        filas.forEach(tr => {
           const id = tr.getAttribute('data-id');
-          if (indentCache[id] !== undefined) {
-            return indentCache[id];
-          }
-          // Obtener fila padre
-          const parentId = tr.getAttribute('data-parent');
-          const filaPadre = mapIdToRow[parentId];
-          if (!filaPadre) {
-            indentCache[id] = 8;
-            return 8;
-          }
-          // Indent del padre
-          const indentPadre = obtenerIndent(filaPadre);
-          // Medir anchos: botón toggle + flecha + texto del padre
-          const tdPadre = filaPadre.querySelector('td:first-child');
-          let anchoToggle = 0,
-            anchoArrow = 0,
-            anchoText = 0;
-          const spanToggle = tdPadre.querySelector('.toggle-btn:not(.hidden)');
-          if (spanToggle)
-            anchoToggle =
-              spanToggle.offsetWidth + parseInt(getComputedStyle(spanToggle).marginRight);
-          const spanArrowPadre = tdPadre.querySelector(`[class^="arrow-nivel-"]`);
-          if (spanArrowPadre)
-            anchoArrow =
-              spanArrowPadre.offsetWidth +
-              parseInt(getComputedStyle(spanArrowPadre).marginRight);
-          const spanTextPadre = tdPadre.querySelector('.item-text');
-          if (spanTextPadre) anchoText = spanTextPadre.offsetWidth;
-
-          const margenExtra = 12; // mayor separación para cada nivel
-          const indentActual = indentPadre + anchoToggle + anchoArrow + anchoText + margenExtra;
-          indentCache[id] = indentActual;
-          return indentActual;
-        }
-
-        todasFilas.forEach(tr => {
           const nivel = tr.classList.contains('nivel-0')
             ? 0
             : tr.classList.contains('nivel-1')
@@ -985,11 +943,20 @@ const root = typeof global !== 'undefined' ? global : globalThis;
             : tr.classList.contains('nivel-5')
             ? 5
             : 6;
-          if (nivel === 0) return;
-          const indent = obtenerIndent(tr);
-          const tdHijo = tr.querySelector('td:first-child');
-        tdHijo.style.paddingLeft = indent + 'px';
-      });
+
+          const td = tr.querySelector('td:first-child');
+          if (nivel === 0) {
+            indentMap[id] = 8;
+            td.style.paddingLeft = '8px';
+            return;
+          }
+
+          const parentId = tr.getAttribute('data-parent');
+          const indentParent = indentMap[parentId] || 8;
+          const indent = indentParent + (widthMap[parentId] || 0);
+          indentMap[id] = indent;
+          td.style.paddingLeft = indent + 'px';
+        });
       }
 
       function saveSinoptico() {
