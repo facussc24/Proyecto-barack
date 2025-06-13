@@ -813,12 +813,49 @@
 
             if (isEditing) {
               const tdAct = document.createElement('td');
+
+              if (tipoStr === 'pieza final') {
+                const addSub = document.createElement('button');
+                addSub.textContent = '+ Subensamble';
+                addSub.addEventListener('click', () => {
+                  const count = sinopticoData.filter(r => r.ParentID === fila.ID && (r.Tipo||'').toLowerCase() === 'subensamble').length + 1;
+                  const desc = `Subensamble ${count}`;
+                  if (window.SinopticoEditor) window.SinopticoEditor.addNode({ ParentID: fila.ID, Tipo: 'Subensamble', Descripción: desc });
+                });
+                tdAct.appendChild(addSub);
+              }
+
+              if (tipoStr === 'subensamble') {
+                const addIns = document.createElement('button');
+                addIns.textContent = '+ Insumo';
+                addIns.addEventListener('click', () => {
+                  const nombre = prompt('Nombre del insumo');
+                  if (!nombre) return;
+                  const cant = prompt('Cantidad', '1');
+                  if (window.SinopticoEditor) window.SinopticoEditor.addNode({ ParentID: fila.ID, Tipo: 'Insumo', Descripción: nombre, Consumo: cant });
+                });
+                tdAct.appendChild(addIns);
+              }
+
+              const editBtn = document.createElement('button');
+              editBtn.textContent = 'Editar';
+              editBtn.addEventListener('click', () => {
+                const nuevo = prompt('Nueva descripción', fila['Descripción'] || '');
+                if (nuevo !== null && window.SinopticoEditor) {
+                  window.SinopticoEditor.updateNode(fila.ID, { Descripción: nuevo });
+                }
+              });
+              tdAct.appendChild(editBtn);
+
               const del = document.createElement('button');
               del.textContent = 'Eliminar';
               del.addEventListener('click', () => {
-                if (window.SinopticoEditor) window.SinopticoEditor.deleteSubtree(fila.ID);
+                if (confirm(`¿Eliminar ${fila.Tipo} "${fila['Descripción']}" definitivamente?`)) {
+                  if (window.SinopticoEditor) window.SinopticoEditor.deleteSubtree(fila.ID);
+                }
               });
               tdAct.appendChild(del);
+
               tr.appendChild(tdAct);
             }
 
@@ -967,6 +1004,16 @@
             sinopticoData.filter(r => r.ParentID === pid).forEach(r => collect(r.ID));
           })(id);
           sinopticoData = sinopticoData.filter(r => !ids.has(r.ID));
+          saveSinoptico();
+          loadData();
+        },
+        updateNode(id, attrs) {
+          const node = sinopticoData.find(r => r.ID === id);
+          if (!node) return;
+          Object.assign(node, attrs);
+          if (node.Tipo === 'Cliente' && attrs['Descripción']) {
+            node.Cliente = attrs['Descripción'];
+          }
           saveSinoptico();
           loadData();
         },
