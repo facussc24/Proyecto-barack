@@ -25,7 +25,6 @@ Editing the master list and the sinóptico now requires being logged in.
 The **master document list** lets you organise engineering documents by category. Open `listado_maestro.html` in your browser and click **Editar** to toggle edit mode. You must be logged in to modify the table. While in edit mode you can add new rows or change existing numbers and details.
 
 The list is stored solely in your browser's `localStorage`.
-
 ## Features
 
 - **Column toggles** – checkboxes let you hide or show specific table columns.
