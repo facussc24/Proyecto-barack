@@ -1,8 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
   const STORAGE_KEY = 'amfeProcesoData';
-  const fs = window.require ? window.require('fs') : null;
-  const path = window.require ? window.require('path') : null;
-  const jsonPath = fs && path ? path.join(__dirname, 'no-borrar', 'amfe_proceso.json') : null;
 
   const fields = [
     'codigo',
@@ -24,26 +21,11 @@ document.addEventListener('DOMContentLoaded', () => {
   let data = [];
 
   function load() {
-    if (fs && jsonPath && fs.existsSync(jsonPath)) {
-      try {
-        data = JSON.parse(fs.readFileSync(jsonPath, 'utf8')) || [];
-      } catch (e) {
-        data = [];
-      }
-    } else {
-      data = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-    }
+    data = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
   }
 
   function save() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    if (fs && jsonPath) {
-      try {
-        fs.writeFileSync(jsonPath, JSON.stringify(data, null, 2), 'utf8');
-      } catch (e) {
-        console.error('Error writing AMFE JSON', e);
-      }
-    }
   }
 
   const tableElem = $('#amfeTable');
