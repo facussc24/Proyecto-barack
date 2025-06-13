@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Usuarios</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav class="main-nav">
+    <a href="welcome.html">Inicio</a>
+    <a href="sinoptico.html">Sinóptico</a>
+    <a href="listado_maestro.html">Listado maestro</a>
+    <a href="insumos.html">Insumos</a>
+    <a href="usuarios.html" aria-current="page" id="usersNav">Usuarios</a>
+    <button id="toggleTheme">🌙</button>
+  </nav>
+  <div id="adminPanel" class="admin-panel fade-in">
+    <h2>Administrar usuarios</h2>
+    <div class="admin-row">
+      <input type="text" id="newUser" placeholder="Usuario">
+      <input type="password" id="newPass" placeholder="Contraseña">
+      <select id="newRole">
+        <option value="user">Usuario</option>
+        <option value="admin">Administrador</option>
+      </select>
+      <button id="createUser">Crear</button>
+    </div>
+    <div class="admin-row">
+      <input type="text" id="chgUser" placeholder="Usuario">
+      <input type="password" id="chgPass" placeholder="Nueva contraseña">
+      <button id="changePassword">Cambiar</button>
+    </div>
+    <button id="logoutBtn">Cerrar sesión</button>
+    <button id="backHome" type="button">Volver al inicio</button>
+  </div>
+  <script src="sha256.min.js"></script>
+  <script src="auth.js"></script>
+  <script src="theme.js" defer></script>
+  <script src="smooth-nav.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      auth.restoreSession();
+      if (sessionStorage.getItem('isAdmin') !== 'true') {
+        location.href = 'login.html';
+        return;
+      }
+      document.getElementById('createUser').addEventListener('click', () => {
+        const u = document.getElementById('newUser').value.trim();
+        const p = document.getElementById('newPass').value.trim();
+        const r = document.getElementById('newRole').value;
+        if (u && p) {
+          if (auth.createUser(u, p, r)) {
+            alert('Usuario creado');
+          } else {
+            alert('Ya existe el usuario');
+          }
+        }
+      });
+      document.getElementById('changePassword').addEventListener('click', () => {
+        const u = document.getElementById('chgUser').value.trim();
+        const p = document.getElementById('chgPass').value.trim();
+        if (auth.changePassword(u, p)) {
+          alert('Contraseña actualizada');
+        } else {
+          alert('Usuario no encontrado');
+        }
+      });
+      document.getElementById('logoutBtn').addEventListener('click', () => {
+        auth.logout();
+        location.href = 'index.html';
+      });
+      document.getElementById('backHome').addEventListener('click', () => {
+        location.href = 'index.html';
+      });
+    });
+  </script>
+</body>
+</html>

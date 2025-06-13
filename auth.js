@@ -17,10 +17,10 @@
     }
     if (!Array.isArray(list) || list.length === 0) {
       list = [
-        { username:'PAULO', hash: hash('1234') },
-        { username:'LEO', hash: hash('1234') },
-        { username:'FACUNDO', hash: hash('1234') },
-        { username:'PABLO', hash: hash('1234') }
+        { username:'PAULO', hash: hash('1234'), role:'admin' },
+        { username:'LEO', hash: hash('1234'), role:'admin' },
+        { username:'FACUNDO', hash: hash('1234'), role:'admin' },
+        { username:'PABLO', hash: hash('1234'), role:'admin' }
       ];
     } else {
       list = list.map(u => {
@@ -28,6 +28,7 @@
           u.hash = hash(u.password);
           delete u.password;
         }
+        if (!u.role) u.role = 'admin';
         return u;
       });
     }
@@ -48,7 +49,7 @@
     const u = users.find(x => x.username === username && x.hash === hashed);
     if (u) {
       if (typeof sessionStorage !== 'undefined') {
-        sessionStorage.setItem('isAdmin', 'true');
+        sessionStorage.setItem('isAdmin', u.role === 'admin' ? 'true' : 'false');
         sessionStorage.setItem('currentUser', username);
       }
       if (remember && typeof localStorage !== 'undefined') {
@@ -73,19 +74,20 @@
 
   function restoreSession(){
     if (typeof localStorage !== 'undefined') {
-      const u = localStorage.getItem('rememberUser');
-      if (u && typeof sessionStorage !== 'undefined') {
-        sessionStorage.setItem('isAdmin','true');
-        sessionStorage.setItem('currentUser', u);
+      const uName = localStorage.getItem('rememberUser');
+      if (uName && typeof sessionStorage !== 'undefined') {
+        const u = users.find(x => x.username === uName);
+        sessionStorage.setItem('isAdmin', u && u.role === 'admin' ? 'true' : 'false');
+        sessionStorage.setItem('currentUser', uName);
         return true;
       }
     }
     return false;
   }
 
-  function createUser(username, password){
+  function createUser(username, password, role='user'){
     if (users.some(u => u.username === username)) return false;
-    users.push({ username, hash: hash(password) });
+    users.push({ username, hash: hash(password), role });
     saveUsers(users);
     return true;
   }
@@ -98,7 +100,15 @@
     return true;
   }
 
-  const api = { login, logout, createUser, changePassword, loadUsers, restoreSession, hash };
+  function setRole(username, role){
+    const u = users.find(x => x.username === username);
+    if (!u) return false;
+    u.role = role;
+    saveUsers(users);
+    return true;
+  }
+
+  const api = { login, logout, createUser, changePassword, setRole, loadUsers, restoreSession, hash };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   global.auth = api;
 })(typeof globalThis !== 'undefined' ? globalThis : window);
