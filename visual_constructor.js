@@ -277,6 +277,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   document.addEventListener('sinoptico-mode', fillClientOptions);
+  document.addEventListener('sinoptico-loaded', fillClientOptions);
   document.addEventListener('sinoptico-data-changed', fillClientOptions);
   setTimeout(fillClientOptions, 300);
 });

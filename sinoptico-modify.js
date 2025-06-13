@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   document.addEventListener('sinoptico-mode', render);
+  document.addEventListener('sinoptico-loaded', render);
   document.addEventListener('sinoptico-data-changed', render);
   setTimeout(render, 300);
 });

@@ -17,17 +17,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Renderiza botones de subensambles e insumos disponibles
   function renderLists() {
+    subsDiv.innerHTML = '';
+    insDiv.innerHTML = '';
     if (!window.SinopticoEditor || !SinopticoEditor.getNodes) return;
     const nodes = SinopticoEditor.getNodes();
-    const subs  = nodes.filter(n => (n.Tipo || '').toLowerCase() === 'subensamble');
-    const ins   = nodes.filter(n => (n.Tipo || '').toLowerCase() === 'insumo');
-    subsDiv.innerHTML = '';
-    insDiv.innerHTML  = '';
+    if (!Array.isArray(nodes) || nodes.length === 0 ||
+        !nodes.some(n => (n.Tipo || '').toLowerCase() === 'cliente')) {
+      subsDiv.textContent = 'Sinóptico vacío';
+      return;
+    }
+    const subs = nodes.filter(n => (n.Tipo || '').toLowerCase() === 'subensamble');
+    const ins  = nodes.filter(n => (n.Tipo || '').toLowerCase() === 'insumo');
     subs.forEach(s => {
       const btn = document.createElement('button');
       btn.textContent = `${s['Descripción'] || ''} - ${s['Código'] || ''}`;
       btn.addEventListener('click', () => addItem({
-        ID: s.ID, Tipo: s.Tipo,
+        ID: s.ID,
+        Tipo: s.Tipo,
         Descripción: s['Descripción'],
         Código: s['Código']
       }));
@@ -37,7 +43,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const btn = document.createElement('button');
       btn.textContent = `${i['Descripción'] || ''} - ${i['Código'] || ''}`;
       btn.addEventListener('click', () => addItem({
-        ID: i.ID, Tipo: i.Tipo,
+        ID: i.ID,
+        Tipo: i.Tipo,
         Descripción: i['Descripción'],
         Código: i['Código']
       }));
