@@ -1004,6 +1004,9 @@
 
       function saveSinoptico() {
         localStorage.setItem('sinopticoData', JSON.stringify(sinopticoData));
+        if (typeof addHistoryEntry === 'function') {
+          try { addHistoryEntry('sinopticoHistory', sinopticoData); } catch(e){}
+        }
         if (fs && jsonFile) {
           try {
             fs.writeFileSync(

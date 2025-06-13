@@ -155,6 +155,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function save() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(docs));
+    if (typeof addHistoryEntry === 'function') {
+      try { addHistoryEntry('maestroHistory', docs); } catch(e){}
+    }
   }
 
   function render() {
