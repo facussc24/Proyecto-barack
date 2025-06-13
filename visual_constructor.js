@@ -166,6 +166,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
   saveBtn.addEventListener('click', () => {
     updateSummary();
-    showToast('Producto guardado');
+    const data = {
+      Tipo: 'Pieza final',
+      Descripción: root.descripcion,
+      Código: root.codigo,
+      children: root.subproductos.map(sp => ({
+        Tipo: 'Subensamble',
+        Descripción: sp.descripcion,
+        Código: sp.codigo,
+        children: (sp.insumos || []).map(ins => ({
+          Tipo: 'Insumo',
+          Descripción: ins.descripcion,
+          Código: ins.codigo
+        }))
+      }))
+    };
+    if (window.SinopticoEditor && SinopticoEditor.addNode) {
+      SinopticoEditor.addNode({
+        Tipo: data.Tipo,
+        Descripción: data.Descripción,
+        Código: data.Código
+      }, data.children);
+      showToast('Producto guardado');
+      root.descripcion = '';
+      root.codigo = '';
+      root.subproductos = [];
+      document.getElementById('prodDesc').value = '';
+      document.getElementById('prodCode').value = '';
+      productCard.innerHTML = '';
+      updateSummary();
+      updateProgress(1);
+    } else {
+      showToast('Error: SinopticoEditor no disponible');
+    }
   });
 });
