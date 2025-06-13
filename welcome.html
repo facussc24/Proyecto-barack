@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bienvenido</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="home">
+  <section class="hero">
+    <img src="images/LOGO BARACK.png" alt="Logo Barack" class="logo">
+    <h1>Ingeniería Barack</h1>
+    <a href="login.html" class="btn-link">Iniciar sesión</a>
+    <button id="guestBtn" class="btn-link">Entrar como invitado</button>
+  </section>
+  <script>
+    document.getElementById('guestBtn').addEventListener('click', () => {
+      sessionStorage.setItem('isAdmin', 'false');
+      location.href = 'index.html';
+    });
+  </script>
+  <script src="theme.js" defer></script>
+  <script src="smooth-nav.js" defer></script>
+</body>
+</html>
