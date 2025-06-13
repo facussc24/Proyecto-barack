@@ -15,6 +15,14 @@
     processes: []
   };
 
+  const PLACEHOLDERS = {
+    secuencia: 'Secuencia',
+    estacion: 'Estación',
+    descripcion: 'Descripción',
+    materiales: 'Materiales',
+    requerimientos: 'Requerimientos'
+  };
+
   function calcNivel(s,o,d){
     const r=s*o*d;
     if(!s||!o||!d) return '';
@@ -88,10 +96,11 @@
     }
   }
 
-  function fieldSpan(text){
+  function fieldSpan(text, placeholder){
     const span=document.createElement('span');
     span.textContent=text||'';
     span.contentEditable=isAdmin;
+    if(placeholder) span.dataset.placeholder=placeholder;
     return span;
   }
 
@@ -142,10 +151,11 @@
           } else {
             const span=document.createElement('span');
             span.textContent=proc.secuencia||'';
+            span.dataset.placeholder=PLACEHOLDERS[f];
             fields.appendChild(span);
           }
         } else {
-          const span=fieldSpan(proc[f]);
+          const span=fieldSpan(proc[f], PLACEHOLDERS[f]);
           span.onblur=()=>{ proc[f]=span.textContent.trim(); validateFields(details); save(); };
           fields.appendChild(span);
         }
