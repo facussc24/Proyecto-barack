@@ -47,6 +47,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function save() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    if (typeof addHistoryEntry === 'function') {
+      try { addHistoryEntry('insumosHistory', data); } catch(e){}
+    }
     if (fs && jsonPath) {
       try {
         fs.writeFileSync(jsonPath, JSON.stringify(data, null, 2), 'utf8');

@@ -1,5 +1,6 @@
 const jsdom = require('jsdom-global');
 jsdom('', { url: 'http://localhost' });
+require('./history_utils.js');
 
 // expose storages
 global.sessionStorage = window.sessionStorage;

@@ -2,6 +2,8 @@ const jsdom = require('jsdom-global');
 const Fuse = require('fuse.js');
 jsdom('', { url: 'http://localhost' });
 
+require('./history_utils.js');
+
 // expose storage
 global.sessionStorage = window.sessionStorage;
 global.localStorage = window.localStorage;

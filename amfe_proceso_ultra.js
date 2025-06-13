@@ -30,6 +30,9 @@
 
   function save(){
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    if (typeof addHistoryEntry === 'function') {
+      try { addHistoryEntry('amfeUltraHistory', data); } catch(e){}
+    }
   }
 
   function initHeader(){
