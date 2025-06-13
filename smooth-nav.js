@@ -13,7 +13,7 @@ window.addEventListener('DOMContentLoaded', () => {
       const href = a.href;
       setTimeout(() => {
         window.location.href = href;
-      }, 200);
+      }, 100);
     });
   });
 });

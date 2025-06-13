@@ -55,7 +55,7 @@ body {
   background-color: var(--color-bg);
   color: var(--color-text);
   opacity: 0;
-  transition: opacity 0.3s ease-in-out;
+  transition: opacity 0.15s ease-in-out;
 }
 
 body.page-loaded {
@@ -298,9 +298,9 @@ body.dark-mode .fila-oper {
 .arrow-nivel-5,
 .arrow-nivel-6 {
   display: inline-block;
-  width: 14px;       /* reducido a 14px en lugar de 16px */
+  width: 20px;       /* espacio fijo un poco mayor */
   text-align: center;
-  margin-right: 2px; /* reducido a 2px en lugar de 4px */
+  margin-right: 4px; /* separación más evidente */
   font-weight: bold;
 }
 .arrow-nivel-1 {
