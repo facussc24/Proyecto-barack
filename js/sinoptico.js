@@ -1,3 +1,4 @@
+'use strict';
 import { getAll, subscribeToChanges } from './dataService.js';
 import '../renderer.js';
 

@@ -1,3 +1,4 @@
+'use strict';
 // Add smooth page transitions
 window.addEventListener('DOMContentLoaded', () => {
   document.body.classList.add('page-loaded');

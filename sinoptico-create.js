@@ -1,3 +1,4 @@
+'use strict';
 document.addEventListener('DOMContentLoaded', () => {
   if (sessionStorage.getItem('isAdmin') !== 'true') {
     alert('Debe iniciar sesión para editar');

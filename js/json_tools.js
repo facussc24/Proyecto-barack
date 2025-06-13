@@ -1,3 +1,4 @@
+'use strict';
 import { getAll, replaceAll } from './dataService.js';
 
 document.addEventListener('DOMContentLoaded', () => {

@@ -1,3 +1,4 @@
+'use strict';
 (function(global){
   const STORAGE_KEY = 'users';
   const sha256 = global.sha256 || (typeof require === 'function' ? require('./sha256.min.js') : undefined);

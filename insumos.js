@@ -1,3 +1,4 @@
+'use strict';
 document.addEventListener('DOMContentLoaded', () => {
   const cont = document.getElementById('insumos');
   const searchInput = document.getElementById('insumoSearch');

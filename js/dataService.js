@@ -1,3 +1,4 @@
+'use strict';
 // js/dataService.js
 
 export const DATA_CHANGED = 'DATA_CHANGED';

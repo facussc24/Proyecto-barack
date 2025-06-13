@@ -1,3 +1,4 @@
+'use strict';
 document.addEventListener('DOMContentLoaded', () => {
   // Solo administradores pueden editar
   if (sessionStorage.getItem('isAdmin') !== 'true') {
