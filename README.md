@@ -26,11 +26,6 @@ The **master document list** lets you organise engineering documents by category
 
 The list is stored solely in your browser's `localStorage`.
 
-## Using `amfe_proceso_mejorado.html`
-
-Open `amfe_proceso_mejorado.html` in a browser to work with an enhanced process AMFE. Log in to add processes or failure modes and edit the tables inline. All data is kept in `localStorage`.
-
-
 ## Features
 
 - **Column toggles** – checkboxes let you hide or show specific table columns.
@@ -47,7 +42,6 @@ Open `amfe_proceso_mejorado.html` in a browser to work with an enhanced process 
 - **Cross-linking** – clicking an insumo in the sinóptico opens the list filtered to that entry.
 - **Insumo editing** – administrators can agregar, modificar o eliminar insumos desde `insumos.html`.
 - **AMFE persistence** – the AMFE pages store their data in `localStorage`.
-- **Improved process AMFE** – `amfe_proceso_mejorado.html` adds per-process sections with DataTable filtering and inline editing. Data is saved to `localStorage`.
 - **Data change event** – pages dispatch a `sinoptico-data-changed` event after
   updating the product tree so other modules can refresh their views.
 
