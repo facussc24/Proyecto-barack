@@ -1179,3 +1179,20 @@ select {
 .insumos-table tbody tr:nth-child(even) {
   background-color: #f7f7f7;
 }
+
+.insumos-table tr.highlight {
+  background-color: #fff5a3;
+}
+
+#insumoSearch {
+  max-width: 300px;
+  display: block;
+}
+
+#clearInsumoSearch {
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: var(--color-text);
+}

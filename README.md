@@ -38,6 +38,8 @@ The list is normally stored in your browser's `localStorage`. When running in an
 - **Dynamic categories** – the master list starts empty and new document sections appear automatically when items are added.
 - **Client grouping** – rows with a value in the `Cliente` column are grouped under that client in the product tree.
 - **Smooth animations** – buttons and rows fade and scale for a more polished experience.
+- **Insumo lookup** – the insumos table includes a search box with fuzzy matching.
+- **Cross-linking** – clicking an insumo in the sinóptico opens the list filtered to that entry.
 
 When running the app through Node/Electron the hierarchy is stored in `no-borrar/sinoptico.json`. Browsers fall back to `localStorage`.
 
@@ -63,7 +65,7 @@ This creates a small DOM environment so the script can be executed without a rea
 
 ## Fuzzy search flow
 
- Both `listado_maestro.html` and `sinoptico.html` load [Fuse.js](https://fusejs.io/) from a CDN. In the master list a drop-down of matching documents appears while you type; picking one stores the selection in `sessionStorage`, highlights the chosen row and shows the filter banner without navigating away. The product view also leverages Fuse.js for its filter box: multiple keywords separated by spaces or commas are accepted and the fuzzy results of each term are combined. Suggestions no longer reload the table; clicking one simply highlights the corresponding row and scrolls it into view. If no row matches the stored selection a warning is shown. Removing the Fuse.js script tags disables these fuzzy searches.
+ `listado_maestro.html`, `sinoptico.html` and now `insumos.html` load [Fuse.js](https://fusejs.io/) from a CDN. In the master list a drop-down of matching documents appears while you type; picking one stores the selection in `sessionStorage`, highlights the chosen row and shows the filter banner without navigating away. The product view also leverages Fuse.js for its filter box: multiple keywords separated by spaces or commas are accepted and the fuzzy results of each term are combined. The insumos page contains a simpler search box that filters the table in place. Suggestions no longer reload the table; clicking one simply highlights the corresponding row and scrolls it into view. If no row matches the stored selection a warning is shown. Removing the Fuse.js script tags disables these fuzzy searches.
 
 ## License
 

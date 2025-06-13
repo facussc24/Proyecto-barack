@@ -1,5 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   const cont = document.getElementById('insumos');
+  const searchInput = document.getElementById('insumoSearch');
+  const clearBtn = document.getElementById('clearInsumoSearch');
   const STORAGE_KEY = 'insumosData';
   let fs = null;
   let path = null;
@@ -24,6 +26,19 @@ document.addEventListener('DOMContentLoaded', () => {
     data = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
   }
 
+  let fuse = null;
+
+  function buildFuse() {
+    if (typeof Fuse === 'undefined') {
+      fuse = null;
+      return;
+    }
+    fuse = new Fuse(data, {
+      keys: ['nombre', 'descripcion', 'especificaciones', 'id'],
+      threshold: 0.4
+    });
+  }
+
   function save() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     if (fs && jsonPath) {
@@ -34,6 +49,45 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
   }
+
+  function applyFilter() {
+    if (!searchInput) return;
+    const text = searchInput.value.trim();
+    const rows = cont.querySelectorAll('tbody tr');
+    if (!text) {
+      rows.forEach(r => (r.style.display = ''));
+      return;
+    }
+    if (fuse) {
+      const results = fuse.search(text);
+      const ids = new Set(results.map(r => r.item.id));
+      rows.forEach(r => {
+        const id = parseInt(r.getAttribute('data-id'));
+        r.style.display = ids.has(id) ? '' : 'none';
+      });
+    } else {
+      const lower = text.toLowerCase();
+      rows.forEach(r => {
+        r.style.display = r.textContent.toLowerCase().includes(lower)
+          ? ''
+          : 'none';
+      });
+    }
+  }
+
+  function highlightInsumo(name) {
+    const sel = (name || '').toString().trim().toLowerCase();
+    const rows = Array.from(cont.querySelectorAll('tbody tr'));
+    const row = rows.find(tr =>
+      Array.from(tr.children).some(td => td.textContent.trim().toLowerCase() === sel)
+    );
+    if (row) {
+      row.classList.add('highlight');
+      row.scrollIntoView({ block: 'center' });
+      setTimeout(() => row.classList.remove('highlight'), 2000);
+    }
+  }
+  window.highlightInsumo = highlightInsumo;
 
   function render() {
     cont.textContent = '';
@@ -51,6 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const tbody = document.createElement('tbody');
     data.forEach(item => {
       const tr = document.createElement('tr');
+      tr.setAttribute('data-id', item.id);
       [item.id, item.nombre, item.descripcion, item.especificaciones].forEach(v => {
         const td = document.createElement('td');
         td.textContent = v || '';
@@ -63,4 +118,22 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   render();
+  buildFuse();
+
+  if (searchInput) {
+    searchInput.addEventListener('input', applyFilter);
+  }
+  if (clearBtn) {
+    clearBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      applyFilter();
+    });
+  }
+
+  const stored = sessionStorage.getItem('insumoQuery');
+  if (stored) {
+    if (searchInput) searchInput.value = stored;
+    applyFilter();
+    highlightInsumo(stored);
+  }
 });
