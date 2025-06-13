@@ -1,39 +1,51 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // Solo administradores pueden editar
   if (sessionStorage.getItem('isAdmin') !== 'true') {
     alert('Debe iniciar sesión para editar');
     location.href = 'login.html';
     return;
   }
 
-  const subsDiv = document.getElementById('availableSubs');
-  const insDiv = document.getElementById('availableIns');
-  const subContainer = document.getElementById('subInputContainer');
-  const addSubBtn = document.getElementById('addSubRow');
-  const treePreview = document.getElementById('treePreview');
-  const selectedList = document.getElementById('selectedList');
+  // Referencias al DOM
+  const subsDiv        = document.getElementById('availableSubs');
+  const insDiv         = document.getElementById('availableIns');
+  const subContainer   = document.getElementById('subInputContainer');
+  const addSubBtn      = document.getElementById('addSubRow');
+  const treePreview    = document.getElementById('treePreview');
+  const selectedList   = document.getElementById('selectedList');
   let selected = [];
 
+  // Renderiza botones de subensambles e insumos disponibles
   function renderLists() {
     if (!window.SinopticoEditor || !SinopticoEditor.getNodes) return;
     const nodes = SinopticoEditor.getNodes();
-    const subs = nodes.filter(n => (n.Tipo || '').toLowerCase() === 'subensamble');
-    const ins = nodes.filter(n => (n.Tipo || '').toLowerCase() === 'insumo');
+    const subs  = nodes.filter(n => (n.Tipo || '').toLowerCase() === 'subensamble');
+    const ins   = nodes.filter(n => (n.Tipo || '').toLowerCase() === 'insumo');
     subsDiv.innerHTML = '';
-    insDiv.innerHTML = '';
+    insDiv.innerHTML  = '';
     subs.forEach(s => {
       const btn = document.createElement('button');
       btn.textContent = `${s['Descripción'] || ''} - ${s['Código'] || ''}`;
-      btn.addEventListener('click', () => addItem({ ID: s.ID, Tipo: s.Tipo, Descripción: s['Descripción'], Código: s['Código'] }));
+      btn.addEventListener('click', () => addItem({
+        ID: s.ID, Tipo: s.Tipo,
+        Descripción: s['Descripción'],
+        Código: s['Código']
+      }));
       subsDiv.appendChild(btn);
     });
     ins.forEach(i => {
       const btn = document.createElement('button');
       btn.textContent = `${i['Descripción'] || ''} - ${i['Código'] || ''}`;
-      btn.addEventListener('click', () => addItem({ ID: i.ID, Tipo: i.Tipo, Descripción: i['Descripción'], Código: i['Código'] }));
+      btn.addEventListener('click', () => addItem({
+        ID: i.ID, Tipo: i.Tipo,
+        Descripción: i['Descripción'],
+        Código: i['Código']
+      }));
       insDiv.appendChild(btn);
     });
   }
 
+  // Renderiza la lista de elementos seleccionados
   function renderSelected() {
     selectedList.innerHTML = '';
     selected.forEach((item, idx) => {
@@ -41,18 +53,23 @@ document.addEventListener('DOMContentLoaded', () => {
       li.textContent = `${item.Descripción || ''} - ${item.Código || ''}`;
       const rm = document.createElement('button');
       rm.textContent = '×';
-      rm.addEventListener('click', () => { selected.splice(idx, 1); renderSelected(); });
+      rm.addEventListener('click', () => {
+        selected.splice(idx, 1);
+        renderSelected();
+      });
       li.appendChild(rm);
       selectedList.appendChild(li);
     });
     renderPreview();
   }
 
+  // Añade un ítem (existente o nuevo) a la selección
   function addItem(item) {
     selected.push(item);
     renderSelected();
   }
 
+  // Crea una nueva fila inline para agregar subensamble manual
   function addSubRow() {
     if (!subContainer) return;
     const row = document.createElement('div');
@@ -65,37 +82,50 @@ document.addEventListener('DOMContentLoaded', () => {
       row.remove();
       renderPreview();
     });
-    row.querySelectorAll('input').forEach(inp => inp.addEventListener('input', renderPreview));
+    row.querySelectorAll('input').forEach(inp =>
+      inp.addEventListener('input', renderPreview)
+    );
     subContainer.appendChild(row);
   }
 
+  // Recoge datos de las filas de subensamble manual
   function getSubRowsData() {
     if (!subContainer) return [];
-    return Array.from(subContainer.querySelectorAll('.new-sub-row')).map(r => {
-      const desc = r.querySelector('.new-sub-desc').value.trim();
-      const code = r.querySelector('.new-sub-code').value.trim();
-      if (!desc) return null;
-      return { Tipo: 'Subensamble', Descripción: desc, Código: code };
-    }).filter(Boolean);
+    return Array.from(subContainer.querySelectorAll('.new-sub-row'))
+      .map(r => {
+        const desc = r.querySelector('.new-sub-desc').value.trim();
+        const code = r.querySelector('.new-sub-code').value.trim();
+        if (!desc) return null;
+        return { Tipo: 'Subensamble', Descripción: desc, Código: code };
+      })
+      .filter(Boolean);
   }
 
+  // Construye recursivamente un nodo existente desde el mapa
   function buildNodeFromExisting(id, map) {
     const n = map[id];
     if (!n) return null;
-    const children = Object.values(map).filter(ch => ch.ParentID === id).map(ch => buildNodeFromExisting(ch.ID, map)).filter(Boolean);
+    const children = Object.values(map)
+      .filter(ch => ch.ParentID === id)
+      .map(ch => buildNodeFromExisting(ch.ID, map))
+      .filter(Boolean);
     return { Descripción: n['Descripción'], Código: n['Código'], children };
   }
 
+  // Renderiza la vista previa del árbol completo
   function renderPreview() {
     if (!treePreview) return;
     const desc = document.getElementById('builderDesc').value.trim();
     if (!desc) { treePreview.innerHTML = ''; return; }
     const code = document.getElementById('builderCode').value.trim();
     const root = { Descripción: desc, Código: code, children: [] };
-    const nodes = window.SinopticoEditor && SinopticoEditor.getNodes ? SinopticoEditor.getNodes() : [];
+
+    // Mapa de nodos existentes
+    const nodes = window.SinopticoEditor?.getNodes?.() || [];
     const map = {};
     nodes.forEach(n => { map[n.ID] = n; });
 
+    // Agrega ítems seleccionados
     selected.forEach(it => {
       if (it.ID) {
         const sub = buildNodeFromExisting(it.ID, map);
@@ -105,8 +135,10 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
+    // Agrega subensambles manuales
     getSubRowsData().forEach(it => root.children.push(it));
 
+    // Dibuja el árbol
     treePreview.innerHTML = '';
     const ul = document.createElement('ul');
     ul.className = 'tree-list';
@@ -114,13 +146,14 @@ document.addEventListener('DOMContentLoaded', () => {
     treePreview.appendChild(ul);
   }
 
+  // Renderiza un nodo (y recursivamente sus hijos)
   function renderItem(node) {
     const li = document.createElement('li');
     const div = document.createElement('div');
     div.className = 'tree-node';
     div.textContent = node.Descripción + (node.Código ? ` - ${node.Código}` : '');
     li.appendChild(div);
-    if (node.children && node.children.length) {
+    if (node.children?.length) {
       const ul = document.createElement('ul');
       ul.className = 'tree-list';
       node.children.forEach(ch => ul.appendChild(renderItem(ch)));
@@ -129,28 +162,38 @@ document.addEventListener('DOMContentLoaded', () => {
     return li;
   }
 
+  // Guardar producto final junto con hijos
   document.getElementById('saveProduct').addEventListener('click', () => {
     const desc = document.getElementById('builderDesc').value.trim();
     const code = document.getElementById('builderCode').value.trim();
     if (!desc) return;
     const children = selected.concat(getSubRowsData());
-    SinopticoEditor.addNode({ Tipo: 'Pieza final', Descripción: desc, Código: code }, children);
+    SinopticoEditor.addNode(
+      { Tipo: 'Pieza final', Descripción: desc, Código: code },
+      children
+    );
+    // Reset estado
     selected = [];
     document.getElementById('builderDesc').value = '';
     document.getElementById('builderCode').value = '';
-    if (subContainer) subContainer.innerHTML = '';
+    subContainer.innerHTML = '';
     renderSelected();
     renderPreview();
     alert('Producto creado');
   });
 
+  // Event listeners adicionales
   if (addSubBtn) addSubBtn.addEventListener('click', addSubRow);
+  document.getElementById('builderDesc')
+    .addEventListener('input', renderPreview);
+  document.getElementById('builderCode')
+    .addEventListener('input', renderPreview);
 
-  document.getElementById('builderDesc').addEventListener('input', renderPreview);
-  document.getElementById('builderCode').addEventListener('input', renderPreview);
-
-  document.addEventListener('sinoptico-mode', () => { renderLists(); renderPreview(); });
+  // Suscripción a eventos del sinóptico
+  document.addEventListener('sinoptico-mode',         () => { renderLists(); renderPreview(); });
+  document.addEventListener('sinoptico-loaded',       () => { renderLists(); renderPreview(); });
   document.addEventListener('sinoptico-data-changed', () => { renderLists(); renderPreview(); });
+  // Fallback por si algún evento no llega
   setTimeout(() => { renderLists(); renderPreview(); }, 300);
 });
 

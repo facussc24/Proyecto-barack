@@ -691,6 +691,9 @@
         if (sinopticoElem) {
           procesarDatos(sinopticoData, expandedIds);
         }
+        Promise.resolve().then(() => {
+          document.dispatchEvent(new CustomEvent('sinoptico-loaded'));
+        });
       }
 
       // Llamo inmediatamente a loadData()
