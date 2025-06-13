@@ -28,7 +28,16 @@ document.addEventListener('DOMContentLoaded', () => {
       data = [];
     }
   } else {
-    data = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      data = raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      console.error('Invalid insumosData in storage', e);
+      data = [];
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      } catch {}
+    }
   }
 
   let fuse = null;

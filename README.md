@@ -14,6 +14,8 @@ Open http://localhost:8000/index.html in a modern browser. All data, including t
 
 All data—including the sinóptico—is stored only in your browser and will not sync across devices. Clearing your browser's storage or visiting the site under a different domain will start you with an empty dataset.
 
+For long-term storage create a folder outside the repository, for example `Datos-Nunca borrar`, and export the JSON there using the **Exportar datos** button on the home page. Add that folder to `.gitignore` so Git does not commit it. When updating the project you can reimport the file with **Importar datos**.
+
 ## GitHub Pages
 
 To host the page publicly you can enable **GitHub Pages**:
@@ -63,7 +65,7 @@ no external dependencies. All header fields and the list of processes persist in
 - **Editing modes** – once logged in you can edit the master list and the sinóptico using their respective **Editar** buttons. The product view is maintained through the interface at `admin_menu.html`.
 - **Excel export** – visible rows can be saved as `sinoptico.xlsx`. The file
   downloads to your browser's default folder.
-- **JSON export/import** – use **Export JSON** to save the hierarchy and **Import JSON** to load a previously saved `.json` file.
+- **JSON export/import** – the **Exportar datos** and **Importar datos** buttons on the home page let you save or restore the hierarchy from a `.json` file.
 - **Dynamic categories** – the master list starts empty and new document sections appear automatically when items are added.
 - **Client grouping** – rows with a value in the `Cliente` column are grouped under that client in the product tree.
 - **Smooth animations** – buttons and rows fade and scale for a more polished experience.

@@ -779,7 +779,16 @@
           }
         } else {
           stored = localStorage.getItem('sinopticoData');
-          sinopticoData = stored ? JSON.parse(stored) : generarDatosIniciales();
+          if (stored) {
+            try {
+              sinopticoData = JSON.parse(stored);
+            } catch (e) {
+              console.error('Invalid sinopticoData in storage', e);
+              sinopticoData = generarDatosIniciales();
+            }
+          } else {
+            sinopticoData = generarDatosIniciales();
+          }
         }
 
         if (typeof localStorage !== 'undefined') {
