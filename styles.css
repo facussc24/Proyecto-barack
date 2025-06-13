@@ -934,6 +934,11 @@ select {
 .admin-row {
   display: flex;
   gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.admin-row input {
+  flex: 1;
 }
 .login-form input,
 .admin-panel input {
