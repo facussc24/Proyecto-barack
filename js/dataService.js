@@ -23,6 +23,20 @@ if (Dexie) {
     // use string "id" as primary key
     sinoptico: 'id,parentId,nombre,orden',
   });
+  // migrate existing records that used numeric primary keys
+  db.open().then(async () => {
+    const all = await db.sinoptico.toArray();
+    const needsFix = all.filter(r => typeof r.id !== 'string' || r.id !== r.ID);
+    if (needsFix.length) {
+      await db.transaction('rw', db.sinoptico, async () => {
+        for (const rec of needsFix) {
+          await db.sinoptico.delete(rec.id);
+          const newRec = { ...rec, id: String(rec.ID || rec.id) };
+          await db.sinoptico.add(newRec);
+        }
+      });
+    }
+  }).catch(() => {});
 } else if (hasWindow) {
   // hydrate in-memory storage from localStorage
   try {
@@ -176,6 +190,16 @@ const api = {
   updateNode,
   deleteNode,
   replaceAll,
+  async reset() {
+    if (db) {
+      await db.delete();
+      db = new Dexie('ProyectoBarackDB');
+      db.version(1).stores({ sinoptico: 'id,parentId,nombre,orden' });
+    }
+    memory.length = 0;
+    _fallbackPersist();
+    notifyChange();
+  },
   subscribeToChanges,
 };
 
