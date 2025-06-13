@@ -129,4 +129,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   load();
   render();
+
+  window.addEventListener('storage', e => {
+    if (e.key === STORAGE_KEY) {
+      load();
+      render();
+    }
+  });
 });
