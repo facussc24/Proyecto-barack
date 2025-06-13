@@ -1,6 +1,7 @@
 # Proyecto-barack
 
 This project displays a hierarchical product table built with plain HTML, CSS and JavaScript.
+These pages are completely static. You can serve them locally with Python's built‑in HTTP server or host them on GitHub Pages.
 
 ## Quick start
 
@@ -16,20 +17,6 @@ files directly (for example using the `file://` protocol) disables several
 features because the pages rely on `localStorage` and other browser APIs that
 only work over HTTP.
 
-## Launching the site
-
-Because some browsers block local file reads, serve the folder from any static web server. For quick testing you can run:
-
-```bash
-python3 -m http.server
-```
-
-Open http://localhost:8000/index.html in a modern browser. All data is stored locally. The sinóptico uses IndexedDB via Dexie (falling back to `localStorage` if needed) while the AMFE tables continue to rely on `localStorage`.
-
-All data is kept only in your browser and will not sync across devices, but open tabs share updates through a BroadcastChannel.
-
-Previous versions allowed saving JSON files directly when running the page under Node or Electron. That capability has been removed; the site now persists data in IndexedDB with a `localStorage` fallback.
-
 ## GitHub Pages
 
 To host the page publicly you can enable **GitHub Pages**:
@@ -39,11 +26,9 @@ To host the page publicly you can enable **GitHub Pages**:
 3. After a minute or so the site will be available at
    `https://<user>.github.io/<repo>/`.
 
-A workflow defined in `.github/workflows/deploy.yml` publishes the site
-whenever changes are pushed to the `main` branch. The job installs
-dependencies with `npm ci`, runs `npm run build` if present and deploys the
-contents of either `dist/` or `public/` to the `gh-pages` branch using
-`peaceiris/actions-gh-pages`.
+A workflow defined in `.github/workflows/deploy.yml` publishes the repository
+root to the `gh-pages` branch whenever changes reach `main`. The job only
+installs Node dependencies needed for the test suite—there is no build step.
 
 `localStorage` is tied to each domain. Data saved while using
 `http://localhost` will not appear when visiting the GitHub Pages URL and
