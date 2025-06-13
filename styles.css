@@ -711,6 +711,11 @@ header {
   max-width: 250px;
   height: auto;
 }
+body:not(.dark-mode) .logo {
+  background-color: var(--color-primary);
+  padding: 4px;
+  border-radius: 4px;
+}
 
 .hero {
   min-height: 85vh;
