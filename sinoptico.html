@@ -21,20 +21,6 @@
     <button id="toggleTheme">🌙</button>
   </nav>
   <h1>Sinóptico de Producto Barack</h1>
-  <div id="sinopticoAdmin" class="sinoptico-admin hidden">
-    <select id="newParent"></select>
-    <select id="newTipo">
-      <option value="Producto">Producto</option>
-      <option value="Subensamble">Subensamble</option>
-      <option value="Insumo">Insumo</option>
-      <option value="Cliente">Cliente</option>
-    </select>
-    <input type="text" id="newSecuencia" placeholder="Secuencia" />
-    <input type="text" id="newDesc" placeholder="Descripción" />
-    <button id="addRow">Agregar</button>
-    <select id="deleteNode"></select>
-    <button id="deleteTree">Eliminar</button>
-  </div>
   <div id="mensaje"></div>
 
   <!-- ==============================
@@ -128,6 +114,7 @@
   <script src="auth.js"></script>
   <script src="theme.js" defer></script>
   <script src="smooth-nav.js" defer></script>
+  <script>sessionStorage.setItem('sinopticoEdit','false');</script>
   <script src="renderer.js" defer></script>
 </body>
 </html>
