@@ -52,20 +52,19 @@
       const logoutBtn = document.getElementById('logoutBtn');
       const backHomeBtn = document.getElementById('backHome');
       auth.restoreSession();
-      if (sessionStorage.getItem('isAdmin') === 'true') {
-        location.href = 'index.html';
-        return;
-      }
       function updatePanel() {
-        panel.style.display = sessionStorage.getItem('isAdmin') === 'true' ? 'block' : 'none';
+        const isAdmin = sessionStorage.getItem('isAdmin') === 'true';
+        panel.style.display = isAdmin ? 'block' : 'none';
+        form.style.display = isAdmin ? 'none' : 'flex';
       }
+      updatePanel();
       form.addEventListener('submit', e => {
         e.preventDefault();
         const u = document.getElementById('username').value.trim();
         const p = document.getElementById('password').value.trim();
         const remember = document.getElementById('rememberMe').checked;
         if (auth.login(u, p, remember)) {
-          location.href = 'index.html';
+          updatePanel();
         } else {
           alert('Credenciales inválidas');
         }
