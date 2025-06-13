@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crear elemento</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav class="main-nav">
+    <a href="index.html">Inicio</a>
+    <a href="sinoptico.html">Sinóptico</a>
+    <a href="sinoptico_edit.html">Editar sinóptico</a>
+    <button id="toggleTheme">🌙</button>
+  </nav>
+  <h1>Crear elemento del sinóptico</h1>
+  <div id="mensaje"></div>
+  <div class="editor-container">
+    <label for="levelSelect">Tipo de elemento</label>
+    <select id="levelSelect">
+      <option value="">Seleccione</option>
+      <option value="Cliente">Cliente</option>
+      <option value="Producto">Producto</option>
+      <option value="Subproducto">Subproducto</option>
+      <option value="Insumo">Insumo</option>
+    </select>
+  </div>
+  <form id="clientForm" class="node-form hidden">
+    <h2>Nuevo cliente</h2>
+    <input type="text" id="clientDesc" placeholder="Nombre" required>
+    <div class="form-actions">
+      <button type="submit">Guardar</button>
+      <button type="button" class="cancelBtn">Cancelar</button>
+    </div>
+  </form>
+  <form id="productForm" class="node-form hidden">
+    <h2>Nuevo producto</h2>
+    <select id="prodClient"></select>
+    <input type="text" id="prodDesc" placeholder="Descripción" required>
+    <div class="form-actions">
+      <button type="submit">Guardar</button>
+      <button type="button" class="cancelBtn">Cancelar</button>
+    </div>
+  </form>
+  <form id="subForm" class="node-form hidden">
+    <h2>Nuevo subproducto</h2>
+    <select id="subParent"></select>
+    <input type="text" id="subDesc" placeholder="Descripción" required>
+    <div class="form-actions">
+      <button type="submit">Guardar</button>
+      <button type="button" id="addChildSub">Agregar subproducto hijo</button>
+      <button type="button" id="addChildIns">Agregar insumo</button>
+      <button type="button" class="cancelBtn">Cancelar</button>
+    </div>
+    <div id="childContainer"></div>
+  </form>
+  <form id="insForm" class="node-form hidden">
+    <h2>Nuevo insumo</h2>
+    <select id="insParent"></select>
+    <input type="text" id="insDesc" placeholder="Descripción" required>
+    <input type="text" id="insCode" placeholder="Código">
+    <div class="form-actions">
+      <button type="submit">Guardar</button>
+      <button type="button" class="cancelBtn">Cancelar</button>
+    </div>
+  </form>
+  <a href="sinoptico_edit.html" class="home-button">Volver al listado</a>
+  <script src="auth.js"></script>
+  <script src="theme.js" defer></script>
+  <script src="renderer.js"></script>
+  <script src="sinoptico-create.js"></script>
+</body>
+</html>

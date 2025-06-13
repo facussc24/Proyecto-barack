@@ -969,6 +969,11 @@ select {
   background-color: var(--color-primary-hover);
 }
 
+.form-actions {
+  display: flex;
+  gap: 8px;
+}
+
 .editor-menu {
   width: 95%;
   margin: 20px auto;
