@@ -243,7 +243,16 @@
     save();
     fetch('/api/amfe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
       .then(r=>{ if(!r.ok) throw new Error(); })
-      .then(()=>showToast('AMFE guardado correctamente'))
+      .then(()=>{
+        showToast('AMFE guardado correctamente');
+        const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+        const url=URL.createObjectURL(blob);
+        const a=document.createElement('a');
+        a.href=url;
+        a.download='amfe.json';
+        a.click();
+        URL.revokeObjectURL(url);
+      })
       .catch(()=>alert('Error al guardar AMFE'));
   });
 
