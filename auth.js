@@ -122,7 +122,15 @@
     return true;
   }
 
-  const api = { login, logout, createUser, changePassword, setRole, loadUsers, restoreSession, hash };
+  function deleteUser(username){
+    const idx = users.findIndex(u => u.username === username);
+    if (idx === -1) return false;
+    users.splice(idx, 1);
+    saveUsers(users);
+    return true;
+  }
+
+  const api = { login, logout, createUser, changePassword, setRole, deleteUser, loadUsers, restoreSession, hash };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   global.auth = api;
 })(typeof globalThis !== 'undefined' ? globalThis : window);
