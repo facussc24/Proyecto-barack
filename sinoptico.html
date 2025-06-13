@@ -113,11 +113,11 @@
   </div>
   <a href="welcome.html" class="home-button">Inicio</a>
 
-  <script src="https://cdn.jsdelivr.net/npm/dexie@4/dist/dexie.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dexie@4/dist/dexie.min.js" onerror="this.onerror=null;this.src='vendor/dexie.min.js'"></script>
   <script type="importmap">
   {
     "imports": {
-      "dexie": "https://cdn.jsdelivr.net/npm/dexie@4/dist/modern/dexie.mjs"
+      "dexie": "./vendor/dexie.min.mjs"
     }
   }
   </script>
