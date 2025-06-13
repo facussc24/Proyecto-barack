@@ -37,6 +37,7 @@
         <button id="changePassword">Cambiar</button>
       </div>
       <button id="logoutBtn">Cerrar sesión</button>
+      <button id="backHome" type="button">Volver al inicio</button>
     </div>
   </div>
 
@@ -49,6 +50,7 @@
       const form = document.getElementById('loginForm');
       const panel = document.getElementById('adminPanel');
       const logoutBtn = document.getElementById('logoutBtn');
+      const backHomeBtn = document.getElementById('backHome');
       auth.restoreSession();
       if (sessionStorage.getItem('isAdmin') === 'true') {
         location.href = 'index.html';
@@ -91,6 +93,9 @@
       logoutBtn.addEventListener('click', () => {
         auth.logout();
         updatePanel();
+      });
+      backHomeBtn.addEventListener('click', () => {
+        location.href = 'index.html';
       });
       updatePanel();
     });
