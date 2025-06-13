@@ -185,7 +185,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Guardar producto final junto con hijos
-  document.getElementById('saveProduct').addEventListener('click', () => {
+  const saveBtn = document.getElementById('saveProduct');
+  if (saveBtn) saveBtn.addEventListener('click', () => {
     const desc = document.getElementById('builderDesc').value.trim();
     const code = document.getElementById('builderCode').value.trim();
     if (!desc) return;
@@ -206,10 +207,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Event listeners adicionales
   if (addSubBtn) addSubBtn.addEventListener('click', addSubRow);
-  document.getElementById('builderDesc')
-    .addEventListener('input', renderPreview);
-  document.getElementById('builderCode')
-    .addEventListener('input', renderPreview);
+  const builderDesc = document.getElementById('builderDesc');
+  if (builderDesc) builderDesc.addEventListener('input', renderPreview);
+  const builderCode = document.getElementById('builderCode');
+  if (builderCode) builderCode.addEventListener('input', renderPreview);
 
   // Suscripción a eventos del sinóptico
   document.addEventListener('sinoptico-mode',         () => { renderLists(); renderPreview(); });

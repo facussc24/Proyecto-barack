@@ -27,6 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const insDescInput = document.getElementById('insDesc');
   const insCodeInput = document.getElementById('insCode');
   const prodCodeInput = document.getElementById('prodCode');
+  const addChildSubBtn = document.getElementById('addChildSub');
+  const addChildInsBtn = document.getElementById('addChildIns');
 
   let subFuse = null;
   let insFuse = null;
@@ -64,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (pid) insParent.value = pid;
   }
 
-  level.addEventListener('change', () => {
+  if (level) level.addEventListener('change', () => {
     hideAll();
     switch (level.value) {
       case 'Cliente':
@@ -185,7 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
     () => { selectedInsId = null; }
   );
 
-  clientForm.addEventListener('submit', e => {
+  if (clientForm) clientForm.addEventListener('submit', e => {
     e.preventDefault();
     const desc = document.getElementById('clientDesc').value.trim();
     if (!desc) return;
@@ -196,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
     level.value = '';
   });
 
-  productForm.addEventListener('submit', e => {
+  if (productForm) productForm.addEventListener('submit', e => {
     e.preventDefault();
     const parent = prodClient.value;
     const desc = document.getElementById('prodDesc').value.trim();
@@ -223,7 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let lastSubId = null;
 
-  subForm.addEventListener('submit', e => {
+  if (subForm) subForm.addEventListener('submit', e => {
     e.preventDefault();
     const parent = subParent.value;
     const desc = subDescInput.value.trim();
@@ -243,7 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
     fillOptions();
   });
 
-  insForm.addEventListener('submit', e => {
+  if (insForm) insForm.addEventListener('submit', e => {
     e.preventDefault();
     const parent = insParent.value;
     const desc = insDescInput.value.trim();
@@ -263,15 +265,19 @@ document.addEventListener('DOMContentLoaded', () => {
     fillOptions();
   });
 
-  document.getElementById('addChildSub').addEventListener('click', () => {
-    if (!lastSubId) return;
-    createSubChildForm(lastSubId);
-  });
+  if (addChildSubBtn) {
+    addChildSubBtn.addEventListener('click', () => {
+      if (!lastSubId) return;
+      createSubChildForm(lastSubId);
+    });
+  }
 
-  document.getElementById('addChildIns').addEventListener('click', () => {
-    if (!lastSubId) return;
-    createInsChildForm(lastSubId);
-  });
+  if (addChildInsBtn) {
+    addChildInsBtn.addEventListener('click', () => {
+      if (!lastSubId) return;
+      createInsChildForm(lastSubId);
+    });
+  }
 
   function createSubChildForm(pid) {
     const form = document.createElement('form');

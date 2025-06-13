@@ -37,17 +37,24 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+
   const sClient = document.getElementById('searchClient');
   const rClient = document.getElementById('resultsClient');
-  sClient.addEventListener('input', () => buildList(rClient, search('cliente', sClient.value)));
+  if (sClient) sClient.addEventListener('input', () =>
+    buildList(rClient, search('cliente', sClient.value))
+  );
 
   const sProd = document.getElementById('searchProduct');
   const rProd = document.getElementById('resultsProduct');
-  sProd.addEventListener('input', () => buildList(rProd, search('producto', sProd.value)));
+  if (sProd) sProd.addEventListener('input', () =>
+    buildList(rProd, search('producto', sProd.value))
+  );
 
   const sIns = document.getElementById('searchInsumo');
   const rIns = document.getElementById('resultsInsumo');
-  sIns.addEventListener('input', () => buildList(rIns, search('insumo', sIns.value)));
+  if (sIns) sIns.addEventListener('input', () =>
+    buildList(rIns, search('insumo', sIns.value))
+  );
 
   document.dispatchEvent(new Event('sinoptico-mode'));
   document.addEventListener('sinoptico-loaded', () => {

@@ -185,7 +185,8 @@ document.addEventListener('DOMContentLoaded', () => {
     return card;
   }
 
-  document.getElementById('toStep2').addEventListener('click', () => {
+  const toStep2Btn = document.getElementById('toStep2');
+  if (toStep2Btn) toStep2Btn.addEventListener('click', () => {
     const desc = document.getElementById('prodDesc').value.trim();
     if (!desc) {
       document.getElementById('prodDesc').style.border = '1px solid red';
@@ -240,7 +241,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
 
-  saveBtn.addEventListener('click', () => {
+  if (saveBtn) saveBtn.addEventListener('click', () => {
     updateSummary();
     function serialize(node, tipo) {
       const obj = { Tipo: tipo, Descripción: node.descripcion, Código: node.codigo };
