@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const clientSelect = document.getElementById('prodClient');
   const clientLabel = document.getElementById('clientInfo');
 
-  const root = { descripcion: '', codigo: '', subproductos: [] };
+  const root = { descripcion: '', codigo: '', subproductos: [], insumos: [] };
 
   fillClientOptions();
 
@@ -76,37 +76,38 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.textContent = '+';
       div.appendChild(btn);
       btn.addEventListener('click', () => {
-        addInlineForm(div, (d,c) => {
-          const ins = { descripcion: d, codigo: c };
-          node.insumos = node.insumos || [];
-          node.insumos.push(ins);
-          updateSummary();
-          showToast('Insumo agregado');
+        addChildForm(div, (type,d,c) => {
+          if (type === 'sub') {
+            const child = { descripcion: d, codigo: c, subproductos: [], insumos: [] };
+            node.subproductos = node.subproductos || [];
+            node.subproductos.push(child);
+            updateSummary();
+          } else {
+            const ins = { descripcion: d, codigo: c };
+            node.insumos = node.insumos || [];
+            node.insumos.push(ins);
+            updateSummary();
+          }
+          showToast('Elemento agregado');
         });
       });
     }
     li.appendChild(div);
-    if (node.subproductos && node.subproductos.length) {
+    if ((node.subproductos && node.subproductos.length) || (node.insumos && node.insumos.length)) {
       const ul = document.createElement('ul');
       ul.className = 'tree-list';
-      node.subproductos.forEach(sp => {
-        const liSp = renderNode(sp, true);
-        if (sp.insumos && sp.insumos.length) {
-          const ulIns = document.createElement('ul');
-          ulIns.className = 'tree-list';
-          sp.insumos.forEach(ins => ulIns.appendChild(renderNode(ins)));
-          liSp.appendChild(ulIns);
-        }
-        ul.appendChild(liSp);
-      });
+      (node.subproductos || []).forEach(sp => ul.appendChild(renderNode(sp, true)));
+      (node.insumos || []).forEach(ins => ul.appendChild(renderNode(ins)));
       li.appendChild(ul);
     }
     return li;
   }
 
-  function addInlineForm(parentEl, callback) {
+  function addChildForm(parentEl, callback) {
     const form = document.createElement('div');
     form.className = 'inline-form';
+    const typeSel = document.createElement('select');
+    typeSel.innerHTML = '<option value="sub">Subproducto</option><option value="ins">Insumo</option>';
     const desc = document.createElement('input');
     desc.placeholder = 'Descripción';
     const code = document.createElement('input');
@@ -116,7 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const cancel = document.createElement('button');
     cancel.textContent = '✖';
     cancel.className = 'cancel';
-    form.append(desc, code, ok, cancel);
+    form.append(typeSel, desc, code, ok, cancel);
     parentEl.appendChild(form);
 
     ok.addEventListener('click', () => {
@@ -124,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
         desc.style.border = '1px solid red';
         return;
       }
-      callback(desc.value.trim(), code.value.trim());
+      callback(typeSel.value, desc.value.trim(), code.value.trim());
       form.remove();
     });
     cancel.addEventListener('click', () => {
@@ -141,23 +142,39 @@ document.addEventListener('DOMContentLoaded', () => {
     card.appendChild(title);
     const addBtn = document.createElement('button');
     addBtn.className = 'add-btn';
-    addBtn.title = '+ Insumo';
+    addBtn.title = 'Agregar';
     addBtn.textContent = '+';
     card.appendChild(addBtn);
     const children = document.createElement('div');
     children.className = 'children';
     card.appendChild(children);
 
+    function renderChildren() {
+      children.innerHTML = '';
+      (sub.subproductos || []).forEach(sp => children.appendChild(createSubCard(sp)));
+      (sub.insumos || []).forEach(ins => children.appendChild(createInsumoCard(ins)));
+    }
+
     addBtn.addEventListener('click', () => {
-      addInlineForm(card, (d,c) => {
-        const ins = { descripcion: d, codigo: c };
-        sub.insumos.push(ins);
-        children.appendChild(createInsumoCard(ins));
+      addChildForm(card, (type,d,c) => {
+        if (type === 'sub') {
+          const child = { descripcion: d, codigo: c, subproductos: [], insumos: [] };
+          sub.subproductos = sub.subproductos || [];
+          sub.subproductos.push(child);
+          renderChildren();
+          showToast('Subproducto agregado');
+        } else {
+          const ins = { descripcion: d, codigo: c };
+          sub.insumos = sub.insumos || [];
+          sub.insumos.push(ins);
+          renderChildren();
+          showToast('Insumo agregado');
+        }
         updateSummary();
-        showToast('Insumo agregado');
       });
     });
 
+    renderChildren();
     return card;
   }
 
@@ -190,22 +207,36 @@ document.addEventListener('DOMContentLoaded', () => {
     productCard.textContent = desc + (root.codigo ? ` - ${root.codigo}` : '');
     const addBtn = document.createElement('button');
     addBtn.className = 'add-btn';
-    addBtn.title = '+ Subproducto';
+    addBtn.title = 'Agregar';
     addBtn.textContent = '+';
     productCard.appendChild(addBtn);
     const children = document.createElement('div');
     children.className = 'children';
     productCard.appendChild(children);
+    function renderChildren() {
+      children.innerHTML = '';
+      root.subproductos.forEach(sp => children.appendChild(createSubCard(sp)));
+      root.insumos.forEach(ins => children.appendChild(createInsumoCard(ins)));
+    }
+
     addBtn.addEventListener('click', () => {
-      addInlineForm(productCard, (d,c) => {
-        const sub = { descripcion: d, codigo: c, insumos: [] };
-        root.subproductos.push(sub);
-        const subCard = createSubCard(sub);
-        children.appendChild(subCard);
+      addChildForm(productCard, (type,d,c) => {
+        if (type === 'sub') {
+          const sub = { descripcion: d, codigo: c, subproductos: [], insumos: [] };
+          root.subproductos.push(sub);
+          renderChildren();
+          showToast('Subproducto creado');
+        } else {
+          const ins = { descripcion: d, codigo: c };
+          root.insumos.push(ins);
+          renderChildren();
+          showToast('Insumo agregado');
+        }
         updateSummary();
-        showToast('Subproducto creado');
       });
     });
+
+    renderChildren();
     updateProgress(2);
   });
 
@@ -216,21 +247,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   saveBtn.addEventListener('click', () => {
     updateSummary();
-    const data = {
-      Tipo: 'Pieza final',
-      Descripción: root.descripcion,
-      Código: root.codigo,
-      children: root.subproductos.map(sp => ({
-        Tipo: 'Subensamble',
-        Descripción: sp.descripcion,
-        Código: sp.codigo,
-        children: (sp.insumos || []).map(ins => ({
-          Tipo: 'Insumo',
-          Descripción: ins.descripcion,
-          Código: ins.codigo
-        }))
-      }))
-    };
+    function serialize(node, tipo) {
+      const obj = { Tipo: tipo, Descripción: node.descripcion, Código: node.codigo };
+      const children = [];
+      (node.subproductos || []).forEach(sp => children.push(serialize(sp, 'Subensamble')));
+      (node.insumos || []).forEach(ins => children.push({ Tipo: 'Insumo', Descripción: ins.descripcion, Código: ins.codigo }));
+      if (children.length) obj.children = children;
+      return obj;
+    }
+
+    const data = serialize(root, 'Pieza final');
     if (window.SinopticoEditor && SinopticoEditor.addNode) {
       const parentId = clientSelect ? clientSelect.value : '';
       SinopticoEditor.addNode({
@@ -243,6 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
       root.descripcion = '';
       root.codigo = '';
       root.subproductos = [];
+      root.insumos = [];
       document.getElementById('prodDesc').value = '';
       document.getElementById('prodCode').value = '';
       productCard.innerHTML = '';
