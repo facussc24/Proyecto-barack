@@ -16,7 +16,7 @@ Open http://localhost:8000/index.html in a modern browser. All data, including t
 
 Use the **Log in** link or open `login.html` directly to access the sign‑in page. The project includes four default accounts: **PAULO**, **LEO**, **FACUNDO** and **PABLO**, all with password `1234`. After logging in an admin panel becomes visible where you can create new users or update existing passwords.
 
-Account information is stored in the browser's `localStorage`. Clear the `users` entry to reset all accounts.
+Account information is now stored as SHA‑256 hashes in the browser's `localStorage`. Tick **Recordarme** on the login form to keep the session between visits. Clear the `users` entry to reset all accounts.
 
 Editing the master list and the sinóptico now requires being logged in.
 

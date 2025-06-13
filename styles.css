@@ -950,6 +950,12 @@ select {
   border-radius: 4px;
   cursor: pointer;
 }
+.remember-row {
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
 .login-form button:hover,
 .admin-panel button:hover {
   background-color: var(--color-primary-hover);
