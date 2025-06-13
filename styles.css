@@ -18,11 +18,13 @@
 }
 
 body.dark-mode {
-  --color-bg: #111;
+  --color-bg: #121212;
   --color-text: #e0e0e0;
-  --color-primary: #003366; /* tonos más oscuros para encabezados y botones */
-  --color-accent: #005a9c;  /* azul intenso para elementos destacados */
-  --color-surface-dark: #222;
+  --color-primary: #1e88e5;
+  --color-primary-hover: #1565c0;
+  --color-accent: #42a5f5;
+  --color-accent-hover: #2196f3;
+  --color-surface-dark: #1e1e1e;
 }
 
 /* mantener la hero de la página de inicio con sus colores originales */
@@ -52,6 +54,16 @@ body {
   padding: 60px 0 0 0;
   background-color: var(--color-bg);
   color: var(--color-text);
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+body.page-loaded {
+  opacity: 1;
+}
+
+body.fade-out {
+  opacity: 0;
 }
 
 body.home {
@@ -570,6 +582,10 @@ body.dark-mode .fila-oper {
 
 .suggestions-list li:hover {
   background-color: #eee;
+}
+
+body.dark-mode .suggestions-list li:hover {
+  background-color: #333;
 }
 
 .filter-banner {
