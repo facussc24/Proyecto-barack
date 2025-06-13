@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modificar elementos</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav class="main-nav">
+    <a href="index.html">Inicio</a>
+    <a href="sinoptico.html">Sinóptico</a>
+    <a href="sinoptico_edit.html">Editar sinóptico</a>
+    <button id="toggleTheme">🌙</button>
+  </nav>
+  <h1>Modificar detalles</h1>
+  <div id="mensaje"></div>
+  <table id="modTable">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Tipo</th>
+        <th>Descripción</th>
+        <th>Código</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <a href="sinoptico_edit.html" class="home-button">Volver</a>
+  <script src="auth.js"></script>
+  <script src="theme.js" defer></script>
+  <script src="renderer.js"></script>
+  <script src="sinoptico-modify.js"></script>
+</body>
+</html>

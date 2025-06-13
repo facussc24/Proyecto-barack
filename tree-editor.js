@@ -14,4 +14,18 @@ document.addEventListener('DOMContentLoaded', () => {
       location.href = 'sinoptico_crear.html';
     });
   }
+
+  const eliminar = document.getElementById('menuEliminar');
+  if (eliminar) {
+    eliminar.addEventListener('click', () => {
+      location.href = 'sinoptico_eliminar.html';
+    });
+  }
+
+  const modificar = document.getElementById('menuModificar');
+  if (modificar) {
+    modificar.addEventListener('click', () => {
+      location.href = 'sinoptico_modificar.html';
+    });
+  }
 });
