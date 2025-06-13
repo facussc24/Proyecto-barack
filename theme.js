@@ -1,3 +1,4 @@
+'use strict';
 // Toggle dark mode and remember choice
 window.addEventListener('DOMContentLoaded', () => {
   const btn = document.getElementById('toggleTheme');

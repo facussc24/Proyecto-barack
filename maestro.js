@@ -1,3 +1,4 @@
+'use strict';
 document.addEventListener('DOMContentLoaded', () => {
   const maestroContainer = document.getElementById('maestro');
   const nameInput = document.getElementById('docName');

@@ -1,3 +1,4 @@
+'use strict';
 (function(){
   const STORAGE_KEY = 'amfeUltraData';
   const isAdmin = sessionStorage.getItem('isAdmin') === 'true';

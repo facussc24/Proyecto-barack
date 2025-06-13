@@ -1,3 +1,4 @@
+'use strict';
 const root = typeof global !== 'undefined' ? global : globalThis;
 
     document.addEventListener('DOMContentLoaded', () => {

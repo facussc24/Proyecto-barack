@@ -1,3 +1,4 @@
+'use strict';
 (function(global){
   function loadHistory(key){
     if (typeof localStorage === 'undefined') return [];
