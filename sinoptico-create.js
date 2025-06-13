@@ -20,6 +20,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const childContainer = document.getElementById('childContainer');
   const preview = document.getElementById('treePreview');
 
+  let optionsDiv = null;
+
   let addAnotherProduct = false;
   if (addProductBtn) {
     addProductBtn.addEventListener('click', () => {
@@ -28,8 +30,51 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  function createOptionsDiv() {
+    if (optionsDiv) return;
+    optionsDiv = document.createElement('div');
+    optionsDiv.className = 'node-options hidden';
+    optionsDiv.innerHTML = `
+      <button type="button" id="optAddSub">Agregar subproducto</button>
+      <button type="button" id="optAddIns">Agregar insumo</button>
+    `;
+    optionsDiv.addEventListener('click', ev => ev.stopPropagation());
+    document.body.appendChild(optionsDiv);
+  }
+
+  function hideOptions() {
+    if (optionsDiv) optionsDiv.classList.add('hidden');
+  }
+
+  function showOptions(id, anchor) {
+    createOptionsDiv();
+    const rect = anchor.getBoundingClientRect();
+    optionsDiv.style.top = `${rect.bottom + window.scrollY}px`;
+    optionsDiv.style.left = `${rect.left + window.scrollX}px`;
+    optionsDiv.classList.remove('hidden');
+    optionsDiv.querySelector('#optAddSub').onclick = () => {
+      openSubForm(id);
+      hideOptions();
+    };
+    optionsDiv.querySelector('#optAddIns').onclick = () => {
+      openInsForm(id);
+      hideOptions();
+    };
+  }
+
+  document.addEventListener('click', e => {
+    if (optionsDiv && !optionsDiv.contains(e.target)) {
+      hideOptions();
+    }
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') hideOptions();
+  });
+
   function renderTree() {
     if (!preview || !window.SinopticoEditor || !SinopticoEditor.getNodes) return;
+    hideOptions();
     const nodes = SinopticoEditor.getNodes();
     const map = {};
     nodes.forEach(n => (map[n.ID] = Object.assign({ children: [] }, n)));
@@ -48,24 +93,16 @@ document.addEventListener('DOMContentLoaded', () => {
       const li = document.createElement('li');
       const container = document.createElement('div');
       container.className = 'tree-node';
+      container.dataset.id = node.ID;
       const label = document.createElement('span');
       label.textContent = node['Descripción'] || node.ID;
       container.appendChild(label);
 
       if ((node.Tipo || '').toLowerCase() !== 'insumo') {
-        const addSub = document.createElement('button');
-        addSub.textContent = '+S';
-        addSub.className = 'add-child-btn';
-        addSub.title = 'Agregar subproducto';
-        addSub.addEventListener('click', () => openSubForm(node.ID));
-        container.appendChild(addSub);
-
-        const addIns = document.createElement('button');
-        addIns.textContent = '+I';
-        addIns.className = 'add-child-btn';
-        addIns.title = 'Agregar insumo';
-        addIns.addEventListener('click', () => openInsForm(node.ID));
-        container.appendChild(addIns);
+        container.addEventListener('click', ev => {
+          ev.stopPropagation();
+          showOptions(container.dataset.id, container);
+        });
       }
 
       li.appendChild(container);
@@ -80,6 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function hideAll() {
     [clientForm, productForm, subForm, insForm].forEach(f => f.classList.add('hidden'));
+    hideOptions();
   }
 
   function openSubForm(pid) {
@@ -123,6 +161,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.addEventListener('click', () => {
       hideAll();
       level.value = '';
+      hideOptions();
     });
   });
 
@@ -198,6 +237,20 @@ document.addEventListener('DOMContentLoaded', () => {
     renderTree();
     subForm.reset();
     fillOptions();
+    hideOptions();
+  });
+
+  insForm.addEventListener('submit', e => {
+    e.preventDefault();
+    const parent = insParent.value;
+    const desc = document.getElementById('insDesc').value.trim();
+    const code = document.getElementById('insCode').value.trim();
+    if (!desc) return;
+    SinopticoEditor.addNode({ ParentID: parent, Tipo: 'Insumo', Descripción: desc, Código: code });
+    renderTree();
+    insForm.reset();
+    fillOptions();
+    hideOptions();
   });
 
   document.getElementById('addChildSub').addEventListener('click', () => {
@@ -220,13 +273,17 @@ document.addEventListener('DOMContentLoaded', () => {
         <button type="button" class="cancelBtn">Cancelar</button>
       </div>`;
     childContainer.appendChild(form);
-    form.querySelector('.cancelBtn').addEventListener('click', () => form.remove());
+    form.querySelector('.cancelBtn').addEventListener('click', () => {
+      form.remove();
+      hideOptions();
+    });
     form.addEventListener('submit', ev => {
       ev.preventDefault();
       const desc = form.querySelector('input').value.trim();
       if (!desc) return;
       SinopticoEditor.addNode({ ParentID: pid, Tipo: 'Subensamble', Descripción: desc });
       renderTree();
+      fillOptions();
       form.remove();
     });
   }
@@ -242,7 +299,10 @@ document.addEventListener('DOMContentLoaded', () => {
         <button type="button" class="cancelBtn">Cancelar</button>
       </div>`;
     childContainer.appendChild(form);
-    form.querySelector('.cancelBtn').addEventListener('click', () => form.remove());
+    form.querySelector('.cancelBtn').addEventListener('click', () => {
+      form.remove();
+      hideOptions();
+    });
     form.addEventListener('submit', ev => {
       ev.preventDefault();
       const inputs = form.querySelectorAll('input');
@@ -251,6 +311,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!desc) return;
       SinopticoEditor.addNode({ ParentID: pid, Tipo: 'Insumo', Descripción: desc, Código: code });
       renderTree();
+      fillOptions();
       form.remove();
     });
   }

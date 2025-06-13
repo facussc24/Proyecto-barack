@@ -1075,3 +1075,27 @@ select {
 .add-child-btn:hover {
   background-color: var(--color-primary-hover);
 }
+
+.node-options {
+  position: absolute;
+  background-color: var(--color-light);
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  padding: 4px;
+  z-index: 50;
+}
+
+.node-options button {
+  display: block;
+  width: 100%;
+  padding: 4px 8px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.node-options button:hover {
+  background-color: #eee;
+}
