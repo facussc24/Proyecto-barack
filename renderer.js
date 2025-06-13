@@ -570,25 +570,29 @@
         tbody.textContent = '';
 
         // ===== Crear nodos de cliente y reestructurar jerarquía =====
-        // 1) Encontrar clientes únicos a partir de la columna "Cliente"
+        // 1) Mapear clientes existentes (Tipo === "Cliente")
         const clientes = {};
         datosOriginal.forEach(fila => {
-          const cli = (fila.Cliente || '').toString().trim();
           const tipo = (fila.Tipo || '').toString().trim().toLowerCase();
-          if (!cli) return;
-          if (!clientes[cli]) {
-            clientes[cli] = {
-              id: tipo === 'cliente' ? fila.ID : `cli-${Object.keys(clientes).length + 1}`,
-              nombre: cli,
-              existente: tipo === 'cliente'
-            };
-          } else if (tipo === 'cliente') {
-            clientes[cli].id = fila.ID;
-            clientes[cli].existente = true;
+          if (tipo !== 'cliente') return;
+          const nombre = (fila.Cliente || fila['Descripción'] || '').toString().trim();
+          if (!nombre) return;
+          if (!clientes[nombre]) {
+            clientes[nombre] = { id: fila.ID, nombre, existente: true };
           }
         });
 
-        // 2) Crear filas virtuales para cada cliente detectado
+        // 2) Registrar clientes mencionados en otras filas
+        let cliCounter = 1;
+        datosOriginal.forEach(fila => {
+          const cli = (fila.Cliente || '').toString().trim();
+          if (!cli) return;
+          if (!clientes[cli]) {
+            clientes[cli] = { id: `cli-${cliCounter++}`, nombre: cli, existente: false };
+          }
+        });
+
+        // 3) Crear filas virtuales para cada cliente detectado
         const filasClientes = Object.values(clientes)
           .filter(cli => !cli.existente)
           .map(cli => ({
@@ -608,7 +612,7 @@
             Código: ''
           }));
 
-        // 3) Reasignar las piezas finales para que cuelguen del cliente
+        // 4) Reasignar las piezas finales para que cuelguen del cliente
         const datos = datosOriginal.map(row => {
           const r = { ...row };
           const cli = (r.Cliente || '').toString().trim();
@@ -618,7 +622,7 @@
           return r;
         });
 
-        // 4) Propagar cliente a los descendientes
+        // 5) Propagar cliente a los descendientes
         const mapId = {};
         [...filasClientes, ...datos].forEach(f => {
           mapId[f.ID] = f;
