@@ -1,7 +1,16 @@
     document.addEventListener('DOMContentLoaded', () => {
-      const fs = null;
-      const pathModule = null;
-      const jsonFile = null;
+      let fs = null;
+      let pathModule = null;
+      let jsonFile = null;
+      if (typeof window !== 'undefined' && typeof window.require === 'function') {
+        try {
+          fs = window.require('fs');
+          pathModule = window.require('path');
+          jsonFile = pathModule.join(__dirname, 'sinoptico.json');
+        } catch (e) {
+          fs = null;
+        }
+      }
       let fuseSinoptico = null;
       let sinopticoData = [];
       const sinopticoElem = document.getElementById('sinoptico');
@@ -680,8 +689,26 @@
             ).map(btn => btn.closest('tr').getAttribute('data-id'))
           : [];
 
-        const stored = localStorage.getItem('sinopticoData');
-        sinopticoData = stored ? JSON.parse(stored) : generarDatosIniciales();
+        let stored = null;
+        if (fs && jsonFile) {
+          try {
+            if (!fs.existsSync(jsonFile)) {
+              fs.writeFileSync(
+                jsonFile,
+                JSON.stringify(generarDatosIniciales(), null, 2),
+                'utf8'
+              );
+            }
+            stored = fs.readFileSync(jsonFile, 'utf8');
+            sinopticoData = stored ? JSON.parse(stored) : [];
+          } catch (e) {
+            console.error('Error reading sinoptico JSON', e);
+            sinopticoData = [];
+          }
+        } else {
+          stored = localStorage.getItem('sinopticoData');
+          sinopticoData = stored ? JSON.parse(stored) : generarDatosIniciales();
+        }
 
         if (sinopticoElem) {
           procesarDatos(sinopticoData, expandedIds);
@@ -973,6 +1000,17 @@
 
       function saveSinoptico() {
         localStorage.setItem('sinopticoData', JSON.stringify(sinopticoData));
+        if (fs && jsonFile) {
+          try {
+            fs.writeFileSync(
+              jsonFile,
+              JSON.stringify(sinopticoData, null, 2),
+              'utf8'
+            );
+          } catch (e) {
+            console.error('Error writing sinoptico JSON', e);
+          }
+        }
       }
 
       function generateId(){
