@@ -1189,6 +1189,29 @@ select {
   background-color: #fff5a3;
 }
 
+.insumos-form {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+.insumos-form input {
+  flex: 1;
+  padding: 6px;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+}
+.insumos-form button {
+  padding: 6px 12px;
+  background-color: var(--color-primary);
+  color: var(--color-light);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.insumos-form button:hover {
+  background-color: var(--color-primary-hover);
+}
+
 #insumoSearch {
   max-width: 300px;
   display: block;

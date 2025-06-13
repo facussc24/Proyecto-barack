@@ -2,6 +2,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const cont = document.getElementById('insumos');
   const searchInput = document.getElementById('insumoSearch');
   const clearBtn = document.getElementById('clearInsumoSearch');
+  const form = document.getElementById('insForm');
+  const inNombre = document.getElementById('inNombre');
+  const inDesc = document.getElementById('inDescripcion');
+  const inEsp = document.getElementById('inEspecificaciones');
+  let editId = null;
   const STORAGE_KEY = 'insumosData';
   let fs = null;
   let path = null;
@@ -27,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   let fuse = null;
+  let isEditMode = sessionStorage.getItem('insumosAdmin') === 'true';
 
   function buildFuse() {
     if (typeof Fuse === 'undefined') {
@@ -89,7 +95,43 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   window.highlightInsumo = highlightInsumo;
 
+  function createItem(obj) {
+    const maxId = data.reduce((m, i) => Math.max(m, i.id || 0), 0);
+    const item = { id: maxId + 1, nombre: '', descripcion: '', especificaciones: '', ...obj };
+    data.push(item);
+    save();
+    buildFuse();
+    render();
+    applyFilter();
+    return item.id;
+  }
+
+  function updateItem(id, obj) {
+    const idx = data.findIndex(i => i.id === id);
+    if (idx === -1) return false;
+    data[idx] = { ...data[idx], ...obj, id };
+    save();
+    buildFuse();
+    render();
+    applyFilter();
+    return true;
+  }
+
+  function deleteItem(id) {
+    const idx = data.findIndex(i => i.id === id);
+    if (idx === -1) return false;
+    data.splice(idx, 1);
+    save();
+    buildFuse();
+    render();
+    applyFilter();
+    return true;
+  }
+
+  window.InsumosEditor = { createItem, updateItem, deleteItem, getData: () => data.slice() };
+
   function render() {
+    isEditMode = sessionStorage.getItem('insumosAdmin') === 'true';
     cont.textContent = '';
     const table = document.createElement('table');
     table.className = 'insumos-table';
@@ -100,6 +142,11 @@ document.addEventListener('DOMContentLoaded', () => {
       th.textContent = t;
       hr.appendChild(th);
     });
+    if (isEditMode) {
+      const th = document.createElement('th');
+      th.textContent = 'Acciones';
+      hr.appendChild(th);
+    }
     thead.appendChild(hr);
     table.appendChild(thead);
     const tbody = document.createElement('tbody');
@@ -111,14 +158,55 @@ document.addEventListener('DOMContentLoaded', () => {
         td.textContent = v || '';
         tr.appendChild(td);
       });
+      if (isEditMode) {
+        const td = document.createElement('td');
+        const eBtn = document.createElement('button');
+        eBtn.textContent = 'Editar';
+        eBtn.addEventListener('click', () => {
+          editId = item.id;
+          if (form) {
+            inNombre.value = item.nombre || '';
+            inDesc.value = item.descripcion || '';
+            inEsp.value = item.especificaciones || '';
+          }
+        });
+        const dBtn = document.createElement('button');
+        dBtn.textContent = 'Eliminar';
+        dBtn.addEventListener('click', () => {
+          if (confirm('¿Eliminar insumo?')) deleteItem(item.id);
+        });
+        td.appendChild(eBtn);
+        td.appendChild(dBtn);
+        tr.appendChild(td);
+      }
       tbody.appendChild(tr);
     });
     table.appendChild(tbody);
     cont.appendChild(table);
+    if (form) form.style.display = isEditMode ? 'flex' : 'none';
   }
 
   render();
   buildFuse();
+
+  if (form) {
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const nombre = inNombre.value.trim();
+      const descripcion = inDesc.value.trim();
+      const especificaciones = inEsp.value.trim();
+      if (!nombre) return;
+      if (editId !== null) {
+        updateItem(editId, { nombre, descripcion, especificaciones });
+      } else {
+        createItem({ nombre, descripcion, especificaciones });
+      }
+      editId = null;
+      form.reset();
+    });
+  }
+
+  document.addEventListener('insumos-mode', render);
 
   if (searchInput) {
     searchInput.addEventListener('input', applyFilter);

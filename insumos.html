@@ -14,15 +14,43 @@
     <a href="insumos.html" aria-current="page">Insumos</a>
     <button id="toggleTheme">🌙</button>
   </nav>
-  <h1>Insumos</h1>
+  <header class="maestro-header">
+    <h1>Insumos</h1>
+    <button id="editInsumosBtn" class="edit-button">Editar</button>
+  </header>
   <div class="search-wrap">
     <label for="insumoSearch">Buscar insumo</label>
     <input type="text" id="insumoSearch" placeholder="Nombre o descripción" />
     <button id="clearInsumoSearch" aria-label="Limpiar búsqueda">×</button>
   </div>
   <div id="insumos" class="maestro-container"></div>
+  <form id="insForm" class="insumos-form maestro-form">
+    <input type="text" id="inNombre" placeholder="Nombre" />
+    <input type="text" id="inDescripcion" placeholder="Descripción" />
+    <input type="text" id="inEspecificaciones" placeholder="Especificaciones" />
+    <button type="submit" id="saveItem">Guardar</button>
+  </form>
 
   <script src="auth.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const btn = document.getElementById('editInsumosBtn');
+      function update() {
+        const editing = sessionStorage.getItem('insumosAdmin') === 'true';
+        btn.textContent = editing ? 'Salir de edición' : 'Editar';
+        btn.style.display = sessionStorage.getItem('isAdmin') === 'true' ? 'inline-block' : 'none';
+      }
+      btn.addEventListener('click', () => {
+        if (sessionStorage.getItem('isAdmin') !== 'true') return;
+        const editing = sessionStorage.getItem('insumosAdmin') === 'true';
+        if (editing) sessionStorage.removeItem('insumosAdmin');
+        else sessionStorage.setItem('insumosAdmin','true');
+        update();
+        document.dispatchEvent(new CustomEvent('insumos-mode'));
+      });
+      update();
+    });
+  </script>
   <script src="theme.js" defer></script>
   <script src="smooth-nav.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/fuse.js@6/dist/fuse.min.js"></script>
