@@ -14,18 +14,9 @@ jobs:
         with:
           node-version: '20'
       - run: npm ci
-      - run: npm run build --if-present
-      - name: Select publish dir
-        id: vars
-        run: |
-          if [ -d dist ]; then
-            echo "dir=dist" >> "$GITHUB_OUTPUT"
-          else
-            echo "dir=public" >> "$GITHUB_OUTPUT"
-          fi
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ${{ steps.vars.outputs.dir }}
+          publish_dir: .
           publish_branch: gh-pages
