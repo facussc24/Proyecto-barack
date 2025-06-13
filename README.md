@@ -63,7 +63,7 @@ no external dependencies. All header fields and the list of processes persist in
 - **Editing modes** – once logged in you can edit the master list and the sinóptico using their respective **Editar** buttons. The product view is maintained through the interface at `admin_menu.html`.
 - **Excel export** – visible rows can be saved as `sinoptico.xlsx`. The file
   downloads to your browser's default folder.
-- **JSON export/import** – use **Export JSON** to save the hierarchy and **Import JSON** to load a previously saved `.json` file.
+- **JSON export/import** – los botones están en la página de inicio y solo los administradores pueden usarlos. Permiten guardar la jerarquía como `.json` o cargar un archivo previamente exportado.
 - **Dynamic categories** – the master list starts empty and new document sections appear automatically when items are added.
 - **Client grouping** – rows with a value in the `Cliente` column are grouped under that client in the product tree.
 - **Smooth animations** – buttons and rows fade and scale for a more polished experience.
@@ -75,6 +75,10 @@ no external dependencies. All header fields and the list of processes persist in
   updating the product tree so other modules can refresh their views.
 - **Cross-tab sync** – modifying the hierarchy in one tab refreshes any other
   open sinóptico pages thanks to the `storage` event.
+
+## Respaldos fuera del repositorio
+
+Crea una carpeta en un nivel superior al proyecto, por ejemplo `../Datos-Nunca borrar`. Como administrador, entra a la página de inicio y pulsa **Exportar JSON** para guardar el archivo allí. Podrás recuperarlo en el futuro con **Importar JSON** desde la misma página. Añade esta carpeta al `.gitignore` para que Git ignore tus copias de seguridad.
 
 The product hierarchy is stored in `localStorage`.
 
