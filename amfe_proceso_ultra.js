@@ -217,7 +217,8 @@
     }
   }
 
-  document.getElementById('addProcess').addEventListener('click',()=>{
+  const addProcessBtn = document.getElementById('addProcess');
+  if (addProcessBtn) addProcessBtn.addEventListener('click',()=>{
     data.processes.push({operacion:data.processes.length+1,titulo:'',maquina:'',funcion:'',materiales:'',requerimientos:'',modos:[{efInt:'',efCli:'',efUsu:'',causa:'',s:'',o:'',d:'',rpn:'',prev:'',det:'',resp:'',fecha:'',estado:'',obs:''}]});
     save();
     renderProcesses();
@@ -231,7 +232,8 @@
     setTimeout(()=>{t.style.display='none';},2500);
   }
 
-  document.getElementById('saveAmfe').addEventListener('click',()=>{
+  const saveAmfeBtn = document.getElementById('saveAmfe');
+  if (saveAmfeBtn) saveAmfeBtn.addEventListener('click',()=>{
     if(!isAdmin) return;
     let valid=true;
     document.querySelectorAll('.process-section').forEach(sec=>{ if(!validateFields(sec)) valid=false; });
