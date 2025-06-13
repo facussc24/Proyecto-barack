@@ -129,6 +129,10 @@ If a CDN script fails to load you will see one of the following warnings:
 
 Ensure your browser can reach the CDN domains if these messages appear.
 
+Local copies of these libraries are now bundled under `vendor/`.
+If a CDN script fails to load the pages automatically fall back to the
+corresponding local file, so the features remain available offline.
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
