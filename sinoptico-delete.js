@@ -50,6 +50,11 @@ document.addEventListener('DOMContentLoaded', () => {
   sIns.addEventListener('input', () => buildList(rIns, search('insumo', sIns.value)));
 
   document.dispatchEvent(new Event('sinoptico-mode'));
+  document.addEventListener('sinoptico-data-changed', () => {
+    buildList(rClient, search('cliente', sClient.value));
+    buildList(rProd, search('producto', sProd.value));
+    buildList(rIns, search('insumo', sIns.value));
+  });
   setTimeout(() => {
     buildList(rClient, []);
     buildList(rProd, []);
