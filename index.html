@@ -13,6 +13,7 @@
           <a href="admin_menu.html" id="editSinLink" style="display:none">Editar sinóptico</a>
           <a href="listado_maestro.html">Listado maestro</a>
           <a href="insumos.html">Insumos</a>
+          <a href="usuarios.html" id="usersLink" style="display:none">Usuarios</a>
           <a href="login.html" id="loginLink">Log in</a>
           <button id="toggleTheme">🌙</button>
       </nav>
@@ -42,10 +43,12 @@
           document.querySelector('main').classList.add('fade-in');
           const link = document.getElementById('loginLink');
           const editLink = document.getElementById('editSinLink');
+          const usersLink = document.getElementById('usersLink');
           function update() {
             const logged = sessionStorage.getItem('isAdmin') === 'true';
             link.textContent = logged ? 'Cerrar sesión' : 'Log in';
             if (editLink) editLink.style.display = logged ? 'inline' : 'none';
+            if (usersLink) usersLink.style.display = logged ? 'inline' : 'none';
           }
           link.addEventListener('click', e => {
             if (sessionStorage.getItem('isAdmin') === 'true') {
