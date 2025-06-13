@@ -16,8 +16,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const prodClient = document.getElementById('prodClient');
   const subParent = document.getElementById('subParent');
   const insParent = document.getElementById('insParent');
+  const addProductBtn = document.getElementById('addProductBtn');
   const childContainer = document.getElementById('childContainer');
   const preview = document.getElementById('treePreview');
+
+  let addAnotherProduct = false;
+  if (addProductBtn) {
+    addProductBtn.addEventListener('click', () => {
+      addAnotherProduct = true;
+      productForm.classList.remove('hidden');
+    });
+  }
 
   function renderTree() {
     if (!preview || !window.SinopticoEditor || !SinopticoEditor.getNodes) return;
@@ -129,7 +138,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const id = SinopticoEditor.addNode({ ParentID: parent, Tipo: 'Pieza final', Descripción: desc });
     renderTree();
     productForm.reset();
-    if (confirm('¿Va a incluir subproductos o insumos?')) {
+    const addMore = addAnotherProduct || (e.submitter && e.submitter.id === 'addProductBtn');
+    addAnotherProduct = false;
+    if (addMore) {
+      productForm.classList.remove('hidden');
+      level.value = 'Producto';
+      fillOptions();
+    } else if (confirm('¿Va a incluir subproductos o insumos?')) {
       level.value = 'Subproducto';
       level.dispatchEvent(new Event('change'));
       subParent.value = id;
