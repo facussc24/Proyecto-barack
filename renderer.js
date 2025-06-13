@@ -574,29 +574,39 @@
         const clientes = {};
         datosOriginal.forEach(fila => {
           const cli = (fila.Cliente || '').toString().trim();
-          if (cli && !clientes[cli]) {
-            const id = `cli-${Object.keys(clientes).length + 1}`;
-            clientes[cli] = { id, nombre: cli };
+          const tipo = (fila.Tipo || '').toString().trim().toLowerCase();
+          if (!cli) return;
+          if (!clientes[cli]) {
+            clientes[cli] = {
+              id: tipo === 'cliente' ? fila.ID : `cli-${Object.keys(clientes).length + 1}`,
+              nombre: cli,
+              existente: tipo === 'cliente'
+            };
+          } else if (tipo === 'cliente') {
+            clientes[cli].id = fila.ID;
+            clientes[cli].existente = true;
           }
         });
 
         // 2) Crear filas virtuales para cada cliente detectado
-        const filasClientes = Object.values(clientes).map(cli => ({
-          ID: cli.id,
-          ParentID: '',
-          Tipo: 'Cliente',
-          Secuencia: '',
-          Descripción: cli.nombre,
-          Cliente: cli.nombre,
-          Vehículo: '',
-          RefInterno: '',
-          versión: '',
-          Imagen: '',
-          Consumo: '',
-          Unidad: '',
-          Sourcing: '',
-          Código: ''
-        }));
+        const filasClientes = Object.values(clientes)
+          .filter(cli => !cli.existente)
+          .map(cli => ({
+            ID: cli.id,
+            ParentID: '',
+            Tipo: 'Cliente',
+            Secuencia: '',
+            Descripción: cli.nombre,
+            Cliente: cli.nombre,
+            Vehículo: '',
+            RefInterno: '',
+            versión: '',
+            Imagen: '',
+            Consumo: '',
+            Unidad: '',
+            Sourcing: '',
+            Código: ''
+          }));
 
         // 3) Reasignar las piezas finales para que cuelguen del cliente
         const datos = datosOriginal.map(row => {
