@@ -15,6 +15,14 @@
     processes: []
   };
 
+  function calcNivel(s,o,d){
+    const r=s*o*d;
+    if(!s||!o||!d) return '';
+    if(r>=150) return 'Alto';
+    if(r>=75) return 'Medio';
+    return 'Bajo';
+  }
+
   try {
     const stored = JSON.parse(localStorage.getItem(STORAGE_KEY));
     if (stored && typeof stored === 'object') {
@@ -26,6 +34,13 @@
   data.processes.forEach((p, i) => {
     if (typeof p.secuencia === 'undefined') p.secuencia = i + 1;
     if (!Array.isArray(p.modos)) p.modos = [];
+    p.modos.forEach(m=>{
+      if(typeof m.nivel==='undefined'){
+        const s=Number(m.s)||0,o=Number(m.o)||0,d=Number(m.d)||0;
+        if(typeof m.rpn!=='undefined') delete m.rpn;
+        m.nivel=calcNivel(s,o,d);
+      }
+    });
   });
 
   function save(){
@@ -90,6 +105,7 @@
     return valid;
   }
 
+
   function renderProcesses(){
     const cont=document.getElementById('processContainer');
     cont.innerHTML='';
@@ -139,15 +155,15 @@
       wrap.className='table-wrapper';
       const table=document.createElement('table');
       table.className='fmea-table';
-      table.innerHTML='<thead><tr><th>Efecto planta interna</th><th>Efecto planta cliente</th><th>Efecto usuario final</th><th>Causa</th><th>S</th><th>O</th><th>D</th><th>RPN</th><th>Acción preventiva</th><th>Acción detectiva</th><th>Responsable</th><th>Fecha objetivo</th><th>Estado</th><th>Observaciones</th><th></th></tr></thead><tbody></tbody>';
+      table.innerHTML='<thead><tr><th>Efecto planta interna</th><th>Efecto planta cliente</th><th>Efecto usuario final</th><th>Causa</th><th>S</th><th>O</th><th>D</th><th>Nivel</th><th>Acción preventiva</th><th>Acción detectiva</th><th>Responsable</th><th>Fecha objetivo</th><th>Estado</th><th>Observaciones</th><th></th></tr></thead><tbody></tbody>';
       wrap.appendChild(table);
       details.appendChild(wrap);
       proc.modos.forEach((m,rIdx)=>{
         const tr=document.createElement('tr');
-        const fields=['efInt','efCli','efUsu','causa','s','o','d','rpn','prev','det','resp','fecha','estado','obs'];
+        const fields=['efInt','efCli','efUsu','causa','s','o','d','nivel','prev','det','resp','fecha','estado','obs'];
         fields.forEach((fld,idx)=>{
           const td=document.createElement('td');
-          if(fld==='rpn'){ td.textContent=m.rpn||''; }
+          if(fld==='nivel'){ td.textContent=m.nivel||''; }
           else {
             td.contentEditable=isAdmin;
             td.textContent=m[fld]||'';
@@ -156,8 +172,8 @@
               if(['s','o','d'].includes(fld)){
                 m[fld]=Number(m[fld])||0;
                 const s=Number(m.s)||0,o=Number(m.o)||0,d=Number(m.d)||0;
-                m.rpn=s*o*d;
-                tr.children[7].textContent=m.rpn||'';
+                m.nivel=calcNivel(s,o,d);
+                tr.children[7].textContent=m.nivel||'';
               }
               save();
             };
@@ -177,7 +193,7 @@
         const addBtn=document.createElement('button'); addBtn.textContent='+ Modo de Falla'; addBtn.className='add-mode-btn';
         addBtn.onclick=()=>{
           const clone={};
-          Object.keys({efInt:'',efCli:'',efUsu:'',causa:'',s:'',o:'',d:'',rpn:'',prev:'',det:'',resp:'',fecha:'',estado:'',obs:''}).forEach(k=>clone[k]='');
+          Object.keys({efInt:'',efCli:'',efUsu:'',causa:'',s:'',o:'',d:'',nivel:'',prev:'',det:'',resp:'',fecha:'',estado:'',obs:''}).forEach(k=>clone[k]='');
           proc.modos.push(clone);
           save();
           renderProcesses();
@@ -194,7 +210,7 @@
   }
 
   document.getElementById('addProcess').addEventListener('click',()=>{
-    data.processes.push({secuencia:data.processes.length+1,titulo:'',estacion:'',descripcion:'',materiales:'',requerimientos:'',modos:[{efInt:'',efCli:'',efUsu:'',causa:'',s:'',o:'',d:'',rpn:'',prev:'',det:'',resp:'',fecha:'',estado:'',obs:''}]});
+    data.processes.push({secuencia:data.processes.length+1,titulo:'',estacion:'',descripcion:'',materiales:'',requerimientos:'',modos:[{efInt:'',efCli:'',efUsu:'',causa:'',s:'',o:'',d:'',nivel:'',prev:'',det:'',resp:'',fecha:'',estado:'',obs:''}]});
     save();
     renderProcesses();
   });
