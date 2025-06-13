@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const progressBar = document.getElementById('progressBar');
   const step1 = document.getElementById('step1');
   const step2 = document.getElementById('step2');
-  const step3 = document.getElementById('step3');
   const productCard = document.getElementById('productCard');
   const summaryTree = document.getElementById('summaryTree');
   const saveBtn = document.getElementById('saveAll');
@@ -42,8 +41,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function updateProgress(step) {
-    progressBar.style.width = step * 33 + '%';
-    [step1, step2, step3].forEach((s,i) => {
+    progressBar.style.width = step * 50 + '%';
+    [step1, step2].forEach((s,i) => {
       if (i === step-1) {
         s.classList.remove('hidden');
         s.classList.add('active');
@@ -240,10 +239,6 @@ document.addEventListener('DOMContentLoaded', () => {
     updateProgress(2);
   });
 
-  document.getElementById('toStep3').addEventListener('click', () => {
-    updateSummary();
-    updateProgress(3);
-  });
 
   saveBtn.addEventListener('click', () => {
     updateSummary();

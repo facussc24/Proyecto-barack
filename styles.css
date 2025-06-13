@@ -1139,11 +1139,22 @@ select {
   position: absolute;
   top: 50%;
   left: 100%;
-  width: 20px;
+  width: 14px;
   border-top: 2px solid #ccc;
 }
+.flow-diagram li > .tree-node::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: calc(100% + 14px);
+  border-width: 4px 0 4px 6px;
+  border-style: solid;
+  border-color: transparent transparent transparent #ccc;
+  transform: translateY(-50%);
+}
 
-.flow-diagram li:last-child > .tree-node::after {
+.flow-diagram li:last-child > .tree-node::after,
+.flow-diagram li:last-child > .tree-node::before {
   display: none;
 }
 
