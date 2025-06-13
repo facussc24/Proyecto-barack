@@ -1224,3 +1224,25 @@ select {
   cursor: pointer;
   color: var(--color-text);
 }
+
+/* ==============================
+   CONSTRUCTOR VISUAL DE PRODUCTO
+   ============================== */
+.wizard { max-width: 900px; margin: 20px auto; font-family: 'Montserrat', sans-serif; }
+.wizard .progress { height: 8px; background:#e0e0e0; border-radius:4px; overflow:hidden; margin-bottom:20px; }
+.wizard .progress #progressBar { height:100%; width:0; background:linear-gradient(90deg,#4b6cb7,#182848); transition:width 0.3s; }
+.wizard-step { display:none; }
+.wizard-step.active { display:block; }
+
+.builder-card { background:linear-gradient(135deg,#ffffff,#f0f4ff); padding:12px; border-radius:8px; box-shadow:0 2px 4px rgba(0,0,0,0.1); margin:10px 0; position:relative; overflow-x:auto; }
+.builder-card .add-btn { position:absolute; top:8px; right:8px; width:24px; height:24px; border:none; border-radius:50%; background:#0066cc; color:#fff; cursor:pointer; }
+.builder-card .add-btn:hover { background:#004c99; }
+.builder-card .children { margin-left:30px; }
+
+.inline-form { display:flex; gap:6px; margin-top:8px; }
+.inline-form input { padding:4px 6px; }
+.inline-form button { padding:0 8px; border:none; border-radius:4px; background:#0066cc; color:#fff; cursor:pointer; }
+.inline-form button.cancel { background:#999; }
+
+.toast { position:fixed; bottom:20px; right:20px; background:#333; color:#fff; padding:8px 12px; border-radius:4px; opacity:0; animation:fadeIn 0.3s forwards, fadeOut 0.3s 2.5s forwards; }
+@keyframes fadeOut { to { opacity:0; } }

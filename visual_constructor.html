@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Constructor visual</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav class="main-nav">
+    <a href="index.html">Inicio</a>
+    <a href="sinoptico.html">Sinóptico</a>
+    <a href="admin_menu.html" aria-current="page">Editar sinóptico</a>
+    <a href="listado_maestro.html">Listado maestro</a>
+    <a href="insumos.html">Insumos</a>
+    <button id="toggleTheme">🌙</button>
+  </nav>
+  <h1>Constructor de producto</h1>
+  <div class="wizard" id="wizard">
+    <div class="progress"><div id="progressBar"></div></div>
+    <section id="step1" class="wizard-step active">
+      <h2>Paso 1: Crear Producto</h2>
+      <div class="inline-form">
+        <input type="text" id="prodDesc" placeholder="Descripción" required>
+        <input type="text" id="prodCode" placeholder="Código">
+        <button id="toStep2">Siguiente</button>
+      </div>
+    </section>
+    <section id="step2" class="wizard-step hidden">
+      <h2>Paso 2: Agregar Subproductos</h2>
+      <div id="productCard" class="builder-card"></div>
+      <button id="toStep3">Siguiente</button>
+    </section>
+    <section id="step3" class="wizard-step hidden">
+      <h2>Paso 3: Agregar Insumos</h2>
+      <div id="summaryTree" class="tree-preview flow-diagram"></div>
+      <button id="saveAll">Guardar Producto</button>
+    </section>
+  </div>
+  <div id="toastContainer"></div>
+  <script src="auth.js"></script>
+  <script src="theme.js" defer></script>
+  <script src="visual_constructor.js"></script>
+</body>
+</html>
