@@ -32,11 +32,6 @@
             <li>Listado maestro de ingeniería</li>
             <li>Datos actualizados automáticamente</li>
           </ul>
-          <div id="adminDataBtns" style="display:none">
-            <button id="btnExportJson" aria-label="Exportar datos">Exportar datos</button>
-            <input type="file" id="inputImportJson" accept=".json" style="display:none">
-            <button id="btnImportJson" aria-label="Importar datos">Importar datos</button>
-          </div>
       </main>
   <script src="sha256.min.js"></script>
   <script src="auth.js"></script>
@@ -50,13 +45,11 @@
           const link = document.getElementById('loginLink');
           const editLink = document.getElementById('editSinLink');
           const usersLink = document.getElementById('usersLink');
-          const adminBtns = document.getElementById('adminDataBtns');
           function update() {
             const logged = sessionStorage.getItem('isAdmin') === 'true';
             link.textContent = logged ? 'Cerrar sesión' : 'Log in';
             if (editLink) editLink.style.display = logged ? 'inline' : 'none';
             if (usersLink) usersLink.style.display = logged ? 'inline' : 'none';
-            if (adminBtns) adminBtns.style.display = logged ? 'block' : 'none';
           }
           auth.restoreSession();
           link.addEventListener('click', e => {
