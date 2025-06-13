@@ -1,4 +1,10 @@
     document.addEventListener('DOMContentLoaded', () => {
+      const dataService =
+        global.dataService ||
+        (typeof require === 'function' ? require('./js/dataService.js') : null);
+      if (typeof requestAnimationFrame === 'undefined') {
+        global.requestAnimationFrame = cb => setTimeout(cb, 0);
+      }
       let fuseSinoptico = null;
       let sinopticoData = [];
       const sinopticoElem = document.getElementById('sinoptico');
@@ -679,42 +685,21 @@
       }
 
 
-      function loadData() {
+      async function loadData() {
         const expandedIds = sinopticoElem
           ? Array.from(
               document.querySelectorAll('#sinoptico tbody .toggle-btn[data-expanded="true"]')
             ).map(btn => btn.closest('tr').getAttribute('data-id'))
           : [];
 
-        let stored = localStorage.getItem('sinopticoData');
-        if (stored) {
-          try {
-            sinopticoData = JSON.parse(stored);
-          } catch (e) {
-            console.error(
-              'Error parsing sinopticoData from localStorage',
-              e
-            );
-            sinopticoData = generarDatosIniciales();
-            try {
-              localStorage.setItem(
-                'sinopticoData',
-                JSON.stringify(sinopticoData)
-              );
-            } catch (err) {
-              console.error('Error persisting sinopticoData', err);
-            }
-          }
-        } else {
-          sinopticoData = generarDatosIniciales();
+        try {
+          sinopticoData = await dataService.getAll();
+        } catch (e) {
+          console.error('Error loading data from Dexie', e);
+          sinopticoData = [];
         }
-
-        if (typeof localStorage !== 'undefined') {
-          try {
-            localStorage.setItem('sinopticoData', JSON.stringify(sinopticoData));
-          } catch (e) {
-            console.error('Error persisting sinopticoData', e);
-          }
+        if (!Array.isArray(sinopticoData) || sinopticoData.length === 0) {
+          sinopticoData = generarDatosIniciales();
         }
 
         if (sinopticoElem) {
@@ -1006,7 +991,6 @@
       }
 
       function saveSinoptico() {
-        localStorage.setItem('sinopticoData', JSON.stringify(sinopticoData));
         if (typeof addHistoryEntry === 'function') {
           try { addHistoryEntry('sinopticoHistory', sinopticoData); } catch(e){}
         }
@@ -1040,7 +1024,14 @@
           if (row.Tipo === 'Cliente') {
             row.Cliente = row['Descripción'];
           }
+          row.id = row.ID;
+          row.parentId = row.ParentID;
+          row.nombre = row['Descripción'];
+          row.orden = 0;
           sinopticoData.push(row);
+          if (dataService && dataService.addNode) {
+            dataService.addNode(row);
+          }
           if (Array.isArray(children)) {
             children.forEach(child => {
               if (child) {
@@ -1061,6 +1052,9 @@
             sinopticoData.filter(r => r.ParentID === pid).forEach(r => collect(r.ID));
           })(id);
           sinopticoData = sinopticoData.filter(r => !ids.has(r.ID));
+          if (dataService && dataService.deleteNode) {
+            ids.forEach(dbid => dataService.deleteNode(dbid));
+          }
           saveSinoptico();
           loadData();
           document.dispatchEvent(new CustomEvent('sinoptico-data-changed'));
@@ -1071,6 +1065,13 @@
           Object.assign(node, attrs);
           if (node.Tipo === 'Cliente' && attrs['Descripción']) {
             node.Cliente = attrs['Descripción'];
+          }
+          if (dataService && dataService.updateNode) {
+            const changes = Object.assign({}, attrs);
+            if (changes['Descripción']) changes.nombre = changes['Descripción'];
+            if (node.id) {
+              dataService.updateNode(node.id, changes);
+            }
           }
           saveSinoptico();
           loadData();
@@ -1087,10 +1088,8 @@
         loadData();
       });
 
-      window.addEventListener('storage', e => {
-        if (e.key === 'sinopticoData') {
-          loadData();
-        }
-      });
+      if (dataService && dataService.subscribeToChanges) {
+        dataService.subscribeToChanges(() => loadData());
+      }
 
     }); // FIN DOMContentLoaded
