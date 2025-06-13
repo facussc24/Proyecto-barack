@@ -173,7 +173,6 @@
       if(isAdmin){
         const addBtn=document.createElement('button'); addBtn.textContent='+ Modo de Falla'; addBtn.className='add-mode-btn';
         addBtn.onclick=()=>{
-          const base=proc.modos[proc.modos.length-1]||{};
           const clone={};
           Object.keys({efInt:'',efCli:'',efUsu:'',causa:'',s:'',o:'',d:'',rpn:'',prev:'',det:'',resp:'',fecha:'',estado:'',obs:''}).forEach(k=>clone[k]='');
           proc.modos.push(clone);
@@ -197,9 +196,6 @@
     renderProcesses();
   });
 
-  function collectData(){
-    return JSON.parse(JSON.stringify(data));
-  }
 
   function showToast(msg){
     const t=document.getElementById('toast');
@@ -213,7 +209,7 @@
     let valid=true;
     document.querySelectorAll('.process-section').forEach(sec=>{ if(!validateFields(sec)) valid=false; });
     if(!valid) return alert('Complete los campos marcados');
-    const payload=collectData();
+    const payload=JSON.parse(JSON.stringify(data));
     save();
     fetch('/api/amfe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
       .then(r=>{ if(!r.ok) throw new Error(); })
