@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "pretest": "sh scripts/setup.sh",
-    "test": "node test-maestro.js && node test-renderer.js && node test-auth.js && node test-insumos.js"
+    "test": "node test-maestro.js && node test-renderer.js && node test-auth.js && node test-insumos.js && node test-amfe-ultra.js"
   },
   "devDependencies": {
     "fuse.js": "^7.1.0",
