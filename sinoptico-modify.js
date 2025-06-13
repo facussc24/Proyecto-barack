@@ -12,7 +12,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const nodes = window.SinopticoEditor.getNodes();
     nodes.forEach(n => {
       const tr = document.createElement('tr');
-      tr.innerHTML = `<td>${n.ID}</td><td>${n.Tipo}</td><td>${n['Descripción'] || ''}</td><td>${n.Código || ''}</td>`;
+
+      const idTd = document.createElement('td');
+      idTd.textContent = n.ID;
+      tr.appendChild(idTd);
+
+      const typeTd = document.createElement('td');
+      typeTd.textContent = n.Tipo;
+      tr.appendChild(typeTd);
+
+      const descTd = document.createElement('td');
+      descTd.textContent = n['Descripción'] || '';
+      tr.appendChild(descTd);
+
+      const codeTd = document.createElement('td');
+      codeTd.textContent = n.Código || '';
+      tr.appendChild(codeTd);
+
       const td = document.createElement('td');
       const btn = document.createElement('button');
       btn.textContent = 'Editar';
