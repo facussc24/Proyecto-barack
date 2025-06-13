@@ -30,6 +30,10 @@ The list is stored in your browser's `localStorage`; the no-borrar folder is no 
 
 Open `amfe_proceso_mejorado.html` in a browser to work with an enhanced process AMFE. Log in to add processes or failure modes and edit the tables inline. All data is kept in `localStorage`.
 
+## Using `amfe_proceso_ultra.html`
+
+`amfe_proceso_ultra.html` provides a trimmed-down AMFE editor focused on speed and simplicity. You can add new processes and failure modes directly in the browser and the information will persist in `localStorage`.
+
 
 ## Features
 
@@ -48,6 +52,7 @@ Open `amfe_proceso_mejorado.html` in a browser to work with an enhanced process 
 - **Insumo editing** – administrators can agregar, modificar o eliminar insumos desde `insumos.html`.
 - **AMFE persistence** – the AMFE pages store their data in `localStorage`.
 - **Improved process AMFE** – `amfe_proceso_mejorado.html` adds per-process sections with DataTable filtering and inline editing. Data is saved to `localStorage`.
+- **Ultralight AMFE editor** – `amfe_proceso_ultra.html` offers a fast, simplified workflow that also persists entries in `localStorage`.
 - **Data change event** – pages dispatch a `sinoptico-data-changed` event after
   updating the product tree so other modules can refresh their views.
 
