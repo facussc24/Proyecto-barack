@@ -63,6 +63,14 @@ Open `sinoptico.html` and click **Editar** to modify the hierarchy. Rows remain
 visible while editing even with an empty search box, so you can toggle the level
 checkboxes to quickly hide or show sections.
 
+## Using `viewer_lite.html`
+
+`viewer_lite.html` displays the product hierarchy without loading optional
+libraries such as Fuse.js or SheetJS. The page only includes the core scripts
+(`styles.css`, `renderer.js`, `sha256.min.js`, `auth.js` and
+`file-warning.js`) and a minimal navigation bar that links back to the home
+page. It is intended as a lightweight viewer for quick look-ups.
+
 ## Features
 
 - **Column toggles** – checkboxes let you hide or show specific table columns.
