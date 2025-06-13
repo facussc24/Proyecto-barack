@@ -12,6 +12,24 @@ python3 -m http.server
 
 Open http://localhost:8000/index.html in a modern browser. All data, including the AMFE tables, is kept in your browser's localStorage.
 
+## GitHub Pages
+
+To host the page publicly you can enable **GitHub Pages**:
+
+1. Open the repository on GitHub and select **Settings**.
+2. In the **Pages** section choose the `main` branch and `/` folder, then save.
+3. After a minute or so the site will be available at
+   `https://<user>.github.io/<repo>/`.
+
+`localStorage` is tied to each domain. Data saved while using
+`http://localhost` will not appear when visiting the GitHub Pages URL and
+vice versa.
+
+To inspect or clear stored data open your browser's developer tools and
+locate the **Application** or **Storage** tab. Select the site's entry under
+**Local Storage** to view the key/value pairs or delete them (you can also run
+`localStorage.clear()` from the console).
+
 ## Login and user accounts
 
 Use the **Log in** link or open `login.html` directly to access the sign‑in page. The project includes four default accounts: **PAULO**, **LEO**, **FACUNDO** and **PABLO**, all with password `1234`. After logging in an admin panel becomes visible where you can create new users or update existing passwords.
