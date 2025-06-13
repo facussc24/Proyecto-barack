@@ -86,6 +86,15 @@ This creates a small DOM environment so the scripts can be executed without a re
 
  `listado_maestro.html`, `sinoptico.html` and now `insumos.html` load [Fuse.js](https://fusejs.io/) from a CDN. In the master list a drop-down of matching documents appears while you type; picking one stores the selection in `sessionStorage`, highlights the chosen row and shows the filter banner without navigating away. The product view also leverages Fuse.js for its filter box: multiple keywords separated by spaces or commas are accepted and the fuzzy results of each term are combined. The insumos page contains a simpler search box that filters the table in place. Suggestions no longer reload the table; clicking one simply highlights the corresponding row and scrolls it into view. If no row matches the stored selection a warning is shown. Removing the Fuse.js script tags disables these fuzzy searches.
 
+## Troubleshooting
+
+If editing pages doesn't work as expected:
+
+1. Verify the site is being served over **HTTP**, not opened directly as local files.
+2. Make sure you are logged in as an administrator before attempting to edit.
+3. Open the browser console and ensure there are no script errors.
+4. Check your browser's `localStorage` for entries such as `sinopticoData`.
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
