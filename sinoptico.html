@@ -9,9 +9,9 @@
   <link rel="stylesheet" href="styles.css" />
 
   <!-- SheetJS (xlsx) para exportar a Excel -->
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" onerror="this.onerror=null;this.src='vendor/xlsx.full.min.js'"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" defer onerror="this.onerror=null;this.src='vendor/xlsx.full.min.js'"></script>
   <!-- Fuse.js para búsqueda difusa -->
-  <script src="https://cdn.jsdelivr.net/npm/fuse.js@6/dist/fuse.min.js" onerror="this.onerror=null;this.src='vendor/fuse.min.js'"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fuse.js@6/dist/fuse.min.js" defer onerror="this.onerror=null;this.src='vendor/fuse.min.js'"></script>
 </head>
 <body>
   <div id="loading">Cargando...</div>
@@ -113,19 +113,7 @@
   </div>
   <a href="welcome.html" class="home-button">Inicio</a>
 
-  <script src="sha256.min.js"></script>
-  <script src="auth.js"></script>
-  <script src="file-warning.js"></script>
-  <script src="history_utils.js"></script>
-  <script src="theme.js" defer></script>
-  <script src="smooth-nav.js" defer></script>
-  <script>sessionStorage.setItem('sinopticoEdit','false');</script>
-  <script src="renderer.js" defer></script>
-  <script>
-    window.onload = () => {
-      const loader = document.getElementById('loading');
-      if (loader) loader.style.display = 'none';
-    };
-  </script>
+  <script type="module" defer src="js/dataService.js"></script>
+  <script type="module" defer src="js/sinoptico.js"></script>
 </body>
 </html>
