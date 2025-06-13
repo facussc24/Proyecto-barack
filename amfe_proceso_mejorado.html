@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AMFE de Proceso Mejorado</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+  <style>
+    body { font-family: 'Montserrat', sans-serif; }
+    .header-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:10px; margin:20px; background:#fff; padding:10px; border-radius:8px; box-shadow:0 2px 4px rgba(0,0,0,0.1); }
+    .header-grid label { display:flex; flex-direction:column; font-weight:600; }
+    .readonly input { background:#f0f0f0; border:none; }
+    .team-list span { background:#4b6cb7; color:#fff; padding:2px 6px; margin:2px; border-radius:4px; display:inline-block; }
+    .process-section { margin:20px; border-radius:8px; background:#fff; box-shadow:0 2px 4px rgba(0,0,0,0.1); }
+    .process-section summary { cursor:pointer; padding:10px; background:linear-gradient(#4b6cb7,#182848); color:#fff; border-radius:8px 8px 0 0; display:flex; justify-content:space-between; align-items:center; }
+    .process-fields { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; padding:10px; }
+    .process-fields label { display:flex; flex-direction:column; }
+    .table-wrapper { overflow-x:auto; }
+    table.fmea-table { border-collapse:collapse; width:100%; }
+    table.fmea-table th, table.fmea-table td { border:1px solid #ccc; padding:4px; }
+    table.fmea-table th { background:#0d1b3d; color:#fff; position:sticky; top:0; }
+    button { border:none; padding:6px 12px; background:#0d1b3d; color:#fff; border-radius:4px; }
+    .add-mode-btn { margin-top:10px; }
+  </style>
+</head>
+<body>
+  <nav class="main-nav">
+    <a href="index.html">Inicio</a>
+    <a href="sinoptico.html">Sinóptico</a>
+    <a href="listado_maestro.html">Listado maestro</a>
+    <button id="toggleTheme">🌙</button>
+  </nav>
+  <h1 style="text-align:center">AMFE de Proceso</h1>
+  <section class="header-grid" id="amfeHeader">
+    <div style="grid-column:1/-1;text-align:center">
+      <img src="images/LOGO BARACK.png" alt="Logo" class="logo" style="height:80px">
+    </div>
+    <label class="readonly">Organización<input id="hdr-organizacion" readonly></label>
+    <label class="readonly">Planta<input id="hdr-planta" readonly></label>
+    <label class="readonly">Fecha de Inicio<input id="hdr-fecha" type="date" readonly></label>
+    <label class="readonly">Responsable de Diseño<input id="hdr-resp" readonly></label>
+    <label class="readonly">Cliente<input id="hdr-cliente" readonly></label>
+    <label class="readonly">Confidencialidad<input id="hdr-conf" readonly></label>
+    <label class="readonly">Modelo/Año<input id="hdr-modelo" readonly></label>
+    <label>Equipo
+      <div class="team-list" id="teamList"></div>
+      <div id="teamControls" style="display:none; margin-top:4px;">
+        <input id="teamAdd" placeholder="Nombre">
+        <button id="teamAddBtn">Añadir</button>
+      </div>
+    </label>
+  </section>
+  <div id="processContainer"></div>
+  <button id="addProcess" class="add-mode-btn">+ Proceso</button>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+  <script src="amfe_proceso_mejorado.js"></script>
+  <script src="theme.js" defer></script>
+  <script src="smooth-nav.js" defer></script>
+</body>
+</html>
