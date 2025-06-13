@@ -250,7 +250,7 @@
         a.click();
         URL.revokeObjectURL(url);
       })
-      .catch(()=>alert('Error al guardar AMFE'));
+      .catch(()=>showToast('Sin conexión con el servidor; AMFE guardado localmente'));
   });
 
   document.addEventListener('DOMContentLoaded',()=>{
