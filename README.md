@@ -24,11 +24,11 @@ Because some browsers block local file reads, serve the folder from any static w
 python3 -m http.server
 ```
 
-Open http://localhost:8000/index.html in a modern browser. All data, including the AMFE tables, is kept in your browser's localStorage.
+Open http://localhost:8000/index.html in a modern browser. All data is stored locally. The sinóptico uses IndexedDB via Dexie (falling back to `localStorage` if needed) while the AMFE tables continue to rely on `localStorage`.
 
-All data—including the sinóptico—is stored only in your browser and will not sync across devices, but open tabs share updates through a BroadcastChannel.
+All data is kept only in your browser and will not sync across devices, but open tabs share updates through a BroadcastChannel.
 
-Previous versions allowed saving JSON files directly when running the page under Node or Electron. That capability has been removed; the site now reads and writes exclusively through `localStorage`.
+Previous versions allowed saving JSON files directly when running the page under Node or Electron. That capability has been removed; the site now persists data in IndexedDB with a `localStorage` fallback.
 
 ## GitHub Pages
 
@@ -109,6 +109,7 @@ page. It is intended as a lightweight viewer for quick look-ups.
 - **Insumo lookup** – the insumos table includes a search box with fuzzy matching.
 - **Cross-linking** – clicking an insumo in the sinóptico opens the list filtered to that entry.
 - **Insumo editing** – administrators can agregar, modificar o eliminar insumos desde `insumos.html`.
+- **IndexedDB persistence** – the sinóptico stores its hierarchy in IndexedDB using Dexie with automatic fallback to `localStorage`.
 - **AMFE persistence** – the AMFE pages store their data in `localStorage`.
 - **Data change event** – pages dispatch a `sinoptico-data-changed` event after
   updating the product tree so other modules can refresh their views.
@@ -120,7 +121,8 @@ Pages communicate via a BroadcastChannel so each tab reloads the latest data whe
 Whenever `SinopticoEditor.addNode`, `updateNode` or `deleteSubtree` modifies the
 hierarchy it stores the updated array and dispatches the
 `sinoptico-data-changed` event. Scripts can listen for this event on
-`document` and call `SinopticoEditor.getNodes()` to refresh their UI.
+`document` or subscribe via `dataService.subscribeToChanges()` and call
+`SinopticoEditor.getNodes()` to refresh their UI.
 
 ## Dependencies and browser requirements
 
