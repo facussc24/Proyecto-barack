@@ -56,6 +56,13 @@ no external dependencies. All header fields and the list of processes persist in
 `localStorage`. Pressing **Guardar** attempts to POST the JSON to `/api/amfe`.
 If that endpoint is missing the page still saves to `localStorage` and shows a
 warning that the server could not be reached.
+
+## Using the sinóptico editor
+
+Open `sinoptico.html` and click **Editar** to modify the hierarchy. Rows remain
+visible while editing even with an empty search box, so you can toggle the level
+checkboxes to quickly hide or show sections.
+
 ## Features
 
 - **Column toggles** – checkboxes let you hide or show specific table columns.
