@@ -40,6 +40,7 @@ The list is stored in your browser's `localStorage`; the no-borrar folder is no 
 - **Smooth animations** – buttons and rows fade and scale for a more polished experience.
 - **Insumo lookup** – the insumos table includes a search box with fuzzy matching.
 - **Cross-linking** – clicking an insumo in the sinóptico opens the list filtered to that entry.
+- **Insumo editing** – administrators can agregar, modificar o eliminar insumos desde `insumos.html`.
 - **AMFE persistence** – the AMFE pages store their data in `localStorage`.
 
 The product hierarchy is stored in `localStorage`.
@@ -50,7 +51,7 @@ The page loads [SheetJS](https://sheetjs.com/) and [Fuse.js](https://fusejs.io/)
 
 ## Node testing
 
-Running the project in a browser is enough to use the page. Optionally you can run an automated test that executes `maestro.js` under Node using JSDOM. The tests rely on `jsdom-global`, `jsdom` and `fuse.js`. **Run `scripts/setup.sh` once before executing the tests to download these dependencies**:
+Running the project in a browser is enough to use the page. Optionally you can run automated tests that execute the scripts under Node using JSDOM. The tests rely on `jsdom-global`, `jsdom` and `fuse.js`. **Run `scripts/setup.sh` once before executing the tests to download these dependencies**:
 
 ```bash
 scripts/setup.sh
@@ -62,7 +63,7 @@ Then run:
 npm test
 ```
 
-This creates a small DOM environment so the script can be executed without a real browser.
+This creates a small DOM environment so the scripts can be executed without a real browser. The tests also verify that the insumos editor persists new items.
 
 ## Fuzzy search flow
 
