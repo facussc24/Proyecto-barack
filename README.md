@@ -4,15 +4,17 @@ This project displays a hierarchical product table built with plain HTML, CSS an
 
 ## Quick start
 
-Run a simple web server from the project folder:
+Run a simple web server from the project folder and visit the site from
+`http://localhost`:
 
 ```bash
 python3 -m http.server
 ```
 
-Open http://localhost:8000/index.html in a modern browser. All features rely on
-`localStorage` and won't work correctly if the pages are opened directly from
-the file system.
+Open http://localhost:8000/index.html in a modern browser. Opening the HTML
+files directly (for example using the `file://` protocol) disables several
+features because the pages rely on `localStorage` and other browser APIs that
+only work over HTTP.
 
 ## Launching the site
 
@@ -123,6 +125,15 @@ hierarchy it stores the updated array and dispatches the
 ## Dependencies and browser requirements
 
 The page loads [SheetJS](https://sheetjs.com/) and [Fuse.js](https://fusejs.io/) from CDNs. A browser with ES6 support (such as recent Chrome, Firefox or Edge) is required.
+
+## Instalación y pruebas
+
+Instala las dependencias necesarias y ejecuta la suite de pruebas con:
+
+```bash
+scripts/setup.sh
+npm test
+```
 
 ## Node testing
 
