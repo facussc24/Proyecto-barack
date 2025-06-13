@@ -1237,8 +1237,21 @@ select {
 .wizard { max-width: 900px; margin: 20px auto; font-family: var(--font-base); }
 .wizard .progress { height: 8px; background:#e0e0e0; border-radius:4px; overflow:hidden; margin-bottom:20px; }
 .wizard .progress #progressBar { height:100%; width:0; background:linear-gradient(90deg,#4b6cb7,#182848); transition:width 0.3s; }
+.client-info { text-align:center; margin-bottom:10px; font-weight:bold; }
 .wizard-step { display:none; }
 .wizard-step.active { display:block; }
+.wizard-step > button {
+  padding: 6px 12px;
+  background-color: var(--color-primary);
+  color: var(--color-light);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 8px;
+}
+.wizard-step > button:hover {
+  background-color: var(--color-primary-hover);
+}
 
 .builder-card { background:linear-gradient(135deg,#ffffff,#f0f4ff); padding:12px; border-radius:8px; box-shadow:0 2px 4px rgba(0,0,0,0.1); margin:10px 0; position:relative; overflow-x:auto; }
 .builder-card .add-btn { position:absolute; top:8px; right:8px; width:24px; height:24px; border:none; border-radius:50%; background:#0066cc; color:#fff; cursor:pointer; }
