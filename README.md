@@ -26,7 +26,7 @@ python3 -m http.server
 
 Open http://localhost:8000/index.html in a modern browser. All data, including the AMFE tables, is kept in your browser's localStorage.
 
-All data—including the sinóptico—is stored only in your browser and will not sync across devices. Clearing your browser's storage or visiting the site under a different domain will start you with an empty dataset.
+All data—including the sinóptico—is stored only in your browser and will not sync across devices, but open tabs share updates through a BroadcastChannel.
 
 Previous versions allowed saving JSON files directly when running the page under Node or Electron. That capability has been removed; the site now reads and writes exclusively through `localStorage`.
 
@@ -112,9 +112,8 @@ page. It is intended as a lightweight viewer for quick look-ups.
 - **AMFE persistence** – the AMFE pages store their data in `localStorage`.
 - **Data change event** – pages dispatch a `sinoptico-data-changed` event after
   updating the product tree so other modules can refresh their views.
-- **Cross-tab sync** – modifying the hierarchy in one tab refreshes any other
-  open sinóptico pages thanks to the `storage` event.
-
+- **Cross-tab sync** – modifying the hierarchy in one tab refreshes any other open sinóptico pages via the BroadcastChannel API.
+Pages communicate via a BroadcastChannel so each tab reloads the latest data whenever another one saves changes.
 
 ## Listening for data changes
 
