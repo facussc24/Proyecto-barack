@@ -53,7 +53,9 @@ The **AMFE de Proceso Ultraligero** editor works entirely offline. Open
 `amfe_proceso_ultra.html` in your browser to capture process failures and
 actions. It relies only on the scripts bundled in this repository, so there are
 no external dependencies. All header fields and the list of processes persist in
-`localStorage`.
+`localStorage`. Pressing **Guardar** attempts to POST the JSON to `/api/amfe`.
+If that endpoint is missing the page still saves to `localStorage` and shows a
+warning that the server could not be reached.
 ## Features
 
 - **Column toggles** – checkboxes let you hide or show specific table columns.
