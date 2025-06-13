@@ -45,6 +45,8 @@
         location.href = 'login.html';
         return;
       }
+      const panel = document.getElementById('adminPanel');
+      if (panel) panel.style.display = 'flex';
       document.getElementById('createUser').addEventListener('click', () => {
         const u = document.getElementById('newUser').value.trim();
         const p = document.getElementById('newPass').value.trim();
