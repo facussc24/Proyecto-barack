@@ -20,6 +20,7 @@
       <h1>Login</h1>
       <input type="text" id="username" placeholder="Usuario" required>
       <input type="password" id="password" placeholder="Contraseña" required>
+      <label class="remember-row"><input type="checkbox" id="rememberMe"> Recordarme</label>
       <button type="submit">Entrar</button>
       <button type="button" id="forgotBtn" disabled>Olvidé la contraseña</button>
     </form>
@@ -39,6 +40,7 @@
     </div>
   </div>
 
+  <script src="sha256.min.js"></script>
   <script src="auth.js"></script>
   <script src="theme.js" defer></script>
   <script src="smooth-nav.js" defer></script>
@@ -47,6 +49,7 @@
       const form = document.getElementById('loginForm');
       const panel = document.getElementById('adminPanel');
       const logoutBtn = document.getElementById('logoutBtn');
+      auth.restoreSession();
       function updatePanel() {
         panel.style.display = sessionStorage.getItem('isAdmin') === 'true' ? 'block' : 'none';
       }
@@ -54,7 +57,8 @@
         e.preventDefault();
         const u = document.getElementById('username').value.trim();
         const p = document.getElementById('password').value.trim();
-        if (auth.login(u, p)) {
+        const remember = document.getElementById('rememberMe').checked;
+        if (auth.login(u, p, remember)) {
           location.href = 'index.html';
         } else {
           alert('Credenciales inválidas');

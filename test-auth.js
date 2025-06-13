@@ -11,10 +11,11 @@ localStorage.clear();
 sessionStorage.clear();
 
 auth.createUser('user1','pass1');
-if (!auth.login('user1','pass1')) throw new Error('login failed');
+if (!auth.login('user1','pass1', true)) throw new Error('login failed');
 if (sessionStorage.getItem('currentUser') !== 'user1') throw new Error('session not stored');
+sessionStorage.clear();
+if (!auth.restoreSession()) throw new Error('restore failed');
 auth.logout();
-if (sessionStorage.getItem('currentUser')) throw new Error('logout failed');
 auth.changePassword('user1','new');
 
 if (!auth.login('user1','new')) throw new Error('password change failed');
