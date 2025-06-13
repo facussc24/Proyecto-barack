@@ -6,7 +6,7 @@
         try {
           fs = window.require('fs');
           pathModule = window.require('path');
-          jsonFile = pathModule.join(__dirname, 'sinoptico.json');
+          jsonFile = pathModule.join(__dirname, 'BASE_DE_DATOS.json');
         } catch (e) {
           fs = null;
         }
@@ -569,7 +569,7 @@
           const url = URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.href = url;
-          a.download = 'sinoptico.json';
+          a.download = 'BASE_DE_DATOS.json';
           a.style.display = 'none';
           document.body.appendChild(a);
           a.click();
@@ -1098,6 +1098,13 @@
         }
         if (fs && jsonFile) {
           try {
+            if (!fs.existsSync(jsonFile)) {
+              fs.writeFileSync(
+                jsonFile,
+                JSON.stringify(generarDatosIniciales(), null, 2),
+                'utf8'
+              );
+            }
             fs.writeFileSync(
               jsonFile,
               JSON.stringify(sinopticoData, null, 2),
