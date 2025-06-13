@@ -32,7 +32,7 @@ The list is normally stored in your browser's `localStorage`. When running in an
 - **Filtering** – search for text and control which hierarchy levels are visible.
 - **Expand/Collapse** – the tree of products can be expanded node by node or all at once.
 - **Manual refresh** – click the **Refrescar** button in `sinoptico.html` to reload data on demand.
-- **Editing modes** – once logged in you can edit the master list and the sinóptico using their respective **Editar** buttons. The product view is maintained through the interface at `sinoptico_edit.html`.
+- **Editing modes** – once logged in you can edit the master list and the sinóptico using their respective **Editar** buttons. The product view is maintained through the interface at `admin_menu.html`.
 - **Excel export** – visible rows can be saved as `sinoptico.xlsx`. The file
   downloads to your browser's default folder.
 - **Dynamic categories** – the master list starts empty and new document sections appear automatically when items are added.

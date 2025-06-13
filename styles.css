@@ -996,3 +996,28 @@ select {
 .editor-menu button:hover {
   transform: scale(1.05);
 }
+
+/* Admin menu buttons */
+.admin-menu {
+  width: 80%;
+  margin: 40px auto;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.admin-menu button {
+  padding: 16px 24px;
+  font-size: 1.2rem;
+  background: linear-gradient(135deg, var(--color-accent), var(--color-primary));
+  color: var(--color-light);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s;
+}
+
+.admin-menu button:hover {
+  transform: scale(1.05);
+}
