@@ -9,7 +9,7 @@
   --color-accent: #0066cc;
   --color-accent-hover: #004c99;
   --color-light: #ffffff;
-  --font-base: 'Poppins', Arial, sans-serif;
+  --font-base: 'Montserrat', sans-serif;
 
   /* new mappings used later in the file */
   --primary-color: var(--color-primary);
@@ -91,6 +91,12 @@ h1 {
 
 .hidden {
   display: none !important;
+}
+
+/* highlight invalid form fields */
+.invalid {
+  border: 1px solid red !important;
+  background-color: #ffe5e5 !important;
 }
 
 /* ==============================
@@ -1100,7 +1106,7 @@ select {
 
 /* ========= Flow diagram enhancements ========= */
 .flow-diagram {
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-base);
 }
 
 .flow-diagram .tree-list,
@@ -1228,7 +1234,7 @@ select {
 /* ==============================
    CONSTRUCTOR VISUAL DE PRODUCTO
    ============================== */
-.wizard { max-width: 900px; margin: 20px auto; font-family: 'Montserrat', sans-serif; }
+.wizard { max-width: 900px; margin: 20px auto; font-family: var(--font-base); }
 .wizard .progress { height: 8px; background:#e0e0e0; border-radius:4px; overflow:hidden; margin-bottom:20px; }
 .wizard .progress #progressBar { height:100%; width:0; background:linear-gradient(90deg,#4b6cb7,#182848); transition:width 0.3s; }
 .wizard-step { display:none; }
