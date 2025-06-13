@@ -738,6 +738,7 @@ body.amfe-page:not(.dark-mode) .logo {
 .hero h1 {
   font-size: 3rem;
   color: var(--color-light);
+  margin-bottom: 1.5rem;
 }
 .intro {
   background-color: var(--color-light);
