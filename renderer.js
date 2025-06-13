@@ -714,6 +714,14 @@
           sinopticoData = stored ? JSON.parse(stored) : generarDatosIniciales();
         }
 
+        if (typeof localStorage !== 'undefined') {
+          try {
+            localStorage.setItem('sinopticoData', JSON.stringify(sinopticoData));
+          } catch (e) {
+            console.error('Error persisting sinopticoData', e);
+          }
+        }
+
         if (sinopticoElem) {
           procesarDatos(sinopticoData, expandedIds);
         }
