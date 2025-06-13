@@ -105,6 +105,13 @@
       }
       window.mostrarMensaje = mostrarMensaje;
 
+      if (typeof Fuse === 'undefined') {
+        mostrarMensaje('Fuse.js no cargó – búsqueda deshabilitada', 'warning');
+      }
+      if (typeof XLSX === 'undefined') {
+        mostrarMensaje('SheetJS no cargó – exportar a Excel deshabilitado', 'warning');
+      }
+
       function aplicarFiltro() {
         const criterioElem = document.getElementById('filtroInsumo');
         const criterio = criterioElem ? criterioElem.value.trim().toLowerCase() : '';
@@ -482,6 +489,10 @@
       ================================================== */
       const btnExcel = document.getElementById('btnExcel');
       if (btnExcel) btnExcel.addEventListener('click', () => {
+        if (typeof XLSX === 'undefined') {
+          mostrarMensaje('SheetJS no cargó – exportar a Excel deshabilitado', 'warning');
+          return;
+        }
         const filasVisibles = [];
         const encabezados = Array.from(
           document.querySelectorAll('#sinoptico thead th')
@@ -655,6 +666,7 @@
           });
         } else {
           fuseSinoptico = null;
+          mostrarMensaje('Fuse.js no cargó – búsqueda deshabilitada', 'warning');
         }
 
         construirSinoptico(datosConClientes);

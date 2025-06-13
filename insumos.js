@@ -37,6 +37,9 @@ document.addEventListener('DOMContentLoaded', () => {
   function buildFuse() {
     if (typeof Fuse === 'undefined') {
       fuse = null;
+      if (typeof mostrarMensaje === 'function') {
+        mostrarMensaje('Fuse.js no cargó – búsqueda deshabilitada', 'warning');
+      }
       return;
     }
     fuse = new Fuse(data, {
