@@ -51,7 +51,7 @@ locate the **Application** or **Storage** tab. Select the site's entry under
 Use the **Log in** link or open `login.html` directly to access the sign‑in page. The project includes four default accounts: **PAULO**, **LEO**, **FACUNDO** and **PABLO**, all with password `1234`. After logging in an admin panel becomes visible where you can create new users or update existing passwords. A dedicated management page is also available at `usuarios.html` for administrators.
 If the page detects `sessionStorage.isAdmin` is already set to `true`, it skips the form and redirects straight to `index.html`.
 
-Account information is now stored as SHA‑256 hashes in the browser's `localStorage`. Tick **Recordarme** on the login form to keep the session between visits. Clear the `users` entry to reset all accounts.
+Account information is now stored as SHA‑256 hashes combined with a per‑user salt in the browser's `localStorage`. Tick **Recordarme** on the login form to keep the session between visits. Clear the `users` entry to reset all accounts.
 
 Editing the master list and the sinóptico now requires being logged in.
 
