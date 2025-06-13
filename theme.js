@@ -2,7 +2,8 @@
 window.addEventListener('DOMContentLoaded', () => {
   const btn = document.getElementById('toggleTheme');
   if (!btn) return;
-  if (localStorage.getItem('theme') === 'dark') {
+  const saved = localStorage.getItem('theme');
+  if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
     document.body.classList.add('dark-mode');
   }
   btn.addEventListener('click', () => {
