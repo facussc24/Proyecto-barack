@@ -81,15 +81,30 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!subContainer) return;
     const row = document.createElement('div');
     row.className = 'new-sub-row';
-    row.innerHTML = `
-      <input type="text" class="new-sub-desc" placeholder="Descripción">
-      <input type="text" class="new-sub-code" placeholder="Código">
-      <button type="button" class="remove-sub">×</button>`;
-    row.querySelector('.remove-sub').addEventListener('click', () => {
+    const descInput = document.createElement('input');
+    descInput.type = 'text';
+    descInput.className = 'new-sub-desc';
+    descInput.placeholder = 'Descripción';
+
+    const codeInput = document.createElement('input');
+    codeInput.type = 'text';
+    codeInput.className = 'new-sub-code';
+    codeInput.placeholder = 'Código';
+
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.className = 'remove-sub';
+    removeBtn.textContent = '×';
+
+    row.appendChild(descInput);
+    row.appendChild(codeInput);
+    row.appendChild(removeBtn);
+
+    removeBtn.addEventListener('click', () => {
       row.remove();
       renderPreview();
     });
-    row.querySelectorAll('input').forEach(inp =>
+    [descInput, codeInput].forEach(inp =>
       inp.addEventListener('input', renderPreview)
     );
     subContainer.appendChild(row);
