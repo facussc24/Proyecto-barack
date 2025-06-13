@@ -20,8 +20,16 @@ document.addEventListener('DOMContentLoaded', () => {
   const STORAGE_KEY = 'maestroDocs';
   let isAdmin = sessionStorage.getItem('maestroAdmin') === 'true';
 
-  // Load documents from browser storage
-  let docs = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+  // Load documents from browser storage with error handling
+  let docs;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    docs = raw ? JSON.parse(raw) : [];
+    if (!Array.isArray(docs)) docs = [];
+  } catch (e) {
+    docs = [];
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(docs));
+  }
   if (Array.isArray(docs)) {
     // Remove empty placeholder entries from older versions
     docs = docs.filter(d => !(DOC_TYPES.some(t => t.name === d.name) && !d.number && !d.detail));
