@@ -122,30 +122,6 @@ hierarchy it stores the updated array and dispatches the
 
 The page loads [SheetJS](https://sheetjs.com/) and [Fuse.js](https://fusejs.io/) from CDNs. A browser with ES6 support (such as recent Chrome, Firefox or Edge) is required.
 
-## Instalación y pruebas
-
-Instala las dependencias necesarias y ejecuta la suite de pruebas con:
-
-```bash
-scripts/setup.sh
-npm test
-```
-
-## Node testing
-
-Running the project in a browser is enough to use the page. Optionally you can run automated tests that execute the scripts under Node using JSDOM. The tests rely on `jsdom-global`, `jsdom` and `fuse.js`. **Execute `scripts/setup.sh` before running the tests to install these dependencies**. The setup script will also run automatically thanks to the `pretest` step defined in `package.json`.
-
-```bash
-scripts/setup.sh
-```
-
-After the dependencies are installed, run:
-
-```bash
-npm test
-```
-
-This creates a small DOM environment so the scripts can be executed without a real browser. The tests also verify that the insumos editor persists new items.
 
 ## Fuzzy search flow
 
@@ -168,9 +144,6 @@ If a CDN script fails to load you will see one of the following warnings:
 
 Ensure your browser can reach the CDN domains if these messages appear.
 
-Local copies of these libraries are now bundled under `vendor/`.
-If a CDN script fails to load the pages automatically fall back to the
-corresponding local file, so the features remain available offline.
 
 ## License
 
