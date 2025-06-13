@@ -5,10 +5,11 @@ These pages are completely static. You can serve them locally with Python's buil
 
 ## Quick start
 
-Run a simple web server from the project folder and visit the site from
+Run a simple web server **from inside this folder** and visit the site from
 `http://localhost`:
 
 ```bash
+cd /path/to/Proyecto-barack
 python3 -m http.server
 ```
 
@@ -17,6 +18,7 @@ files directly (for example using the `file://` protocol) disables several
 features because the pages rely on `localStorage` and other browser APIs that
 only work over HTTP. All dependencies are included in the repository, so no
 internet connection is needed once the server is running.
+Luego abre http://localhost:8000/login.html e inicia sesión con cualquiera de las cuentas por defecto (PAULO, LEO, FACUNDO o PABLO; todas usan la contraseña `1234`). Sin iniciar sesión las opciones de edición no aparecen.
 
 ## GitHub Pages
 
@@ -142,6 +144,8 @@ If editing pages doesn't work as expected:
 4. Check your browser's `localStorage` for entries such as `sinopticoData`.
 5. Accede siempre con la misma URL (por ejemplo `localhost`) para que los datos guardados estén disponibles.
 6. La biblioteca **Dexie** viene incluida, por lo que la persistencia funciona incluso sin acceso a Internet.
+
+7. Asegúrate de ejecutar `python3 -m http.server` dentro de la carpeta del proyecto. Iniciar el servidor desde otro directorio provoca errores 404.
 
 If a CDN script fails to load you will see one of the following warnings:
 
