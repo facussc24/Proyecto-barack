@@ -192,9 +192,10 @@
       if(isAdmin){
         const addBtn=document.createElement('button'); addBtn.textContent='+ Modo de Falla'; addBtn.className='add-mode-btn';
         addBtn.onclick=()=>{
-          const clone={};
-          Object.keys({efInt:'',efCli:'',efUsu:'',causa:'',s:'',o:'',d:'',nivel:'',prev:'',det:'',resp:'',fecha:'',estado:'',obs:''}).forEach(k=>clone[k]='');
-          proc.modos.push(clone);
+          proc.modos.push({
+            efInt:'',efCli:'',efUsu:'',causa:'',s:'',o:'',d:'',
+            nivel:'',prev:'',det:'',resp:'',fecha:'',estado:'',obs:''
+          });
           save();
           renderProcesses();
         };
