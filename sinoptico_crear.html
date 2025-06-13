@@ -48,6 +48,8 @@
   <form id="subForm" class="node-form hidden">
     <h2>Nuevo subproducto</h2>
     <select id="subParent"></select>
+    <input type="text" id="subSearch" placeholder="Buscar existente">
+    <ul id="subSuggestions" class="suggestions-list"></ul>
     <input type="text" id="subDesc" placeholder="Descripción" required>
     <div class="form-actions">
       <button type="submit">Guardar</button>
@@ -60,6 +62,8 @@
   <form id="insForm" class="node-form hidden">
     <h2>Nuevo insumo</h2>
     <select id="insParent"></select>
+    <input type="text" id="insSearch" placeholder="Buscar existente">
+    <ul id="insSuggestions" class="suggestions-list"></ul>
     <input type="text" id="insDesc" placeholder="Descripción" required>
     <input type="text" id="insCode" placeholder="Código">
     <div class="form-actions">
@@ -67,12 +71,12 @@
       <button type="button" class="cancelBtn">Cancelar</button>
     </div>
   </form>
-  <div id="treePreview" class="tree-preview flow-diagram"></div>
   <a href="admin_menu.html" class="home-button">Volver al listado</a>
   <script src="auth.js"></script>
   <script src="theme.js" defer></script>
   <script src="smooth-nav.js" defer></script>
   <script src="renderer.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fuse.js@6/dist/fuse.min.js"></script>
   <script src="sinoptico-create.js"></script>
 </body>
 </html>
