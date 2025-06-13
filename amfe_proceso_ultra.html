@@ -16,6 +16,7 @@
     .process-section summary { cursor:pointer; padding:10px; background:linear-gradient(#4b6cb7,#182848); color:#fff; border-radius:8px 8px 0 0; display:flex; justify-content:space-between; align-items:center; }
     .process-fields { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; padding:10px; }
     .process-fields span { border:1px solid #ccc; padding:4px; border-radius:4px; min-height:22px; }
+    .process-fields span[data-placeholder]:empty::before { content: attr(data-placeholder); color:#999; }
     .process-fields .invalid { border-color:red; }
     .table-wrapper { overflow-x:auto; padding:10px; }
     table.fmea-table { border-collapse:collapse; width:100%; }
