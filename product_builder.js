@@ -150,6 +150,6 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('builderCode').addEventListener('input', renderPreview);
 
   document.addEventListener('sinoptico-mode', () => { renderLists(); renderPreview(); });
-  setTimeout(() => { renderLists(); renderPreview(); }, 300);
+  document.addEventListener('sinoptico-loaded', () => { renderLists(); renderPreview(); });
 });
 
