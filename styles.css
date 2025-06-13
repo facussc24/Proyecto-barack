@@ -965,6 +965,17 @@ select {
   border-radius: 4px;
   cursor: pointer;
 }
+.node-form #addProductBtn {
+  width: 32px;
+  padding: 4px;
+  font-size: 1.2rem;
+  line-height: 1;
+  border-radius: 50%;
+  background-color: var(--color-accent);
+}
+.node-form #addProductBtn:hover {
+  background-color: var(--color-accent-hover);
+}
 .node-form button:hover {
   background-color: var(--color-primary-hover);
 }
