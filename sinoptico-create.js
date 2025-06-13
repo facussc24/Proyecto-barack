@@ -190,6 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const desc = document.getElementById('clientDesc').value.trim();
     if (!desc) return;
     SinopticoEditor.addNode({ Tipo: 'Cliente', Descripción: desc, Cliente: desc });
+    if (window.mostrarMensaje) window.mostrarMensaje('Elemento creado', 'success');
     clientForm.reset();
     hideAll();
     level.value = '';
@@ -202,6 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const code = prodCodeInput ? prodCodeInput.value.trim() : '';
     if (!desc) return;
     const id = SinopticoEditor.addNode({ ParentID: parent, Tipo: 'Pieza final', Descripción: desc, Código: code });
+    if (window.mostrarMensaje) window.mostrarMensaje('Elemento creado', 'success');
     productForm.reset();
     const addMore = addAnotherProduct || (e.submitter && e.submitter.id === 'addProductBtn');
     addAnotherProduct = false;
@@ -235,6 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
       data = { ParentID: parent, Tipo: 'Subensamble', Descripción: desc, Código: code };
     }
     lastSubId = SinopticoEditor.addNode(data);
+    if (window.mostrarMensaje) window.mostrarMensaje('Elemento creado', 'success');
     selectedSubId = null;
     subForm.reset();
     fillOptions();
@@ -254,6 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
       data = { ParentID: parent, Tipo: 'Insumo', Descripción: desc, Código: code };
     }
     SinopticoEditor.addNode(data);
+    if (window.mostrarMensaje) window.mostrarMensaje('Elemento creado', 'success');
     selectedInsId = null;
     insForm.reset();
     fillOptions();
@@ -285,6 +289,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const desc = form.querySelector('input').value.trim();
       if (!desc) return;
       SinopticoEditor.addNode({ ParentID: pid, Tipo: 'Subensamble', Descripción: desc });
+        if (window.mostrarMensaje) window.mostrarMensaje('Elemento creado', 'success');
       fillOptions();
       form.remove();
     });
@@ -309,6 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const code = inputs[1].value.trim();
       if (!desc) return;
       SinopticoEditor.addNode({ ParentID: pid, Tipo: 'Insumo', Descripción: desc, Código: code });
+        if (window.mostrarMensaje) window.mostrarMensaje('Elemento creado', 'success');
       fillOptions();
       form.remove();
     });
