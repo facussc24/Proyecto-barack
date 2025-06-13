@@ -779,7 +779,27 @@
           }
         } else {
           stored = localStorage.getItem('sinopticoData');
-          sinopticoData = stored ? JSON.parse(stored) : generarDatosIniciales();
+          if (stored) {
+            try {
+              sinopticoData = JSON.parse(stored);
+            } catch (e) {
+              console.error(
+                'Error parsing sinopticoData from localStorage',
+                e
+              );
+              sinopticoData = generarDatosIniciales();
+              try {
+                localStorage.setItem(
+                  'sinopticoData',
+                  JSON.stringify(sinopticoData)
+                );
+              } catch (err) {
+                console.error('Error persisting sinopticoData', err);
+              }
+            }
+          } else {
+            sinopticoData = generarDatosIniciales();
+          }
         }
 
         if (typeof localStorage !== 'undefined') {
