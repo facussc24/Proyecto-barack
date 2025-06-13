@@ -14,6 +14,7 @@
   <script src="https://cdn.jsdelivr.net/npm/fuse.js@6/dist/fuse.min.js" onerror="this.onerror=null;this.src='vendor/fuse.min.js'"></script>
 </head>
 <body>
+  <div id="loading">Cargando…</div>
   <nav class="main-nav">
     <a href="index.html">Inicio</a>
     <a href="sinoptico.html" aria-current="page">Sinóptico</a>
@@ -120,5 +121,11 @@
   <script src="smooth-nav.js" defer></script>
   <script>sessionStorage.setItem('sinopticoEdit','false');</script>
   <script src="renderer.js" defer></script>
+  <script>
+    window.onload = () => {
+      const loader = document.getElementById('loading');
+      if (loader) loader.style.display = 'none';
+    };
+  </script>
 </body>
 </html>

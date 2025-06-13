@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="styles.css">
 </head>
   <body class="home">
+    <div id="loading">Cargando…</div>
       <nav class="main-nav">
           <a href="index.html" aria-current="page">Inicio</a>
           <a href="sinoptico.html">Sinóptico</a>
@@ -69,6 +70,12 @@
           });
           update();
         });
+      </script>
+      <script>
+        window.onload = () => {
+          const loader = document.getElementById('loading');
+          if (loader) loader.style.display = 'none';
+        };
       </script>
   </body>
 </html>
