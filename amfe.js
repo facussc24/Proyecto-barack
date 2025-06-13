@@ -58,9 +58,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const tr = $('<tr>');
       fields.forEach(f => {
         const td = $('<td contenteditable="true">').text(row[f] || '');
+        td.on('focus', () => td.data('orig', td.text()));
         td.on('keydown', e => {
           if (e.key === 'Escape') {
-            document.execCommand('undo');
+            td.text(td.data('orig') || '');
             td.blur();
           }
           if (e.key === 'Enter') {
