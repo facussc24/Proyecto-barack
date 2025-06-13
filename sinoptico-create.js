@@ -17,6 +17,40 @@ document.addEventListener('DOMContentLoaded', () => {
   const subParent = document.getElementById('subParent');
   const insParent = document.getElementById('insParent');
   const childContainer = document.getElementById('childContainer');
+  const preview = document.getElementById('treePreview');
+
+  function renderTree() {
+    if (!preview || !window.SinopticoEditor || !SinopticoEditor.getNodes) return;
+    const nodes = SinopticoEditor.getNodes();
+    const map = {};
+    nodes.forEach(n => (map[n.ID] = Object.assign({ children: [] }, n)));
+    nodes.forEach(n => {
+      if (n.ParentID && map[n.ParentID]) {
+        map[n.ParentID].children.push(map[n.ID]);
+      }
+    });
+    const roots = nodes.filter(n => !n.ParentID).map(n => map[n.ID]);
+    const levels = [];
+    function traverse(node, depth) {
+      levels[depth] = levels[depth] || [];
+      levels[depth].push(node);
+      node.children.forEach(c => traverse(c, depth + 1));
+    }
+    roots.forEach(r => traverse(r, 0));
+
+    preview.innerHTML = '';
+    levels.forEach(lv => {
+      const lvDiv = document.createElement('div');
+      lvDiv.className = 'tree-level';
+      lv.forEach(n => {
+        const nd = document.createElement('div');
+        nd.className = 'tree-node';
+        nd.textContent = n['Descripción'] || n.ID;
+        lvDiv.appendChild(nd);
+      });
+      preview.appendChild(lvDiv);
+    });
+  }
 
   function hideAll() {
     [clientForm, productForm, subForm, insForm].forEach(f => f.classList.add('hidden'));
@@ -81,6 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const desc = document.getElementById('clientDesc').value.trim();
     if (!desc) return;
     SinopticoEditor.addNode({ Tipo: 'Cliente', Descripción: desc, Cliente: desc });
+    renderTree();
     clientForm.reset();
     hideAll();
     level.value = '';
@@ -92,6 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const desc = document.getElementById('prodDesc').value.trim();
     if (!desc) return;
     const id = SinopticoEditor.addNode({ ParentID: parent, Tipo: 'Pieza final', Descripción: desc });
+    renderTree();
     productForm.reset();
     if (confirm('¿Va a incluir subproductos o insumos?')) {
       level.value = 'Subproducto';
@@ -111,6 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const desc = document.getElementById('subDesc').value.trim();
     if (!desc) return;
     lastSubId = SinopticoEditor.addNode({ ParentID: parent, Tipo: 'Subensamble', Descripción: desc });
+    renderTree();
     subForm.reset();
     fillOptions();
   });
@@ -141,6 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const desc = form.querySelector('input').value.trim();
       if (!desc) return;
       SinopticoEditor.addNode({ ParentID: pid, Tipo: 'Subensamble', Descripción: desc });
+      renderTree();
       form.remove();
     });
   }
@@ -164,10 +202,17 @@ document.addEventListener('DOMContentLoaded', () => {
       const code = inputs[1].value.trim();
       if (!desc) return;
       SinopticoEditor.addNode({ ParentID: pid, Tipo: 'Insumo', Descripción: desc, Código: code });
+      renderTree();
       form.remove();
     });
   }
 
-  document.addEventListener('sinoptico-mode', fillOptions);
-  setTimeout(fillOptions, 300);
+  document.addEventListener('sinoptico-mode', () => {
+    fillOptions();
+    renderTree();
+  });
+  setTimeout(() => {
+    fillOptions();
+    renderTree();
+  }, 300);
 });

@@ -1021,3 +1021,25 @@ select {
 .admin-menu button:hover {
   transform: scale(1.05);
 }
+
+/* ========= Tree preview ========= */
+.tree-preview {
+  margin: 20px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tree-level {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.tree-node {
+  padding: 6px 12px;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  background-color: var(--color-light);
+  white-space: nowrap;
+}
