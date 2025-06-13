@@ -18,10 +18,11 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.textContent = 'Editar';
       btn.addEventListener('click', () => {
         const desc = prompt('Nueva descripción', n['Descripción'] || '');
-        if (desc !== null) {
-          window.SinopticoEditor.updateNode(n.ID, { Descripción: desc });
-          render();
-        }
+        if (desc === null) return;
+        const code = prompt('Nuevo código', n['Código'] || '');
+        if (code === null) return;
+        window.SinopticoEditor.updateNode(n.ID, { Descripción: desc, Código: code });
+        render();
       });
       td.appendChild(btn);
       tr.appendChild(td);

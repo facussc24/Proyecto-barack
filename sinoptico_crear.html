@@ -35,22 +35,24 @@
       <button type="button" class="cancelBtn">Cancelar</button>
     </div>
   </form>
-  <form id="productForm" class="node-form hidden">
-    <h2>Nuevo producto</h2>
-    <select id="prodClient"></select>
-    <input type="text" id="prodDesc" placeholder="Descripción" required>
+    <form id="productForm" class="node-form hidden">
+      <h2>Nuevo producto</h2>
+      <select id="prodClient"></select>
+      <input type="text" id="prodDesc" placeholder="Descripción" required>
+      <input type="text" id="prodCode" placeholder="Código">
     <div class="form-actions">
       <button type="submit">Guardar</button>
       <button type="submit" id="addProductBtn" title="Agregar otro producto">➕</button>
       <button type="button" class="cancelBtn">Cancelar</button>
     </div>
   </form>
-  <form id="subForm" class="node-form hidden">
-    <h2>Nuevo subproducto</h2>
-    <select id="subParent"></select>
-    <input type="text" id="subSearch" placeholder="Buscar existente">
-    <ul id="subSuggestions" class="suggestions-list"></ul>
-    <input type="text" id="subDesc" placeholder="Descripción" required>
+    <form id="subForm" class="node-form hidden">
+      <h2>Nuevo subproducto</h2>
+      <select id="subParent"></select>
+      <input type="text" id="subSearch" placeholder="Buscar existente">
+      <ul id="subSuggestions" class="suggestions-list"></ul>
+      <input type="text" id="subDesc" placeholder="Descripción" required>
+      <input type="text" id="subCode" placeholder="Código">
     <div class="form-actions">
       <button type="submit">Guardar</button>
       <button type="button" id="addChildSub">Agregar subproducto hijo</button>
