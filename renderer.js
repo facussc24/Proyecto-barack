@@ -1,7 +1,7 @@
     document.addEventListener('DOMContentLoaded', () => {
-      const fs = window.require ? window.require("fs") : null;
-      const pathModule = window.require ? window.require("path") : null;
-      const jsonFile = pathModule ? pathModule.join(__dirname, "no-borrar", "sinoptico.json") : null;
+      const fs = null;
+      const pathModule = null;
+      const jsonFile = null;
       let fuseSinoptico = null;
       let sinopticoData = [];
       const sinopticoElem = document.getElementById('sinoptico');
@@ -680,23 +680,8 @@
             ).map(btn => btn.closest('tr').getAttribute('data-id'))
           : [];
 
-        if (fs && jsonFile) {
-          try {
-            if (fs.existsSync(jsonFile)) {
-              sinopticoData = JSON.parse(fs.readFileSync(jsonFile, 'utf8')) || [];
-            } else {
-              const stored = localStorage.getItem('sinopticoData');
-              sinopticoData = stored ? JSON.parse(stored) : generarDatosIniciales();
-              fs.writeFileSync(jsonFile, JSON.stringify(sinopticoData, null, 2), 'utf8');
-            }
-          } catch (err) {
-            console.error('Error al leer sinoptico.json:', err);
-            sinopticoData = generarDatosIniciales();
-          }
-        } else {
-          const stored = localStorage.getItem('sinopticoData');
-          sinopticoData = stored ? JSON.parse(stored) : generarDatosIniciales();
-        }
+        const stored = localStorage.getItem('sinopticoData');
+        sinopticoData = stored ? JSON.parse(stored) : generarDatosIniciales();
 
         if (sinopticoElem) {
           procesarDatos(sinopticoData, expandedIds);
@@ -988,11 +973,6 @@
 
       function saveSinoptico() {
         localStorage.setItem('sinopticoData', JSON.stringify(sinopticoData));
-        if (fs && jsonFile) {
-          try {
-            fs.writeFileSync(jsonFile, JSON.stringify(sinopticoData, null, 2), 'utf8');
-          } catch(e) { console.error('Error guardando json', e); }
-        }
       }
 
       function generateId(){

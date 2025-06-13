@@ -1,25 +1,9 @@
 (function(global){
   const STORAGE_KEY = 'users';
-  let fs = null, path = null, jsonPath = null;
-  if (typeof window !== 'undefined' && window.require) {
-    try {
-      fs = window.require('fs');
-      path = window.require('path');
-      jsonPath = path.join(__dirname, 'no-borrar', 'users.json');
-    } catch(e) { fs = null; }
-  } else if (typeof require === 'function') {
-    try {
-      fs = require('fs');
-      path = require('path');
-      jsonPath = path.join(__dirname, 'no-borrar', 'users.json');
-    } catch(e){ fs = null; }
-  }
 
   function loadUsers(){
     let list = [];
-    if (fs && jsonPath && fs.existsSync(jsonPath)) {
-      try { list = JSON.parse(fs.readFileSync(jsonPath, 'utf8')) || []; } catch(e){ list = []; }
-    } else if (typeof localStorage !== 'undefined') {
+    if (typeof localStorage !== 'undefined') {
       try { list = JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch(e){ list = []; }
     }
     if (!Array.isArray(list) || list.length === 0) {
@@ -35,9 +19,6 @@
   }
 
   function saveUsers(list){
-    if (fs && jsonPath) {
-      try { fs.writeFileSync(jsonPath, JSON.stringify(list, null, 2), 'utf8'); } catch(e) {}
-    }
     if (typeof localStorage !== 'undefined') {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
     }
