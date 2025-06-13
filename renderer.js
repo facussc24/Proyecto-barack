@@ -1117,6 +1117,9 @@
             console.error('Error writing sinoptico JSON', e);
           }
         }
+        if (typeof mostrarMensaje === 'function') {
+          mostrarMensaje('Datos guardados', 'success');
+        }
       }
 
       function generateId(){
