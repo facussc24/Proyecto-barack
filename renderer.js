@@ -554,11 +554,11 @@
       /* ==================================================
          Exportar/Importar JSON
       ================================================== */
-      const btnExportJson = document.getElementById('btnExportJson');
+      const btnExportJson = document.querySelector('#btnExportJson');
       if (btnExportJson) btnExportJson.addEventListener('click', exportJson);
 
-      const btnImportJson = document.getElementById('btnImportJson');
-      const inputImportJson = document.getElementById('inputImportJson');
+      const btnImportJson = document.querySelector('#btnImportJson');
+      const inputImportJson = document.querySelector('#inputImportJson');
       if (btnImportJson && inputImportJson) {
         btnImportJson.addEventListener('click', () => inputImportJson.click());
         inputImportJson.addEventListener('change', e => {
