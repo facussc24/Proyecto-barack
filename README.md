@@ -2,6 +2,18 @@
 
 This project displays a hierarchical product table built with plain HTML, CSS and JavaScript.
 
+## Quick start
+
+Run a simple web server from the project folder:
+
+```bash
+python3 -m http.server
+```
+
+Open http://localhost:8000/index.html in a modern browser. All features rely on
+`localStorage` and won't work correctly if the pages are opened directly from
+the file system.
+
 ## Launching the site
 
 Because some browsers block local file reads, serve the folder from any static web server. For quick testing you can run:
