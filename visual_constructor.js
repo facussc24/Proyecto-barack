@@ -12,8 +12,25 @@ document.addEventListener('DOMContentLoaded', () => {
   const productCard = document.getElementById('productCard');
   const summaryTree = document.getElementById('summaryTree');
   const saveBtn = document.getElementById('saveAll');
+  const clientSelect = document.getElementById('prodClient');
 
   const root = { descripcion: '', codigo: '', subproductos: [] };
+
+  fillClientOptions();
+
+  function fillClientOptions() {
+    if (!clientSelect) return;
+    if (!window.SinopticoEditor || !SinopticoEditor.getNodes) return;
+    const nodes = SinopticoEditor.getNodes();
+    const clients = nodes.filter(n => (n.Tipo || '').toLowerCase() === 'cliente');
+    clientSelect.innerHTML = '';
+    clients.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.ID;
+      opt.textContent = c['Descripción'] || '';
+      clientSelect.appendChild(opt);
+    });
+  }
 
   function showToast(msg) {
     const div = document.createElement('div');
@@ -187,7 +204,9 @@ document.addEventListener('DOMContentLoaded', () => {
       }))
     };
     if (window.SinopticoEditor && SinopticoEditor.addNode) {
+      const parentId = clientSelect ? clientSelect.value : '';
       SinopticoEditor.addNode({
+        ParentID: parentId,
         Tipo: data.Tipo,
         Descripción: data.Descripción,
         Código: data.Código
@@ -205,4 +224,8 @@ document.addEventListener('DOMContentLoaded', () => {
       showToast('Error: SinopticoEditor no disponible');
     }
   });
+
+  document.addEventListener('sinoptico-mode', fillClientOptions);
+  document.addEventListener('sinoptico-data-changed', fillClientOptions);
+  setTimeout(fillClientOptions, 300);
 });
