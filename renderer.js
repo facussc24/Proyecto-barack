@@ -1168,4 +1168,10 @@
         loadData();
       });
 
+      window.addEventListener('storage', e => {
+        if (e.key === 'sinopticoData') {
+          loadData();
+        }
+      });
+
     }); // FIN DOMContentLoaded

@@ -71,6 +71,8 @@ no external dependencies. All header fields and the list of processes persist in
 - **AMFE persistence** – the AMFE pages store their data in `localStorage`.
 - **Data change event** – pages dispatch a `sinoptico-data-changed` event after
   updating the product tree so other modules can refresh their views.
+- **Cross-tab sync** – modifying the hierarchy in one tab refreshes any other
+  open sinóptico pages thanks to the `storage` event.
 
 The product hierarchy is stored in `localStorage`.
 
