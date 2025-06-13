@@ -17,6 +17,12 @@
   </nav>
   <div id="adminPanel" class="admin-panel fade-in">
     <h2>Administrar usuarios</h2>
+    <table id="usersTable" class="users-table">
+      <thead>
+        <tr><th>Usuario</th><th>Rol</th><th>Acciones</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
     <div class="admin-row">
       <input type="text" id="newUser" placeholder="Usuario">
       <input type="password" id="newPass" placeholder="Contraseña">
@@ -46,19 +52,57 @@
         return;
       }
       const panel = document.getElementById('adminPanel');
+      const tbody = document.querySelector('#usersTable tbody');
       if (panel) panel.style.display = 'flex';
+
+      function renderList() {
+        tbody.innerHTML = '';
+        auth.loadUsers().forEach(u => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${u.username}</td>
+            <td>
+              <select data-user="${u.username}">
+                <option value="user"${u.role==='user'? ' selected':''}>Usuario</option>
+                <option value="admin"${u.role==='admin'? ' selected':''}>Administrador</option>
+              </select>
+            </td>
+            <td><button data-del="${u.username}">Eliminar</button></td>`;
+          tbody.appendChild(tr);
+        });
+      }
+
+      renderList();
+
+      tbody.addEventListener('change', e => {
+        if (e.target.tagName === 'SELECT') {
+          const user = e.target.getAttribute('data-user');
+          auth.setRole(user, e.target.value);
+        }
+      });
+
+      tbody.addEventListener('click', e => {
+        const u = e.target.getAttribute('data-del');
+        if (u && confirm(`Eliminar ${u}?`)) {
+          auth.deleteUser(u);
+          renderList();
+        }
+      });
+
       document.getElementById('createUser').addEventListener('click', () => {
         const u = document.getElementById('newUser').value.trim();
         const p = document.getElementById('newPass').value.trim();
         const r = document.getElementById('newRole').value;
         if (u && p) {
           if (auth.createUser(u, p, r)) {
+            renderList();
             alert('Usuario creado');
           } else {
             alert('Ya existe el usuario');
           }
         }
       });
+
       document.getElementById('changePassword').addEventListener('click', () => {
         const u = document.getElementById('chgUser').value.trim();
         const p = document.getElementById('chgPass').value.trim();
@@ -68,6 +112,7 @@
           alert('Usuario no encontrado');
         }
       });
+
       document.getElementById('logoutBtn').addEventListener('click', () => {
         auth.logout();
         location.href = 'index.html';
