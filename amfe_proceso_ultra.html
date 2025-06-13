@@ -9,6 +9,7 @@
     body { font-family: var(--font-base); margin:0; }
     .header-grid { position:sticky; top:0; z-index:100; background:#fff; padding:10px; margin:0; display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:10px; box-shadow:0 2px 4px rgba(0,0,0,0.1); }
     .header-grid label { display:flex; flex-direction:column; font-weight:600; }
+    #teamContainer { display:flex; flex-direction:column; }
     .team-list span { background:#0066cc; color:#fff; padding:2px 6px; margin:2px; border-radius:4px; display:inline-block; transition:box-shadow .2s; }
     .team-list button { margin-left:4px; }
     .process-section { margin:20px; border-radius:8px; background:#fff; box-shadow:0 2px 4px rgba(0,0,0,0.1); }
@@ -44,13 +45,14 @@
     <label>Cliente<input id="hdr-cliente"></label>
     <label>Confidencialidad<input id="hdr-conf"></label>
     <label>Modelo/Año<input id="hdr-modelo"></label>
-    <label>Equipo
+    <label for="teamInput">Equipo</label>
+    <div id="teamContainer">
       <div class="team-list" id="teamList"></div>
       <div id="teamControls">
         <input id="teamInput" placeholder="Nombre">
         <button id="teamAdd">+</button>
       </div>
-    </label>
+    </div>
   </section>
   <div id="processContainer"></div>
   <button id="addProcess">+ Proceso</button>
