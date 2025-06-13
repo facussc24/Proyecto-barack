@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const summaryTree = document.getElementById('summaryTree');
   const saveBtn = document.getElementById('saveAll');
   const clientSelect = document.getElementById('prodClient');
+  const clientLabel = document.getElementById('clientInfo');
 
   const root = { descripcion: '', codigo: '', subproductos: [] };
 
@@ -51,6 +52,9 @@ document.addEventListener('DOMContentLoaded', () => {
         s.classList.remove('active');
       }
     });
+    if (clientLabel) {
+      if (step === 1) clientLabel.classList.add('hidden');
+    }
   }
 
   function updateSummary() {
@@ -61,17 +65,32 @@ document.addEventListener('DOMContentLoaded', () => {
     summaryTree.appendChild(ul);
   }
 
-  function renderNode(node) {
+  function renderNode(node, isSub = false) {
     const li = document.createElement('li');
     const div = document.createElement('div');
     div.className = 'tree-node';
     div.textContent = node.descripcion + (node.codigo ? ` - ${node.codigo}` : '');
+    if (isSub) {
+      const btn = document.createElement('button');
+      btn.className = 'add-child-btn';
+      btn.textContent = '+';
+      div.appendChild(btn);
+      btn.addEventListener('click', () => {
+        addInlineForm(div, (d,c) => {
+          const ins = { descripcion: d, codigo: c };
+          node.insumos = node.insumos || [];
+          node.insumos.push(ins);
+          updateSummary();
+          showToast('Insumo agregado');
+        });
+      });
+    }
     li.appendChild(div);
     if (node.subproductos && node.subproductos.length) {
       const ul = document.createElement('ul');
       ul.className = 'tree-list';
       node.subproductos.forEach(sp => {
-        const liSp = renderNode(sp);
+        const liSp = renderNode(sp, true);
         if (sp.insumos && sp.insumos.length) {
           const ulIns = document.createElement('ul');
           ulIns.className = 'tree-list';
@@ -158,6 +177,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     root.descripcion = desc;
     root.codigo = document.getElementById('prodCode').value.trim();
+    const selected = clientSelect && clientSelect.options[clientSelect.selectedIndex];
+    if (clientLabel) {
+      if (selected) {
+        clientLabel.textContent = 'Cliente: ' + selected.textContent;
+        clientLabel.classList.remove('hidden');
+      } else {
+        clientLabel.classList.add('hidden');
+      }
+    }
     productCard.innerHTML = '';
     productCard.textContent = desc + (root.codigo ? ` - ${root.codigo}` : '');
     const addBtn = document.createElement('button');
@@ -218,6 +246,7 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('prodDesc').value = '';
       document.getElementById('prodCode').value = '';
       productCard.innerHTML = '';
+      if (clientLabel) clientLabel.classList.add('hidden');
       updateSummary();
       updateProgress(1);
     } else {
