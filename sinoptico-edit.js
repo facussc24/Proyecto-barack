@@ -126,6 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   document.addEventListener('sinoptico-mode', fillOptions);
+  document.addEventListener('sinoptico-loaded', fillOptions);
   document.addEventListener('sinoptico-data-changed', fillOptions);
   setTimeout(fillOptions, 300);
 });
