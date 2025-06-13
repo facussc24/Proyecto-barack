@@ -26,7 +26,7 @@ python3 -m http.server
 
 Open http://localhost:8000/index.html in a modern browser. All data, including the AMFE tables, is kept in your browser's localStorage.
 
-All data—including the sinóptico—is stored only in your browser and will not sync across devices. Clearing your browser's storage or visiting the site under a different domain will start you with an empty dataset.
+All data—including the sinóptico—is stored only in your browser and will not sync across devices, but open tabs share updates through a BroadcastChannel.
 
 Previous versions allowed saving JSON files directly when running the page under Node or Electron. That capability has been removed; the site now reads and writes exclusively through `localStorage`.
 
@@ -35,9 +35,15 @@ Previous versions allowed saving JSON files directly when running the page under
 To host the page publicly you can enable **GitHub Pages**:
 
 1. Open the repository on GitHub and select **Settings**.
-2. In the **Pages** section choose the `main` branch and `/` folder, then save.
+2. In the **Pages** section choose the `gh-pages` branch and `/` folder, then save.
 3. After a minute or so the site will be available at
    `https://<user>.github.io/<repo>/`.
+
+A workflow defined in `.github/workflows/deploy.yml` publishes the site
+whenever changes are pushed to the `main` branch. The job installs
+dependencies with `npm ci`, runs `npm run build` if present and deploys the
+contents of either `dist/` or `public/` to the `gh-pages` branch using
+`peaceiris/actions-gh-pages`.
 
 `localStorage` is tied to each domain. Data saved while using
 `http://localhost` will not appear when visiting the GitHub Pages URL and
@@ -106,9 +112,8 @@ page. It is intended as a lightweight viewer for quick look-ups.
 - **AMFE persistence** – the AMFE pages store their data in `localStorage`.
 - **Data change event** – pages dispatch a `sinoptico-data-changed` event after
   updating the product tree so other modules can refresh their views.
-- **Cross-tab sync** – modifying the hierarchy in one tab refreshes any other
-  open sinóptico pages thanks to the `storage` event.
-
+- **Cross-tab sync** – modifying the hierarchy in one tab refreshes any other open sinóptico pages via the BroadcastChannel API.
+Pages communicate via a BroadcastChannel so each tab reloads the latest data whenever another one saves changes.
 
 ## Listening for data changes
 

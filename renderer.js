@@ -345,7 +345,7 @@
           chip.className = 'chip';
           chip.textContent = item.text;
           const btn = document.createElement('button');
-          btn.innerHTML = '×';
+          btn.textContent = '×';
           btn.addEventListener('click', () => {
             removeSelectedItem(item.code);
           });

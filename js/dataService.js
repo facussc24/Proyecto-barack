@@ -1,89 +1,151 @@
-(function(global){
-  const isNode = typeof process !== 'undefined' && process.versions && process.versions.node;
-  const hasWindow = !isNode && typeof window !== 'undefined' && typeof window.document !== 'undefined';
-  let DexieLib = null;
-  if (hasWindow) {
-    DexieLib = global.Dexie || (typeof require === 'function' ? require('dexie') : undefined);
-  }
+// js/dataService.js
 
-  let db = null;
-  if (DexieLib) {
-    db = new DexieLib('ProyectoBarackDB');
-    db.version(1).stores({ sinoptico: '++id,parentId,nombre,orden' });
-  }
-  const memory = [];
+export const DATA_CHANGED = 'DATA_CHANGED';
+const STORAGE_KEY = 'sinopticoData';
 
-  const channelName = 'sinoptico-channel';
-  const channel = hasWindow && typeof BroadcastChannel !== 'undefined'
+const isNode =
+  typeof process !== 'undefined' &&
+  process.versions != null &&
+  process.versions.node != null;
+const hasWindow = !isNode && typeof window !== 'undefined' && window.document;
+let DexieLib = null;
+if (hasWindow) {
+  DexieLib =
+    // if Dexie is loaded via a <script> tag it will be on window
+    window.Dexie ||
+    // otherwise try to require (for Node environments or bundlers)
+    (typeof require === 'function' ? require('dexie') : undefined);
+}
+
+let db = null;
+// in-memory fallback
+const memory = [];
+
+// initialize IndexedDB if Dexie is available
+if (DexieLib) {
+  db = new DexieLib('ProyectoBarackDB');
+  db.version(1).stores({
+    sinoptico: '++id,parentId,nombre,orden',
+  });
+} else if (hasWindow) {
+  // hydrate in-memory storage from localStorage
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    const arr = raw ? JSON.parse(raw) : [];
+    if (Array.isArray(arr)) {
+      memory.push(...arr);
+    }
+  } catch (e) {
+    console.error('Failed to load fallback storage', e);
+  }
+}
+
+// setup cross-tab/channel notifications
+const channelName = 'sinoptico-channel';
+const channel =
+  hasWindow && typeof BroadcastChannel !== 'undefined'
     ? new BroadcastChannel(channelName)
     : null;
 
-  function notify(){
-    if (channel && channel.postMessage) {
-      channel.postMessage({ type: 'DATA_CHANGED' });
-    }
+function _fallbackPersist() {
+  // sync in-memory array to localStorage
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(memory));
+  } catch (e) {
+    console.error('Failed to persist fallback storage', e);
   }
+}
 
-  async function getAll(){
-    if (db) {
-      try { return await db.sinoptico.toArray(); } catch(e){ console.error(e); }
+function notifyChange() {
+  if (channel && channel.postMessage) {
+    channel.postMessage({ type: DATA_CHANGED });
+  }
+  if (hasWindow) {
+    // dispatch a DOM event for same-page listeners
+    document.dispatchEvent(new Event(DATA_CHANGED));
+  }
+}
+
+export async function getAll() {
+  if (db) {
+    try {
+      return await db.sinoptico.toArray();
+    } catch (e) {
+      console.error(e);
+      return [];
     }
+  } else {
     return memory.slice();
   }
+}
 
-  async function addNode(node){
-    if (db) {
-      try {
-        const id = await db.sinoptico.add(node);
-        notify();
-        return id;
-      } catch(e){
-        console.error(e);
-      }
+export async function addNode(node) {
+  if (db) {
+    try {
+      const id = await db.sinoptico.add(node);
+      notifyChange();
+      return id;
+    } catch (e) {
+      console.error(e);
     }
-    memory.push(Object.assign({}, node));
-    notify();
-    return node.id;
+  } else {
+    // ensure unique id
+    const id = node.id ?? Date.now();
+    const newNode = { ...node, id };
+    memory.push(newNode);
+    _fallbackPersist();
+    notifyChange();
+    return id;
   }
+}
 
-  async function updateNode(id, changes){
-    if (db) {
-      try {
-        await db.sinoptico.update(id, changes);
-        notify();
-        return;
-      } catch(e){
-        console.error(e);
-      }
+export async function updateNode(id, changes) {
+  if (db) {
+    try {
+      await db.sinoptico.update(id, changes);
+      notifyChange();
+      return;
+    } catch (e) {
+      console.error(e);
     }
-    const item = memory.find(x => x.id === id);
-    if (item) Object.assign(item, changes);
-    notify();
-  }
-
-  async function deleteNode(id){
-    if (db) {
-      try {
-        await db.sinoptico.delete(id);
-        notify();
-        return;
-      } catch(e){
-        console.error(e);
-      }
+  } else {
+    const item = memory.find((x) => x.id === id);
+    if (item) {
+      Object.assign(item, changes);
+      _fallbackPersist();
+      notifyChange();
     }
-    const idx = memory.findIndex(x => x.id === id);
-    if (idx >= 0) memory.splice(idx,1);
-    notify();
   }
+}
 
-  function subscribeToChanges(handler){
-    if (!channel) return;
-    channel.addEventListener('message', ev => {
-      if (ev.data && ev.data.type === 'DATA_CHANGED') handler();
+export async function deleteNode(id) {
+  if (db) {
+    try {
+      await db.sinoptico.delete(id);
+      notifyChange();
+      return;
+    } catch (e) {
+      console.error(e);
+    }
+  } else {
+    const idx = memory.findIndex((x) => x.id === id);
+    if (idx >= 0) {
+      memory.splice(idx, 1);
+      _fallbackPersist();
+      notifyChange();
+    }
+  }
+}
+
+export function subscribeToChanges(handler) {
+  if (channel) {
+    channel.addEventListener('message', (ev) => {
+      if (ev.data && ev.data.type === DATA_CHANGED) {
+        handler();
+      }
     });
   }
-
-  const api = { getAll, addNode, updateNode, deleteNode, subscribeToChanges };
-  if (typeof module !== 'undefined' && module.exports) module.exports = api;
-  global.dataService = api;
-})(typeof globalThis !== 'undefined' ? globalThis : window);
+  if (hasWindow) {
+    document.addEventListener(DATA_CHANGED, handler);
+  }
+}
