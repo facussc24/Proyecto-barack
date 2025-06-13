@@ -1,16 +1,4 @@
     document.addEventListener('DOMContentLoaded', () => {
-      let fs = null;
-      let pathModule = null;
-      let jsonFile = null;
-      if (typeof window !== 'undefined' && typeof window.require === 'function') {
-        try {
-          fs = window.require('fs');
-          pathModule = window.require('path');
-          jsonFile = pathModule.join(__dirname, 'BASE_DE_DATOS.json');
-        } catch (e) {
-          fs = null;
-        }
-      }
       let fuseSinoptico = null;
       let sinopticoData = [];
       const sinopticoElem = document.getElementById('sinoptico');
@@ -757,45 +745,27 @@
             ).map(btn => btn.closest('tr').getAttribute('data-id'))
           : [];
 
-        let stored = null;
-        if (fs && jsonFile) {
+        let stored = localStorage.getItem('sinopticoData');
+        if (stored) {
           try {
-            if (!fs.existsSync(jsonFile)) {
-              fs.writeFileSync(
-                jsonFile,
-                JSON.stringify(generarDatosIniciales(), null, 2),
-                'utf8'
-              );
-            }
-            stored = fs.readFileSync(jsonFile, 'utf8');
-            sinopticoData = stored ? JSON.parse(stored) : [];
+            sinopticoData = JSON.parse(stored);
           } catch (e) {
-            console.error('Error reading sinoptico JSON', e);
-            sinopticoData = [];
+            console.error(
+              'Error parsing sinopticoData from localStorage',
+              e
+            );
+            sinopticoData = generarDatosIniciales();
+            try {
+              localStorage.setItem(
+                'sinopticoData',
+                JSON.stringify(sinopticoData)
+              );
+            } catch (err) {
+              console.error('Error persisting sinopticoData', err);
+            }
           }
         } else {
-          stored = localStorage.getItem('sinopticoData');
-          if (stored) {
-            try {
-              sinopticoData = JSON.parse(stored);
-            } catch (e) {
-              console.error(
-                'Error parsing sinopticoData from localStorage',
-                e
-              );
-              sinopticoData = generarDatosIniciales();
-              try {
-                localStorage.setItem(
-                  'sinopticoData',
-                  JSON.stringify(sinopticoData)
-                );
-              } catch (err) {
-                console.error('Error persisting sinopticoData', err);
-              }
-            }
-          } else {
-            sinopticoData = generarDatosIniciales();
-          }
+          sinopticoData = generarDatosIniciales();
         }
 
         if (typeof localStorage !== 'undefined') {
@@ -1098,24 +1068,6 @@
         localStorage.setItem('sinopticoData', JSON.stringify(sinopticoData));
         if (typeof addHistoryEntry === 'function') {
           try { addHistoryEntry('sinopticoHistory', sinopticoData); } catch(e){}
-        }
-        if (fs && jsonFile) {
-          try {
-            if (!fs.existsSync(jsonFile)) {
-              fs.writeFileSync(
-                jsonFile,
-                JSON.stringify(generarDatosIniciales(), null, 2),
-                'utf8'
-              );
-            }
-            fs.writeFileSync(
-              jsonFile,
-              JSON.stringify(sinopticoData, null, 2),
-              'utf8'
-            );
-          } catch (e) {
-            console.error('Error writing sinoptico JSON', e);
-          }
         }
         if (typeof mostrarMensaje === 'function') {
           mostrarMensaje('Datos guardados', 'success');

@@ -26,6 +26,8 @@ Open http://localhost:8000/index.html in a modern browser. All data, including t
 
 All data—including the sinóptico—is stored only in your browser and will not sync across devices. Clearing your browser's storage or visiting the site under a different domain will start you with an empty dataset.
 
+Previous versions allowed saving JSON files directly when running the page under Node or Electron. That capability has been removed; the site now reads and writes exclusively through `localStorage`.
+
 ## GitHub Pages
 
 To host the page publicly you can enable **GitHub Pages**:
@@ -107,7 +109,7 @@ page. It is intended as a lightweight viewer for quick look-ups.
 
 ## Respaldos fuera del repositorio
 
-Crea una carpeta en un nivel superior al proyecto, por ejemplo `../Datos-Nunca borrar`. Como administrador, entra a la página de inicio y pulsa **Exportar JSON** para guardar el archivo allí. Podrás recuperarlo en el futuro con **Importar JSON** desde la misma página. Añade esta carpeta al `.gitignore` para que Git ignore tus copias de seguridad.
+Pulsa **Exportar JSON** en la página de inicio para descargar el fichero `sinoptico.json` mediante el navegador. Guarda una copia en una carpeta fuera del proyecto si quieres conservarla. Podrás recuperarla más adelante con **Importar JSON** desde el mismo menú.
 
 The product hierarchy is stored in `localStorage`.
 
