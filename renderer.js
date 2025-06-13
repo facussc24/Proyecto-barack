@@ -982,10 +982,14 @@
         }
       }
 
+      function generateId(){
+        return Date.now().toString(36) + Math.random().toString(36).substr(2,5);
+      }
+
       window.SinopticoEditor = {
         addNode(opts, children) {
           const row = {
-            ID: Date.now().toString(),
+            ID: generateId(),
             ParentID: opts.ParentID || '',
             Tipo: opts.Tipo || 'Producto',
             Secuencia: opts.Secuencia || '',
