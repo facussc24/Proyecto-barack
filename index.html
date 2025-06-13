@@ -39,6 +39,7 @@
           </div>
       </main>
   <script src="sha256.min.js"></script>
+  <script src="history_utils.js"></script>
   <script src="auth.js"></script>
   <script src="file-warning.js"></script>
   <script src="theme.js" defer></script>
@@ -70,6 +71,9 @@
           link.addEventListener('click', e => {
             if (sessionStorage.getItem('isAdmin') === 'true') {
               e.preventDefault();
+              if (typeof addHistoryEntry === 'function') {
+                try { addHistoryEntry('loginHistory', { user: sessionStorage.getItem('currentUser'), action: 'logout' }); } catch(e){}
+              }
               auth.logout();
               update();
               window.location.href = 'welcome.html';
