@@ -1,9 +1,11 @@
+const root = typeof global !== 'undefined' ? global : globalThis;
+
     document.addEventListener('DOMContentLoaded', () => {
       const dataService =
-        global.dataService ||
+        root.dataService ||
         (typeof require === 'function' ? require('./js/dataService.js') : null);
-      if (typeof requestAnimationFrame === 'undefined') {
-        global.requestAnimationFrame = cb => setTimeout(cb, 0);
+      if (typeof root.requestAnimationFrame === 'undefined') {
+        root.requestAnimationFrame = cb => setTimeout(cb, 0);
       }
       let fuseSinoptico = null;
       let sinopticoData = [];
@@ -1091,5 +1093,10 @@
       if (dataService && dataService.subscribeToChanges) {
         dataService.subscribeToChanges(() => loadData());
       }
+
+      root.renderSinoptico = datos => {
+        sinopticoData = Array.isArray(datos) ? datos.slice() : [];
+        procesarDatos(sinopticoData, []);
+      };
 
     }); // FIN DOMContentLoaded
