@@ -242,10 +242,17 @@ function render(){
   });
 }
 
-window.addEventListener('DOMContentLoaded',()=>{
-  load();
-  render();
-  document.getElementById('addProcess').onclick=()=>{
+  window.addEventListener('DOMContentLoaded',()=>{
+    load();
+    render();
+
+    window.addEventListener('storage',e=>{
+      if(e.key===STORAGE_KEY){
+        load();
+        render();
+      }
+    });
+    document.getElementById('addProcess').onclick=()=>{
     if(!logged()) return;
     data.processes.push({titulo:'',estacion:'',descripcion:'',materiales:'',requerimientos:'',modos:[]});
     save();
