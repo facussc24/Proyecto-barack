@@ -934,7 +934,7 @@
           const spanTextPadre = tdPadre.querySelector('.item-text');
           if (spanTextPadre) anchoText = spanTextPadre.offsetWidth;
 
-          const margenExtra = 4; // sólo 4px en lugar de 8px
+          const margenExtra = 12; // mayor separación para cada nivel
           const indentActual = indentPadre + anchoToggle + anchoArrow + anchoText + margenExtra;
           indentCache[id] = indentActual;
           return indentActual;
