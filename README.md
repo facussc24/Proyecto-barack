@@ -25,12 +25,6 @@ Editing the master list and the sinóptico now requires being logged in.
 The **master document list** lets you organise engineering documents by category. Open `listado_maestro.html` in your browser and click **Editar** to toggle edit mode. You must be logged in to modify the table. While in edit mode you can add new rows or change existing numbers and details.
 
 The list is stored solely in your browser's `localStorage`.
-
-## Using `amfe_proceso_ultra.html`
-
-Open `amfe_proceso_ultra.html` in a browser to use the ultralight process AMFE. It saves everything to `localStorage` and has no external dependencies. Log in to add processes or failure modes and edit the tables inline.
-
-
 ## Features
 
 - **Column toggles** – checkboxes let you hide or show specific table columns.
@@ -47,7 +41,6 @@ Open `amfe_proceso_ultra.html` in a browser to use the ultralight process AMFE. 
 - **Cross-linking** – clicking an insumo in the sinóptico opens the list filtered to that entry.
 - **Insumo editing** – administrators can agregar, modificar o eliminar insumos desde `insumos.html`.
 - **AMFE persistence** – the AMFE pages store their data in `localStorage`.
-- **Ultralight process AMFE** – `amfe_proceso_ultra.html` saves everything to `localStorage` and has no external dependencies.
 - **Data change event** – pages dispatch a `sinoptico-data-changed` event after
   updating the product tree so other modules can refresh their views.
 
