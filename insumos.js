@@ -28,7 +28,14 @@ document.addEventListener('DOMContentLoaded', () => {
       data = [];
     }
   } else {
-    data = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      data = raw ? JSON.parse(raw) : [];
+      if (!Array.isArray(data)) data = [];
+    } catch (e) {
+      data = [];
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
   }
 
   let fuse = null;
