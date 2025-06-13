@@ -8,34 +8,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const inEsp = document.getElementById('inEspecificaciones');
   let editId = null;
   const STORAGE_KEY = 'insumosData';
-  let fs = null;
-  let path = null;
-  let jsonPath = null;
-  if (typeof window !== 'undefined' && typeof window.require === 'function') {
-    try {
-      fs = window.require('fs');
-      path = window.require('path');
-      jsonPath = path.join(__dirname, 'insumos.json');
-    } catch (e) {
-      fs = null;
-    }
-  }
   let data = [];
-  if (fs && jsonPath && fs.existsSync(jsonPath)) {
-    try {
-      data = JSON.parse(fs.readFileSync(jsonPath, 'utf8')) || [];
-    } catch (e) {
-      data = [];
-    }
-  } else {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      data = raw ? JSON.parse(raw) : [];
-      if (!Array.isArray(data)) data = [];
-    } catch (e) {
-      data = [];
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    }
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    data = raw ? JSON.parse(raw) : [];
+    if (!Array.isArray(data)) data = [];
+  } catch (e) {
+    data = [];
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   }
 
   let fuse = null;
@@ -59,13 +39,6 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     if (typeof addHistoryEntry === 'function') {
       try { addHistoryEntry('insumosHistory', data); } catch(e){}
-    }
-    if (fs && jsonPath) {
-      try {
-        fs.writeFileSync(jsonPath, JSON.stringify(data, null, 2), 'utf8');
-      } catch (e) {
-        console.error('Error writing insumos JSON', e);
-      }
     }
   }
 
