@@ -1,25 +1,22 @@
-import { getAll, DATA_CHANGED } from './dataService.js';
+import { getAll, subscribeToChanges } from './dataService.js';
+import '../renderer.js';
 
-function refresh() {
-  const data = getAll();
-  try {
-    localStorage.setItem('sinopticoData', JSON.stringify(data));
-  } catch (e) {
-    console.error('Could not persist sinoptico data', e);
-  }
-  document.dispatchEvent(new CustomEvent('sinoptico-data-changed'));
-}
-
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  console.log('▶ renderSinoptico arrancó');
   sessionStorage.setItem('sinopticoEdit', 'false');
-  refresh();
-  window.addEventListener('load', () => {
-    const loader = document.getElementById('loading');
-    if (loader) loader.style.display = 'none';
+  const nodes = await getAll();
+  console.log('▷ nodos obtenidos', nodes);
+  if (typeof renderSinoptico === 'function') {
+    renderSinoptico(nodes);
+  }
+  const loader = document.getElementById('loading');
+  if (loader) loader.style.display = 'none';
+  console.log('▶ spinner oculto');
+
+  subscribeToChanges(async () => {
+    const updated = await getAll();
+    if (typeof renderSinoptico === 'function') {
+      renderSinoptico(updated);
+    }
   });
 });
-
-document.addEventListener(DATA_CHANGED, refresh);
-
-// Load existing rendering logic
-import '../renderer.js';

@@ -3,27 +3,21 @@
 export const DATA_CHANGED = 'DATA_CHANGED';
 const STORAGE_KEY = 'sinopticoData';
 
+import Dexie from 'dexie';
+
 const isNode =
   typeof process !== 'undefined' &&
   process.versions != null &&
   process.versions.node != null;
 const hasWindow = !isNode && typeof window !== 'undefined' && window.document;
-let DexieLib = null;
-if (hasWindow) {
-  DexieLib =
-    // if Dexie is loaded via a <script> tag it will be on window
-    window.Dexie ||
-    // otherwise try to require (for Node environments or bundlers)
-    (typeof require === 'function' ? require('dexie') : undefined);
-}
 
 let db = null;
 // in-memory fallback
 const memory = [];
 
 // initialize IndexedDB if Dexie is available
-if (DexieLib) {
-  db = new DexieLib('ProyectoBarackDB');
+if (Dexie) {
+  db = new Dexie('ProyectoBarackDB');
   db.version(1).stores({
     sinoptico: '++id,parentId,nombre,orden',
   });
