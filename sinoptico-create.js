@@ -25,35 +25,68 @@ document.addEventListener('DOMContentLoaded', () => {
     const map = {};
     nodes.forEach(n => (map[n.ID] = Object.assign({ children: [] }, n)));
     nodes.forEach(n => {
-      if (n.ParentID && map[n.ParentID]) {
-        map[n.ParentID].children.push(map[n.ID]);
-      }
+      if (n.ParentID && map[n.ParentID]) map[n.ParentID].children.push(map[n.ID]);
     });
     const roots = nodes.filter(n => !n.ParentID).map(n => map[n.ID]);
-    const levels = [];
-    function traverse(node, depth) {
-      levels[depth] = levels[depth] || [];
-      levels[depth].push(node);
-      node.children.forEach(c => traverse(c, depth + 1));
-    }
-    roots.forEach(r => traverse(r, 0));
 
     preview.innerHTML = '';
-    levels.forEach(lv => {
-      const lvDiv = document.createElement('div');
-      lvDiv.className = 'tree-level';
-      lv.forEach(n => {
-        const nd = document.createElement('div');
-        nd.className = 'tree-node';
-        nd.textContent = n['Descripción'] || n.ID;
-        lvDiv.appendChild(nd);
-      });
-      preview.appendChild(lvDiv);
-    });
+    const rootList = document.createElement('ul');
+    rootList.className = 'tree-list';
+    roots.forEach(r => rootList.appendChild(buildItem(r)));
+    preview.appendChild(rootList);
+
+    function buildItem(node) {
+      const li = document.createElement('li');
+      const container = document.createElement('div');
+      container.className = 'tree-node';
+      const label = document.createElement('span');
+      label.textContent = node['Descripción'] || node.ID;
+      container.appendChild(label);
+
+      if ((node.Tipo || '').toLowerCase() !== 'insumo') {
+        const addSub = document.createElement('button');
+        addSub.textContent = '+S';
+        addSub.className = 'add-child-btn';
+        addSub.title = 'Agregar subproducto';
+        addSub.addEventListener('click', () => openSubForm(node.ID));
+        container.appendChild(addSub);
+
+        const addIns = document.createElement('button');
+        addIns.textContent = '+I';
+        addIns.className = 'add-child-btn';
+        addIns.title = 'Agregar insumo';
+        addIns.addEventListener('click', () => openInsForm(node.ID));
+        container.appendChild(addIns);
+      }
+
+      li.appendChild(container);
+      if (node.children && node.children.length) {
+        const ul = document.createElement('ul');
+        node.children.forEach(c => ul.appendChild(buildItem(c)));
+        li.appendChild(ul);
+      }
+      return li;
+    }
   }
 
   function hideAll() {
     [clientForm, productForm, subForm, insForm].forEach(f => f.classList.add('hidden'));
+  }
+
+  function openSubForm(pid) {
+    hideAll();
+    level.value = 'Subproducto';
+    subForm.classList.remove('hidden');
+    fillOptions();
+    if (pid) subParent.value = pid;
+  }
+
+  function openInsForm(pid) {
+    hideAll();
+    level.value = 'Insumo';
+    insForm.classList.remove('hidden');
+    fillOptions();
+    if (pid) insParent.value = pid;
   }
 
   level.addEventListener('change', () => {
