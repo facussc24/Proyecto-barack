@@ -1115,7 +1115,8 @@ select {
   margin: 0;
   padding: 0;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .flow-diagram .tree-list ul {
@@ -1132,6 +1133,8 @@ select {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   animation: fadeIn 0.3s ease forwards;
   opacity: 0;
+  white-space: normal;
+  word-break: break-word;
 }
 
 .flow-diagram li > .tree-node::after {
