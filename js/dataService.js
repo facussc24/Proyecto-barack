@@ -20,7 +20,8 @@ const memory = [];
 if (Dexie) {
   db = new Dexie('ProyectoBarackDB');
   db.version(1).stores({
-    sinoptico: '++id,parentId,nombre,orden',
+    // use string "id" as primary key
+    sinoptico: 'id,parentId,nombre,orden',
   });
 } else if (hasWindow) {
   // hydrate in-memory storage from localStorage
@@ -75,36 +76,39 @@ export async function getAll() {
 }
 
 export async function addNode(node) {
+  const newNode = { ...node };
+  if (!newNode.id) {
+    newNode.id = Date.now().toString();
+  }
   if (db) {
     try {
-      const id = await db.sinoptico.add(node);
+      await db.sinoptico.add(newNode);
       notifyChange();
-      return id;
+      return newNode.id;
     } catch (e) {
       console.error(e);
     }
   } else {
-    // ensure unique id
-    const id = node.id ?? Date.now();
-    const newNode = { ...node, id };
+    // ensure unique id in memory fallback
     memory.push(newNode);
     _fallbackPersist();
     notifyChange();
-    return id;
+    return newNode.id;
   }
 }
 
 export async function updateNode(id, changes) {
+  const key = String(id);
   if (db) {
     try {
-      await db.sinoptico.update(id, changes);
+      await db.sinoptico.update(key, changes);
       notifyChange();
       return;
     } catch (e) {
       console.error(e);
     }
   } else {
-    const item = memory.find((x) => x.id === id);
+    const item = memory.find((x) => String(x.id) === key);
     if (item) {
       Object.assign(item, changes);
       _fallbackPersist();
@@ -114,16 +118,17 @@ export async function updateNode(id, changes) {
 }
 
 export async function deleteNode(id) {
+  const key = String(id);
   if (db) {
     try {
-      await db.sinoptico.delete(id);
+      await db.sinoptico.delete(key);
       notifyChange();
       return;
     } catch (e) {
       console.error(e);
     }
   } else {
-    const idx = memory.findIndex((x) => x.id === id);
+    const idx = memory.findIndex((x) => String(x.id) === key);
     if (idx >= 0) {
       memory.splice(idx, 1);
       _fallbackPersist();
