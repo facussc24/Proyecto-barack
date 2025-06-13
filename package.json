@@ -10,5 +10,8 @@
     "fuse.js": "^7.1.0",
     "jsdom": "^22.1.0",
     "jsdom-global": "^3.0.2"
+  },
+  "dependencies": {
+    "dexie": "^4.0.11"
   }
 }

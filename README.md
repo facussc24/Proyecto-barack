@@ -35,9 +35,15 @@ Previous versions allowed saving JSON files directly when running the page under
 To host the page publicly you can enable **GitHub Pages**:
 
 1. Open the repository on GitHub and select **Settings**.
-2. In the **Pages** section choose the `main` branch and `/` folder, then save.
+2. In the **Pages** section choose the `gh-pages` branch and `/` folder, then save.
 3. After a minute or so the site will be available at
    `https://<user>.github.io/<repo>/`.
+
+A workflow defined in `.github/workflows/deploy.yml` publishes the site
+whenever changes are pushed to the `main` branch. The job installs
+dependencies with `npm ci`, runs `npm run build` if present and deploys the
+contents of either `dist/` or `public/` to the `gh-pages` branch using
+`peaceiris/actions-gh-pages`.
 
 `localStorage` is tied to each domain. Data saved while using
 `http://localhost` will not appear when visiting the GitHub Pages URL and
