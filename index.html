@@ -48,9 +48,10 @@
           }
           link.addEventListener('click', e => {
             if (sessionStorage.getItem('isAdmin') === 'true') {
+              e.preventDefault();
               auth.logout();
               update();
-              e.preventDefault();
+              window.location.href = 'welcome.html';
             }
           });
           update();
