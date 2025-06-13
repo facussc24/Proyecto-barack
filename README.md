@@ -42,8 +42,17 @@ The list is stored in your browser's `localStorage`; the no-borrar folder is no 
 - **Cross-linking** – clicking an insumo in the sinóptico opens the list filtered to that entry.
 - **Insumo editing** – administrators can agregar, modificar o eliminar insumos desde `insumos.html`.
 - **AMFE persistence** – the AMFE pages store their data in `localStorage`.
+- **Data change event** – pages dispatch a `sinoptico-data-changed` event after
+  updating the product tree so other modules can refresh their views.
 
 The product hierarchy is stored in `localStorage`.
+
+## Listening for data changes
+
+Whenever `SinopticoEditor.addNode`, `updateNode` or `deleteSubtree` modifies the
+hierarchy it stores the updated array and dispatches the
+`sinoptico-data-changed` event. Scripts can listen for this event on
+`document` and call `SinopticoEditor.getNodes()` to refresh their UI.
 
 ## Dependencies and browser requirements
 

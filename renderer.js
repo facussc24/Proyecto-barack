@@ -1021,6 +1021,7 @@
           }
           saveSinoptico();
           loadData();
+          document.dispatchEvent(new CustomEvent('sinoptico-data-changed'));
           return row.ID;
         },
         deleteSubtree(id) {
@@ -1032,6 +1033,7 @@
           sinopticoData = sinopticoData.filter(r => !ids.has(r.ID));
           saveSinoptico();
           loadData();
+          document.dispatchEvent(new CustomEvent('sinoptico-data-changed'));
         },
         updateNode(id, attrs) {
           const node = sinopticoData.find(r => r.ID === id);
@@ -1042,6 +1044,7 @@
           }
           saveSinoptico();
           loadData();
+          document.dispatchEvent(new CustomEvent('sinoptico-data-changed'));
         },
         getNodes() {
           return sinopticoData.slice();
