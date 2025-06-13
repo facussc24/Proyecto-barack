@@ -12,6 +12,8 @@ python3 -m http.server
 
 Open http://localhost:8000/index.html in a modern browser. All data, including the AMFE tables, is kept in your browser's localStorage.
 
+All data—including the sinóptico—is stored only in your browser and will not sync across devices. Clearing your browser's storage or visiting the site under a different domain will start you with an empty dataset.
+
 ## GitHub Pages
 
 To host the page publicly you can enable **GitHub Pages**:
