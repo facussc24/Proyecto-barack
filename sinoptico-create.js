@@ -21,10 +21,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const subSearch = document.getElementById('subSearch');
   const subSuggestions = document.getElementById('subSuggestions');
   const subDescInput = document.getElementById('subDesc');
+  const subCodeInput = document.getElementById('subCode');
   const insSearch = document.getElementById('insSearch');
   const insSuggestions = document.getElementById('insSuggestions');
   const insDescInput = document.getElementById('insDesc');
   const insCodeInput = document.getElementById('insCode');
+  const prodCodeInput = document.getElementById('prodCode');
 
   let subFuse = null;
   let insFuse = null;
@@ -126,8 +128,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const nodes = SinopticoEditor.getNodes();
     const subs = nodes.filter(n => (n.Tipo || '').toLowerCase() === 'subensamble');
     const ins = nodes.filter(n => (n.Tipo || '').toLowerCase() === 'insumo');
-    subFuse = new Fuse(subs, { keys: ['Descripción', 'Código', 'ID'], threshold: 0.3 });
-    insFuse = new Fuse(ins, { keys: ['Descripción', 'Código', 'ID'], threshold: 0.3 });
+    subFuse = new Fuse(subs, { keys: ['Descripción', 'Código', 'ID'], threshold: 0.2 });
+    insFuse = new Fuse(ins, { keys: ['Descripción', 'Código', 'ID'], threshold: 0.2 });
   }
 
   function attachSearch(input, list, fuseGetter, onPick, clearSel) {
@@ -145,7 +147,9 @@ document.addEventListener('DOMContentLoaded', () => {
       results.forEach(r => {
         const li = document.createElement('li');
         const item = r.item;
-        li.textContent = item['Descripción'] || item.ID;
+        const desc = item['Descripción'] || item.ID;
+        const codeTxt = item['Código'] ? ` - ${item['Código']}` : '';
+        li.textContent = `${desc}${codeTxt}`;
         li.addEventListener('mousedown', () => {
           onPick(item);
           list.innerHTML = '';
@@ -195,8 +199,9 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     const parent = prodClient.value;
     const desc = document.getElementById('prodDesc').value.trim();
+    const code = prodCodeInput ? prodCodeInput.value.trim() : '';
     if (!desc) return;
-    const id = SinopticoEditor.addNode({ ParentID: parent, Tipo: 'Pieza final', Descripción: desc });
+    const id = SinopticoEditor.addNode({ ParentID: parent, Tipo: 'Pieza final', Descripción: desc, Código: code });
     productForm.reset();
     const addMore = addAnotherProduct || (e.submitter && e.submitter.id === 'addProductBtn');
     addAnotherProduct = false;
@@ -220,13 +225,14 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
     const parent = subParent.value;
     const desc = subDescInput.value.trim();
+    const code = subCodeInput ? subCodeInput.value.trim() : '';
     if (!desc && !selectedSubId) return;
     let data;
     if (selectedSubId) {
       const node = SinopticoEditor.getNodes().find(n => n.ID === selectedSubId);
-      data = { ParentID: parent, Tipo: node ? node.Tipo : 'Subensamble', Descripción: node ? node['Descripción'] : desc };
+      data = { ParentID: parent, Tipo: node ? node.Tipo : 'Subensamble', Descripción: node ? node['Descripción'] : desc, Código: node ? node['Código'] : code };
     } else {
-      data = { ParentID: parent, Tipo: 'Subensamble', Descripción: desc };
+      data = { ParentID: parent, Tipo: 'Subensamble', Descripción: desc, Código: code };
     }
     lastSubId = SinopticoEditor.addNode(data);
     selectedSubId = null;
