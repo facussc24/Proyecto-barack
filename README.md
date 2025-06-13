@@ -61,6 +61,7 @@ no external dependencies. All header fields and the list of processes persist in
 - **Editing modes** – once logged in you can edit the master list and the sinóptico using their respective **Editar** buttons. The product view is maintained through the interface at `admin_menu.html`.
 - **Excel export** – visible rows can be saved as `sinoptico.xlsx`. The file
   downloads to your browser's default folder.
+- **JSON export/import** – use **Export JSON** to save the hierarchy and **Import JSON** to load a previously saved `.json` file.
 - **Dynamic categories** – the master list starts empty and new document sections appear automatically when items are added.
 - **Client grouping** – rows with a value in the `Cliente` column are grouped under that client in the product tree.
 - **Smooth animations** – buttons and rows fade and scale for a more polished experience.

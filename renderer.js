@@ -541,6 +541,62 @@
       });
 
       /* ==================================================
+         Exportar/Importar JSON
+      ================================================== */
+      const btnExportJson = document.getElementById('btnExportJson');
+      if (btnExportJson) btnExportJson.addEventListener('click', exportJson);
+
+      const btnImportJson = document.getElementById('btnImportJson');
+      const inputImportJson = document.getElementById('inputImportJson');
+      if (btnImportJson && inputImportJson) {
+        btnImportJson.addEventListener('click', () => inputImportJson.click());
+        inputImportJson.addEventListener('change', e => {
+          const file = e.target.files[0];
+          if (file) importJsonFile(file);
+          inputImportJson.value = '';
+        });
+      }
+
+      function exportJson() {
+        try {
+          const blob = new Blob([
+            JSON.stringify(sinopticoData, null, 2)
+          ], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'sinoptico.json';
+          a.style.display = 'none';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        } catch (e) {
+          console.error('Error exporting JSON', e);
+        }
+      }
+
+      function importJsonFile(file) {
+        if (typeof FileReader === 'undefined') return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const data = JSON.parse(reader.result);
+            if (Array.isArray(data)) {
+              sinopticoData = data;
+              saveSinoptico();
+              loadData();
+            } else {
+              throw new Error('Formato inválido');
+            }
+          } catch (e) {
+            console.error('Error importing JSON', e);
+          }
+        };
+        reader.readAsText(file);
+      }
+
+      /* ==================================================
          5) Cargar CSV y construir la tabla jerárquica
          + Recarga automática cada 30 segundos
       ================================================== */
