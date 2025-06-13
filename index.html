@@ -33,6 +33,10 @@
             <li>Listado maestro de ingeniería</li>
             <li>Datos actualizados automáticamente</li>
           </ul>
+          <div id="jsonTools" style="display:none;margin-top:1em;text-align:center;">
+            <button id="exportJsonBtn">Exportar JSON</button>
+            <input type="file" id="importJsonInput" accept="application/json" />
+          </div>
       </main>
   <script src="sha256.min.js"></script>
   <script src="auth.js"></script>
@@ -40,6 +44,16 @@
   <script src="theme.js" defer></script>
       <script src="smooth-nav.js" defer></script>
       <script src="renderer.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/dexie@4/dist/dexie.min.js" onerror="this.onerror=null;this.src='vendor/dexie.min.js'"></script>
+  <script type="importmap">
+  {
+    "imports": {
+      "dexie": "./vendor/dexie.min.mjs"
+    }
+  }
+  </script>
+  <script type="module" src="js/dataService.js"></script>
+  <script type="module" src="js/json_tools.js"></script>
       <script>
         document.addEventListener('DOMContentLoaded', () => {
           document.querySelector('main').classList.add('fade-in');

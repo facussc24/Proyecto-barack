@@ -131,6 +131,26 @@ export async function deleteNode(id) {
   }
 }
 
+export async function replaceAll(arr) {
+  if (!Array.isArray(arr)) return;
+  if (db) {
+    try {
+      await db.transaction('rw', db.sinoptico, async () => {
+        await db.sinoptico.clear();
+        if (arr.length) await db.sinoptico.bulkAdd(arr);
+      });
+      notifyChange();
+    } catch (e) {
+      console.error(e);
+    }
+  } else {
+    memory.length = 0;
+    memory.push(...arr);
+    _fallbackPersist();
+    notifyChange();
+  }
+}
+
 export function subscribeToChanges(handler) {
   if (channel) {
     channel.addEventListener('message', (ev) => {
