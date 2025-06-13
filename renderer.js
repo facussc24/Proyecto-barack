@@ -575,8 +575,10 @@
           a.click();
           document.body.removeChild(a);
           URL.revokeObjectURL(url);
+          mostrarMensaje('JSON exportado', 'success');
         } catch (e) {
           console.error('Error exporting JSON', e);
+          mostrarMensaje('Error al exportar JSON');
         }
       }
 
@@ -586,15 +588,16 @@
         reader.onload = () => {
           try {
             const data = JSON.parse(reader.result);
-            if (Array.isArray(data)) {
-              sinopticoData = data;
-              saveSinoptico();
-              loadData();
-            } else {
+            if (!Array.isArray(data)) {
               throw new Error('Formato inválido');
             }
+            sinopticoData = data;
+            saveSinoptico();
+            loadData();
+            mostrarMensaje('JSON importado', 'success');
           } catch (e) {
             console.error('Error importing JSON', e);
+            mostrarMensaje('Error al importar JSON');
           }
         };
         reader.readAsText(file);
