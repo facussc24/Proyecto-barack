@@ -26,8 +26,13 @@ document.addEventListener('DOMContentLoaded', () => {
   function updateProgress(step) {
     progressBar.style.width = step * 33 + '%';
     [step1, step2, step3].forEach((s,i) => {
-      if (i === step-1) s.classList.remove('hidden');
-      else s.classList.add('hidden');
+      if (i === step-1) {
+        s.classList.remove('hidden');
+        s.classList.add('active');
+      } else {
+        s.classList.add('hidden');
+        s.classList.remove('active');
+      }
     });
   }
 
