@@ -50,6 +50,10 @@
       const panel = document.getElementById('adminPanel');
       const logoutBtn = document.getElementById('logoutBtn');
       auth.restoreSession();
+      if (sessionStorage.getItem('isAdmin') === 'true') {
+        location.href = 'index.html';
+        return;
+      }
       function updatePanel() {
         panel.style.display = sessionStorage.getItem('isAdmin') === 'true' ? 'block' : 'none';
       }
