@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
+    "pretest": "sh scripts/setup.sh",
     "test": "node test-maestro.js && node test-renderer.js && node test-auth.js && node test-insumos.js"
   },
   "devDependencies": {
