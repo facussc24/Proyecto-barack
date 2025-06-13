@@ -16,12 +16,12 @@ document.dispatchEvent(new Event('DOMContentLoaded'));
 
 document.getElementById('addProcess').click();
 
-const descSpan = document.querySelector('.process-section .process-fields span:nth-child(3)');
-descSpan.textContent = 'Test descripcion';
-descSpan.dispatchEvent(new Event('blur'));
+const funcSpan = document.querySelector('.process-section .process-fields span:nth-child(3)');
+funcSpan.textContent = 'Test funcion';
+funcSpan.dispatchEvent(new Event('blur'));
 
 const stored = JSON.parse(localStorage.getItem('amfeUltraData') || '{}');
-if (!stored.processes || stored.processes[0].descripcion !== 'Test descripcion') {
+if (!stored.processes || stored.processes[0].funcion !== 'Test funcion') {
   throw new Error('changes not persisted');
 }
 

@@ -16,19 +16,16 @@
   };
 
   const PLACEHOLDERS = {
-    secuencia: 'Secuencia',
-    estacion: 'Estación',
-    descripcion: 'Descripción',
-    materiales: 'Materiales',
+    operacion: 'Operación Nº',
+    maquina: 'Máquina / Estación',
+    funcion: 'Función de la máquina',
+    materiales: 'Materiales indirectos',
     requerimientos: 'Requerimientos'
   };
 
-  function calcNivel(s,o,d){
-    const r=s*o*d;
+  function calcRpn(s,o,d){
     if(!s||!o||!d) return '';
-    if(r>=150) return 'Alto';
-    if(r>=75) return 'Medio';
-    return 'Bajo';
+    return s*o*d;
   }
 
   try {
@@ -40,13 +37,13 @@
   } catch (e) {}
 
   data.processes.forEach((p, i) => {
-    if (typeof p.secuencia === 'undefined') p.secuencia = i + 1;
+    if (typeof p.operacion === 'undefined') p.operacion = i + 1;
     if (!Array.isArray(p.modos)) p.modos = [];
     p.modos.forEach(m=>{
-      if(typeof m.nivel==='undefined'){
+      if(typeof m.rpn==='undefined'){
         const s=Number(m.s)||0,o=Number(m.o)||0,d=Number(m.d)||0;
-        if(typeof m.rpn!=='undefined') delete m.rpn;
-        m.nivel=calcNivel(s,o,d);
+        if(typeof m.nivel!=='undefined') delete m.nivel;
+        m.rpn=calcRpn(s,o,d);
       }
     });
   });
@@ -123,13 +120,13 @@
       details.className='process-section';
       details.open=true;
       const summary=document.createElement('summary');
-      const title=document.createElement('span');
-      title.textContent=proc.titulo||`Proceso ${pIdx+1}`;
-      summary.appendChild(title);
+      const summaryText=document.createElement('span');
+      summaryText.textContent=`Operación Nº${proc.operacion}`;
+      summary.appendChild(summaryText);
       if(isAdmin){
         const btnWrap=document.createElement('span');
         const edit=document.createElement('button'); edit.textContent='✎';
-        edit.onclick=()=>{ const n=prompt('Nombre del proceso', title.textContent); if(n){ proc.titulo=n; title.textContent=n; save(); } };
+        edit.onclick=()=>{ const n=prompt('Título del proceso', proc.titulo||''); if(n!=null){ proc.titulo=n; save(); } };
         const dup=document.createElement('button'); dup.textContent='📄';
         dup.onclick=()=>{ const copy=JSON.parse(JSON.stringify(proc)); data.processes.splice(pIdx+1,0,copy); save(); renderProcesses(); };
         const del=document.createElement('button'); del.textContent='🗑️';
@@ -140,17 +137,17 @@
       details.appendChild(summary);
       const fields=document.createElement('div');
       fields.className='process-fields';
-      ['secuencia','estacion','descripcion','materiales','requerimientos'].forEach(f=>{
-        if(f==='secuencia'){
+      ['operacion','maquina','funcion','materiales','requerimientos'].forEach(f=>{
+        if(f==='operacion'){
           if(isAdmin){
             const inp=document.createElement('input');
             inp.type='number';
-            inp.value=proc.secuencia||'';
-            inp.oninput=()=>{ proc.secuencia=parseInt(inp.value,10)||0; save(); };
+            inp.value=proc.operacion||'';
+            inp.oninput=()=>{ proc.operacion=parseInt(inp.value,10)||0; summaryText.textContent=`Operación Nº${proc.operacion}`; save(); };
             fields.appendChild(inp);
           } else {
             const span=document.createElement('span');
-            span.textContent=proc.secuencia||'';
+            span.textContent=proc.operacion||'';
             span.dataset.placeholder=PLACEHOLDERS[f];
             fields.appendChild(span);
           }
@@ -165,15 +162,15 @@
       wrap.className='table-wrapper';
       const table=document.createElement('table');
       table.className='fmea-table';
-      table.innerHTML='<thead><tr><th>Efecto planta interna</th><th>Efecto planta cliente</th><th>Efecto usuario final</th><th>Causa</th><th>S</th><th>O</th><th>D</th><th>Nivel</th><th>Acción preventiva</th><th>Acción detectiva</th><th>Responsable</th><th>Fecha objetivo</th><th>Estado</th><th>Observaciones</th><th></th></tr></thead><tbody></tbody>';
+      table.innerHTML='<thead><tr><th>Efecto planta interna</th><th>Efecto planta cliente</th><th>Efecto usuario final</th><th>Causa</th><th>S</th><th>O</th><th>D</th><th>RPN</th><th>Acción preventiva</th><th>Acción detectiva</th><th>Responsable</th><th>Fecha objetivo</th><th>Estado</th><th>Observaciones</th><th></th></tr></thead><tbody></tbody>';
       wrap.appendChild(table);
       details.appendChild(wrap);
       proc.modos.forEach((m,rIdx)=>{
         const tr=document.createElement('tr');
-        const fields=['efInt','efCli','efUsu','causa','s','o','d','nivel','prev','det','resp','fecha','estado','obs'];
+        const fields=['efInt','efCli','efUsu','causa','s','o','d','rpn','prev','det','resp','fecha','estado','obs'];
         fields.forEach((fld,idx)=>{
           const td=document.createElement('td');
-          if(fld==='nivel'){ td.textContent=m.nivel||''; }
+          if(fld==='rpn'){ td.textContent=m.rpn||''; }
           else {
             td.contentEditable=isAdmin;
             td.textContent=m[fld]||'';
@@ -182,8 +179,8 @@
               if(['s','o','d'].includes(fld)){
                 m[fld]=Number(m[fld])||0;
                 const s=Number(m.s)||0,o=Number(m.o)||0,d=Number(m.d)||0;
-                m.nivel=calcNivel(s,o,d);
-                tr.children[7].textContent=m.nivel||'';
+                m.rpn=calcRpn(s,o,d);
+                tr.children[7].textContent=m.rpn||'';
               }
               save();
             };
@@ -204,7 +201,7 @@
         addBtn.onclick=()=>{
           proc.modos.push({
             efInt:'',efCli:'',efUsu:'',causa:'',s:'',o:'',d:'',
-            nivel:'',prev:'',det:'',resp:'',fecha:'',estado:'',obs:''
+            rpn:'',prev:'',det:'',resp:'',fecha:'',estado:'',obs:''
           });
           save();
           renderProcesses();
@@ -221,7 +218,7 @@
   }
 
   document.getElementById('addProcess').addEventListener('click',()=>{
-    data.processes.push({secuencia:data.processes.length+1,titulo:'',estacion:'',descripcion:'',materiales:'',requerimientos:'',modos:[{efInt:'',efCli:'',efUsu:'',causa:'',s:'',o:'',d:'',nivel:'',prev:'',det:'',resp:'',fecha:'',estado:'',obs:''}]});
+    data.processes.push({operacion:data.processes.length+1,titulo:'',maquina:'',funcion:'',materiales:'',requerimientos:'',modos:[{efInt:'',efCli:'',efUsu:'',causa:'',s:'',o:'',d:'',rpn:'',prev:'',det:'',resp:'',fecha:'',estado:'',obs:''}]});
     save();
     renderProcesses();
   });
