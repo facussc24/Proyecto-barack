@@ -17,39 +17,64 @@
 
   <h1>Editor del Sinóptico</h1>
   <div id="mensaje"></div>
-  <div class="editor-container">
-    <form id="clientForm" class="node-form">
-      <h2>Agregar cliente</h2>
+
+  <div id="mainMenu" class="editor-menu">
+    <button id="menuCrear">Crear</button>
+    <button id="menuEliminar">Eliminar</button>
+    <button id="menuModificar">Modificar</button>
+  </div>
+
+  <div id="crearMenu" class="editor-container hidden">
+    <div class="node-form">
+      <button id="btnAddClient">Agregar cliente</button>
+      <button id="btnAddProduct">Agregar producto</button>
+      <button id="volverMenu">Volver</button>
+    </div>
+
+    <form id="clientForm" class="node-form hidden">
+      <h2>Nuevo cliente</h2>
       <input type="text" id="clientDesc" placeholder="Nombre" required />
-      <button type="submit">Agregar</button>
+      <button type="submit">Guardar</button>
     </form>
 
-    <form id="productForm" class="node-form">
-      <h2>Agregar producto</h2>
+    <div id="productStep" class="hidden">
+      <button id="addProductBtn">+ Producto</button>
+    </div>
+
+    <form id="productForm" class="node-form hidden">
+      <h2>Nuevo producto</h2>
       <select id="prodClient"></select>
       <input type="text" id="prodDesc" placeholder="Descripción" required />
-      <button type="submit">Agregar</button>
-    </form>
-
-    <form id="subForm" class="node-form">
-      <h2>Agregar subensamble</h2>
-      <select id="subParent"></select>
-      <input type="text" id="subDesc" placeholder="Descripción" required />
-      <button type="submit">Agregar</button>
-    </form>
-
-    <form id="insForm" class="node-form">
-      <h2>Agregar insumo</h2>
-      <select id="insParent"></select>
-      <input type="text" id="insDesc" placeholder="Descripción" required />
-      <input type="text" id="insCode" placeholder="Código" />
-      <button type="submit">Agregar</button>
+      <button type="submit">Guardar</button>
     </form>
   </div>
+
+  <div class="tabla-contenedor">
+    <table id="sinoptico">
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Cliente</th>
+          <th>Vehículo</th>
+          <th>RefInterno</th>
+          <th>Versión</th>
+          <th>Imagen</th>
+          <th>Consumo</th>
+          <th>Unidad</th>
+          <th>Sourcing</th>
+          <th>Código</th>
+          <th id="thActions" style="display:none">Acciones</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <a href="index.html" class="home-button">Inicio</a>
 
   <script src="auth.js"></script>
   <script src="theme.js" defer></script>
   <script src="renderer.js" defer></script>
-  <script src="sinoptico-edit.js" defer></script>
+  <script src="tree-editor.js" defer></script>
 </body>
 </html>
