@@ -783,7 +783,19 @@
               spanArrow.classList.add(`arrow-nivel-${nivel}`);
               const spanText = document.createElement('span');
               spanText.classList.add('item-text');
-              spanText.textContent = nombreItem;
+              if (tipoStr === 'insumo') {
+                const link = document.createElement('a');
+                link.href = 'insumos.html';
+                link.textContent = nombreItem;
+                link.addEventListener('click', e => {
+                  e.preventDefault();
+                  sessionStorage.setItem('insumoQuery', nombreItem);
+                  window.location.href = 'insumos.html';
+                });
+                spanText.appendChild(link);
+              } else {
+                spanText.textContent = nombreItem;
+              }
               tdItem.appendChild(spanArrow);
               tdItem.appendChild(spanText);
             }
