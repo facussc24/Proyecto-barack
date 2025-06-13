@@ -107,21 +107,19 @@ This creates a small DOM environment so the scripts can be executed without a re
 
 ## Troubleshooting
 
-<<<<<< codex/add-troubleshooting-section-to-readme
 If editing pages doesn't work as expected:
 
 1. Verify the site is being served over **HTTP**, not opened directly as local files.
 2. Make sure you are logged in as an administrator before attempting to edit.
 3. Open the browser console and ensure there are no script errors.
 4. Check your browser's `localStorage` for entries such as `sinopticoData`.
-=======
+
 If a CDN script fails to load you will see one of the following warnings:
 
 - `Fuse.js no cargó – búsqueda deshabilitada`
 - `SheetJS no cargó – exportar a Excel deshabilitado`
 
 Ensure your browser can reach the CDN domains if these messages appear.
->>>>>> main
 
 ## License
 
