@@ -109,11 +109,6 @@ page. It is intended as a lightweight viewer for quick look-ups.
 - **Cross-tab sync** – modifying the hierarchy in one tab refreshes any other
   open sinóptico pages thanks to the `storage` event.
 
-## Respaldos fuera del repositorio
-
-Pulsa **Exportar JSON** en la página de inicio para descargar el fichero `sinoptico.json` mediante el navegador. Guarda una copia en una carpeta fuera del proyecto si quieres conservarla. Podrás recuperarla más adelante con **Importar JSON** desde el mismo menú.
-
-The product hierarchy is stored in `localStorage`.
 
 ## Listening for data changes
 
