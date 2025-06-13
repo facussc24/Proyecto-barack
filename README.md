@@ -17,7 +17,9 @@ Open http://localhost:8000/index.html in a modern browser. Opening the HTML
 files directly (for example using the `file://` protocol) disables several
 features because the pages rely on `localStorage` and other browser APIs that
 only work over HTTP. All dependencies are included in the repository, so no
-internet connection is needed once the server is running.
+internet connection is needed once the server is running. The site relies on
+IndexedDB via [Dexie](https://dexie.org/) for persistence, and a copy of the
+library is bundled under `lib/` to load locally if the CDN is unreachable.
 Luego abre http://localhost:8000/login.html e inicia sesión con cualquiera de las cuentas por defecto (PAULO, LEO, FACUNDO o PABLO; todas usan la contraseña `1234`). Sin iniciar sesión las opciones de edición no aparecen.
 
 ## GitHub Pages
