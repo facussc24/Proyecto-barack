@@ -11,6 +11,8 @@ sessionStorage.clear();
 
 auth.createUser('user1','pass1');
 auth.setRole('user1','admin');
+const uRec = auth.loadUsers().find(u => u.username === 'user1');
+if (!uRec || !uRec.salt) throw new Error('salt missing');
 if (!auth.login('user1','pass1', true)) throw new Error('login failed');
 if (sessionStorage.getItem('isAdmin') !== 'true') throw new Error('role not applied');
 

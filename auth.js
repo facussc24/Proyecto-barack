@@ -2,6 +2,18 @@
   const STORAGE_KEY = 'users';
   const sha256 = global.sha256 || (typeof require === 'function' ? require('./sha256.min.js') : undefined);
 
+  function randomSalt(){
+    if (typeof global.crypto !== 'undefined' && crypto.getRandomValues){
+      const arr = new Uint8Array(16);
+      crypto.getRandomValues(arr);
+      return Array.from(arr).map(b => b.toString(16).padStart(2,'0')).join('');
+    }
+    if (typeof require === 'function'){
+      try{ return require('crypto').randomBytes(16).toString('hex'); }catch(e){}
+    }
+    return Math.random().toString(16).slice(2,18);
+  }
+
   function hash(text){
     if (sha256) return sha256(text);
     if (typeof require === 'function'){
@@ -16,16 +28,17 @@
       try { list = JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch(e){ list = []; }
     }
     if (!Array.isArray(list) || list.length === 0) {
-      list = [
-        { username:'PAULO', hash: hash('1234'), role:'admin' },
-        { username:'LEO', hash: hash('1234'), role:'admin' },
-        { username:'FACUNDO', hash: hash('1234'), role:'admin' },
-        { username:'PABLO', hash: hash('1234'), role:'admin' }
-      ];
+      const defaultPass = '1234';
+      list = ['PAULO','LEO','FACUNDO','PABLO'].map(name => {
+        const salt = randomSalt();
+        return { username: name, salt, hash: hash(salt + defaultPass), role: 'admin' };
+      });
     } else {
       list = list.map(u => {
+        if (!u.salt) u.salt = '';
         if (!u.hash && u.password){
-          u.hash = hash(u.password);
+          u.salt = randomSalt();
+          u.hash = hash(u.salt + u.password);
           delete u.password;
         }
         if (!u.role) u.role = 'admin';
@@ -45,9 +58,8 @@
   let users = loadUsers();
 
   function login(username, password, remember){
-    const hashed = hash(password);
-    const u = users.find(x => x.username === username && x.hash === hashed);
-    if (u) {
+    const u = users.find(x => x.username === username);
+    if (u && u.hash === hash((u.salt || '') + password)) {
       if (typeof sessionStorage !== 'undefined') {
         sessionStorage.setItem('isAdmin', u.role === 'admin' ? 'true' : 'false');
         sessionStorage.setItem('currentUser', username);
@@ -87,7 +99,8 @@
 
   function createUser(username, password, role='user'){
     if (users.some(u => u.username === username)) return false;
-    users.push({ username, hash: hash(password), role });
+    const salt = randomSalt();
+    users.push({ username, salt, hash: hash(salt + password), role });
     saveUsers(users);
     return true;
   }
@@ -95,7 +108,8 @@
   function changePassword(username, newPass){
     const u = users.find(x => x.username === username);
     if (!u) return false;
-    u.hash = hash(newPass);
+    u.salt = randomSalt();
+    u.hash = hash(u.salt + newPass);
     saveUsers(users);
     return true;
   }
