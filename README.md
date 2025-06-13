@@ -15,7 +15,8 @@ python3 -m http.server
 Open http://localhost:8000/index.html in a modern browser. Opening the HTML
 files directly (for example using the `file://` protocol) disables several
 features because the pages rely on `localStorage` and other browser APIs that
-only work over HTTP.
+only work over HTTP. All dependencies are included in the repository, so no
+internet connection is needed once the server is running.
 
 ## GitHub Pages
 
@@ -78,6 +79,9 @@ checkboxes to quickly hide or show sections.
 4. Haz clic en ese enlace para abrir `admin_menu.html` y elige **Crear**.
 5. En `sinoptico_crear.html` selecciona la opción **Cliente**, completa la descripción y envía el formulario.
 6. Los nuevos clientes se guardan en el navegador usando IndexedDB o `localStorage`; no hay una base de datos externa.
+7. Las páginas de creación, modificación y eliminación ya cargan el módulo de
+   persistencia, por lo que los cambios permanecen guardados incluso sin
+   conexión a Internet.
 
 ## Using `viewer_lite.html`
 
@@ -103,7 +107,7 @@ page. It is intended as a lightweight viewer for quick look-ups.
 - **Insumo lookup** – the insumos table includes a search box with fuzzy matching.
 - **Cross-linking** – clicking an insumo in the sinóptico opens the list filtered to that entry.
 - **Insumo editing** – administrators can agregar, modificar o eliminar insumos desde `insumos.html`.
-- **IndexedDB persistence** – the sinóptico stores its hierarchy in IndexedDB using Dexie with automatic fallback to `localStorage`.
+- **IndexedDB persistence** – the sinóptico stores its hierarchy in IndexedDB using Dexie (bundled locally) with automatic fallback to `localStorage`. No network connection is required.
 - **AMFE persistence** – the AMFE pages store their data in `localStorage`.
 - **Data change event** – pages dispatch a `sinoptico-data-changed` event after
   updating the product tree so other modules can refresh their views.
@@ -137,6 +141,7 @@ If editing pages doesn't work as expected:
 3. Open the browser console and ensure there are no script errors.
 4. Check your browser's `localStorage` for entries such as `sinopticoData`.
 5. Accede siempre con la misma URL (por ejemplo `localhost`) para que los datos guardados estén disponibles.
+6. La biblioteca **Dexie** viene incluida, por lo que la persistencia funciona incluso sin acceso a Internet.
 
 If a CDN script fails to load you will see one of the following warnings:
 
