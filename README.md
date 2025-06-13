@@ -59,13 +59,13 @@ The page loads [SheetJS](https://sheetjs.com/) and [Fuse.js](https://fusejs.io/)
 
 ## Node testing
 
-Running the project in a browser is enough to use the page. Optionally you can run automated tests that execute the scripts under Node using JSDOM. The tests rely on `jsdom-global`, `jsdom` and `fuse.js`. **Run `scripts/setup.sh` once before executing the tests to download these dependencies**:
+Running the project in a browser is enough to use the page. Optionally you can run automated tests that execute the scripts under Node using JSDOM. The tests rely on `jsdom-global`, `jsdom` and `fuse.js`. **Execute `scripts/setup.sh` before running the tests to install these dependencies**. The setup script will also run automatically thanks to the `pretest` step defined in `package.json`.
 
 ```bash
 scripts/setup.sh
 ```
 
-Then run:
+After the dependencies are installed, run:
 
 ```bash
 npm test
