@@ -1,15 +1,13 @@
 'use strict';
-import { getAll, addNode, updateNode, deleteNode, ready } from './dataService.js';
+import { getAll, updateNode, deleteNode, ready } from './dataService.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-  const form = document.getElementById('dbAddForm');
-  const parentSel = form.querySelector('#dbParent');
-  const tipoSel = form.querySelector('#dbTipo');
-  const descInput = form.querySelector('#dbDesc');
-  const codeInput = form.querySelector('#dbCode');
   const clientFilter = document.getElementById('dbClienteFilter');
   const tipoFilter = document.getElementById('dbTipoFilter');
-  const tableBody = document.querySelector('.db-table tbody');
+  const clientesBody = document.querySelector('#clientesSection tbody');
+  const productosBody = document.querySelector('#productosSection tbody');
+  const componentesBody = document.querySelector('#componentesSection tbody');
+  const tableContainer = document.getElementById('dbTables');
 
   async function load() {
     await ready;
@@ -20,7 +18,9 @@ document.addEventListener('DOMContentLoaded', () => {
       clientes.map(c => `<option value="${c.Descripción}">${c.Descripción}</option>`).join('');
     clientFilter.value = sel;
 
-    tableBody.innerHTML = '';
+    clientesBody.innerHTML = '';
+    productosBody.innerHTML = '';
+    componentesBody.innerHTML = '';
     let items = data.slice();
     if (clientFilter.value) {
       items = items.filter(i => i.Cliente === clientFilter.value || i.Descripción === clientFilter.value);
@@ -31,23 +31,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     items.forEach(item => {
       const tr = document.createElement('tr');
-      tr.innerHTML = `<td>${item.Tipo}</td>` +
-        `<td>${item.Descripción || ''}</td>` +
+      tr.innerHTML = `<td>${item.Descripción || ''}</td>` +
         `<td>${item.Código || ''}</td>` +
-        `<td></td>` +
-        `<td></td>` +
         `<td><button class="db-edit" data-id="${item.ID}">✏️</button>` +
         `<button class="db-del" data-id="${item.ID}">🗑️</button></td>`;
-      tableBody.appendChild(tr);
+      if (item.Tipo === 'Cliente') {
+        clientesBody.appendChild(tr);
+      } else if (item.Tipo === 'Producto') {
+        productosBody.appendChild(tr);
+      } else {
+        componentesBody.appendChild(tr);
+      }
     });
-    parentSel.innerHTML = '<option value="">(raíz)</option>' +
-      data.map(d => `<option value="${d.ID}">${d.Descripción} [${d.Tipo}]</option>`).join('');
   }
 
   clientFilter.addEventListener('change', load);
   tipoFilter.addEventListener('change', load);
 
-  tableBody.addEventListener('click', async ev => {
+  tableContainer.addEventListener('click', async ev => {
     const btn = ev.target.closest('button');
     if (!btn) return;
     const id = btn.dataset.id;
@@ -63,28 +64,6 @@ document.addEventListener('DOMContentLoaded', () => {
         await load();
       }
     }
-  });
-
-  form.addEventListener('submit', async ev => {
-    ev.preventDefault();
-    const newItem = {
-      ID: Date.now().toString(),
-      ParentID: parentSel.value,
-      Tipo: tipoSel.value,
-      Descripción: descInput.value.trim(),
-      Cliente: '',
-      Vehículo: '',
-      RefInterno: '',
-      versión: '',
-      Imagen: '',
-      Consumo: '',
-      Unidad: '',
-      Sourcing: '',
-      Código: codeInput.value.trim()
-    };
-    await addNode(newItem);
-    form.reset();
-    await load();
   });
 
   load();
