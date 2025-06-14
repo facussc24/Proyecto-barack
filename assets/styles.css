@@ -1364,3 +1364,5 @@ select {
 .users-table td button:hover {
   background-color: var(--color-accent-hover);
 }
+
+dialog.modal{border:none;border-radius:8px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.3);}dialog.modal form{display:flex;flex-direction:column;gap:8px;}
