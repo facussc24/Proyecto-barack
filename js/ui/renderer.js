@@ -83,7 +83,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function aplicarFiltro() {
     showLoader();
-    const criterio = document.getElementById('filtroInsumo')?.value.trim().toLowerCase() || '';
+    // input de búsqueda
+    const criterio = document.getElementById('search')?.value.trim().toLowerCase() || '';
     const mostrarFlags = [
       'chkMostrarNivel0','chkMostrarNivel1','chkMostrarNivel2','chkMostrarNivel3'
     ].map(id => document.getElementById(id)?.checked ?? true);
@@ -132,10 +133,10 @@ document.addEventListener('DOMContentLoaded', () => {
     hideLoader();
   }
 
-  document.getElementById('filtroInsumo')?.addEventListener('input', aplicarFiltro);
+  document.getElementById('search')?.addEventListener('input', aplicarFiltro);
   document.getElementById('clearSearch')?.addEventListener('click', () => {
     document.getElementById('sinopticoSuggestions').innerHTML = '';
-    document.getElementById('filtroInsumo').value = '';
+    document.getElementById('search').value = '';
     selectedItems.length = 0;
     aplicarFiltro();
   });
