@@ -836,6 +836,9 @@ const root = typeof global !== 'undefined' ? global : globalThis;
               img.src = `images/${nombreImg}`;
               img.alt = nombreItem;
               img.classList.add('img-product');
+              img.addEventListener('error', () => {
+                img.style.display = 'none';
+              });
               tdImagen.appendChild(img);
             }
             tdImagen.style.textAlign = 'center';
