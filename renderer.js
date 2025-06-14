@@ -974,84 +974,22 @@ const root = typeof global !== 'undefined' ? global : globalThis;
         return Date.now().toString(36) + Math.random().toString(36).substr(2,5);
       }
 
-      window.SinopticoEditor = {
-        addNode(opts, children) {
-          const row = {
-            ID: generateId(),
-            ParentID: opts.ParentID || '',
-            Tipo: opts.Tipo || 'Producto',
-            Secuencia: opts.Secuencia || '',
-            Descripción: opts.Descripción || '',
-            Cliente: '',
-            Vehículo: '',
-            RefInterno: '',
-            versión: '',
-            Imagen: '',
-            Consumo: '',
-            Unidad: '',
-            Sourcing: '',
-            Código: opts.Código || ''
-          };
-          if (row.Tipo === 'Cliente') {
-            row.Cliente = row['Descripción'];
-          }
-          row.id = row.ID;
-          row.parentId = row.ParentID;
-          row.nombre = row['Descripción'];
-          row.orden = 0;
-          sinopticoData.push(row);
-          if (dataService && dataService.addNode) {
-            dataService.addNode(row);
-          }
-          if (Array.isArray(children)) {
-            children.forEach(child => {
-              if (child) {
-                const sub = Object.assign({}, child, { ParentID: row.ID });
-                this.addNode(sub, child.children || []);
-              }
-            });
-          }
-          saveSinoptico();
-          loadData();
-          document.dispatchEvent(new CustomEvent('sinoptico-data-changed'));
-          return row.ID;
-        },
-        deleteSubtree(id) {
-          const ids = new Set();
-          (function collect(pid){
-            ids.add(pid);
-            sinopticoData.filter(r => r.ParentID === pid).forEach(r => collect(r.ID));
-          })(id);
-          sinopticoData = sinopticoData.filter(r => !ids.has(r.ID));
-          if (dataService && dataService.deleteNode) {
-            ids.forEach(dbid => dataService.deleteNode(dbid));
-          }
-          saveSinoptico();
-          loadData();
-          document.dispatchEvent(new CustomEvent('sinoptico-data-changed'));
-        },
-        updateNode(id, attrs) {
-          const node = sinopticoData.find(r => r.ID === id);
-          if (!node) return;
-          Object.assign(node, attrs);
-          if (node.Tipo === 'Cliente' && attrs['Descripción']) {
-            node.Cliente = attrs['Descripción'];
-          }
-          if (dataService && dataService.updateNode) {
-            const changes = Object.assign({}, attrs);
-            if (changes['Descripción']) changes.nombre = changes['Descripción'];
-            if (node.id) {
-              dataService.updateNode(node.id, changes);
-            }
-          }
-          saveSinoptico();
-          loadData();
-          document.dispatchEvent(new CustomEvent('sinoptico-data-changed'));
-        },
-        getNodes() {
-          return sinopticoData.slice();
-        }
-      };
+      const createEditor =
+        root.createSinopticoEditor ||
+        (typeof require === 'function'
+          ? require('./js/sinopticoEditor.js').createSinopticoEditor
+          : null);
+
+      if (createEditor) {
+        window.SinopticoEditor = createEditor({
+          getData: () => sinopticoData,
+          setData: d => { sinopticoData = d; },
+          generateId,
+          saveSinoptico,
+          loadData,
+          dataService,
+        });
+      }
 
       document.addEventListener('sinoptico-mode', () => {
         const thAct = document.getElementById('thActions');
