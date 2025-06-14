@@ -124,7 +124,13 @@
    <script src="smooth-nav.js" defer></script>
    <script src="file-warning.js"></script>
    <script>
+     function hideLoader() {
+       const loader = document.getElementById('loading');
+       if (loader) loader.style.display = 'none';
+     }
+
      document.addEventListener('DOMContentLoaded', () => {
+       hideLoader();
        auth.restoreSession();
        const editLink = document.getElementById('editSinLink');
        if (editLink) {
@@ -132,10 +138,8 @@
          editLink.style.display = logged ? 'inline' : 'none';
        }
      });
-      window.addEventListener('load', () => {
-        const loader = document.getElementById('loading');
-        if (loader) loader.style.display = 'none';
-      });
+     window.addEventListener('load', hideLoader);
+     setTimeout(hideLoader, 3000);
    </script>
 </body>
 </html>
