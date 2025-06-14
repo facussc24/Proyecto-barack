@@ -18,6 +18,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     } else {
       nodes.forEach(n => {
         const tr = document.createElement('tr');
+        tr.dataset.id = n.id;
+        tr.dataset.parentId = n.parentId || '';
         tr.innerHTML = `
           <td>${n.id}</td>
           <td>${n.parentId}</td>
@@ -35,7 +37,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (loader) loader.style.display = 'none';
   console.log('▶ spinner oculto');
 
-  subscribeSinopticoChanges(async () => {
+    subscribeSinopticoChanges(async () => {
     const updated = await getAllSinoptico();
     const body = document.getElementById('sinopticoBody');
     if (body) {
@@ -47,6 +49,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       } else {
         updated.forEach(n => {
           const tr = document.createElement('tr');
+          tr.dataset.id = n.id;
+          tr.dataset.parentId = n.parentId || '';
           tr.innerHTML = `
             <td>${n.id}</td>
             <td>${n.parentId}</td>
@@ -60,5 +64,31 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
       }
     }
+    });
+
+    // ====================================================
+    // Botones expandir y colapsar
+    // ====================================================
+    function expandAll() {
+      document
+        .querySelectorAll('#sinopticoBody tr')
+        .forEach(tr => {
+          tr.style.display = '';
+        });
+    }
+
+    function collapseAll() {
+      document
+        .querySelectorAll('#sinopticoBody tr')
+        .forEach(tr => {
+          if (tr.dataset.parentId) {
+            tr.style.display = 'none';
+          }
+        });
+    }
+
+    const expBtn = document.getElementById('expandirTodo');
+    if (expBtn) expBtn.addEventListener('click', expandAll);
+    const colBtn = document.getElementById('colapsarTodo');
+    if (colBtn) colBtn.addEventListener('click', collapseAll);
   });
-});
