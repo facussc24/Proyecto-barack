@@ -111,7 +111,7 @@ function init() {
       mostrarOk('Actualizado con éxito');
     }
   });
-  document.getElementById('btnArbol')?.addEventListener('click', handleArbol);
+  // replaced by newProductDialog.js for a friendlier workflow
   window.SinopticoEditor = { deleteSubtree };
 }
 
