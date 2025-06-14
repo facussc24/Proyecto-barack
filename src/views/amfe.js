@@ -3,10 +3,11 @@ import { getAll } from '../dataService.js';
 export async function render(container) {
   container.innerHTML = `
     <h1>AMFE</h1>
-    <pre id="amfe-list"></pre>
+    <div id="amfe"></div>
   `;
 
   const data = await getAll('amfe');
-  const pre = container.querySelector('#amfe-list');
-  pre.textContent = JSON.stringify(data, null, 2);
+  if (typeof window.renderAMFE === 'function') {
+    window.renderAMFE(data);
+  }
 }
