@@ -306,14 +306,14 @@ body.dark-mode .fila-oper {
    ============================== */
 .nivel-0 td:first-child,
 tr[data-level="0"] td:first-child {
-  padding-left: 8px;
+  padding-left: 12px;
   font-weight: bold;
   border-left: none;
 }
 
 /* sangría adicional para niveles superiores */
 tr[data-level] td:first-child {
-  padding-left: calc(8px + var(--lvl, 0) * 20px);
+  padding-left: calc(12px + var(--lvl, 0) * 24px);
 }
 
 /* ==============================
@@ -345,7 +345,7 @@ tr[data-level] td:first-child {
   display: inline-block;
   width: 14px;
   height: 14px;
-  margin-right: 6px;
+  margin-left: 6px;
   font-size: 14px;
   line-height: 14px;
   text-align: center;
