@@ -2,7 +2,7 @@
 // js/dataService.js
 
 export const DATA_CHANGED = 'DATA_CHANGED';
-const STORAGE_KEY = 'sinopticoData';
+const STORAGE_KEY = 'genericData';
 
 // Dexie may be loaded via a script tag in the browser. Grab the global instance
 // if present. When running under Node we fallback to requiring the package so
@@ -23,16 +23,16 @@ const isNode =
 const hasWindow = !isNode && typeof window !== 'undefined' && window.document;
 
 let db = null;
-// in-memory fallback
-const memory = [];
+// in-memory fallback per store
+const memory = {};
 
 function hydrateFromStorage() {
   if (!hasWindow) return;
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    const arr = raw ? JSON.parse(raw) : [];
-    if (Array.isArray(arr)) {
-      memory.push(...arr);
+    const obj = raw ? JSON.parse(raw) : {};
+    if (obj && typeof obj === 'object') {
+      Object.assign(memory, obj);
     }
   } catch (e) {
     console.error('Failed to load fallback storage', e);
@@ -80,7 +80,7 @@ const simpleChannel =
     : null;
 
 function _fallbackPersist() {
-  // sync in-memory array to localStorage
+  // sync in-memory object to localStorage
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(memory));
   } catch (e) {
@@ -102,79 +102,141 @@ function notifyChange() {
   }
 }
 
-export async function getAll() {
-  if (db) {
+async function getAll(store = 'sinoptico') {
+  const name = String(store);
+  if (db && db[name]) {
     try {
-      return await db.sinoptico.toArray();
+      return await db[name].toArray();
     } catch (e) {
       console.error(e);
       return [];
     }
-  } else {
-    return memory.slice();
   }
+  const arr = Array.isArray(memory[name]) ? memory[name] : [];
+  return arr.slice();
 }
 
-export async function addNode(node) {
-  const newNode = { ...node };
-  if (!newNode.id) {
-    newNode.id = Date.now().toString();
-  }
-  if (db) {
+async function add(store = 'sinoptico', obj) {
+  const name = String(store);
+  const item = { ...obj };
+  if (!item.id) item.id = Date.now().toString();
+  if (db && db[name]) {
     try {
-      await db.sinoptico.add(newNode);
+      await db[name].add(item);
       notifyChange();
-      return newNode.id;
+      return item.id;
     } catch (e) {
       console.error(e);
     }
-  } else {
-    // ensure unique id in memory fallback
-    memory.push(newNode);
+  }
+  if (!memory[name]) memory[name] = [];
+  memory[name].push(item);
+  _fallbackPersist();
+  notifyChange();
+  return item.id;
+}
+
+async function update(store = 'sinoptico', id, changes) {
+  const name = String(store);
+  const key = String(id);
+  if (db && db[name]) {
+    try {
+      await db[name].update(key, changes);
+      notifyChange();
+      return;
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  const arr = memory[name] || [];
+  const item = arr.find(x => String(x.id) === key);
+  if (item) {
+    Object.assign(item, changes);
     _fallbackPersist();
     notifyChange();
-    return newNode.id;
   }
+}
+
+async function remove(store = 'sinoptico', id) {
+  const name = String(store);
+  const key = String(id);
+  if (db && db[name]) {
+    try {
+      await db[name].delete(key);
+      notifyChange();
+      return;
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  const arr = memory[name] || [];
+  const idx = arr.findIndex(x => String(x.id) === key);
+  if (idx >= 0) {
+    arr.splice(idx, 1);
+    _fallbackPersist();
+    notifyChange();
+  }
+}
+
+async function exportJSON() {
+  const result = {};
+  if (db) {
+    for (const table of db.tables) {
+      try {
+        result[table.name] = await table.toArray();
+      } catch (e) {
+        console.error(e);
+        result[table.name] = [];
+      }
+    }
+  } else {
+    Object.assign(result, memory);
+  }
+  return JSON.stringify(result);
+}
+
+async function importJSON(json) {
+  let data;
+  try {
+    data = typeof json === 'string' ? JSON.parse(json) : json;
+  } catch (e) {
+    console.error('Invalid JSON provided to import', e);
+    return;
+  }
+  if (!data || typeof data !== 'object') return;
+  if (db) {
+    try {
+      await db.transaction('rw', db.tables, async () => {
+        for (const table of db.tables) {
+          const arr = Array.isArray(data[table.name]) ? data[table.name] : [];
+          await table.clear();
+          if (arr.length) await table.bulkAdd(arr);
+        }
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  // replace memory
+  for (const key of Object.keys(memory)) delete memory[key];
+  for (const key in data) {
+    if (Array.isArray(data[key])) memory[key] = [...data[key]];
+  }
+  _fallbackPersist();
+  notifyChange();
+}
+
+
+export async function addNode(node) {
+  return add('sinoptico', node);
 }
 
 export async function updateNode(id, changes) {
-  const key = String(id);
-  if (db) {
-    try {
-      await db.sinoptico.update(key, changes);
-      notifyChange();
-      return;
-    } catch (e) {
-      console.error(e);
-    }
-  } else {
-    const item = memory.find((x) => String(x.id) === key);
-    if (item) {
-      Object.assign(item, changes);
-      _fallbackPersist();
-      notifyChange();
-    }
-  }
+  return update('sinoptico', id, changes);
 }
 
 export async function deleteNode(id) {
-  const key = String(id);
-  if (db) {
-    try {
-      await db.sinoptico.delete(key);
-      notifyChange();
-      return;
-    } catch (e) {
-      console.error(e);
-    }
-  } else {
-    const idx = memory.findIndex((x) => String(x.id) === key);
-    if (idx >= 0) {
-      memory.splice(idx, 1);
-      _fallbackPersist();
-      notifyChange();
-    }
-  }
+  return remove('sinoptico', id);
 }
 
 export async function replaceAll(arr) {
@@ -190,8 +252,7 @@ export async function replaceAll(arr) {
       console.error(e);
     }
   } else {
-    memory.length = 0;
-    memory.push(...arr);
+    memory.sinoptico = Array.isArray(arr) ? [...arr] : [];
     _fallbackPersist();
     notifyChange();
   }
@@ -243,13 +304,18 @@ const api = {
   updateNode,
   deleteNode,
   replaceAll,
+  add,
+  update,
+  remove,
+  exportJSON,
+  importJSON,
   async reset() {
     if (db) {
       await db.delete();
       db = new Dexie('ProyectoBarackDB');
       db.version(1).stores({ sinoptico: 'id,parentId,nombre,orden' });
     }
-    memory.length = 0;
+    for (const key of Object.keys(memory)) delete memory[key];
     _fallbackPersist();
     notifyChange();
   },
@@ -262,3 +328,5 @@ if (hasWindow) {
 }
 
 export default api;
+
+export { getAll, add, update, remove, exportJSON, importJSON };
