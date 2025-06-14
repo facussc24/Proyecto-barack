@@ -5,6 +5,11 @@ export function render(container) {
     <section class="hero">
       <h1>Ingeniería Barack</h1>
       <p class="tagline">Soluciones modernas para tu negocio</p>
+      <div class="import-export">
+        <button id="saveJSON">Guardar JSON</button>
+        <input id="jsonFile" type="file" accept="application/json" hidden>
+        <button id="loadJSON">Cargar JSON</button>
+      </div>
     </section>
     <section class="intro">
       <h1>Características</h1>
@@ -13,11 +18,6 @@ export function render(container) {
         <li>Visualización de sinóptico interactivo</li>
         <li>Modo oscuro integrado</li>
       </ul>
-    </section>
-    <section class="import-export">
-      <button id="saveJSON">Guardar JSON</button>
-      <input id="jsonFile" type="file" accept="application/json" hidden>
-      <button id="loadJSON">Cargar JSON</button>
     </section>
   `;
 
