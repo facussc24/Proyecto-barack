@@ -257,7 +257,7 @@ table#sinoptico tbody tr:hover {
   background-color: #f0f0f0;
 }
 table#sinoptico tbody td {
-  padding: 10px 8px;
+  padding: 14px 8px;
   border-bottom: 1px solid #e0e0e0;
   font-size: 0.95rem;
   word-wrap: break-word;
@@ -288,6 +288,9 @@ body.dark-mode table#sinoptico tbody td {
 .fila-oper {
   background-color: #e7f5ff !important;
 } /* Azul claro (Insumo) */
+tr.fila-cliente td {
+  padding-top: 20px;
+}
 body.dark-mode .fila-cliente {
   background-color: #00284d !important;
 }
@@ -310,7 +313,7 @@ tr[data-level="0"] td:first-child {
 /* sangría adicional para niveles superiores */
 tr[data-level] td:first-child {
   /* increase indentation for nested levels */
-  padding-left: calc(16px + var(--lvl, 0) * 36px);
+  padding-left: calc(16px + var(--lvl, 0) * 48px);
 }
 
 /* ==============================
@@ -323,9 +326,9 @@ tr[data-level] td:first-child {
 .arrow-nivel-5,
 .arrow-nivel-6 {
   display: inline-block;
-  width: 20px;       /* espacio fijo un poco mayor */
+  width: 24px;       /* espacio fijo un poco mayor */
   text-align: center;
-  margin-right: 4px; /* separación más evidente */
+  margin-right: 6px; /* separación más evidente */
   font-weight: bold;
 }
 .arrow-nivel-1 { color: var(--color-primary); }
