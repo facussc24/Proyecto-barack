@@ -27,7 +27,7 @@ let db = null;
 const memory = {};
 // promise that resolves once IndexedDB is ready (or failed)
 let readyResolve;
-export const ready = new Promise((res) => {
+const ready = new Promise((res) => {
   readyResolve = res;
 });
 
