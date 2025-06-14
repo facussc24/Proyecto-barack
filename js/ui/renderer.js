@@ -216,6 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const tr=document.createElement('tr'); tr.dataset.id=fila.ID; tr.dataset.parent=fila.ParentID||''; tr.dataset.level=nivel; tr.style.setProperty('--lvl', nivel);
       const tipo=fila.Tipo.toLowerCase(); tr.classList.add(`nivel-${nivel}`);
       const td0=document.createElement('td');
+      td0.style.paddingLeft = `${12 + nivel * 24}px`;
       if(nivel>0){
         const arrow=document.createElement('span');
         const idx=Math.min(nivel,6);
