@@ -100,10 +100,6 @@ function init() {
     const id = prompt('ID a eliminar');
     if (id) await deleteSubtree(id);
   });
-  const dbDialog = document.getElementById('dlgDBManager');
-  document.getElementById('btnModificar')?.addEventListener('click', () => {
-    dbDialog?.showModal();
-  });
   // replaced by newProductDialog.js for a friendlier workflow
   window.SinopticoEditor = { deleteSubtree };
 }

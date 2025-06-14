@@ -36,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const searchInput = document.getElementById('search');
   const suggestionsList = document.getElementById('sinopticoSuggestions');
   const selectedItemsContainer = document.getElementById('selectedItems');
+  const levelFilter = document.getElementById('levelFilter');
   const selectedItems = [];
 
   /* ==================================================
@@ -87,7 +88,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const term = searchInput.value.trim();
       suggestionsList.innerHTML = '';
       if (!term) { suggestionsList.style.display = 'none'; return; }
-      fuseSinoptico.search(term, { limit: 3 }).forEach(res => {
+      let results = fuseSinoptico.search(term, { limit: 20 });
+      const tipo = levelFilter ? levelFilter.value : '';
+      if (tipo) results = results.filter(res => res.item.Tipo === tipo);
+      results.slice(0, 3).forEach(res => {
         const li = document.createElement('li');
         li.textContent = res.item.Descripción;
         li.dataset.text = res.item.Descripción;
@@ -99,16 +103,18 @@ document.addEventListener('DOMContentLoaded', () => {
       const li = ev.target.closest('li');
       if (!li) return;
       const text = li.dataset.text || li.textContent;
-      if (!selectedItems.some(it => it.text === text)) {
-        selectedItems.push({ text });
+      const tipo = levelFilter ? levelFilter.value : '';
+      if (!selectedItems.some(it => it.text === text && it.tipo === tipo)) {
+        selectedItems.push({ text, tipo });
         if (selectedItemsContainer) {
           const chip = document.createElement('span');
           chip.className = 'chip';
+          chip.dataset.tipo = tipo;
           chip.textContent = text;
           const btn = document.createElement('button');
           btn.textContent = '×';
           btn.addEventListener('click', () => {
-            const idx = selectedItems.findIndex(i => i.text === text);
+            const idx = selectedItems.findIndex(i => i.text === text && i.tipo === tipo);
             if (idx !== -1) selectedItems.splice(idx, 1);
             selectedItemsContainer.removeChild(chip);
             aplicarFiltro();
@@ -154,10 +160,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const idSet = new Set();
     selectedItems.forEach(sel => {
       if (fuseSinoptico) {
-        fuseSinoptico.search(sel.text).forEach(res => idSet.add(res.item.ID.toString()));
+        fuseSinoptico.search(sel.text).forEach(res => {
+          if (!sel.tipo || res.item.Tipo === sel.tipo) idSet.add(res.item.ID.toString());
+        });
       } else {
         sinopticoData.forEach(r => {
-          if ((r.Descripción || '').toLowerCase().includes(sel.text.toLowerCase())) idSet.add(r.ID.toString());
+          if ((r.Descripción || '').toLowerCase().includes(sel.text.toLowerCase()) &&
+              (!sel.tipo || r.Tipo === sel.tipo)) {
+            idSet.add(r.ID.toString());
+          }
         });
       }
     });
@@ -173,6 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('clearSearch')?.addEventListener('click', () => {
     if (suggestionsList) suggestionsList.innerHTML = '';
     if (searchInput) searchInput.value = '';
+    if (levelFilter) levelFilter.value = '';
     selectedItems.length = 0;
     if (selectedItemsContainer) selectedItemsContainer.innerHTML = '';
     aplicarFiltro();

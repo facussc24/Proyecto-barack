@@ -21,11 +21,23 @@
         <button id="clearSearch" aria-label="Limpiar">×</button>
         <ul id="sinopticoSuggestions" class="suggestions-list"></ul>
       </div>
+      <label for="levelFilter">Tipo:</label>
+      <select id="levelFilter">
+        <option value="">Todos</option>
+        <option value="Cliente">Cliente</option>
+        <option value="Pieza final">Producto</option>
+        <option value="Subproducto">Subproducto</option>
+        <option value="Insumo">Insumo</option>
+      </select>
       <div id="selectedItems" class="chips"></div>
       <button id="expandirTodo">Expandir todo</button>
       <button id="colapsarTodo">Colapsar todo</button>
     </div>
     <div class="filtro-opciones">
+      <label><input type="checkbox" id="chkMostrarNivel0" checked> Nivel 0</label>
+      <label><input type="checkbox" id="chkMostrarNivel1" checked> Nivel 1</label>
+      <label><input type="checkbox" id="chkMostrarNivel2" checked> Nivel 2</label>
+      <label><input type="checkbox" id="chkMostrarNivel3" checked> Nivel 3</label>
       <button id="btnExcel">Exportar Excel</button>
     </div>
   </div>

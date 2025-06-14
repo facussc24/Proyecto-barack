@@ -18,7 +18,6 @@
   </header>
   <div class="editor-menu">
     <button id="btnNuevoCliente">Nuevo cliente</button>
-    <button id="btnModificar">Modificar</button>
     <button id="btnEliminar">Eliminar</button>
     <button id="btnArbol" onclick="window.location.href='arbol.html'">Crear árbol producto</button>
   </div>
@@ -32,9 +31,23 @@
         <button id="clearSearch" aria-label="Limpiar">×</button>
         <ul id="sinopticoSuggestions" class="suggestions-list"></ul>
       </div>
+      <label for="levelFilter">Tipo:</label>
+      <select id="levelFilter">
+        <option value="">Todos</option>
+        <option value="Cliente">Cliente</option>
+        <option value="Pieza final">Producto</option>
+        <option value="Subproducto">Subproducto</option>
+        <option value="Insumo">Insumo</option>
+      </select>
       <div id="selectedItems" class="chips"></div>
       <button id="expandirTodo">Expandir todo</button>
       <button id="colapsarTodo">Colapsar todo</button>
+    </div>
+    <div class="filtro-opciones">
+      <label><input type="checkbox" id="chkMostrarNivel0" checked> Nivel 0</label>
+      <label><input type="checkbox" id="chkMostrarNivel1" checked> Nivel 1</label>
+      <label><input type="checkbox" id="chkMostrarNivel2" checked> Nivel 2</label>
+      <label><input type="checkbox" id="chkMostrarNivel3" checked> Nivel 3</label>
     </div>
   </div>
   <div class="tabla-contenedor">
@@ -80,50 +93,6 @@
       </div>
     </form>
   </dialog>
-  <dialog id="dlgDBManager" class="modal">
-    <button id="closeDBTop" class="close-dialog" type="button" aria-label="Cerrar">×</button>
-    <form id="dbAddForm" method="dialog">
-      <h3>Agregar elemento</h3>
-      <label for="dbClienteFilter">Cliente:</label>
-      <select id="dbClienteFilter"></select>
-      <label for="dbTipoFilter">Mostrar:</label>
-      <select id="dbTipoFilter">
-        <option value="">Todos</option>
-        <option value="Insumo">Insumos</option>
-        <option value="Subproducto">Subproductos</option>
-      </select>
-      <label for="dbTipo">Tipo:</label>
-      <select id="dbTipo">
-        <option value="Cliente">Cliente</option>
-        <option value="Producto">Producto</option>
-        <option value="Subproducto">Subproducto</option>
-        <option value="Insumo">Insumo</option>
-      </select>
-      <label for="dbParent">Depende de:</label>
-      <select id="dbParent"></select>
-      <label for="dbDesc">Descripción:</label>
-      <input id="dbDesc" required>
-      <label for="dbCode">Código:</label>
-      <input id="dbCode">
-      <div class="form-actions">
-        <button type="submit">Agregar</button>
-        <button id="closeDB" type="button">Cerrar</button>
-      </div>
-    </form>
-    <div class="tabla-contenedor">
-      <table class="db-table">
-        <thead>
-          <tr>
-            <th>Tipo</th>
-            <th>Descripción</th>
-            <th>Código</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </dialog>
   <script src="lib/dexie.min.js" defer></script>
   <script src="lib/fuse.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js" defer></script>
@@ -133,7 +102,6 @@
   <script type="module" src="js/ui/animations.js" defer></script>
   <script type="module" src="js/darkMode.js" defer></script>
   <script type="module" src="js/hideLoading.js" defer></script>
-  <script type="module" src="js/dbManager.js" defer></script>
   <script type="module" src="js/editorUI.js" defer></script>
   <script type="module" src="js/newClientDialog.js" defer></script>
   <script type="module" src="js/newProductDialog.js" defer></script>
