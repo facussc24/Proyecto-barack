@@ -14,6 +14,8 @@ Incluye un módulo llamado *Sinóptico* para gestionar jerarquías de productos.
 Hay tres puntos de entrada al Sinóptico: la página standalone `sinoptico.html`, la vista SPA accesible desde `index.html` y el `sinoptico-editor.html` para modificaciones.
 Los datos se guardan localmente mediante **Dexie/IndexedDB**.
 
+> **Importante:** si abres estos archivos directamente con `file://` cada página se considera un origen distinto en el navegador, por lo que la base de datos no será compartida y verás nuevamente los datos de demostración al recargar. Para que todas las vistas utilicen la misma base de datos, sirve el proyecto desde un servidor local (por ejemplo con `python3 -m http.server` en la raíz del repositorio) y accede mediante `http://localhost`.
+
 ## Desarrollo
 
 El código fuente se encuentra en la carpeta `js/` y las hojas de estilo en
