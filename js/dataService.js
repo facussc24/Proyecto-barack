@@ -26,6 +26,19 @@ let db = null;
 // in-memory fallback
 const memory = [];
 
+function hydrateFromStorage() {
+  if (!hasWindow) return;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    const arr = raw ? JSON.parse(raw) : [];
+    if (Array.isArray(arr)) {
+      memory.push(...arr);
+    }
+  } catch (e) {
+    console.error('Failed to load fallback storage', e);
+  }
+}
+
 // initialize IndexedDB if Dexie is available
 if (Dexie) {
   db = new Dexie('ProyectoBarackDB');
@@ -46,18 +59,12 @@ if (Dexie) {
         }
       });
     }
-  }).catch(() => {});
+  }).catch(() => {
+    db = null;
+    hydrateFromStorage();
+  });
 } else if (hasWindow) {
-  // hydrate in-memory storage from localStorage
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    const arr = raw ? JSON.parse(raw) : [];
-    if (Array.isArray(arr)) {
-      memory.push(...arr);
-    }
-  } catch (e) {
-    console.error('Failed to load fallback storage', e);
-  }
+  hydrateFromStorage();
 }
 
 // setup cross-tab/channel notifications
