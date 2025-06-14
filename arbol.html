@@ -19,9 +19,9 @@
     <label for="productCliente">Cliente:</label>
     <select id="productCliente"></select>
     <label for="productDesc">Descripción:</label>
-    <input id="productDesc" type="text" required>
+    <input id="productDesc" type="text" required placeholder="Descripción del producto">
     <label for="productCode">Código:</label>
-    <input id="productCode" type="text">
+    <input id="productCode" type="text" placeholder="Código (opcional)">
     <div class="form-actions">
       <button id="confirmBtn" type="button">Crear sin subcomponentes</button>
       <button id="continueBtn" type="button">Continuar</button>
@@ -30,13 +30,15 @@
   <div id="step2" class="node-form" style="display:none">
     <h2>Agregar Subcomponentes</h2>
     <label for="subDesc">Descripción:</label>
-    <input id="subDesc" type="text">
+    <input id="subDesc" type="text" placeholder="Descripción del subcomponente">
     <label for="subCode">Código:</label>
-    <input id="subCode" type="text">
+    <input id="subCode" type="text" placeholder="Código (opcional)">
     <label for="subParent">Depende de:</label>
     <select id="subParent"></select>
     <button id="addSubBtn" type="button">Agregar</button>
-    <ul id="subList"></ul>
+    <div class="tree-preview">
+      <ul id="subList" class="tree-list"></ul>
+    </div>
     <div class="form-actions">
       <button id="finishBtn" type="button">Finalizar</button>
     </div>

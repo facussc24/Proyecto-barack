@@ -33,6 +33,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const subcomponents = [];
   const levelMap = new Map();
   levelMap.set('root', 0);
+  const domMap = new Map();
+  domMap.set('root', subList);
   let productData = null;
 
   function buildProduct(desc, code, clienteId) {
@@ -112,10 +114,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     const level = parent === 'root' ? 1 : (levelMap.get(parent) || 0) + 1;
     subcomponents.push({ id, parentId: parent, desc: d, code: c });
     levelMap.set(id, level);
+
+    const parentList = domMap.get(parent) || subList;
     const li = document.createElement('li');
-    li.style.paddingLeft = `${level * 20}px`;
-    li.textContent = c ? `${d} (${c})` : d;
-    subList.appendChild(li);
+    const node = document.createElement('span');
+    node.className = 'tree-node';
+    node.textContent = c ? `${d} (${c})` : d;
+    li.appendChild(node);
+    const childUl = document.createElement('ul');
+    li.appendChild(childUl);
+    parentList.appendChild(li);
+    domMap.set(id, childUl);
+
     if (subParent) {
       const opt = document.createElement('option');
       opt.value = id;
