@@ -12,6 +12,17 @@
     <a href="sinoptico.html">Ver Sinóptico</a>
     <button id="toggleDarkMode" type="button">🌙</button>
   </nav>
+  <header class="editor-header">
+    <h1 class="editor-title">Editor de Sinóptico</h1>
+  </header>
+  <div class="editor-menu">
+    <button id="btnCrearCliente">Crear</button>
+    <button id="btnModificar">Modificar</button>
+    <button id="btnEliminar">Eliminar</button>
+    <button id="btnArbol">Árbol Producto</button>
+  </div>
+  <div id="loading"></div>
+  <div id="appMessage" role="alert" aria-live="polite"></div>
   <div class="filtro-contenedor">
     <div class="filtros-texto">
       <label for="search">Buscar:</label>
@@ -57,6 +68,7 @@
   <script type="module" src="js/ui/animations.js" defer></script>
   <script type="module" src="js/darkMode.js" defer></script>
   <script type="module" src="js/hideLoading.js" defer></script>
+  <script type="module" src="js/editorUI.js" defer></script>
   <script>
     sessionStorage.setItem('sinopticoEdit', 'true');
   </script>
