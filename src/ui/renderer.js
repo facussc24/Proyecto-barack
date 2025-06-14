@@ -4,7 +4,7 @@ const root = typeof global !== 'undefined' ? global : globalThis;
     document.addEventListener('DOMContentLoaded', () => {
       const dataService =
         root.dataService ||
-        (typeof require === 'function' ? require('./js/dataService.js') : null);
+        (typeof require === 'function' ? require('../dataService.js') : null);
       if (typeof root.requestAnimationFrame === 'undefined') {
         root.requestAnimationFrame = cb => setTimeout(cb, 0);
       }
@@ -974,7 +974,7 @@ const root = typeof global !== 'undefined' ? global : globalThis;
       const createEditor =
         root.createSinopticoEditor ||
         (typeof require === 'function'
-          ? require('./js/sinopticoEditor.js').createSinopticoEditor
+          ? require('../views/sinoptico.js').createSinopticoEditor
           : null);
 
       if (createEditor) {
