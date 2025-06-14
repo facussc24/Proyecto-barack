@@ -21,7 +21,7 @@ export function initNewProductDialog() {
     dialog.showModal();
   });
 
-  const cancelBtn = dialog.querySelector('button[type="button"]');
+  const cancelBtn = dialog.querySelector('#cancelNuevoProducto');
   cancelBtn?.addEventListener('click', () => dialog.close());
 
   const form = dialog.querySelector('form');
