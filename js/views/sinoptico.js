@@ -10,7 +10,24 @@ export async function render(container) {
       <input id="sin-import-file" type="file" accept="application/json" hidden>
       <button id="sin-import">Importar</button>
     </div>
-    <div id="sinoptico"></div>
+    <table id="sinoptico">
+      <thead>
+        <tr>
+          <th>Descripción</th>
+          <th>Cliente</th>
+          <th>Vehículo</th>
+          <th>RefInterno</th>
+          <th>versión</th>
+          <th>Imagen</th>
+          <th>Consumo</th>
+          <th>Unidad</th>
+          <th>Sourcing</th>
+          <th>Código</th>
+          <th id="thActions" style="display:none">Acciones</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
   `;
 
   const data = await getAll('sinoptico');
