@@ -11,6 +11,15 @@ const root = typeof global !== 'undefined' ? global : globalThis;
       let fuseSinoptico = null;
       let sinopticoData = [];
       const sinopticoElem = document.getElementById('sinoptico');
+      const loader = document.getElementById('loading');
+
+      function showLoader() {
+        if (loader) loader.style.display = 'flex';
+      }
+
+      function hideLoader() {
+        if (loader) loader.style.display = 'none';
+      }
 
       function generarDatosIniciales() {
         return [
@@ -108,6 +117,7 @@ const root = typeof global !== 'undefined' ? global : globalThis;
       }
 
       function aplicarFiltro() {
+        showLoader();
         const criterioElem = document.getElementById('filtroInsumo');
         const criterio = criterioElem ? criterioElem.value.trim().toLowerCase() : '';
         const incluirAncestrosElem = document.getElementById('chkIncluirAncestros');
@@ -244,6 +254,7 @@ const root = typeof global !== 'undefined' ? global : globalThis;
             (nivel === 3 && mostrar3);
           if (!mostrarEste) tr.style.display = 'none';
         });
+        hideLoader();
       }
 
       // Adjuntamos eventos a campos de filtro
@@ -436,6 +447,7 @@ const root = typeof global !== 'undefined' ? global : globalThis;
         }
       }
       function colapsarTodo() {
+        showLoader();
         document.querySelectorAll('#sinoptico tbody tr').forEach(tr => {
           if (!tr.classList.contains('nivel-0')) {
             tr.style.display = 'none';
@@ -449,8 +461,10 @@ const root = typeof global !== 'undefined' ? global : globalThis;
             btn.setAttribute('aria-label', 'Expandir');
           }
         });
+        hideLoader();
       }
       function expandirTodo() {
+        showLoader();
         document.querySelectorAll('#sinoptico tbody tr').forEach(tr => {
           tr.style.display = '';
           tr.classList.add('fade-in');
@@ -464,6 +478,7 @@ const root = typeof global !== 'undefined' ? global : globalThis;
             btn.setAttribute('aria-label', 'Colapsar');
           }
         });
+        hideLoader();
       }
       const btnExp = document.getElementById('expandirTodo');
       if (btnExp) btnExp.addEventListener('click', expandirTodo);
@@ -687,6 +702,7 @@ const root = typeof global !== 'undefined' ? global : globalThis;
 
 
       async function loadData() {
+        showLoader();
         const expandedIds = sinopticoElem
           ? Array.from(
               document.querySelectorAll('#sinoptico tbody .toggle-btn[data-expanded="true"]')
@@ -707,9 +723,8 @@ const root = typeof global !== 'undefined' ? global : globalThis;
         if (sinopticoElem) {
           procesarDatos(sinopticoData, expandedIds);
         }
-        Promise.resolve().then(() => {
-          document.dispatchEvent(new CustomEvent('sinoptico-loaded'));
-        });
+        document.dispatchEvent(new CustomEvent('sinoptico-loaded'));
+        hideLoader();
       }
 
       // Llamo inmediatamente a loadData()
