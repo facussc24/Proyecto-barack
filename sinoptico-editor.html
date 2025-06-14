@@ -19,7 +19,7 @@
     <button id="btnNuevoCliente">Nuevo cliente</button>
     <button id="btnModificar">Modificar</button>
     <button id="btnEliminar">Eliminar</button>
-    <button id="btnArbol">Árbol Producto</button>
+    <button id="btnArbol">Crear árbol producto</button>
   </div>
   <div id="loading"></div>
   <div id="appMessage" role="alert" aria-live="polite"></div>
@@ -64,6 +64,20 @@
       </div>
     </form>
   </dialog>
+  <dialog id="dlgNuevoProducto" class="modal">
+    <form method="dialog">
+      <label for="nuevoProductoCliente">Cliente:</label>
+      <select id="nuevoProductoCliente" required></select>
+      <label for="nuevoProductoDescripcion">Descripción del producto:</label>
+      <input id="nuevoProductoDescripcion" type="text" required>
+      <label for="nuevoProductoCodigo">Código:</label>
+      <input id="nuevoProductoCodigo" type="text" required>
+      <div class="form-actions">
+        <button type="submit">Crear</button>
+        <button type="button">Cancelar</button>
+      </div>
+    </form>
+  </dialog>
   <script src="lib/dexie.min.js" defer></script>
   <script src="lib/fuse.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js" defer></script>
@@ -75,6 +89,7 @@
   <script type="module" src="js/hideLoading.js" defer></script>
   <script type="module" src="js/editorUI.js" defer></script>
   <script type="module" src="js/newClientDialog.js" defer></script>
+  <script type="module" src="js/newProductDialog.js" defer></script>
   <script>
     sessionStorage.setItem('sinopticoEdit', 'true');
   </script>
