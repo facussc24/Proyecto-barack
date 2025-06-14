@@ -14,9 +14,10 @@ To host the page publicly you can enable **GitHub Pages**:
 3. After a minute or so the site will be available at
    `https://<user>.github.io/<repo>/`.
 
-A workflow defined in `.github/workflows/deploy.yml` publishes the repository
-root to the `gh-pages` branch whenever changes reach `main`. The job only
-installs Node dependencies needed for the test suite—there is no build step.
+A workflow defined in `.github/workflows/deploy.yml` publishes the contents of
+the `public/` folder to the `gh-pages` branch whenever changes reach `main`.
+The job only installs Node dependencies needed for the test suite—there is no
+build step.
 
 `localStorage` is tied to each domain. Data saved while using
 `http://localhost` will not appear when visiting the GitHub Pages URL and
