@@ -5,6 +5,7 @@ export async function render(container) {
   container.innerHTML = `
     <div class="toolbar">
       <button id="sin-edit">Editar</button>
+      <button id="btnNuevoCliente">Nuevo cliente</button>
       <button id="sin-delete">Borrar</button>
       <button id="sin-export">Exportar</button>
       <input id="sin-import-file" type="file" accept="application/json" hidden>
@@ -34,6 +35,11 @@ export async function render(container) {
   if (typeof window.renderSinoptico === 'function') {
     window.renderSinoptico(data);
   }
+
+  container.querySelector('#btnNuevoCliente').addEventListener('click', () => {
+    const dlg = document.getElementById('dlgNuevoCliente');
+    if (dlg && dlg.showModal) dlg.showModal();
+  });
 
   container.querySelector('#sin-edit').addEventListener('click', () => {
     const curr = sessionStorage.getItem('sinopticoEdit') === 'true';
