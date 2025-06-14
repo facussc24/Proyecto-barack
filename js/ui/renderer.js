@@ -737,6 +737,79 @@ const root = typeof global !== 'undefined' ? global : globalThis;
           });
         });
 
+        const fieldOrder = [
+          'Descripción',
+          'Cliente',
+          'Vehículo',
+          'RefInterno',
+          'versión',
+          'Imagen',
+          'Consumo',
+          'Unidad',
+          'Sourcing',
+          'Código'
+        ];
+
+        function startEditRow(tr, fila) {
+          if (!tr || tr.classList.contains('editing')) return;
+          tr.classList.add('editing');
+          const cells = tr.querySelectorAll('td');
+          const orig = Array.from(cells).map(td => td.innerHTML);
+          tr._origHTML = orig;
+
+          const itemText = cells[0].querySelector('.item-text');
+          if (itemText) {
+            itemText.innerHTML = `<input type="text" value="${
+              fila['Descripción'] || ''
+            }">`;
+          }
+
+          fieldOrder.slice(1).forEach((field, idx) => {
+            const td = cells[idx + 1];
+            const val = fila[field] ? fila[field].toString().trim() : '';
+            td.innerHTML = '';
+            if (field === 'Unidad') {
+              const opts = ['pz', 'kg', 'g', 'm', 'cm'];
+              if (!opts.includes(val)) opts.unshift(val);
+              const sel = document.createElement('select');
+              sel.innerHTML = opts
+                .map(o => `<option value="${o}"${o === val ? ' selected' : ''}>${o}</option>`)
+                .join('');
+              td.appendChild(sel);
+            } else {
+              const inp = document.createElement('input');
+              inp.type = field === 'Consumo' ? 'number' : 'text';
+              inp.value = val;
+              td.appendChild(inp);
+            }
+          });
+
+          const actions = cells[cells.length - 1];
+          actions.innerHTML = '';
+          const save = document.createElement('button');
+          save.textContent = 'Guardar';
+          const cancel = document.createElement('button');
+          cancel.textContent = 'Cancelar';
+          actions.appendChild(save);
+          actions.appendChild(cancel);
+
+          save.addEventListener('click', async () => {
+            const changes = {};
+            const itemInput = cells[0].querySelector('input');
+            changes['Descripción'] = itemInput ? itemInput.value.trim() : '';
+            fieldOrder.slice(1).forEach((field, idx) => {
+              const el = cells[idx + 1].querySelector('input,select');
+              changes[field] = el ? el.value.trim() : '';
+            });
+            await dataService.updateNode(fila.ID, changes);
+            loadData();
+          });
+
+          cancel.addEventListener('click', () => {
+            loadData();
+          });
+        }
+
         // c) Dibujar filas recursivamente
         function dibujarNodos(parentID, nivel) {
           const isEditing = sessionStorage.getItem('sinopticoEdit') === 'true';
@@ -880,12 +953,7 @@ const root = typeof global !== 'undefined' ? global : globalThis;
 
               const editBtn = document.createElement('button');
               editBtn.textContent = 'Editar';
-              editBtn.addEventListener('click', () => {
-                const nuevo = prompt('Nueva descripción', fila['Descripción'] || '');
-                if (nuevo !== null && window.SinopticoEditor) {
-                  window.SinopticoEditor.updateNode(fila.ID, { Descripción: nuevo });
-                }
-              });
+              editBtn.addEventListener('click', () => startEditRow(tr, fila));
               tdAct.appendChild(editBtn);
 
               const del = document.createElement('button');
