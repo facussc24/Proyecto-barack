@@ -25,6 +25,11 @@ const hasWindow = !isNode && typeof window !== 'undefined' && window.document;
 let db = null;
 // in-memory fallback per store
 const memory = {};
+// promise that resolves once IndexedDB is ready (or failed)
+let readyResolve;
+export const ready = new Promise((res) => {
+  readyResolve = res;
+});
 
 function hydrateFromStorage() {
   if (!hasWindow) return;
@@ -50,24 +55,32 @@ if (Dexie) {
     users: 'id,name,role',
   });
   // migrate existing records that used numeric primary keys
-  db.open().then(async () => {
-    const all = await db.sinoptico.toArray();
-    const needsFix = all.filter(r => typeof r.id !== 'string' || r.id !== r.ID);
-    if (needsFix.length) {
-      await db.transaction('rw', db.sinoptico, async () => {
-        for (const rec of needsFix) {
-          await db.sinoptico.delete(rec.id);
-          const newRec = { ...rec, id: String(rec.ID || rec.id) };
-          await db.sinoptico.add(newRec);
-        }
-      });
-    }
-  }).catch(() => {
-    db = null;
-    hydrateFromStorage();
-  });
+  db.open()
+    .then(async () => {
+      const all = await db.sinoptico.toArray();
+      const needsFix = all.filter(r => typeof r.id !== 'string' || r.id !== r.ID);
+      if (needsFix.length) {
+        await db.transaction('rw', db.sinoptico, async () => {
+          for (const rec of needsFix) {
+            await db.sinoptico.delete(rec.id);
+            const newRec = { ...rec, id: String(rec.ID || rec.id) };
+            await db.sinoptico.add(newRec);
+          }
+        });
+      }
+    })
+    .catch(() => {
+      db = null;
+      hydrateFromStorage();
+    })
+    .finally(() => {
+      if (readyResolve) readyResolve();
+    });
 } else if (hasWindow) {
   hydrateFromStorage();
+  if (readyResolve) readyResolve();
+} else {
+  if (readyResolve) readyResolve();
 }
 
 // setup cross-tab/channel notifications
@@ -332,6 +345,7 @@ const api = {
   remove,
   exportJSON,
   importJSON,
+  ready,
   async reset() {
     if (db) {
       await db.delete();
@@ -356,4 +370,4 @@ if (hasWindow) {
 
 export default api;
 
-export { getAll, add, update, remove, exportJSON, importJSON };
+export { getAll, add, update, remove, exportJSON, importJSON, ready };
