@@ -1,5 +1,5 @@
 'use strict';
-import { addNode } from './dataService.js';
+import { addNode, ready } from './dataService.js';
 
 export function initNewClientDialog() {
   const dialog = document.getElementById('dlgNuevoCliente');
@@ -17,6 +17,7 @@ export function initNewClientDialog() {
     const input = dialog.querySelector('#nuevoClienteNombre');
     const nombre = input.value.trim();
     if (!nombre) return;
+    await ready;
     await addNode({
       ID: Date.now().toString(),
       ParentID: '',
