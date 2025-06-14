@@ -356,5 +356,4 @@ if (hasWindow) {
 
 export default api;
 
-export { getAll, add, update, remove, exportJSON, importJSON,
-  getAllUsers, addUser, updateUser, deleteUser };
+export { getAll, add, update, remove, exportJSON, importJSON };
