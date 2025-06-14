@@ -244,7 +244,11 @@ async function importJSON(json) {
 
 
 export async function addNode(node) {
-  return add('sinoptico', node);
+  const n = { ...node };
+  if (n.ID && !n.id) {
+    n.id = String(n.ID);
+  }
+  return add('sinoptico', n);
 }
 
 export async function updateNode(id, changes) {
