@@ -58,12 +58,15 @@ if (Dexie) {
   db.open()
     .then(async () => {
       const all = await db.sinoptico.toArray();
-      const needsFix = all.filter(r => typeof r.id !== 'string' || r.id !== r.ID);
+      const needsFix = all.filter(
+        r => typeof r.id !== 'string' || r.id !== r.ID || !r.ID
+      );
       if (needsFix.length) {
         await db.transaction('rw', db.sinoptico, async () => {
           for (const rec of needsFix) {
             await db.sinoptico.delete(rec.id);
-            const newRec = { ...rec, id: String(rec.ID || rec.id) };
+            const fixedId = String(rec.ID || rec.id);
+            const newRec = { ...rec, id: fixedId, ID: fixedId };
             await db.sinoptico.add(newRec);
           }
         });
@@ -248,6 +251,9 @@ export async function addNode(node) {
   if (n.ID && !n.id) {
     n.id = String(n.ID);
   }
+  if (n.id && !n.ID) {
+    n.ID = String(n.id);
+  }
   return add('sinoptico', n);
 }
 
@@ -277,18 +283,25 @@ export async function deleteUser(id) {
 
 export async function replaceAll(arr) {
   if (!Array.isArray(arr)) return;
+  const normalized = arr.map(item => {
+    const obj = { ...item };
+    const fixedId = String(obj.ID || obj.id || Date.now().toString());
+    if (!obj.id) obj.id = fixedId;
+    if (!obj.ID) obj.ID = fixedId;
+    return obj;
+  });
   if (db) {
     try {
       await db.transaction('rw', db.sinoptico, async () => {
         await db.sinoptico.clear();
-        if (arr.length) await db.sinoptico.bulkAdd(arr);
+        if (normalized.length) await db.sinoptico.bulkAdd(normalized);
       });
       notifyChange();
     } catch (e) {
       console.error(e);
     }
   } else {
-    memory.sinoptico = Array.isArray(arr) ? [...arr] : [];
+    memory.sinoptico = [...normalized];
     _fallbackPersist();
     notifyChange();
   }
