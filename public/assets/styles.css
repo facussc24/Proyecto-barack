@@ -813,6 +813,10 @@ body.amfe-page:not(.dark-mode) .logo {
   animation: fadeIn 0.3s ease-in-out;
 }
 
+.fade-out {
+  animation: fadeOut 0.3s ease-in-out forwards;
+}
+
 .scale {
   animation: scaleUp 0.2s ease-in-out;
 }

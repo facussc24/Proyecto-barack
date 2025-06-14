@@ -1003,4 +1003,52 @@ const root = typeof global !== 'undefined' ? global : globalThis;
         procesarDatos(sinopticoData, []);
       };
 
+      function renderSimpleTable(containerId, rows) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        const old = container.querySelector('table');
+        if (old) {
+          if (root.animateRemove) {
+            root.animateRemove(old, () => old.remove());
+          } else {
+            old.remove();
+          }
+        } else {
+          container.textContent = '';
+        }
+
+        const table = document.createElement('table');
+        table.id = containerId;
+        const thead = document.createElement('thead');
+        const tbody = document.createElement('tbody');
+        table.appendChild(thead);
+        table.appendChild(tbody);
+        container.appendChild(table);
+
+        if (!Array.isArray(rows) || rows.length === 0) return;
+        const cols = Object.keys(rows[0]);
+        const headRow = document.createElement('tr');
+        cols.forEach(c => {
+          const th = document.createElement('th');
+          th.textContent = c;
+          headRow.appendChild(th);
+        });
+        thead.appendChild(headRow);
+
+        rows.forEach(r => {
+          const tr = document.createElement('tr');
+          cols.forEach(c => {
+            const td = document.createElement('td');
+            td.textContent = r[c] == null ? '' : r[c];
+            tr.appendChild(td);
+          });
+          tbody.appendChild(tr);
+          if (root.animateInsert) root.animateInsert(tr);
+        });
+      }
+
+      root.renderAMFE = rows => {
+        renderSimpleTable('amfe', Array.isArray(rows) ? rows : []);
+      };
+
     }); // FIN DOMContentLoaded
