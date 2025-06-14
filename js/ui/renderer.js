@@ -223,7 +223,9 @@ document.addEventListener('DOMContentLoaded', () => {
       td0.appendChild(btn);
       if(nivel>0){
         const arrow=document.createElement('span');
-        arrow.classList.add(`arrow-nivel-${Math.min(nivel,6)}`);
+        const idx=Math.min(nivel,6);
+        arrow.classList.add(`arrow-nivel-${idx}`);
+        arrow.textContent = idx===1 ? '►' : idx===2 ? '↳' : '–';
         td0.appendChild(arrow);
       }
       const span=document.createElement('span');

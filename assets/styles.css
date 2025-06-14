@@ -331,42 +331,12 @@ tr[data-level] td:first-child {
   margin-right: 4px; /* separación más evidente */
   font-weight: bold;
 }
-.arrow-nivel-1 {
-  color: var(--color-primary);
-}
-.arrow-nivel-1::before {
-  content: "\25B6"; /* ► */
-}
-.arrow-nivel-2 {
-  color: var(--color-accent);
-}
-.arrow-nivel-2::before {
-  content: "\21B3"; /* ↳ */
-}
-.arrow-nivel-3 {
-  color: var(--color-accent);
-}
-.arrow-nivel-3::before {
-  content: "\2013"; /* – */
-}
-.arrow-nivel-4 {
-  color: var(--color-accent);
-}
-.arrow-nivel-4::before {
-  content: "\2013";
-}
-.arrow-nivel-5 {
-  color: var(--color-accent);
-}
-.arrow-nivel-5::before {
-  content: "\2013";
-}
-.arrow-nivel-6 {
-  color: var(--color-accent);
-}
-.arrow-nivel-6::before {
-  content: "\2013";
-}
+.arrow-nivel-1 { color: var(--color-primary); }
+.arrow-nivel-2,
+.arrow-nivel-3,
+.arrow-nivel-4,
+.arrow-nivel-5,
+.arrow-nivel-6 { color: var(--color-accent); }
 
 /* ==============================
    BOTONES + / –
