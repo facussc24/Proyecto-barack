@@ -16,7 +16,7 @@
     <h1 class="editor-title">Editor de Sinóptico</h1>
   </header>
   <div class="editor-menu">
-    <button id="btnCrearCliente">Crear</button>
+    <button id="btnNuevoCliente">Nuevo cliente</button>
     <button id="btnModificar">Modificar</button>
     <button id="btnEliminar">Eliminar</button>
     <button id="btnArbol">Árbol Producto</button>
@@ -60,6 +60,16 @@
       <tbody id="sinopticoBody"></tbody>
     </table>
   </div>
+  <dialog id="dlgNuevoCliente" class="modal">
+    <form method="dialog">
+      <label for="nuevoClienteNombre">Nombre del cliente:</label>
+      <input id="nuevoClienteNombre" type="text" required>
+      <div class="form-actions">
+        <button type="submit">Crear</button>
+        <button type="button">Cancelar</button>
+      </div>
+    </form>
+  </dialog>
   <script src="lib/dexie.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js" defer></script>
   <script type="module" src="js/dataService.js" defer></script>
@@ -69,6 +79,7 @@
   <script type="module" src="js/darkMode.js" defer></script>
   <script type="module" src="js/hideLoading.js" defer></script>
   <script type="module" src="js/editorUI.js" defer></script>
+  <script type="module" src="js/newClientDialog.js" defer></script>
   <script>
     sessionStorage.setItem('sinopticoEdit', 'true');
   </script>

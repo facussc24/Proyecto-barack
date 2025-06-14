@@ -19,6 +19,16 @@
   <div id="loading"></div>
   <div id="appMessage" role="alert" aria-live="polite"></div>
   <div id="app">Cargando…</div>
+  <dialog id="dlgNuevoCliente" class="modal">
+    <form method="dialog">
+      <label for="nuevoClienteNombre">Nombre del cliente:</label>
+      <input id="nuevoClienteNombre" type="text" required>
+      <div class="form-actions">
+        <button type="submit">Crear</button>
+        <button type="button">Cancelar</button>
+      </div>
+    </form>
+  </dialog>
   <script src="lib/dexie.min.js" defer></script>
   <script src="lib/fuse.min.js" defer></script>
   <script type="module" src="js/router.js" defer></script>
@@ -29,6 +39,7 @@
   <script type="module" src="js/ui/animations.js" defer></script>
   <script type="module" src="js/darkMode.js" defer></script>
   <script type="module" src="js/hideLoading.js" defer></script>
+  <script type="module" src="js/newClientDialog.js" defer></script>
   <script type="module" src="js/views/home.js" defer></script>
   <script type="module" src="js/views/amfe.js" defer></script>
   <script type="module" src="js/views/settings.js" defer></script>

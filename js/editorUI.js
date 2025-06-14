@@ -116,7 +116,6 @@ async function handleArbol() {
 }
 
 function init() {
-  document.getElementById('btnCrearCliente')?.addEventListener('click', handleCrear);
   document.getElementById('btnEliminar')?.addEventListener('click', async () => {
     const id = prompt('ID a eliminar');
     if (id) await deleteSubtree(id);
