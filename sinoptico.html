@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sinóptico</title>
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <nav class="main-nav">
+    <a href="index.html">Inicio</a>
+    <a href="#/sinoptico">Sinóptico SPA</a>
+    <button id="toggleDarkMode" type="button">🌙</button>
+  </nav>
+  <div class="filtro-contenedor">
+    <div class="filtros-texto">
+      <label for="search">Buscar:</label>
+      <div class="input-wrapper">
+        <input id="search" type="text" autocomplete="off" />
+        <button id="clearSearch" aria-label="Limpiar">×</button>
+        <ul id="sinopticoSuggestions" class="suggestions-list"></ul>
+      </div>
+      <button id="expandirTodo">Expandir todo</button>
+      <button id="colapsarTodo">Colapsar todo</button>
+    </div>
+    <div class="filtro-opciones">
+      <button id="saveJSON">Guardar JSON</button>
+      <input id="jsonFile" type="file" accept="application/json" hidden>
+      <button id="loadJSON">Cargar JSON</button>
+      <button id="btnExcel">Exportar Excel</button>
+    </div>
+  </div>
+  <div class="tabla-contenedor">
+    <table id="sinoptico">
+      <thead>
+        <tr>
+          <th>Descripción</th>
+          <th>Cliente</th>
+          <th>Vehículo</th>
+          <th>RefInterno</th>
+          <th>versión</th>
+          <th>Imagen</th>
+          <th>Consumo</th>
+          <th>Unidad</th>
+          <th>Sourcing</th>
+          <th>Código</th>
+        </tr>
+      </thead>
+      <tbody id="sinopticoBody"></tbody>
+    </table>
+  </div>
+  <script src="lib/dexie.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js" defer></script>
+  <script type="module" src="js/router.js" defer></script>
+  <script type="module" src="js/dataService.js" defer></script>
+  <script type="module" src="js/views/sinoptico.js" defer></script>
+  <script type="module" src="js/ui/renderer.js" defer></script>
+  <script type="module" src="js/ui/animations.js" defer></script>
+  <script type="module" src="js/darkMode.js" defer></script>
+  <script type="module" src="js/hideLoading.js" defer></script>
+  <script type="module" src="js/views/home.js" defer></script>
+  <script type="module" src="js/views/amfe.js" defer></script>
+  <script type="module" src="js/views/settings.js" defer></script>
+  <script type="module" src="js/views/users.js" defer></script>
+</body>
+</html>
