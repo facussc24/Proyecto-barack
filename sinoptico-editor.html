@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sinóptico</title>
+  <title>Editor de Sinóptico</title>
   <link rel="stylesheet" href="assets/styles.css">
 </head>
 <body>
   <nav class="main-nav">
     <a href="index.html">Inicio</a>
-    <a href="#/sinoptico">Sinóptico SPA</a>
+    <a href="sinoptico.html">Ver Sinóptico</a>
     <button id="toggleDarkMode" type="button">🌙</button>
   </nav>
   <div class="filtro-contenedor">
@@ -57,5 +57,8 @@
   <script type="module" src="js/ui/animations.js" defer></script>
   <script type="module" src="js/darkMode.js" defer></script>
   <script type="module" src="js/hideLoading.js" defer></script>
+  <script>
+    sessionStorage.setItem('sinopticoEdit', 'true');
+  </script>
 </body>
 </html>
