@@ -135,6 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const mostrarFlags = [
       'chkMostrarNivel0','chkMostrarNivel1','chkMostrarNivel2','chkMostrarNivel3'
     ].map(id => document.getElementById(id)?.checked ?? true);
+    const tipoFiltro = levelFilter ? levelFilter.value : '';
 
     const todasFilas = Array.from(document.querySelectorAll('#sinoptico tbody tr'));
     const mapIdToRow = {};
@@ -147,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
       mostrarAncestros(fila.dataset.parent);
     }
 
-    if (!selectedItems.length) {
+    if (!selectedItems.length && !tipoFiltro) {
       todasFilas.forEach(tr => {
         const lvl = parseInt(tr.dataset.level || '0', 10);
         tr.style.display = mostrarFlags[lvl] ? '' : 'none';
@@ -158,22 +159,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
     todasFilas.forEach(tr => tr.style.display = 'none');
     const idSet = new Set();
-    selectedItems.forEach(sel => {
-      if (fuseSinoptico) {
-        fuseSinoptico.search(sel.text).forEach(res => {
-          if (!sel.tipo || res.item.Tipo === sel.tipo) idSet.add(res.item.ID.toString());
-        });
-      } else {
-        sinopticoData.forEach(r => {
-          if ((r.Descripción || '').toLowerCase().includes(sel.text.toLowerCase()) &&
-              (!sel.tipo || r.Tipo === sel.tipo)) {
-            idSet.add(r.ID.toString());
-          }
-        });
-      }
-    });
+    if (selectedItems.length) {
+      selectedItems.forEach(sel => {
+        if (fuseSinoptico) {
+          fuseSinoptico.search(sel.text).forEach(res => {
+            if (!sel.tipo || res.item.Tipo === sel.tipo) idSet.add(res.item.ID.toString());
+          });
+        } else {
+          sinopticoData.forEach(r => {
+            if ((r.Descripción || '').toLowerCase().includes(sel.text.toLowerCase()) &&
+                (!sel.tipo || r.Tipo === sel.tipo)) {
+              idSet.add(r.ID.toString());
+            }
+          });
+        }
+      });
+    } else {
+      sinopticoData.forEach(r => {
+        if (!tipoFiltro || r.Tipo === tipoFiltro) idSet.add(r.ID.toString());
+      });
+    }
+
     todasFilas.forEach(tr => {
       if (!idSet.has(tr.dataset.id)) return;
+      if (tipoFiltro && tr.dataset.tipo !== tipoFiltro) return;
       const lvl = parseInt(tr.dataset.level || '0', 10);
       if (mostrarFlags[lvl]) tr.style.display = '';
       mostrarAncestros(tr.dataset.parent);
@@ -189,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (selectedItemsContainer) selectedItemsContainer.innerHTML = '';
     aplicarFiltro();
   });
-  ['chkIncluirAncestros','chkMostrarNivel0','chkMostrarNivel1','chkMostrarNivel2','chkMostrarNivel3']
+  ['levelFilter','chkIncluirAncestros','chkMostrarNivel0','chkMostrarNivel1','chkMostrarNivel2','chkMostrarNivel3']
     .forEach(id => document.getElementById(id)?.addEventListener('change', aplicarFiltro));
 
   /* ==================================================
@@ -286,7 +295,12 @@ document.addEventListener('DOMContentLoaded', () => {
       cancel.onclick=()=> loadData();
     }
     function dibujar(parent='',nivel=0){ (agrupado[parent]||[]).forEach(fila=>{
-      const tr=document.createElement('tr'); tr.dataset.id=fila.ID; tr.dataset.parent=fila.ParentID||''; tr.dataset.level=nivel; tr.style.setProperty('--lvl', nivel);
+      const tr=document.createElement('tr');
+      tr.dataset.id=fila.ID;
+      tr.dataset.parent=fila.ParentID||'';
+      tr.dataset.level=nivel;
+      tr.dataset.tipo=fila.Tipo || '';
+      tr.style.setProperty('--lvl', nivel);
       const tipo=fila.Tipo.toLowerCase(); tr.classList.add(`nivel-${nivel}`);
       const td0=document.createElement('td');
       td0.style.paddingLeft = `${12 + nivel * 24}px`;
