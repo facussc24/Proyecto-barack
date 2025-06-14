@@ -46,7 +46,21 @@ if (Dexie) {
         }
       });
     }
-  }).catch(() => {});
+  }).catch((err) => {
+    console.error(err);
+    db = null;
+    if (hasWindow) {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        const arr = raw ? JSON.parse(raw) : [];
+        if (Array.isArray(arr)) {
+          memory.push(...arr);
+        }
+      } catch (e) {
+        console.error('Failed to load fallback storage', e);
+      }
+    }
+  });
 } else if (hasWindow) {
   // hydrate in-memory storage from localStorage
   try {
