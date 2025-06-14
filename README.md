@@ -77,7 +77,7 @@ checkboxes to quickly hide or show sections.
 
 ## Agregar clientes
 
-1. Inicia un servidor local con `python3 -m http.server` dentro de la carpeta del proyecto.
+1. Inicia un servidor local como se explica en [Quick start](#quick-start).
 2. Abre `http://localhost:8000/login.html` e inicia sesión con cualquiera de las cuentas por defecto (**PAULO**, **LEO**, **FACUNDO** o **PABLO**; todas usan la contraseña `1234`).
 3. Tras autenticarte vuelve a `index.html`; aparecerá el enlace **Editar sinóptico**.
 4. Haz clic en ese enlace para abrir `admin_menu.html` y elige **Crear**.
@@ -147,7 +147,7 @@ If editing pages doesn't work as expected:
 5. Accede siempre con la misma URL (por ejemplo `localhost`) para que los datos guardados estén disponibles.
 6. La biblioteca **Dexie** viene incluida, por lo que la persistencia funciona incluso sin acceso a Internet.
 
-7. Asegúrate de ejecutar `python3 -m http.server` dentro de la carpeta del proyecto. Iniciar el servidor desde otro directorio provoca errores 404.
+7. Asegúrate de ejecutar el servidor dentro de la carpeta del proyecto como se indica en [Quick start](#quick-start). Iniciar el servidor desde otro directorio provoca errores 404.
 
 If a CDN script fails to load you will see one of the following warnings:
 
