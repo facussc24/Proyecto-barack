@@ -1,4 +1,4 @@
-import { getAll, add, update, remove } from '../dataService.js';
+import { getAll, add, update, remove, ready } from '../dataService.js';
 
 export async function render(container) {
   container.innerHTML = `
@@ -15,6 +15,7 @@ export async function render(container) {
   const tbody = container.querySelector('tbody');
 
   async function load() {
+    await ready;
     const users = await getAll('users');
     tbody.innerHTML = '';
     users.forEach(u => {
@@ -48,6 +49,7 @@ export async function render(container) {
         await load();
       }
     } else if (btn.classList.contains('edit')) {
+      await ready;
       const users = await getAll('users');
       const user = users.find(u => u.id === id);
       showEditor(user, row);

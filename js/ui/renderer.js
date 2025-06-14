@@ -1,10 +1,8 @@
-'use strict';
+
+import dataService, { ready } from '../dataService.js';
 const root = typeof global !== 'undefined' ? global : globalThis;
 
 document.addEventListener('DOMContentLoaded', () => {
-  const dataService =
-    root.dataService ||
-    (typeof require === 'function' ? require('../dataService.js') : null);
   if (typeof root.requestAnimationFrame === 'undefined') {
     root.requestAnimationFrame = cb => setTimeout(cb, 0);
   }
@@ -231,7 +229,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function loadData() {
     showLoader();
+    await ready;
     try { sinopticoData = await dataService.getAll(); } catch { sinopticoData = []; }
+    await ready;
     if (!sinopticoData.length) {
       sinopticoData = generarDatosIniciales();
       if (dataService && dataService.replaceAll) {
