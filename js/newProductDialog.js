@@ -9,6 +9,21 @@ export function initNewProductDialog() {
   const clienteSelect = dialog.querySelector('#nuevoProductoCliente');
   const descInput = dialog.querySelector('#nuevoProductoDescripcion');
   const codeInput = dialog.querySelector('#nuevoProductoCodigo');
+  const subList = dialog.querySelector('#subproductList');
+  const addSubBtn = dialog.querySelector('#addSubproduct');
+
+  function addSubRow() {
+    if (!subList) return;
+    const div = document.createElement('div');
+    div.className = 'subproduct-item';
+    div.innerHTML = `<input type="text" class="subDesc" placeholder="Descripción"> ` +
+      `<input type="text" class="subCode" placeholder="Código"> ` +
+      `<button type="button" class="removeSub">×</button>`;
+    div.querySelector('.removeSub').onclick = () => div.remove();
+    subList.appendChild(div);
+  }
+
+  addSubBtn?.addEventListener('click', addSubRow);
 
   openBtn.addEventListener('click', async () => {
     await ready;
@@ -18,6 +33,7 @@ export function initNewProductDialog() {
         .map(c => `<option value="${c.ID}">${c.Descripción}</option>`)
         .join('');
     }
+    if (subList) subList.innerHTML = '';
     dialog.showModal();
   });
 
@@ -33,8 +49,9 @@ export function initNewProductDialog() {
     await ready;
     const clientes = await getAll('sinoptico');
     const cliente = clientes.find(c => String(c.ID) === String(clienteId));
+    const baseId = Date.now().toString();
     await addNode({
-      ID: Date.now().toString(),
+      ID: baseId,
       ParentID: clienteId,
       Tipo: 'Producto',
       Descripción: desc,
@@ -48,6 +65,29 @@ export function initNewProductDialog() {
       Sourcing: '',
       Código: codeInput?.value.trim() || ''
     });
+    if (subList) {
+      const rows = Array.from(subList.querySelectorAll('.subproduct-item'));
+      rows.forEach((row, idx) => {
+        const sDesc = row.querySelector('.subDesc')?.value.trim();
+        if (!sDesc) return;
+        const sCode = row.querySelector('.subCode')?.value.trim() || '';
+        addNode({
+          ID: `${baseId}-${idx+1}`,
+          ParentID: baseId,
+          Tipo: 'Subproducto',
+          Descripción: sDesc,
+          Cliente: cliente?.Descripción || '',
+          Vehículo: '',
+          RefInterno: '',
+          versión: '',
+          Imagen: '',
+          Consumo: '',
+          Unidad: '',
+          Sourcing: '',
+          Código: sCode
+        });
+      });
+    }
     if (typeof window.mostrarMensaje === 'function') {
       window.mostrarMensaje('Producto creado con éxito', 'success');
     }
