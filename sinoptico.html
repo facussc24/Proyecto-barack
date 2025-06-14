@@ -15,13 +15,14 @@
 </head>
 <body>
   <div id="loading">Cargando...</div>
-  <nav class="main-nav">
-    <a href="index.html">Inicio</a>
-    <a href="sinoptico.html" aria-current="page">Sinóptico</a>
-    <a href="listado_maestro.html">Listado maestro</a>
-    <a href="insumos.html">Insumos</a>
-    <button id="toggleTheme">🌙</button>
-  </nav>
+    <nav class="main-nav">
+      <a href="index.html">Inicio</a>
+      <a href="sinoptico.html" aria-current="page">Sinóptico</a>
+      <a href="admin_menu.html" id="editSinLink" style="display:none">Editar sinóptico</a>
+      <a href="listado_maestro.html">Listado maestro</a>
+      <a href="insumos.html">Insumos</a>
+      <button id="toggleTheme">🌙</button>
+    </nav>
   <h1>Sinóptico de Producto Barack</h1>
   <div id="mensaje"></div>
 
@@ -115,11 +116,22 @@
   </div>
   <a href="welcome.html" class="home-button">Inicio</a>
 
-  <script src="https://cdn.jsdelivr.net/npm/dexie@4/dist/dexie.min.js"></script>
-  <script type="module" defer src="js/dataService.js"></script>
-  <script type="module" defer src="js/sinoptico.js"></script>
-  <script src="theme.js" defer></script>
-  <script src="smooth-nav.js" defer></script>
-  <script src="file-warning.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/dexie@4/dist/dexie.min.js"></script>
+   <script type="module" defer src="js/dataService.js"></script>
+   <script type="module" defer src="js/sinoptico.js"></script>
+   <script src="auth.js"></script>
+   <script src="theme.js" defer></script>
+   <script src="smooth-nav.js" defer></script>
+   <script src="file-warning.js"></script>
+   <script>
+     document.addEventListener('DOMContentLoaded', () => {
+       auth.restoreSession();
+       const editLink = document.getElementById('editSinLink');
+       if (editLink) {
+         const logged = sessionStorage.getItem('isAdmin') === 'true';
+         editLink.style.display = logged ? 'inline' : 'none';
+       }
+     });
+   </script>
 </body>
 </html>
