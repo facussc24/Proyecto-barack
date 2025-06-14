@@ -33,6 +33,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     ];
   }
+  const searchInput = document.getElementById('search');
+  const suggestionsList = document.getElementById('sinopticoSuggestions');
   const selectedItemsContainer = document.getElementById('selectedItems');
   const selectedItems = [];
 
@@ -79,10 +81,51 @@ document.addEventListener('DOMContentLoaded', () => {
     mostrarMensaje('Fuse.js no cargó – búsqueda deshabilitada', 'warning');
   }
 
+  if (searchInput && suggestionsList) {
+    searchInput.addEventListener('input', () => {
+      if (!fuseSinoptico) return;
+      const term = searchInput.value.trim();
+      suggestionsList.innerHTML = '';
+      if (!term) { suggestionsList.style.display = 'none'; return; }
+      fuseSinoptico.search(term, { limit: 3 }).forEach(res => {
+        const li = document.createElement('li');
+        li.textContent = res.item.Descripción;
+        li.dataset.text = res.item.Descripción;
+        suggestionsList.appendChild(li);
+      });
+      suggestionsList.style.display = suggestionsList.children.length ? 'block' : 'none';
+    });
+    suggestionsList.addEventListener('click', ev => {
+      const li = ev.target.closest('li');
+      if (!li) return;
+      const text = li.dataset.text || li.textContent;
+      if (!selectedItems.some(it => it.text === text)) {
+        selectedItems.push({ text });
+        if (selectedItemsContainer) {
+          const chip = document.createElement('span');
+          chip.className = 'chip';
+          chip.textContent = text;
+          const btn = document.createElement('button');
+          btn.textContent = '×';
+          btn.addEventListener('click', () => {
+            const idx = selectedItems.findIndex(i => i.text === text);
+            if (idx !== -1) selectedItems.splice(idx, 1);
+            selectedItemsContainer.removeChild(chip);
+            aplicarFiltro();
+          });
+          chip.appendChild(btn);
+          selectedItemsContainer.appendChild(chip);
+        }
+      }
+      searchInput.value = '';
+      suggestionsList.innerHTML = '';
+      suggestionsList.style.display = 'none';
+      aplicarFiltro();
+    });
+  }
+
   function aplicarFiltro() {
     showLoader();
-    // input de búsqueda
-    const criterio = document.getElementById('search')?.value.trim().toLowerCase() || '';
     const mostrarFlags = [
       'chkMostrarNivel0','chkMostrarNivel1','chkMostrarNivel2','chkMostrarNivel3'
     ].map(id => document.getElementById(id)?.checked ?? true);
@@ -98,7 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
       mostrarAncestros(fila.dataset.parent);
     }
 
-    if (!criterio) {
+    if (!selectedItems.length) {
       todasFilas.forEach(tr => {
         const lvl = parseInt(tr.dataset.level || '0', 10);
         tr.style.display = mostrarFlags[lvl] ? '' : 'none';
@@ -108,34 +151,30 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     todasFilas.forEach(tr => tr.style.display = 'none');
-    if (fuseSinoptico) {
-      const idSet = new Set();
-      criterio.split(/[\,\s]+/).forEach(k =>
-        fuseSinoptico.search(k).forEach(res => idSet.add(res.item.ID.toString()))
-      );
-      todasFilas.forEach(tr => {
-        if (!idSet.has(tr.dataset.id)) return;
-        const lvl = parseInt(tr.dataset.level || '0', 10);
-        if (mostrarFlags[lvl]) tr.style.display = '';
-        mostrarAncestros(tr.dataset.parent);
-      });
-    } else {
-      todasFilas.forEach(tr => {
-        if (tr.textContent.toLowerCase().includes(criterio)) {
-          const lvl = parseInt(tr.dataset.level || '0', 10);
-          if (mostrarFlags[lvl]) tr.style.display = '';
-          mostrarAncestros(tr.dataset.parent);
-        }
-      });
-    }
+    const idSet = new Set();
+    selectedItems.forEach(sel => {
+      if (fuseSinoptico) {
+        fuseSinoptico.search(sel.text).forEach(res => idSet.add(res.item.ID.toString()));
+      } else {
+        sinopticoData.forEach(r => {
+          if ((r.Descripción || '').toLowerCase().includes(sel.text.toLowerCase())) idSet.add(r.ID.toString());
+        });
+      }
+    });
+    todasFilas.forEach(tr => {
+      if (!idSet.has(tr.dataset.id)) return;
+      const lvl = parseInt(tr.dataset.level || '0', 10);
+      if (mostrarFlags[lvl]) tr.style.display = '';
+      mostrarAncestros(tr.dataset.parent);
+    });
     hideLoader();
   }
 
-  document.getElementById('search')?.addEventListener('input', aplicarFiltro);
   document.getElementById('clearSearch')?.addEventListener('click', () => {
-    document.getElementById('sinopticoSuggestions').innerHTML = '';
-    document.getElementById('search').value = '';
+    if (suggestionsList) suggestionsList.innerHTML = '';
+    if (searchInput) searchInput.value = '';
     selectedItems.length = 0;
+    if (selectedItemsContainer) selectedItemsContainer.innerHTML = '';
     aplicarFiltro();
   });
   ['chkIncluirAncestros','chkMostrarNivel0','chkMostrarNivel1','chkMostrarNivel2','chkMostrarNivel3']
