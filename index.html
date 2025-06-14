@@ -7,19 +7,23 @@
   <link rel="stylesheet" href="assets/styles.css">
 </head>
 <body>
-  <nav>
+  <nav class="main-nav">
     <a href="#/sinoptico">Sinóptico</a>
     <a href="#/amfe">AMFE</a>
     <a href="#/settings">Ajustes</a>
+    <button id="toggleDarkMode" type="button">🌙</button>
   </nav>
   <div id="loading"></div>
   <div id="appMessage" role="alert" aria-live="polite"></div>
   <div id="app">Cargando…</div>
   <script src="lib/dexie.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2/dist/fuse.min.js" defer></script>
   <script type="module" src="js/router.js" defer></script>
   <script type="module" src="js/dataService.js" defer></script>
   <script type="module" src="js/ui/renderer.js" defer></script>
   <script type="module" src="js/ui/animations.js" defer></script>
+  <script type="module" src="js/darkMode.js" defer></script>
+  <script type="module" src="js/hideLoading.js" defer></script>
   <script type="module" src="js/views/sinoptico.js" defer></script>
   <script type="module" src="js/views/amfe.js" defer></script>
   <script type="module" src="js/views/settings.js" defer></script>
