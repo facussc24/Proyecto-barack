@@ -132,6 +132,10 @@
          editLink.style.display = logged ? 'inline' : 'none';
        }
      });
+      window.addEventListener('load', () => {
+        const loader = document.getElementById('loading');
+        if (loader) loader.style.display = 'none';
+      });
    </script>
 </body>
 </html>
