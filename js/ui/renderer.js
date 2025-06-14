@@ -213,7 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
       cancel.onclick=()=> loadData();
     }
     function dibujar(parent='',nivel=0){ (agrupado[parent]||[]).forEach(fila=>{
-      const tr=document.createElement('tr'); tr.dataset.id=fila.ID; tr.dataset.parent=fila.ParentID||''; tr.dataset.level=nivel;
+      const tr=document.createElement('tr'); tr.dataset.id=fila.ID; tr.dataset.parent=fila.ParentID||''; tr.dataset.level=nivel; tr.style.setProperty('--lvl', nivel);
       const tipo=fila.Tipo.toLowerCase(); tr.classList.add(`nivel-${nivel}`);
       const td0=document.createElement('td'); const btn=document.createElement('button'); btn.classList.add('toggle-btn'); btn.textContent='+'; btn.onclick=()=>toggleNodo(btn,fila.ID); td0.appendChild(btn); const span=document.createElement('span'); span.classList.add('item-text'); span.textContent=fila['Descripción']||''; td0.appendChild(span); tr.appendChild(td0);
       ['Cliente','Vehículo','RefInterno','versión'].forEach(f=>{ const td=document.createElement('td'); td.textContent=fila[f]||''; tr.appendChild(td); });
