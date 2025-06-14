@@ -108,7 +108,7 @@ const root = typeof global !== 'undefined' ? global : globalThis;
       }
 
       function aplicarFiltro() {
-        const criterioElem = document.getElementById('filtroInsumo');
+        const criterioElem = document.getElementById('search');
         const criterio = criterioElem ? criterioElem.value.trim().toLowerCase() : '';
         const incluirAncestrosElem = document.getElementById('chkIncluirAncestros');
         const incluirAncestros = incluirAncestrosElem ? incluirAncestrosElem.checked : true;
@@ -247,7 +247,7 @@ const root = typeof global !== 'undefined' ? global : globalThis;
       }
 
       // Adjuntamos eventos a campos de filtro
-      const filtroInputElem = document.getElementById('filtroInsumo');
+      const filtroInputElem = document.getElementById('search');
       if (filtroInputElem) {
         filtroInputElem.addEventListener('input', () => {
           if (fuseSinoptico) {
@@ -376,7 +376,7 @@ const root = typeof global !== 'undefined' ? global : globalThis;
       }
 
       function applyFuzzySearchSinoptico() {
-        const input = document.getElementById('filtroInsumo');
+        const input = document.getElementById('search');
         const suggestionList = document.getElementById('sinopticoSuggestions');
         if (!fuseSinoptico || !input || !suggestionList) return;
         suggestionList.innerHTML = '';

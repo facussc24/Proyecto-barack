@@ -10,6 +10,17 @@ export async function render(container) {
       <input id="sin-import-file" type="file" accept="application/json" hidden>
       <button id="sin-import">Importar</button>
     </div>
+    <div class="filtro-contenedor">
+      <div class="filtros-texto">
+        <label for="search">Buscar:</label>
+        <div class="search-wrap">
+          <input id="search" type="text" />
+          <button id="clearSearch" type="button">×</button>
+          <ul id="sinopticoSuggestions" class="suggestions-list"></ul>
+        </div>
+      </div>
+      <div id="selectedItems" class="chips"></div>
+    </div>
     <table id="sinoptico">
       <thead>
         <tr>
