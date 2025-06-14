@@ -304,7 +304,8 @@ body.dark-mode .fila-oper {
 /* ==============================
    SANGRÍA MÍNIMA PARA NIVEL 0 (CLIENTE)
    ============================== */
-.nivel-0 td:first-child {
+.nivel-0 td:first-child,
+tr[data-level="0"] td:first-child {
   padding-left: 8px;
   font-weight: bold;
   border-left: none;
