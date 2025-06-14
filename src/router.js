@@ -1,6 +1,6 @@
-import { renderSinoptico } from './views/sinoptico.js';
-import { renderAmfe } from './views/amfe.js';
-import { renderSettings } from './views/settings.js';
+import { render as renderSinoptico } from './views/sinoptico.js';
+import { render as renderAmfe } from './views/amfe.js';
+import { render as renderSettings } from './views/settings.js';
 
 function renderNotFound(container) {
   container.textContent = 'Página no encontrada';

@@ -1,3 +1,10 @@
-export function renderSettings(container) {
-  container.textContent = 'Ajustes de la aplicación';
+import { getAll } from '../dataService.js';
+
+export async function render(container) {
+  container.innerHTML = '<h1>Ajustes de la aplicación</h1>';
+  // Muestra el número de elementos cargados en sinoptico
+  const data = await getAll('sinoptico');
+  const p = document.createElement('p');
+  p.textContent = `Registros en sinóptico: ${data.length}`;
+  container.appendChild(p);
 }
