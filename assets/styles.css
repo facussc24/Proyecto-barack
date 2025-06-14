@@ -305,7 +305,8 @@ tr[data-level="0"] td:first-child {
 
 /* sangría adicional para niveles superiores */
 tr[data-level] td:first-child {
-  padding-left: calc(12px + var(--lvl, 0) * 24px);
+  /* increase indentation for nested levels */
+  padding-left: calc(16px + var(--lvl, 0) * 36px);
 }
 
 /* ==============================

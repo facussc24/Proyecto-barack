@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const subDesc = document.getElementById('subDesc');
   const subCode = document.getElementById('subCode');
+  const subParent = document.getElementById('subParent');
   const addSubBtn = document.getElementById('addSubBtn');
   const subList = document.getElementById('subList');
   const finishBtn = document.getElementById('finishBtn');
@@ -30,6 +31,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   const subcomponents = [];
+  const levelMap = new Map();
+  levelMap.set('root', 0);
   let productData = null;
 
   function buildProduct(desc, code, clienteId) {
@@ -52,10 +55,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   async function persist(product, subs) {
     await addNode(product);
+    const idMap = { root: product.ID };
     for (const sub of subs) {
-      await addNode({
+      const parentId = idMap[sub.parentId] || product.ID;
+      const node = {
         ID: Date.now().toString() + Math.random().toString(16).slice(2),
-        ParentID: product.ID,
+        ParentID: parentId,
         Tipo: 'Subcomponente',
         Descripción: sub.desc,
         Cliente: product.Cliente,
@@ -67,7 +72,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         Unidad: '',
         Sourcing: '',
         Código: sub.code || ''
-      });
+      };
+      await addNode(node);
+      idMap[sub.id] = node.ID;
     }
   }
 
@@ -91,16 +98,30 @@ document.addEventListener('DOMContentLoaded', async () => {
     productData = { cid, desc, code };
     step1.style.display = 'none';
     step2.style.display = 'flex';
+    if (subParent) {
+      subParent.innerHTML = '<option value="root">(Producto principal)</option>';
+    }
   });
 
   addSubBtn?.addEventListener('click', () => {
     const d = subDesc.value.trim();
     if (!d) return;
     const c = subCode.value.trim();
-    subcomponents.push({ desc: d, code: c });
+    const parent = subParent?.value || 'root';
+    const id = Date.now().toString(16) + Math.random().toString(16).slice(2);
+    const level = parent === 'root' ? 1 : (levelMap.get(parent) || 0) + 1;
+    subcomponents.push({ id, parentId: parent, desc: d, code: c });
+    levelMap.set(id, level);
     const li = document.createElement('li');
+    li.style.paddingLeft = `${level * 20}px`;
     li.textContent = c ? `${d} (${c})` : d;
     subList.appendChild(li);
+    if (subParent) {
+      const opt = document.createElement('option');
+      opt.value = id;
+      opt.textContent = `${'\u2014 '.repeat(level)}${d}`;
+      subParent.appendChild(opt);
+    }
     subDesc.value = '';
     subCode.value = '';
   });
