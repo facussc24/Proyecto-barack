@@ -1,4 +1,3 @@
 'use strict';
-if (location.protocol === 'file:') {
-  alert('Abra el proyecto a través de un servidor web para que funcione correctamente.');
-}
+// This file previously alerted users to serve pages via HTTP.
+// It is now a no-op so the pages can be opened directly.
