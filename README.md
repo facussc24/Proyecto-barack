@@ -54,9 +54,12 @@ warning that the server could not be reached.
 
 ## Using the sinóptico editor
 
-Open `sinoptico.html` and click **Editar** to modify the hierarchy. Rows remain
-visible while editing even with an empty search box, so you can toggle the level
-checkboxes to quickly hide or show sections.
+After logging in an **Editar sinóptico** link appears on the home page. Use it
+to open `admin_menu.html`, then choose the appropriate option to create,
+modify or delete nodes. The editor embeds `sinoptico.html` so you can adjust the
+hierarchy directly. Rows remain visible while editing even with an empty search
+box, allowing you to toggle the level checkboxes to quickly hide or show
+sections.
 
 ## Agregar clientes
 
@@ -84,7 +87,7 @@ page. It is intended as a lightweight viewer for quick look-ups.
 - **Filtering** – search for text and control which hierarchy levels are visible.
 - **Expand/Collapse** – the tree of products can be expanded node by node or all at once.
 - **Manual refresh** – click the **Refrescar** button in `sinoptico.html` to reload data on demand.
-- **Editing modes** – once logged in you can edit the master list and the sinóptico using their respective **Editar** buttons. The product view is maintained through the interface at `admin_menu.html`.
+- **Editing modes** – once logged in you can edit the master list from its **Editar** button. To modify the product view click **Editar sinóptico** on the home page and use the options in `admin_menu.html`.
 - **Excel export** – visible rows can be saved as `sinoptico.xlsx`. The file
   downloads to your browser's default folder.
 - **JSON export/import** – los botones están en la página de inicio y solo los administradores pueden usarlos. Permiten guardar la jerarquía como `.json` o cargar un archivo previamente exportado.
