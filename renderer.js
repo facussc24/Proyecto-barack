@@ -105,9 +105,6 @@ const root = typeof global !== 'undefined' ? global : globalThis;
       if (typeof Fuse === 'undefined') {
         mostrarMensaje('Fuse.js no cargó – búsqueda deshabilitada', 'warning');
       }
-      if (typeof XLSX === 'undefined') {
-        mostrarMensaje('SheetJS no cargó – exportar a Excel deshabilitado', 'warning');
-      }
 
       function aplicarFiltro() {
         const criterioElem = document.getElementById('filtroInsumo');
