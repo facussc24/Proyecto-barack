@@ -1,4 +1,4 @@
-import { addNode, updateNode, deleteNode, getAll } from './dataService.js';
+import { addNode, deleteNode, getAll } from './dataService.js';
 
 function mostrarOk(msg) {
   if (typeof window.mostrarMensaje === 'function') {
@@ -100,16 +100,9 @@ function init() {
     const id = prompt('ID a eliminar');
     if (id) await deleteSubtree(id);
   });
-  // simple placeholders
-  document.getElementById('btnModificar')?.addEventListener('click', async () => {
-    const id = prompt('ID a modificar');
-    if (!id) return;
-    const campo = prompt('Campo a modificar');
-    const valor = prompt('Nuevo valor');
-    if (campo && valor != null) {
-      await updateNode(id, { [campo]: valor });
-      mostrarOk('Actualizado con éxito');
-    }
+  const dbDialog = document.getElementById('dlgDBManager');
+  document.getElementById('btnModificar')?.addEventListener('click', () => {
+    dbDialog?.showModal();
   });
   // replaced by newProductDialog.js for a friendlier workflow
   window.SinopticoEditor = { deleteSubtree };

@@ -1,6 +1,6 @@
 # Proyecto Barack
 
-Versión actual: **340**
+Versión actual: **341**
 
 Esta es una pequeña SPA (Single Page Application) escrita en HTML, CSS y JavaScript.
 Incluye un módulo llamado *Sinóptico* para gestionar jerarquías de productos.
