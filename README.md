@@ -7,6 +7,8 @@ Incluye un módulo llamado *Sinóptico* para gestionar jerarquías de productos.
 
 1. Abre `index.html` en tu navegador.
 2. Navega a "Sinóptico" para visualizar la tabla con filtros.
+   Los productos añadidos quedan sangrados a la derecha de su cliente y
+   muestran una flecha que indica la relación jerárquica.
 3. Puedes crear clientes desde cualquier vista con el botón "Nuevo cliente".
 4. Desde "Editar Sinóptico" puedes modificar los datos almacenados en el
    navegador.
