@@ -1,6 +1,6 @@
 # Proyecto Barack
 
-Versión actual: **336**
+Versión actual: **339**
 
 Esta es una pequeña SPA (Single Page Application) escrita en HTML, CSS y JavaScript.
 Incluye un módulo llamado *Sinóptico* para gestionar jerarquías de productos.
@@ -24,6 +24,8 @@ Hay tres puntos de entrada al Sinóptico: la página standalone `sinoptico.html`
 Los datos se guardan localmente mediante **Dexie/IndexedDB**.
 
 > **Importante:** si abres estos archivos directamente con `file://` cada página se considera un origen distinto en el navegador, por lo que la base de datos no será compartida y verás nuevamente los datos de demostración al recargar. Para que todas las vistas utilicen la misma base de datos, sirve el proyecto desde un servidor local (por ejemplo con `python3 -m http.server` en la raíz del repositorio) y accede mediante `http://localhost`.
+
+Si ya conoces estas páginas, puedes trabajar solo con `sinoptico-editor.html` y consultar los datos desde `sinoptico.html`. La SPA (`index.html`) queda como opción adicional.
 
 ### Crear un nuevo producto con `arbol.html`
 

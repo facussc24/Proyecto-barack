@@ -273,8 +273,7 @@ document.addEventListener('DOMContentLoaded', () => {
         dBtn.innerHTML='🗑️';
         dBtn.title='Eliminar';
         dBtn.onclick=()=>{
-          if(!confirm('¿Eliminar este elemento?')) return;
-          if(!confirm('Esta acción es irreversible. ¿Seguro?')) return;
+          if(!confirm('¿Eliminar este elemento? Esta acción es irreversible.')) return;
           window.SinopticoEditor.deleteSubtree(fila.ID);
         };
         tdA.appendChild(dBtn);
