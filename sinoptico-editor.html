@@ -78,6 +78,43 @@
       </div>
     </form>
   </dialog>
+  <dialog id="dlgDBManager" class="modal">
+    <form id="dbAddForm" method="dialog">
+      <h3>Agregar elemento</h3>
+      <label for="dbTipo">Tipo:</label>
+      <select id="dbTipo">
+        <option value="Cliente">Cliente</option>
+        <option value="Producto">Producto</option>
+        <option value="Subcomponente">Subcomponente</option>
+        <option value="Insumo">Insumo</option>
+      </select>
+      <label for="dbParent">Depende de:</label>
+      <select id="dbParent"></select>
+      <label for="dbDesc">Descripción:</label>
+      <input id="dbDesc" required>
+      <label for="dbCode">Código:</label>
+      <input id="dbCode">
+      <div class="form-actions">
+        <button type="submit">Agregar</button>
+        <button id="closeDB" type="button">Cerrar</button>
+      </div>
+    </form>
+    <div class="tabla-contenedor">
+      <table class="db-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Parent</th>
+            <th>Tipo</th>
+            <th>Descripción</th>
+            <th>Código</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </dialog>
   <script src="lib/dexie.min.js" defer></script>
   <script src="lib/fuse.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js" defer></script>
@@ -87,6 +124,7 @@
   <script type="module" src="js/ui/animations.js" defer></script>
   <script type="module" src="js/darkMode.js" defer></script>
   <script type="module" src="js/hideLoading.js" defer></script>
+  <script type="module" src="js/dbManager.js" defer></script>
   <script type="module" src="js/editorUI.js" defer></script>
   <script type="module" src="js/newClientDialog.js" defer></script>
   <script type="module" src="js/newProductDialog.js" defer></script>
