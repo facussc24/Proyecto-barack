@@ -17,8 +17,7 @@
     <h1 class="editor-title">Base de Datos</h1>
   </header>
   <div class="editor-menu">
-    <form id="dbAddForm" method="dialog">
-      <h3>Agregar elemento</h3>
+    <div id="dbFilters">
       <label for="dbClienteFilter">Cliente:</label>
       <select id="dbClienteFilter"></select>
       <label for="dbTipoFilter">Mostrar:</label>
@@ -29,38 +28,48 @@
         <option value="Subproducto">Subproductos</option>
         <option value="Insumo">Insumos</option>
       </select>
-      <label for="dbTipo">Tipo:</label>
-      <select id="dbTipo">
-        <option value="Cliente">Cliente</option>
-        <option value="Producto">Producto</option>
-        <option value="Subproducto">Subproducto</option>
-        <option value="Insumo">Insumo</option>
-      </select>
-      <label for="dbParent">Depende de:</label>
-      <select id="dbParent"></select>
-      <label for="dbDesc">Descripción:</label>
-      <input id="dbDesc" required>
-      <label for="dbCode">Código:</label>
-      <input id="dbCode">
-      <div class="form-actions">
-        <button type="submit">Agregar</button>
-      </div>
-    </form>
+    </div>
   </div>
-  <div class="tabla-contenedor">
-    <table class="db-table">
-      <thead>
-        <tr>
-          <th>Tipo</th>
-          <th>Descripción</th>
-          <th>Código</th>
-          <th>Columna 1</th>
-          <th>Columna 2</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+  <div id="dbTables" class="tabla-contenedor">
+    <details class="category-section" id="clientesSection">
+      <summary>Clientes</summary>
+      <table class="db-table">
+        <thead>
+          <tr>
+            <th>Descripción</th>
+            <th>Código</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </details>
+    <details class="category-section" id="productosSection">
+      <summary>Productos</summary>
+      <table class="db-table">
+        <thead>
+          <tr>
+            <th>Descripción</th>
+            <th>Código</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </details>
+    <details class="category-section" id="componentesSection">
+      <summary>Subproductos e Insumos</summary>
+      <table class="db-table">
+        <thead>
+          <tr>
+            <th>Descripción</th>
+            <th>Código</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </details>
   </div>
   <script src="lib/dexie.min.js" defer></script>
   <script type="module" src="js/dataService.js" defer></script>
