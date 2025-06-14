@@ -1,7 +1,8 @@
 # Proyecto-barack
 
 This project displays a hierarchical product table built with plain HTML, CSS and JavaScript.
-These pages are completely static. You can serve them locally with Python's built‑in HTTP server or host them on GitHub Pages.
+These pages are completely static and can be opened directly from the file system.
+You may still choose to serve them locally with Python's built‑in HTTP server or host them on GitHub Pages.
 
 
 ## GitHub Pages
@@ -59,8 +60,8 @@ checkboxes to quickly hide or show sections.
 
 ## Agregar clientes
 
-1. Inicia un servidor local dentro de la carpeta del proyecto.
-2. Abre `http://localhost:8000/login.html` e inicia sesión con cualquiera de las cuentas por defecto (**PAULO**, **LEO**, **FACUNDO** o **PABLO**; todas usan la contraseña `1234`).
+1. Abre `login.html` directamente en tu navegador.
+2. Inicia sesión con cualquiera de las cuentas por defecto (**PAULO**, **LEO**, **FACUNDO** o **PABLO**; todas usan la contraseña `1234`).
 3. Tras autenticarte vuelve a `index.html`; aparecerá el enlace **Editar sinóptico**.
 4. Haz clic en ese enlace para abrir `admin_menu.html` y elige **Crear**.
 5. En `sinoptico_crear.html` selecciona la opción **Cliente**, completa la descripción y envía el formulario.
@@ -122,14 +123,11 @@ The page loads [SheetJS](https://sheetjs.com/) and [Fuse.js](https://fusejs.io/)
 
 If editing pages doesn't work as expected:
 
-1. Verify the site is being served over **HTTP**, not opened directly as local files.
-2. Make sure you are logged in as an administrator before attempting to edit.
-3. Open the browser console and ensure there are no script errors.
-4. Check your browser's `localStorage` for entries such as `sinopticoData`.
-5. Accede siempre con la misma URL (por ejemplo `localhost`) para que los datos guardados estén disponibles.
-6. La biblioteca **Dexie** viene incluida, por lo que la persistencia funciona incluso sin acceso a Internet.
-
-7. Asegúrate de ejecutar el servidor dentro de la carpeta del proyecto. Iniciar el servidor desde otro directorio provoca errores 404.
+1. Make sure you are logged in as an administrator before attempting to edit.
+2. Open the browser console and ensure there are no script errors.
+3. Check your browser's `localStorage` for entries such as `sinopticoData`.
+4. Accede siempre con la misma ruta de archivo para que los datos guardados estén disponibles.
+5. La biblioteca **Dexie** viene incluida, por lo que la persistencia funciona incluso sin acceso a Internet.
 
 If a CDN script fails to load you will see one of the following warnings:
 

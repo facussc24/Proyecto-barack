@@ -4,7 +4,9 @@
 export const DATA_CHANGED = 'DATA_CHANGED';
 const STORAGE_KEY = 'sinopticoData';
 
-import Dexie from 'dexie';
+// Dexie is loaded via a regular script tag so grab the global instance
+// Using a global avoids the need for import maps when opening files directly
+const Dexie = typeof globalThis !== 'undefined' ? globalThis.Dexie : undefined;
 
 const isNode =
   typeof process !== 'undefined' &&

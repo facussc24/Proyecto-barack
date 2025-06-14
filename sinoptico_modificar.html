@@ -34,14 +34,7 @@
   <script src="theme.js" defer></script>
   <script src="smooth-nav.js" defer></script>
   <script src="lib/dexie.min.js"></script>
-  <script async src="https://cdn.jsdelivr.net/npm/es-module-shims@1/dist/es-module-shims.min.js" onerror="this.onerror=null;this.src='lib/es-module-shims.min.js'"></script>
-  <script type="importmap">
-  {
-    "imports": {
-      "dexie": "./lib/dexie.mjs"
-    }
-  }
-  </script>
+  <!-- import map removed; Dexie loaded globally -->
   <script type="module" defer src="js/dataService.js"></script>
   <script src="renderer.js"></script>
   <script src="sinoptico-modify.js"></script>
