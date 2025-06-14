@@ -139,6 +139,15 @@ If a CDN script fails to load you will see one of the following warnings:
 
 Ensure your browser can reach the CDN domains if these messages appear.
 
+## Contributing
+
+Pull requests are welcome. When committing changes, keep the message brief and
+describe the actual update. For example:
+
+```
+Hide loading overlay when page finishes loading.
+```
+
 
 ## License
 
