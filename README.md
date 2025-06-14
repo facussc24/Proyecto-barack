@@ -7,9 +7,11 @@ Incluye un módulo llamado *Sinóptico* para gestionar jerarquías de productos.
 
 1. Abre `index.html` en tu navegador.
 2. Navega a "Sinóptico" para visualizar la tabla con filtros.
-3. Desde "Editar Sinóptico" puedes modificar los datos almacenados en el
+3. Puedes crear clientes desde cualquier vista con el botón "Nuevo cliente".
+4. Desde "Editar Sinóptico" puedes modificar los datos almacenados en el
    navegador.
 
+Hay tres puntos de entrada al Sinóptico: la página standalone `sinoptico.html`, la vista SPA accesible desde `index.html` y el `sinoptico-editor.html` para modificaciones.
 Los datos se guardan localmente mediante **Dexie/IndexedDB**.
 
 ## Desarrollo

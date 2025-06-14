@@ -23,26 +23,6 @@ async function deleteSubtree(id) {
   mostrarOk('Eliminado con éxito');
 }
 
-async function handleCrear() {
-  const nombre = prompt('Nombre del cliente');
-  if (!nombre) return;
-  await addNode({
-    ID: Date.now().toString(),
-    ParentID: '',
-    Tipo: 'Cliente',
-    Descripción: nombre,
-    Cliente: nombre,
-    Vehículo: '',
-    RefInterno: '',
-    versión: '',
-    Imagen: '',
-    Consumo: '',
-    Unidad: '',
-    Sourcing: '',
-    Código: ''
-  });
-  mostrarOk('Creado con éxito');
-}
 
 async function handleArbol() {
   const cliente = prompt('Nombre del cliente raíz');
