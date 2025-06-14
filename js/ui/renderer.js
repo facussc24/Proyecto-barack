@@ -232,7 +232,12 @@ document.addEventListener('DOMContentLoaded', () => {
   async function loadData() {
     showLoader();
     try { sinopticoData = await dataService.getAll(); } catch { sinopticoData = []; }
-    if(!sinopticoData.length) sinopticoData = generarDatosIniciales();
+    if (!sinopticoData.length) {
+      sinopticoData = generarDatosIniciales();
+      if (dataService && dataService.replaceAll) {
+        await dataService.replaceAll(sinopticoData);
+      }
+    }
     if (typeof Fuse !== 'undefined') {
       fuseSinoptico = new Fuse(sinopticoData, { keys: ['Descripción', 'Código'] });
     } else {
