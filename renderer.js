@@ -699,6 +699,7 @@ const root = typeof global !== 'undefined' ? global : globalThis;
           sinopticoData = await dataService.getAll();
         } catch (e) {
           console.error('Error loading data from Dexie', e);
+          mostrarMensaje('No se pudo acceder a la base de datos');
           sinopticoData = [];
         }
         if (!Array.isArray(sinopticoData) || sinopticoData.length === 0) {
