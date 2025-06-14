@@ -311,6 +311,11 @@ tr[data-level="0"] td:first-child {
   border-left: none;
 }
 
+/* sangría adicional para niveles superiores */
+tr[data-level] td:first-child {
+  padding-left: calc(8px + var(--lvl, 0) * 20px);
+}
+
 /* ==============================
    FLECHAS (ESPACIO FIJO) POR NIVEL
    ============================== */
