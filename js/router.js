@@ -1,6 +1,7 @@
 import { render as renderSinoptico } from './views/sinoptico.js';
 import { render as renderAmfe } from './views/amfe.js';
 import { render as renderSettings } from './views/settings.js';
+import { render as renderUsers } from './views/users.js';
 
 function renderNotFound(container) {
   container.textContent = 'Página no encontrada';
@@ -10,6 +11,7 @@ const routes = {
   '#/sinoptico': renderSinoptico,
   '#/amfe': renderAmfe,
   '#/settings': renderSettings,
+  '#/users': renderUsers,
   '#/404': renderNotFound,
 };
 

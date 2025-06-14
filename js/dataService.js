@@ -43,8 +43,11 @@ function hydrateFromStorage() {
 if (Dexie) {
   db = new Dexie('ProyectoBarackDB');
   db.version(1).stores({
-    // use string "id" as primary key
     sinoptico: 'id,parentId,nombre,orden',
+  });
+  db.version(2).stores({
+    sinoptico: 'id,parentId,nombre,orden',
+    users: 'id,name,role',
   });
   // migrate existing records that used numeric primary keys
   db.open().then(async () => {
@@ -239,6 +242,22 @@ export async function deleteNode(id) {
   return remove('sinoptico', id);
 }
 
+export async function getAllUsers() {
+  return getAll('users');
+}
+
+export async function addUser(user) {
+  return add('users', user);
+}
+
+export async function updateUser(id, changes) {
+  return update('users', id, changes);
+}
+
+export async function deleteUser(id) {
+  return remove('users', id);
+}
+
 export async function replaceAll(arr) {
   if (!Array.isArray(arr)) return;
   if (db) {
@@ -303,6 +322,10 @@ const api = {
   addNode,
   updateNode,
   deleteNode,
+  getAllUsers,
+  addUser,
+  updateUser,
+  deleteUser,
   replaceAll,
   add,
   update,
@@ -314,6 +337,10 @@ const api = {
       await db.delete();
       db = new Dexie('ProyectoBarackDB');
       db.version(1).stores({ sinoptico: 'id,parentId,nombre,orden' });
+      db.version(2).stores({
+        sinoptico: 'id,parentId,nombre,orden',
+        users: 'id,name,role',
+      });
     }
     for (const key of Object.keys(memory)) delete memory[key];
     _fallbackPersist();
@@ -329,4 +356,5 @@ if (hasWindow) {
 
 export default api;
 
-export { getAll, add, update, remove, exportJSON, importJSON };
+export { getAll, add, update, remove, exportJSON, importJSON,
+  getAllUsers, addUser, updateUser, deleteUser };
