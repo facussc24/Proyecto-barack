@@ -34,12 +34,6 @@
       <button id="expandirTodo">Expandir todo</button>
       <button id="colapsarTodo">Colapsar todo</button>
     </div>
-    <div class="filtro-opciones">
-      <button id="saveJSON">Guardar JSON</button>
-      <input id="jsonFile" type="file" accept="application/json" hidden>
-      <button id="loadJSON">Cargar JSON</button>
-      <button id="btnExcel">Exportar Excel</button>
-    </div>
   </div>
   <div class="tabla-contenedor">
     <table id="sinoptico">
@@ -71,6 +65,7 @@
     </form>
   </dialog>
   <script src="lib/dexie.min.js" defer></script>
+  <script src="lib/fuse.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js" defer></script>
   <script type="module" src="js/dataService.js" defer></script>
   <script type="module" src="js/views/sinoptico.js" defer></script>
