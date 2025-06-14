@@ -106,15 +106,14 @@
           <th id="thActions" style="display:none">Acciones</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody id="sinopticoBody">
         <!-- Aquí se insertarán las filas dinámicamente -->
       </tbody>
     </table>
   </div>
   <a href="welcome.html" class="home-button">Inicio</a>
 
-  <script src="lib/dexie.min.js"></script>
-  <!-- Dexie is loaded via script tag, modules no longer rely on import maps -->
+  <script src="https://cdn.jsdelivr.net/npm/dexie@4/dist/dexie.min.js"></script>
   <script type="module" defer src="js/dataService.js"></script>
   <script type="module" defer src="js/sinoptico.js"></script>
   <script src="theme.js" defer></script>

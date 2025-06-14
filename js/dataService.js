@@ -58,6 +58,11 @@ const channel =
   hasWindow && typeof BroadcastChannel !== 'undefined'
     ? new BroadcastChannel(channelName)
     : null;
+// secondary channel used by the simplified API
+const simpleChannel =
+  hasWindow && typeof BroadcastChannel !== 'undefined'
+    ? new BroadcastChannel('sinoptico')
+    : null;
 
 function _fallbackPersist() {
   // sync in-memory array to localStorage
@@ -72,9 +77,13 @@ function notifyChange() {
   if (channel && channel.postMessage) {
     channel.postMessage({ type: DATA_CHANGED });
   }
+  if (simpleChannel && simpleChannel.postMessage) {
+    simpleChannel.postMessage('changed');
+  }
   if (hasWindow) {
     // dispatch a DOM event for same-page listeners
     document.dispatchEvent(new Event(DATA_CHANGED));
+    document.dispatchEvent(new Event('sinopticoUpdated'));
   }
 }
 
@@ -186,8 +195,35 @@ export function subscribeToChanges(handler) {
   }
 }
 
+// simplified API used by sinoptico.html
+export async function getAllSinoptico() {
+  if (db) {
+    try {
+      return await db.sinoptico.toArray();
+    } catch (e) {
+      console.error(e);
+      return [];
+    }
+  }
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  } catch (e) {
+    return [];
+  }
+}
+
+export function subscribeSinopticoChanges(handler) {
+  if (simpleChannel) {
+    simpleChannel.addEventListener('message', () => handler());
+  }
+  if (hasWindow) {
+    document.addEventListener('sinopticoUpdated', handler);
+  }
+}
+
 const api = {
   getAll,
+  getAllSinoptico,
   addNode,
   updateNode,
   deleteNode,
@@ -203,6 +239,7 @@ const api = {
     notifyChange();
   },
   subscribeToChanges,
+  subscribeSinopticoChanges,
 };
 
 if (hasWindow) {
