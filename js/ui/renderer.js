@@ -201,15 +201,37 @@ document.addEventListener('DOMContentLoaded', () => {
     tbody.innerHTML='';
     const agrupado={}; datos.forEach(r=>{ const p=r.ParentID||''; (agrupado[p]||(agrupado[p]=[])).push(r); });
     Object.keys(agrupado).forEach(k=> agrupado[k].sort((a,b)=>a.Descripción.toLowerCase().localeCompare(b.Descripción.toLowerCase(),undefined,{numeric:true})) );
+    const thActions=document.getElementById('thActions');
+    if(thActions){
+      const show=sessionStorage.getItem('sinopticoEdit')==='true';
+      thActions.style.display=show?'':'none';
+    }
     // Inline edit helper
     const fieldOrder=['Descripción','Cliente','Vehículo','RefInterno','versión','Imagen','Consumo','Unidad','Sourcing','Código'];
     function startEditRow(tr,fila) {
-      if(tr.classList.contains('editing'))return; tr.classList.add('editing');
-      const cells=tr.querySelectorAll('td'); tr._orig=[...cells].map(td=>td.innerHTML);
-      const it=cells[0].querySelector('.item-text'); if(it) it.innerHTML=`<input value="${fila.Descripción||''}">`;
-      fieldOrder.slice(1).forEach((f,i)=>{ const td=cells[i+1]; const val=fila[f]||''; td.innerHTML=''; if(f==='Unidad'){ let opts=['pz','kg','g','m','cm']; if(!opts.includes(val))opts.unshift(val); const sel=document.createElement('select'); sel.innerHTML=opts.map(o=>`<option${o===val?' selected':''}>${o}</option>`).join(''); td.appendChild(sel);} else{const inp=document.createElement('input'); inp.value=val; td.appendChild(inp);} });
-      const act=cells[cells.length-1]; act.innerHTML=''; const save=document.createElement('button');save.textContent='Guardar'; act.appendChild(save); const cancel=document.createElement('button');cancel.textContent='Cancelar';act.appendChild(cancel);
-      save.onclick=async()=>{ const changes={}; changes.Descripción=cells[0].querySelector('input').value; fieldOrder.slice(1).forEach((f,i)=>{ const e=cells[i+1].querySelector('input,select'); changes[f]=e.value; }); await dataService.updateNode(fila.ID,changes); loadData(); };
+      if(tr.classList.contains('editing'))return; 
+      tr.classList.add('editing');
+      const cells=tr.querySelectorAll('td');
+      tr._orig=[...cells].map(td=>td.innerHTML);
+      const idxConsumo=fieldOrder.indexOf('Consumo');
+      const tdCons=cells[idxConsumo];
+      tdCons.innerHTML='';
+      const inp=document.createElement('input');
+      inp.value=fila['Consumo']||'';
+      tdCons.appendChild(inp);
+      const act=cells[cells.length-1];
+      act.innerHTML='';
+      const save=document.createElement('button');
+      save.textContent='Guardar';
+      act.appendChild(save);
+      const cancel=document.createElement('button');
+      cancel.textContent='Cancelar';
+      act.appendChild(cancel);
+      save.onclick=async()=>{
+        const nuevo=tdCons.querySelector('input').value;
+        await dataService.updateNode(fila.ID,{Consumo:nuevo});
+        loadData();
+      };
       cancel.onclick=()=> loadData();
     }
     function dibujar(parent='',nivel=0){ (agrupado[parent]||[]).forEach(fila=>{
@@ -238,7 +260,22 @@ document.addEventListener('DOMContentLoaded', () => {
       const tdImg=document.createElement('td'); if(fila.Imagen){ const img=document.createElement('img'); img.src=`images/${fila.Imagen}`;tdImg.appendChild(img);} tr.appendChild(tdImg);
       ['Consumo','Unidad','Sourcing','Código'].forEach(f=>{ const td=document.createElement('td'); td.textContent=fila[f]||''; tr.appendChild(td); });
       const editing=sessionStorage.getItem('sinopticoEdit')==='true';
-      if(editing){ const tdA=document.createElement('td'); const eBtn=document.createElement('button'); eBtn.textContent='Editar'; eBtn.onclick=()=>startEditRow(tr,fila); tdA.appendChild(eBtn); const dBtn=document.createElement('button'); dBtn.textContent='Eliminar'; dBtn.onclick=()=>window.SinopticoEditor.deleteSubtree(fila.ID); tdA.appendChild(dBtn); tr.appendChild(tdA);}    
+      if(editing){
+        const tdA=document.createElement('td');
+        const eBtn=document.createElement('button');
+        eBtn.className='action-btn edit-btn';
+        eBtn.innerHTML='✏️';
+        eBtn.title='Editar';
+        eBtn.onclick=()=>startEditRow(tr,fila);
+        tdA.appendChild(eBtn);
+        const dBtn=document.createElement('button');
+        dBtn.className='action-btn delete-btn';
+        dBtn.innerHTML='🗑️';
+        dBtn.title='Eliminar';
+        dBtn.onclick=()=>window.SinopticoEditor.deleteSubtree(fila.ID);
+        tdA.appendChild(dBtn);
+        tr.appendChild(tdA);
+      }
       tbody.appendChild(tr);
       dibujar(fila.ID,nivel+1);
     }); }
