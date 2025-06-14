@@ -4,6 +4,21 @@ This project displays a hierarchical product table built with plain HTML, CSS an
 These pages are completely static and can be opened directly from the file system.
 You may still choose to serve them locally with Python's built‑in HTTP server or host them on GitHub Pages.
 
+## Local setup
+
+Install dependencies with:
+
+```
+npm ci
+```
+
+Serve the static files with:
+
+```
+python3 -m http.server 8000 public
+```
+
+Open `http://localhost:8000` and navigate using hash routes such as `#/sinoptico`, `#/amfe` or `#/settings`. Use the **Exportar** button to download a `.json` backup and restore it later with **Importar**.
 
 ## GitHub Pages
 
