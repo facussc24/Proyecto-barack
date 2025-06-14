@@ -198,6 +198,9 @@ document.addEventListener('DOMContentLoaded', () => {
      5) Construir tabla jerárquica y editar inline
   ==================================================*/
   function construirSinoptico(datos) {
+    const tbody=document.querySelector('#sinoptico tbody');
+    if(!tbody)return;
+    tbody.innerHTML='';
     const agrupado={}; datos.forEach(r=>{ const p=r.ParentID||''; (agrupado[p]||(agrupado[p]=[])).push(r); });
     Object.keys(agrupado).forEach(k=> agrupado[k].sort((a,b)=>a.Descripción.toLowerCase().localeCompare(b.Descripción.toLowerCase(),undefined,{numeric:true})) );
     // Inline edit helper
@@ -220,7 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
       ['Consumo','Unidad','Sourcing','Código'].forEach(f=>{ const td=document.createElement('td'); td.textContent=fila[f]||''; tr.appendChild(td); });
       const editing=sessionStorage.getItem('sinopticoEdit')==='true';
       if(editing){ const tdA=document.createElement('td'); const eBtn=document.createElement('button'); eBtn.textContent='Editar'; eBtn.onclick=()=>startEditRow(tr,fila); tdA.appendChild(eBtn); const dBtn=document.createElement('button'); dBtn.textContent='Eliminar'; dBtn.onclick=()=>window.SinopticoEditor.deleteSubtree(fila.ID); tdA.appendChild(dBtn); tr.appendChild(tdA);}    
-      document.querySelector('#sinoptico tbody').appendChild(tr);
+      tbody.appendChild(tr);
       dibujar(fila.ID,nivel+1);
     }); }
     dibujar();
