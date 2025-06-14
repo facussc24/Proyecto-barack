@@ -28,17 +28,31 @@
     </div>
   </div>
   <div id="step2" class="node-form" style="display:none">
-    <h2>Agregar Subcomponentes</h2>
-    <label for="subDesc">Descripción:</label>
-    <input id="subDesc" type="text" placeholder="Descripción del subcomponente">
-    <label for="subCode">Código:</label>
-    <input id="subCode" type="text" placeholder="Código (opcional)">
-    <label for="subParent">Depende de:</label>
-    <select id="subParent"></select>
-    <button id="addSubBtn" type="button">Agregar</button>
+    <h2>Subcomponentes e Insumos</h2>
     <div class="tree-preview">
+      <span id="productPreview" class="tree-node product-node"></span>
       <ul id="subList" class="tree-list"></ul>
     </div>
+    <fieldset class="sub-section">
+      <legend>Nuevo subcomponente</legend>
+      <label for="subDesc">Descripción:</label>
+      <input id="subDesc" type="text" placeholder="Descripción del subcomponente">
+      <label for="subCode">Código:</label>
+      <input id="subCode" type="text" placeholder="Código (opcional)">
+      <label for="subParent">Depende de:</label>
+      <select id="subParent"></select>
+      <button id="addSubBtn" type="button">Agregar subcomponente</button>
+    </fieldset>
+    <fieldset class="sub-section">
+      <legend>Nuevo insumo</legend>
+      <label for="insumoDesc">Descripción:</label>
+      <input id="insumoDesc" type="text" placeholder="Descripción del insumo">
+      <label for="insumoCode">Código:</label>
+      <input id="insumoCode" type="text" placeholder="Código (opcional)">
+      <label for="insumoParent">Asociado a:</label>
+      <select id="insumoParent"></select>
+      <button id="addInsumoBtn" type="button">Agregar insumo</button>
+    </fieldset>
     <div class="form-actions">
       <button id="finishBtn" type="button">Finalizar</button>
     </div>

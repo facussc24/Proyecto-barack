@@ -20,6 +20,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   const addSubBtn = document.getElementById('addSubBtn');
   const subList = document.getElementById('subList');
   const finishBtn = document.getElementById('finishBtn');
+  const productPreview = document.getElementById('productPreview');
+  const insumoDesc = document.getElementById('insumoDesc');
+  const insumoCode = document.getElementById('insumoCode');
+  const insumoParent = document.getElementById('insumoParent');
+  const addInsumoBtn = document.getElementById('addInsumoBtn');
 
   await ready;
   const all = await getAll('sinoptico');
@@ -30,12 +35,59 @@ document.addEventListener('DOMContentLoaded', async () => {
       .join('');
   }
 
-  const subcomponents = [];
+  let subcomponents = [];
+  let insumos = [];
   const levelMap = new Map();
   levelMap.set('root', 0);
   const domMap = new Map();
   domMap.set('root', subList);
+  const liMap = new Map();
   let productData = null;
+
+  function updateParentOptions() {
+    if (!insumoParent) return;
+    insumoParent.innerHTML = '<option value="root">(Producto principal)</option>';
+    for (const sub of subcomponents) {
+      const level = levelMap.get(sub.id) || 1;
+      const opt = document.createElement('option');
+      opt.value = sub.id;
+      opt.textContent = `${'\u2014 '.repeat(level)}${sub.desc}`;
+      insumoParent.appendChild(opt);
+    }
+  }
+
+  function removeSubcomponent(id) {
+    const stack = [id];
+    const subsToRemove = [];
+    while (stack.length) {
+      const cur = stack.pop();
+      subsToRemove.push(cur);
+      subcomponents.forEach(sc => {
+        if (sc.parentId === cur) stack.push(sc.id);
+      });
+    }
+    const insIds = insumos.filter(i => subsToRemove.includes(i.parentId)).map(i => i.id);
+    const allIds = subsToRemove.concat(insIds);
+    subcomponents = subcomponents.filter(sc => !subsToRemove.includes(sc.id));
+    insumos = insumos.filter(i => !insIds.includes(i.id));
+    for (const rid of allIds) {
+      subParent?.querySelector(`option[value='${rid}']`)?.remove();
+      insumoParent?.querySelector(`option[value='${rid}']`)?.remove();
+      levelMap.delete(rid);
+      const li = liMap.get(rid);
+      li?.remove();
+      liMap.delete(rid);
+      domMap.delete(rid);
+    }
+    updateParentOptions();
+  }
+
+  function removeInsumo(id) {
+    insumos = insumos.filter(i => i.id !== id);
+    const li = liMap.get(id);
+    li?.remove();
+    liMap.delete(id);
+  }
 
   function buildProduct(desc, code, clienteId) {
     return {
@@ -55,7 +107,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
   }
 
-  async function persist(product, subs) {
+  async function persist(product, subs, ins) {
     await addNode(product);
     const idMap = { root: product.ID };
     for (const sub of subs) {
@@ -78,6 +130,25 @@ document.addEventListener('DOMContentLoaded', async () => {
       await addNode(node);
       idMap[sub.id] = node.ID;
     }
+    for (const insumo of ins) {
+      const parentId = idMap[insumo.parentId] || product.ID;
+      const n = {
+        ID: Date.now().toString() + Math.random().toString(16).slice(2),
+        ParentID: parentId,
+        Tipo: 'Insumo',
+        Descripción: insumo.desc,
+        Cliente: product.Cliente,
+        Vehículo: '',
+        RefInterno: '',
+        versión: '',
+        Imagen: '',
+        Consumo: '',
+        Unidad: '',
+        Sourcing: '',
+        Código: insumo.code || ''
+      };
+      await addNode(n);
+    }
   }
 
   confirmBtn?.addEventListener('click', async () => {
@@ -87,7 +158,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!cid || !desc) return;
     const code = codeInput.value.trim();
     const product = buildProduct(desc, code, cid);
-    await persist(product, []);
+    await persist(product, [], []);
     if (window.mostrarMensaje) window.mostrarMensaje('Producto creado con éxito', 'success');
     window.location.href = 'sinoptico-editor.html';
   });
@@ -100,9 +171,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     productData = { cid, desc, code };
     step1.style.display = 'none';
     step2.style.display = 'flex';
+    if (productPreview) {
+      productPreview.textContent = code ? `${desc} (${code})` : desc;
+    }
     if (subParent) {
       subParent.innerHTML = '<option value="root">(Producto principal)</option>';
     }
+    if (insumoParent) {
+      insumoParent.innerHTML = '<option value="root">(Producto principal)</option>';
+    }
+    updateParentOptions();
   });
 
   addSubBtn?.addEventListener('click', () => {
@@ -117,14 +195,22 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const parentList = domMap.get(parent) || subList;
     const li = document.createElement('li');
+    li.dataset.id = id;
     const node = document.createElement('span');
     node.className = 'tree-node';
     node.textContent = c ? `${d} (${c})` : d;
+    const delBtn = document.createElement('button');
+    delBtn.className = 'remove-btn';
+    delBtn.type = 'button';
+    delBtn.textContent = '🗑';
+    delBtn.addEventListener('click', () => removeSubcomponent(id));
+    node.appendChild(delBtn);
     li.appendChild(node);
     const childUl = document.createElement('ul');
     li.appendChild(childUl);
     parentList.appendChild(li);
     domMap.set(id, childUl);
+    liMap.set(id, li);
 
     if (subParent) {
       const opt = document.createElement('option');
@@ -132,14 +218,44 @@ document.addEventListener('DOMContentLoaded', async () => {
       opt.textContent = `${'\u2014 '.repeat(level)}${d}`;
       subParent.appendChild(opt);
     }
+    updateParentOptions();
     subDesc.value = '';
     subCode.value = '';
+  });
+
+  addInsumoBtn?.addEventListener('click', () => {
+    const d = insumoDesc.value.trim();
+    if (!d) return;
+    const c = insumoCode.value.trim();
+    const parent = insumoParent?.value || 'root';
+    const id = Date.now().toString(16) + Math.random().toString(16).slice(2);
+    const level = (levelMap.get(parent) || 0) + 1;
+    insumos.push({ id, parentId: parent, desc: d, code: c });
+
+    const parentList = domMap.get(parent) || subList;
+    const li = document.createElement('li');
+    li.dataset.id = id;
+    const node = document.createElement('span');
+    node.className = 'tree-node insumo-node';
+    node.textContent = c ? `${d} (${c})` : d;
+    const delBtn = document.createElement('button');
+    delBtn.className = 'remove-btn';
+    delBtn.type = 'button';
+    delBtn.textContent = '🗑';
+    delBtn.addEventListener('click', () => removeInsumo(id));
+    node.appendChild(delBtn);
+    li.appendChild(node);
+    parentList.appendChild(li);
+    liMap.set(id, li);
+
+    insumoDesc.value = '';
+    insumoCode.value = '';
   });
 
   finishBtn?.addEventListener('click', async () => {
     if (!productData) return;
     const product = buildProduct(productData.desc, productData.code, productData.cid);
-    await persist(product, subcomponents);
+    await persist(product, subcomponents, insumos);
     if (window.mostrarMensaje) window.mostrarMensaje('Árbol creado con éxito', 'success');
     window.location.href = 'sinoptico-editor.html';
   });

@@ -8,6 +8,8 @@
   --color-primary-hover: #0a1a33;
   --color-accent: #0066cc;
   --color-accent-hover: #004c99;
+  --color-danger: #e74c3c;
+  --color-danger-hover: #c0392b;
   --color-light: #ffffff;
   --font-base: Arial, sans-serif;
 
@@ -24,6 +26,8 @@ body.dark-mode {
   --color-primary-hover: #1565c0;
   --color-accent: #42a5f5;
   --color-accent-hover: #2196f3;
+  --color-danger: #e74c3c;
+  --color-danger-hover: #c0392b;
   --color-surface-dark: #1e1e1e;
 }
 
@@ -1122,6 +1126,39 @@ select {
 
 .add-child-btn:hover {
   background-color: var(--color-primary-hover);
+}
+
+/* remove button for tree preview */
+.remove-btn {
+  margin-left: 4px;
+  padding: 0 4px;
+  font-size: 0.8rem;
+  background-color: var(--color-danger, #e74c3c);
+  color: var(--color-light);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.remove-btn:hover {
+  background-color: var(--color-danger-hover, #c0392b);
+}
+
+.product-node {
+  font-weight: bold;
+  background-color: var(--color-accent);
+  color: var(--color-light);
+}
+
+.insumo-node {
+  background-color: #fff7e0;
+}
+
+.sub-section {
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  padding: 8px;
+  margin-top: 8px;
 }
 
 /* ========= Flow diagram enhancements ========= */
