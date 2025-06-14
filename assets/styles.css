@@ -1341,3 +1341,6 @@ select {
 }
 
 dialog.modal{border:none;border-radius:8px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.3);}dialog.modal form{display:flex;flex-direction:column;gap:8px;}
+
+.version-info { position: fixed; bottom: 4px; right: 4px; font-size: 0.8rem; opacity: 0.6; }
+
