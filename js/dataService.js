@@ -4,9 +4,17 @@
 export const DATA_CHANGED = 'DATA_CHANGED';
 const STORAGE_KEY = 'sinopticoData';
 
-// Dexie is loaded via a regular script tag so grab the global instance
-// Using a global avoids the need for import maps when opening files directly
-const Dexie = typeof globalThis !== 'undefined' ? globalThis.Dexie : undefined;
+// Dexie may be loaded via a script tag in the browser. Grab the global instance
+// if present. When running under Node we fallback to requiring the package so
+// the same file can be used in tests or server side scripts.
+let Dexie = typeof globalThis !== 'undefined' ? globalThis.Dexie : undefined;
+if (!Dexie && typeof require === 'function') {
+  try {
+    Dexie = require('dexie');
+  } catch {
+    // ignore, fallback storage will be used
+  }
+}
 
 const isNode =
   typeof process !== 'undefined' &&
