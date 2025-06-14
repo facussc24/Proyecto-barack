@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crear árbol de producto</title>
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <nav class="main-nav">
+    <a href="index.html">Inicio</a>
+    <a href="sinoptico-editor.html">Editor Sinóptico</a>
+    <button id="toggleDarkMode" type="button">🌙</button>
+  </nav>
+  <div id="appMessage" role="alert" aria-live="polite"></div>
+  <div id="step1" class="node-form">
+    <h2>Nuevo Producto</h2>
+    <label for="productCliente">Cliente:</label>
+    <select id="productCliente"></select>
+    <label for="productDesc">Descripción:</label>
+    <input id="productDesc" type="text" required>
+    <label for="productCode">Código:</label>
+    <input id="productCode" type="text">
+    <div class="form-actions">
+      <button id="confirmBtn" type="button">Confirmar</button>
+      <button id="continueBtn" type="button">Continuar</button>
+    </div>
+  </div>
+  <div id="step2" class="node-form" style="display:none">
+    <h2>Agregar Subcomponentes</h2>
+    <label for="subDesc">Descripción:</label>
+    <input id="subDesc" type="text">
+    <label for="subCode">Código:</label>
+    <input id="subCode" type="text">
+    <button id="addSubBtn" type="button">Agregar</button>
+    <ul id="subList"></ul>
+    <div class="form-actions">
+      <button id="finishBtn" type="button">Finalizar</button>
+    </div>
+  </div>
+  <script src="lib/dexie.min.js" defer></script>
+  <script type="module" src="js/dataService.js" defer></script>
+  <script type="module" src="js/arbol.js" defer></script>
+  <script type="module" src="js/darkMode.js" defer></script>
+  <script type="module" src="js/version.js" defer></script>
+</body>
+</html>
