@@ -94,3 +94,75 @@ test('deleteNode removes the node', async () => {
   const stored = JSON.parse(localStorage.getItem('sinopticoData'));
   expect(stored.find((n) => n.id === id)).toBeUndefined();
 });
+
+describe('when Dexie fails to open', () => {
+  let failingService;
+  let store;
+
+  beforeAll(() => {
+    jest.resetModules();
+
+    store = createStorageMock();
+
+    global.Dexie = undefined;
+    global.process = undefined;
+    global.window = {
+      document: { dispatchEvent: () => {} },
+      localStorage: store,
+    };
+    global.document = global.window.document;
+    global.localStorage = store;
+    global.Event = function Event(type) { this.type = type; };
+
+    jest.doMock('dexie', () => {
+      return class DexieMock {
+        constructor() {
+          this.sinoptico = {
+            toArray: jest.fn().mockResolvedValue([]),
+            add: jest.fn().mockRejectedValue(new Error('fail')),
+            update: jest.fn().mockRejectedValue(new Error('fail')),
+            delete: jest.fn().mockRejectedValue(new Error('fail')),
+            clear: jest.fn().mockResolvedValue(),
+            bulkAdd: jest.fn().mockResolvedValue(),
+          };
+        }
+        version() { return { stores: () => {} }; }
+        open() { return Promise.reject(new Error('open fail')); }
+        delete() { return Promise.resolve(); }
+        transaction(_, __, fn) { return fn(); }
+      };
+    });
+
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+
+    failingService = require('../js/dataService.js');
+
+    global.process = originalProcess;
+  });
+
+  afterAll(() => {
+    jest.dontMock('dexie');
+    jest.resetModules();
+
+    global.Dexie = originalDexie;
+    global.process = originalProcess;
+    global.window = originalWindow;
+    global.localStorage = originalLocalStorage;
+    global.document = originalDocument;
+    global.Event = originalEvent;
+  });
+
+  beforeEach(async () => {
+    await failingService.default.reset();
+  });
+
+  test('addNode persists via fallback storage', async () => {
+    const id = await failingService.addNode({ nombre: 'fallback' });
+    const stored = JSON.parse(localStorage.getItem('sinopticoData'));
+    const found = stored.find((n) => n.id === id);
+    expect(found).toBeDefined();
+    expect(found.nombre).toBe('fallback');
+    const all = await failingService.getAll();
+    expect(all.find((n) => n.id === id)).toBeDefined();
+  });
+});
