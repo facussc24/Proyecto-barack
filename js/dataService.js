@@ -20,6 +20,7 @@ const memory = [];
 
 // initialize IndexedDB if Dexie is available
 if (Dexie) {
+  console.log('[dataService] Using IndexedDB via Dexie');
   db = new Dexie('ProyectoBarackDB');
   db.version(1).stores({
     // use string "id" as primary key
@@ -40,6 +41,7 @@ if (Dexie) {
     }
   }).catch(() => {});
 } else if (hasWindow) {
+  console.log('[dataService] Dexie not available, using localStorage fallback');
   // hydrate in-memory storage from localStorage
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -88,11 +90,12 @@ function notifyChange() {
 }
 
 export async function getAll() {
+  console.log('[dataService] getAll called');
   if (db) {
     try {
       return await db.sinoptico.toArray();
     } catch (e) {
-      console.error(e);
+      console.error('[dataService] getAll error', e);
       return [];
     }
   } else {
@@ -101,6 +104,7 @@ export async function getAll() {
 }
 
 export async function addNode(node) {
+  console.log('[dataService] addNode called', node);
   const newNode = { ...node };
   if (!newNode.id) {
     newNode.id = Date.now().toString();
@@ -111,7 +115,7 @@ export async function addNode(node) {
       notifyChange();
       return newNode.id;
     } catch (e) {
-      console.error(e);
+      console.error('[dataService] addNode error', e);
     }
   } else {
     // ensure unique id in memory fallback
@@ -123,6 +127,7 @@ export async function addNode(node) {
 }
 
 export async function updateNode(id, changes) {
+  console.log('[dataService] updateNode called', id, changes);
   const key = String(id);
   if (db) {
     try {
@@ -130,7 +135,7 @@ export async function updateNode(id, changes) {
       notifyChange();
       return;
     } catch (e) {
-      console.error(e);
+      console.error('[dataService] updateNode error', e);
     }
   } else {
     const item = memory.find((x) => String(x.id) === key);
@@ -143,6 +148,7 @@ export async function updateNode(id, changes) {
 }
 
 export async function deleteNode(id) {
+  console.log('[dataService] deleteNode called', id);
   const key = String(id);
   if (db) {
     try {
@@ -150,7 +156,7 @@ export async function deleteNode(id) {
       notifyChange();
       return;
     } catch (e) {
-      console.error(e);
+      console.error('[dataService] deleteNode error', e);
     }
   } else {
     const idx = memory.findIndex((x) => String(x.id) === key);
@@ -163,6 +169,7 @@ export async function deleteNode(id) {
 }
 
 export async function replaceAll(arr) {
+  console.log('[dataService] replaceAll called', Array.isArray(arr) ? arr.length : 'invalid');
   if (!Array.isArray(arr)) return;
   if (db) {
     try {
@@ -172,7 +179,7 @@ export async function replaceAll(arr) {
       });
       notifyChange();
     } catch (e) {
-      console.error(e);
+      console.error('[dataService] replaceAll error', e);
     }
   } else {
     memory.length = 0;
@@ -197,11 +204,12 @@ export function subscribeToChanges(handler) {
 
 // simplified API used by sinoptico.html
 export async function getAllSinoptico() {
+  console.log('[dataService] getAllSinoptico called');
   if (db) {
     try {
       return await db.sinoptico.toArray();
     } catch (e) {
-      console.error(e);
+      console.error('[dataService] getAllSinoptico error', e);
       return [];
     }
   }

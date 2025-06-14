@@ -2,11 +2,17 @@
 import { getAllSinoptico, subscribeSinopticoChanges } from './dataService.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
+  console.log('[sinoptico] DOMContentLoaded');
   const loader = document.getElementById('loading');
   if (loader) loader.style.display = 'block';
 
-  const nodes = await getAllSinoptico();
-  console.log('▷ nodos obtenidos', nodes);
+  let nodes = [];
+  try {
+    nodes = await getAllSinoptico();
+    console.log('[sinoptico] nodes obtained', nodes);
+  } catch (e) {
+    console.error('[sinoptico] error loading nodes', e);
+  }
 
   const tbody = document.getElementById('sinopticoBody');
   if (tbody) {
@@ -36,7 +42,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   console.log('▶ spinner oculto');
 
   subscribeSinopticoChanges(async () => {
-    const updated = await getAllSinoptico();
+    console.log('[sinoptico] change detected');
+    let updated = [];
+    try {
+      updated = await getAllSinoptico();
+    } catch (e) {
+      console.error('[sinoptico] error refreshing nodes', e);
+      return;
+    }
     const body = document.getElementById('sinopticoBody');
     if (body) {
       body.innerHTML = '';
