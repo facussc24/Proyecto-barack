@@ -1,4 +1,5 @@
 import { getAll, remove, exportJSON, importJSON } from '../dataService.js';
+import { createSinopticoEditor } from '../editors/sinopticoEditor.js';
 
 export async function render(container) {
   container.innerHTML = `
@@ -18,6 +19,8 @@ export async function render(container) {
   }
 
   container.querySelector('#sin-edit').addEventListener('click', () => {
+    const curr = sessionStorage.getItem('sinopticoEdit') === 'true';
+    sessionStorage.setItem('sinopticoEdit', (!curr).toString());
     document.dispatchEvent(new Event('sinoptico-mode'));
   });
 
@@ -45,4 +48,10 @@ export async function render(container) {
     const text = await file.text();
     await importJSON(text);
   });
+}
+
+// expose editor factory for renderer.js
+export { createSinopticoEditor };
+if (typeof window !== 'undefined') {
+  window.createSinopticoEditor = createSinopticoEditor;
 }
