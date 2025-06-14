@@ -129,7 +129,7 @@ If editing pages doesn't work as expected:
 1. Make sure you are logged in as an administrator before attempting to edit.
 2. Open the browser console and ensure there are no script errors.
 3. Check your browser's `localStorage` for entries such as `sinopticoData`.
-4. Accede siempre con la misma ruta de archivo para que los datos guardados estén disponibles.
+4. Accede siempre con la misma ruta de archivo para que los datos guardados estén disponibles. Abrir las páginas desde carpetas distintas (incluso con `file://`) usa un almacenamiento separado. Sirve el repositorio con un servidor web local o abre los archivos siempre desde la misma ubicación.
 5. La biblioteca **Dexie** viene incluida, por lo que la persistencia funciona incluso sin acceso a Internet.
 
 If a CDN script fails to load you will see one of the following warnings:
