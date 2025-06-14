@@ -10,16 +10,34 @@ export function initDBManager() {
   const tipoSel = form.querySelector('#dbTipo');
   const descInput = form.querySelector('#dbDesc');
   const codeInput = form.querySelector('#dbCode');
+  const clientFilter = form.querySelector('#dbClienteFilter');
+  const tipoFilter = form.querySelector('#dbTipoFilter');
   const tableBody = dlg.querySelector('tbody');
 
   async function load() {
     await ready;
     const data = await getAll('sinoptico');
+    const clientes = data.filter(d => d.Tipo === 'Cliente');
+    if (clientFilter) {
+      const sel = clientFilter.value || '';
+      clientFilter.innerHTML = '<option value="">Todos</option>' +
+        clientes.map(c => `<option value="${c.Descripción}">${c.Descripción}</option>`).join('');
+      clientFilter.value = sel;
+    }
+
     tableBody.innerHTML = '';
-    data.forEach(item => {
+    let items = data.slice();
+    if (clientFilter && clientFilter.value) {
+      items = items.filter(i => i.Cliente === clientFilter.value || i.Descripción === clientFilter.value);
+    }
+    if (tipoFilter && tipoFilter.value) {
+      items = items.filter(i => i.Tipo === tipoFilter.value);
+    }
+
+    items.forEach(item => {
       const tr = document.createElement('tr');
-      tr.innerHTML = `<td>${item.ID}</td><td>${item.ParentID || ''}</td>` +
-        `<td>${item.Tipo}</td><td>${item.Descripción || ''}</td>` +
+      tr.innerHTML = `<td>${item.Tipo}</td>`+
+        `<td>${item.Descripción || ''}</td>` +
         `<td>${item.Código || ''}</td>` +
         `<td><button class="db-edit" data-id="${item.ID}">✏️</button>` +
         `<button class="db-del" data-id="${item.ID}">🗑️</button></td>`;
@@ -34,7 +52,12 @@ export function initDBManager() {
     dlg.showModal();
   });
 
+  dlg.querySelector('#closeDBTop')?.addEventListener('click', () => dlg.close());
+  
   dlg.querySelector('#closeDB')?.addEventListener('click', () => dlg.close());
+
+  clientFilter?.addEventListener('change', load);
+  tipoFilter?.addEventListener('change', load);
 
   tableBody.addEventListener('click', async ev => {
     const btn = ev.target.closest('button');

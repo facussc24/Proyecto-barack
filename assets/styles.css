@@ -1393,7 +1393,8 @@ select {
   background-color: var(--color-accent-hover);
 }
 
-dialog.modal{border:none;border-radius:8px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.3);}dialog.modal form{display:flex;flex-direction:column;gap:8px;}
+dialog.modal{border:none;border-radius:8px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.3);position:relative;}dialog.modal form{display:flex;flex-direction:column;gap:8px;}
+.close-dialog{position:absolute;top:8px;right:8px;background:none;border:none;font-size:1.2rem;cursor:pointer;}
 .db-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:0.9rem;}
 .db-table th,.db-table td{border:1px solid #ccc;padding:6px 8px;}
 .db-table tbody tr:nth-child(even){background-color:#f7f7f7;}
