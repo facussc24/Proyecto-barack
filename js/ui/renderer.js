@@ -285,12 +285,24 @@ const root = typeof global !== 'undefined' ? global : globalThis;
          3) Botones Expandir / Colapsar (nodos + recursivo)
       ================================================== */
       function showChildren(parentId) {
-        const hijos = document.querySelectorAll(`#sinoptico tbody tr[data-parent="${parentId}"]`);
-        hijos.forEach(hijo => {
-          hijo.style.display = '';
-          hijo.classList.add('fade-in');
-          setTimeout(() => hijo.classList.remove('fade-in'), 300);
-        });
+        const parentRow = document.querySelector(
+          `#sinoptico tbody tr[data-id="${parentId}"]`
+        );
+        if (!parentRow) return;
+        const parentLevel = parseInt(parentRow.dataset.level || '0', 10);
+        let next = parentRow.nextElementSibling;
+        while (next && parseInt(next.dataset.level || '0', 10) > parentLevel) {
+          if (parseInt(next.dataset.level || '0', 10) === parentLevel + 1) {
+            next.style.display = '';
+            next.classList.add('fade-in');
+            setTimeout(() => next.classList.remove('fade-in'), 300);
+            const btn = next.querySelector('.toggle-btn');
+            if (btn && btn.getAttribute('data-expanded') === 'true') {
+              showChildren(next.getAttribute('data-id'));
+            }
+          }
+          next = next.nextElementSibling;
+        }
       }
 
       function highlightRow(code, persistent) {
@@ -402,18 +414,22 @@ const root = typeof global !== 'undefined' ? global : globalThis;
         suggestionList.style.display = results.length ? 'block' : 'none';
       }
       function hideSubtree(parentId) {
-        const hijos = document.querySelectorAll(`#sinoptico tbody tr[data-parent="${parentId}"]`);
-        hijos.forEach(hijo => {
-          hijo.style.display = 'none';
-          const btn = hijo.querySelector('.toggle-btn');
+        const parentRow = document.querySelector(
+          `#sinoptico tbody tr[data-id="${parentId}"]`
+        );
+        if (!parentRow) return;
+        const parentLevel = parseInt(parentRow.dataset.level || '0', 10);
+        let next = parentRow.nextElementSibling;
+        while (next && parseInt(next.dataset.level || '0', 10) > parentLevel) {
+          next.style.display = 'none';
+          const btn = next.querySelector('.toggle-btn');
           if (btn) {
             btn.textContent = '+';
             btn.setAttribute('data-expanded', 'false');
             btn.setAttribute('aria-expanded', 'false');
           }
-          const idHijo = hijo.getAttribute('data-id');
-          hideSubtree(idHijo);
-        });
+          next = next.nextElementSibling;
+        }
       }
       function toggleNodo(btn, parentId) {
         const expanded = btn.getAttribute('data-expanded') === 'true';
@@ -437,7 +453,7 @@ const root = typeof global !== 'undefined' ? global : globalThis;
       }
       function colapsarTodo() {
         document.querySelectorAll('#sinoptico tbody tr').forEach(tr => {
-          if (!tr.classList.contains('nivel-0')) {
+          if (parseInt(tr.dataset.level || '0', 10) > 0) {
             tr.style.display = 'none';
           }
         });
@@ -745,6 +761,7 @@ const root = typeof global !== 'undefined' ? global : globalThis;
             const tr = document.createElement('tr');
             tr.setAttribute('data-id', fila.ID);
             tr.setAttribute('data-parent', (fila.ParentID || '').toString().trim());
+            tr.dataset.level = nivel;
 
             // Color según Tipo
             const tipoStr = (fila.Tipo || '').toString().trim().toLowerCase();
@@ -933,19 +950,7 @@ const root = typeof global !== 'undefined' ? global : globalThis;
         const indentMap = {};
         filas.forEach(tr => {
           const id = tr.getAttribute('data-id');
-          const nivel = tr.classList.contains('nivel-0')
-            ? 0
-            : tr.classList.contains('nivel-1')
-            ? 1
-            : tr.classList.contains('nivel-2')
-            ? 2
-            : tr.classList.contains('nivel-3')
-            ? 3
-            : tr.classList.contains('nivel-4')
-            ? 4
-            : tr.classList.contains('nivel-5')
-            ? 5
-            : 6;
+          const nivel = parseInt(tr.dataset.level || '0', 10);
 
           const td = tr.querySelector('td:first-child');
           if (nivel === 0) {
