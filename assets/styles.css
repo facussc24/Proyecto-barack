@@ -75,7 +75,7 @@ h1 {
   font-size: 1.8rem;
   color: var(--color-primary);
 }
-#mensaje {
+#appMessage {
   margin: 15px auto;
   max-width: 90%;
   padding: 10px;

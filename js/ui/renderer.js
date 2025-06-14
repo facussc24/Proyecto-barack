@@ -76,7 +76,8 @@ const root = typeof global !== 'undefined' ? global : globalThis;
          2) Funciones de alerta y filtrado
       ================================================== */
       function mostrarMensaje(texto, tipo = 'error') {
-        const div = document.getElementById('mensaje');
+        const div = document.getElementById('appMessage');
+        if (!div) return;
         const colores = {
           error: '#e74c3c',
           warning: '#f39c12',
