@@ -262,12 +262,16 @@ document.addEventListener('DOMContentLoaded', () => {
       const editing=sessionStorage.getItem('sinopticoEdit')==='true';
       if(editing){
         const tdA=document.createElement('td');
-        const eBtn=document.createElement('button');
-        eBtn.className='action-btn edit-btn';
-        eBtn.innerHTML='✏️';
-        eBtn.title='Editar';
-        eBtn.onclick=()=>startEditRow(tr,fila);
-        tdA.appendChild(eBtn);
+        const tipo=(fila.Tipo||'').toLowerCase();
+        const allowEdit=!['cliente','producto','pieza final'].includes(tipo);
+        if(allowEdit){
+          const eBtn=document.createElement('button');
+          eBtn.className='action-btn edit-btn';
+          eBtn.innerHTML='✏️';
+          eBtn.title='Editar';
+          eBtn.onclick=()=>startEditRow(tr,fila);
+          tdA.appendChild(eBtn);
+        }
         const dBtn=document.createElement('button');
         dBtn.className='action-btn delete-btn';
         dBtn.innerHTML='🗑️';
