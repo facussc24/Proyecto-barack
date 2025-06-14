@@ -229,6 +229,11 @@ document.addEventListener('DOMContentLoaded', () => {
     showLoader();
     try { sinopticoData = await dataService.getAll(); } catch { sinopticoData = []; }
     if(!sinopticoData.length) sinopticoData = generarDatosIniciales();
+    if (typeof Fuse !== 'undefined') {
+      fuseSinoptico = new Fuse(sinopticoData, { keys: ['Descripción', 'Código'] });
+    } else {
+      fuseSinoptico = null;
+    }
     construirSinoptico(sinopticoData);
     hideLoader();
   }
