@@ -72,6 +72,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   confirmBtn?.addEventListener('click', async () => {
+    if (!confirm('¿Seguro que no deseas agregar subcomponentes?')) return;
     const cid = clienteSel.value;
     const desc = descInput.value.trim();
     if (!cid || !desc) return;
