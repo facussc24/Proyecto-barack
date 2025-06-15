@@ -59,6 +59,8 @@ export async function render(container) {
 
   function showEditor(user = {}, refRow) {
     const tr = document.createElement('tr');
+    const pwdPlaceholder = user.id ? 'Nueva contraseña' : 'Contraseña';
+    const pwdRequired = user.id ? '' : ' required';
     tr.innerHTML = `
       <td><input type="text" value="${user.name || ''}" /></td>
       <td>
@@ -66,7 +68,7 @@ export async function render(container) {
           <option value="admin"${user.role === 'admin' ? ' selected' : ''}>Admin</option>
           <option value="user"${user.role === 'user' ? ' selected' : ''}>User</option>
         </select>
-        <input type="password" placeholder="Contraseña" />
+        <input type="password" placeholder="${pwdPlaceholder}"${pwdRequired} />
       </td>
       <td>
         <button class="save">Guardar</button>
