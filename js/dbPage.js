@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
         sections[k].style.display = k === 'Desactivado' ? '' : 'none';
       });
     } else {
-      items = items.filter(i => !i.Desactivado);
+      // Sin filtro: mostrar activos y desactivados
     }
 
     items.forEach(item => {
@@ -59,7 +59,6 @@ document.addEventListener('DOMContentLoaded', () => {
           `<td data-edit="Descripción" data-id="${item.ID}">${item.Descripción || ''}</td>` +
           `<td data-edit="Código" data-id="${item.ID}">${item.Código || ''}</td>` +
           `<td>${actBtn}<button class="db-del" data-id="${item.ID}">🗑️</button></td>`;
-        (tipoFilter.value === 'Desactivado' ? desactivadosBody : clientesBody).appendChild(tr);
       } else if (item.Tipo === 'Producto') {
         tr.innerHTML =
           `<td data-edit="Descripción" data-id="${item.ID}">${item.Descripción || ''}</td>` +
@@ -69,7 +68,6 @@ document.addEventListener('DOMContentLoaded', () => {
           `<td data-edit="Alto" data-id="${item.ID}">${item.Alto || ''}</td>` +
           `<td data-edit="Peso" data-id="${item.ID}">${item.Peso || ''}</td>` +
           `<td>${actBtn}<button class="db-del" data-id="${item.ID}">🗑️</button></td>`;
-        (tipoFilter.value === 'Desactivado' ? desactivadosBody : productosBody).appendChild(tr);
       } else if (item.Tipo === 'Insumo') {
         tr.innerHTML =
           `<td data-edit="Unidad" data-id="${item.ID}">${item.Unidad || ''}</td>` +
@@ -80,15 +78,22 @@ document.addEventListener('DOMContentLoaded', () => {
           `<td data-edit="Observaciones" data-id="${item.ID}">${item.Observaciones || ''}</td>` +
           `<td data-edit="Sourcing" data-id="${item.ID}">${item.Sourcing || ''}</td>` +
           `<td>${actBtn}<button class="db-del" data-id="${item.ID}">🗑️</button></td>`;
-        (tipoFilter.value === 'Desactivado' ? desactivadosBody : insumosBody).appendChild(tr);
       } else {
         // Subproducto o cualquier otro
         tr.innerHTML =
           `<td data-edit="Descripción" data-id="${item.ID}">${item.Descripción || ''}</td>` +
           `<td data-edit="Código" data-id="${item.ID}">${item.Código || ''}</td>` +
           `<td>${actBtn}<button class="db-del" data-id="${item.ID}">🗑️</button></td>`;
-        (tipoFilter.value === 'Desactivado' ? desactivadosBody : subproductosBody).appendChild(tr);
       }
+
+      let target = desactivadosBody;
+      if (!item.Desactivado) {
+        if (item.Tipo === 'Cliente') target = clientesBody;
+        else if (item.Tipo === 'Producto') target = productosBody;
+        else if (item.Tipo === 'Insumo') target = insumosBody;
+        else target = subproductosBody;
+      }
+      target.appendChild(tr);
     });
   }
 
@@ -106,7 +111,6 @@ document.addEventListener('DOMContentLoaded', () => {
       } else if (btn.classList.contains('db-deact')) {
         if (confirm('¿Desactivar elemento?')) {
           await updateNode(id, { Desactivado: true });
-          tipoFilter.value = 'Desactivado';
           await load();
         }
       } else if (btn.classList.contains('db-activate')) {
