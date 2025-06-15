@@ -12,6 +12,11 @@
   </script>
 </head>
 <body>
+  <div id="fileWarning" class="file-warning" style="display:none">
+    Debes abrir la aplicación mediante un servidor local (por ejemplo,
+    <code>python -m http.server</code>) en lugar de cargar los archivos
+    directamente.
+  </div>
   <nav class="main-nav">
     <a href="#/home">Inicio</a>
     <a href="sinoptico-editor.html" class="no-guest">Editar Sinóptico</a>
@@ -53,5 +58,10 @@
   <script type="module" src="js/views/settings.js" defer></script>
   <script type="module" src="js/views/users.js" defer></script>
   <script type="module" src="js/version.js" defer></script>
+  <script>
+    if (location.protocol === 'file:') {
+      document.getElementById('fileWarning').style.display = 'block';
+    }
+  </script>
 </body>
 </html>

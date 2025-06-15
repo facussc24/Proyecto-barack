@@ -19,9 +19,19 @@
       <label for="loginPass">Contraseña:</label>
       <input id="loginPass" type="password" required>
       <button type="submit">Ingresar</button>
-    <button type="button" id="guestBtn">Ingresar como invitado</button>
+      <button type="button" id="guestBtn">Ingresar como invitado</button>
     </form>
   </div>
+  <div id="fileWarning" class="file-warning" style="display:none">
+    Para utilizar la aplicación ejecuta un servidor local (por ejemplo,
+    <code>python -m http.server</code>) y abre la URL correspondiente en tu
+    navegador.
+  </div>
+  <script>
+    if (location.protocol === 'file:') {
+      document.getElementById('fileWarning').style.display = 'block';
+    }
+  </script>
   <noscript>
     <p class="noscript-warning">
       Esta página necesita JavaScript para funcionar. Si la estás viendo desde
