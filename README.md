@@ -1,6 +1,6 @@
 # Proyecto Barack
 
-Versión actual: **365**
+Versión actual: **366**
 
 Esta es una pequeña SPA (Single Page Application) escrita en HTML, CSS y JavaScript.
 Incluye un módulo llamado *Sinóptico* para gestionar jerarquías de productos.
@@ -20,7 +20,7 @@ siempre y cuando no se esté ejecutando desde `file://`.
   con `python -m http.server`, y abre `http://localhost:8000/index.html` en
   tu navegador. Verás la pantalla de inicio de sesión donde puedes ingresar
   con alguno de los administradores iniciales **facundo**, **leo**, **pablo** o
-  **paulo** (todos con la misma contraseña predeterminada), o pulsar el botón
+  **paulo** (todos con la misma contraseña predeterminada `1234`), o pulsar el botón
   "Ingresar como invitado". Estos usuarios iniciales se pueden modificar o
   eliminar desde la
   sección "Usuarios".
