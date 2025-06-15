@@ -8,7 +8,7 @@ if (!user) {
 // guests shouldn't access certain pages directly
 const guestOnlyPages = ['sinoptico-editor.html', 'database.html', 'arbol.html'];
 if (isGuest() && guestOnlyPages.some(p => location.pathname.endsWith(p))) {
-  location.href = 'sinoptico.html';
+  location.href = 'index.html#/sinoptico';
 }
 
 function applyRoleRules() {

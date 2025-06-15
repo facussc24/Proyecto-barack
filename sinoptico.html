@@ -9,74 +9,10 @@
     if (localStorage.getItem('darkMode') === 'true') {
       document.documentElement.classList.add('dark-mode');
     }
+    // Redirigir a la versión SPA del sinóptico
+    location.replace('index.html#/sinoptico');
   </script>
 </head>
 <body>
-  <nav class="main-nav">
-    <a href="index.html">Inicio</a>
-    <a href="database.html" class="no-guest">Base de Datos</a>
-    <!-- <a href="#/sinoptico">Sinóptico SPA</a> -->
-    <button id="toggleDarkMode" type="button">🌙</button>
-    <button type="button" class="logout-link">Salir</button>
-  </nav>
-  <div class="filtro-contenedor">
-    <div class="filtros-texto">
-      <label for="search">Buscar:</label>
-      <div class="input-wrapper">
-        <input id="search" type="text" autocomplete="off" />
-        <button id="clearSearch" aria-label="Limpiar">×</button>
-        <ul id="sinopticoSuggestions" class="suggestions-list"></ul>
-      </div>
-      <label for="levelFilter">Tipo:</label>
-      <select id="levelFilter">
-        <option value="">Todos</option>
-        <option value="Cliente">Cliente</option>
-        <option value="Pieza final">Producto</option>
-        <option value="Subproducto">Subproducto</option>
-        <option value="Insumo">Insumo</option>
-      </select>
-      <div id="selectedItems" class="chips"></div>
-      <button id="expandirTodo">Expandir todo</button>
-      <button id="colapsarTodo">Colapsar todo</button>
-    </div>
-    <div class="filtro-opciones">
-      <label><input type="checkbox" id="chkMostrarNivel0" checked> Nivel 0</label>
-      <label><input type="checkbox" id="chkMostrarNivel1" checked> Nivel 1</label>
-      <label><input type="checkbox" id="chkMostrarNivel2" checked> Nivel 2</label>
-      <label><input type="checkbox" id="chkMostrarNivel3" checked> Nivel 3</label>
-      <button id="btnExcel" class="no-guest">Exportar Excel</button>
-    </div>
-  </div>
-  <div class="tabla-contenedor">
-    <table id="sinoptico">
-      <thead>
-        <tr>
-          <th>Descripción</th>
-          <th>Proyecto</th>
-          <th>Código</th>
-          <th>Consumo</th>
-          <th>Unidad</th>
-          <th>Imagen</th>
-        </tr>
-      </thead>
-      <tbody id="sinopticoBody"></tbody>
-    </table>
-  </div>
-  <script src="lib/dexie.min.js" defer></script>
-  <script src="lib/fuse.min.js" defer></script>
-  <script type="module" src="js/authGuard.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js" defer></script>
-  <script type="module" src="js/dataService.js" defer></script>
-  <script type="module" src="js/views/sinoptico.js" defer></script>
-  <script type="module" src="js/ui/renderer.js" defer></script>
-  <script type="module" src="js/ui/animations.js" defer></script>
-  <script type="module" src="js/darkMode.js" defer></script>
-  <script type="module" src="js/pageSettings.js" defer></script>
-  <script type="module" src="js/hideLoading.js" defer></script>
-  <script type="module" src="js/newClientDialog.js" defer></script>
-  <script type="module" src="js/version.js" defer></script>
-  <script>
-    sessionStorage.setItem('sinopticoEdit', 'false');
-  </script>
 </body>
 </html>

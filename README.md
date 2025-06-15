@@ -29,7 +29,7 @@ siempre y cuando no se esté ejecutando desde `file://`.
 4. Desde "Editar Sinóptico" puedes modificar los datos almacenados en el
    navegador.
 
-Hay tres puntos de entrada al Sinóptico: la página standalone `sinoptico.html`, la vista SPA accesible desde `index.html` y el `sinoptico-editor.html` para modificaciones.
+Hay dos puntos de entrada al Sinóptico: la vista SPA accesible desde `index.html` y el `sinoptico-editor.html` para modificaciones. El archivo `sinoptico.html` solo redirige a `index.html#/sinoptico`.
 Los datos se guardan localmente mediante **Dexie/IndexedDB**.
 
 ### Exportar e importar datos
@@ -45,7 +45,7 @@ await dataService.importJSON(json); // Restaura la copia
 ```
 
 
-Si ya conoces estas páginas, puedes trabajar solo con `sinoptico-editor.html` y consultar los datos desde `sinoptico.html`. La SPA (`index.html`) queda como opción adicional.
+Puedes trabajar directamente con `sinoptico-editor.html` para editar y consultar los datos desde `index.html#/sinoptico` (o la redirección `sinoptico.html`).
 
 ### Crear un nuevo producto con `arbol.html`
 
