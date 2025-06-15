@@ -767,22 +767,12 @@ body.amfe-page:not(.dark-mode) .logo {
   font-size: 1.2rem;
   margin-bottom: 1.5rem;
 }
-.import-export {
+.quick-links {
   margin-top: 1rem;
   display: flex;
   gap: 12px;
-}
-.import-export button {
-  padding: 0.75rem 1.25rem;
-  background-color: var(--color-accent);
-  color: var(--color-light);
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 1rem;
-}
-.import-export button:hover {
-  background-color: var(--color-accent-hover);
+  flex-wrap: wrap;
+  justify-content: center;
 }
 .features {
   list-style: none;

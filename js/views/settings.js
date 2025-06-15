@@ -17,10 +17,6 @@ export async function render(container) {
         <input type="checkbox" id="toggleGridOverlay">
         Mostrar cuadrícula
       </label>
-      <label>
-        <input type="checkbox" id="toggleEditMode">
-        Activar edición de Sinóptico
-      </label>
     </section>`;
 
   await ready;
@@ -33,7 +29,6 @@ export async function render(container) {
   const valueLabel = container.querySelector('#brightnessValue');
   const versionChk = container.querySelector('#toggleVersionOverlay');
   const gridChk = container.querySelector('#toggleGridOverlay');
-  const editChk = container.querySelector('#toggleEditMode');
 
   const storedBrightness = localStorage.getItem('pageBrightness') || '100';
   range.value = storedBrightness;
@@ -69,13 +64,4 @@ export async function render(container) {
     localStorage.setItem('showGrid', val);
   });
 
-  const editState = localStorage.getItem('defaultEditMode') === 'true';
-  editChk.checked = editState;
-  if (editState) sessionStorage.setItem('sinopticoEdit', 'true');
-  editChk.addEventListener('change', ev => {
-    const val = ev.target.checked;
-    sessionStorage.setItem('sinopticoEdit', val.toString());
-    localStorage.setItem('defaultEditMode', val.toString());
-    document.dispatchEvent(new Event('sinoptico-mode'));
-  });
 }

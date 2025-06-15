@@ -358,12 +358,9 @@ document.addEventListener('DOMContentLoaded', () => {
     await ready;
     try { sinopticoData = await dataService.getAll(); } catch { sinopticoData = []; }
     await ready;
-    if (!sinopticoData.length) {
-      sinopticoData = generarDatosIniciales();
-      if (dataService && dataService.replaceAll) {
-        await dataService.replaceAll(sinopticoData);
-      }
-    }
+    // Si la base está vacía simplemente mostramos una tabla sin datos. Ya no
+    // generamos registros de demostración para permitir que el usuario elimine
+    // por completo los valores iniciales.
     if (typeof Fuse !== 'undefined') {
       fuseSinoptico = new Fuse(sinopticoData, { keys: ['Descripción', 'Código'] });
     } else {
