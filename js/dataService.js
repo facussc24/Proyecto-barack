@@ -32,17 +32,19 @@ const ready = new Promise((res) => {
   readyResolve = res;
 });
 
-export async function ensureDefaultUser() {
+export async function ensureDefaultUsers() {
   await ready;
   const users = await getAll('users');
   const initFlag = hasWindow && localStorage.getItem('defaultUserInit');
   const disableFlag = hasWindow && localStorage.getItem(DISABLE_DEFAULT_USER_KEY);
   if (!users.length && !initFlag && !disableFlag) {
-    await add('users', {
-      name: 'facundo',
-      password: '1234',
-      role: 'admin',
-    });
+    const defaults = [
+      { name: 'facundo', password: '1234', role: 'admin' },
+      { name: 'leo', password: '1234', role: 'admin' },
+      { name: 'pablo', password: '1234', role: 'admin' },
+      { name: 'paulo', password: '1234', role: 'admin' },
+    ];
+    for (const u of defaults) await add('users', u);
     if (hasWindow) localStorage.setItem('defaultUserInit', '1');
   }
 }
@@ -435,8 +437,8 @@ if (hasWindow) {
   window.dataService = api;
 }
 
-ensureDefaultUser();
+ensureDefaultUsers();
 
 export default api;
 
-export { getAll, add, update, remove, exportJSON, importJSON, ready };
+export { getAll, add, update, remove, exportJSON, importJSON, ready, ensureDefaultUsers };

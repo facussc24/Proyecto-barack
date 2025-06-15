@@ -935,7 +935,7 @@ select {
    LOGIN
    ============================== */
 .login-container {
-  max-width: 320px;
+  max-width: 360px;
   margin: 80px auto;
   padding: 1rem;
   background: var(--color-light);
@@ -945,6 +945,10 @@ select {
 .dark-mode .login-container {
   background: #1e1e1e;
   box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+}
+.login-title {
+  text-align: center;
+  margin: 0 0 1rem;
 }
 .login-form,
 .admin-panel {
@@ -1400,8 +1404,9 @@ select {
    ============================== */
 .users-table {
   width: 100%;
+  max-width: 600px;
+  margin: 0 auto 10px;
   border-collapse: collapse;
-  margin-bottom: 10px;
 }
 .users-table th,
 .users-table td {
