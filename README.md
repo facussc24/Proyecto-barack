@@ -1,6 +1,6 @@
 # Proyecto Barack
 
-Versión actual: **363**
+Versión actual: **364**
 
 Esta es una pequeña SPA (Single Page Application) escrita en HTML, CSS y JavaScript.
 Incluye un módulo llamado *Sinóptico* para gestionar jerarquías de productos.
@@ -17,11 +17,12 @@ siempre y cuando no se esté ejecutando desde `file://`.
 ## Uso
 
 1. Ejecuta un servidor local desde la carpeta del proyecto, por ejemplo
-   con `python -m http.server`, y abre `http://localhost:8000/index.html` en
-   tu navegador. Verás la pantalla de inicio de sesión donde puedes ingresar
-   con el usuario **facundo** (contraseña `1234`) o pulsar el botón "Ingresar
-   como invitado". Este usuario inicial se puede modificar o eliminar
-   desde la sección "Usuarios".
+  con `python -m http.server`, y abre `http://localhost:8000/index.html` en
+  tu navegador. Verás la pantalla de inicio de sesión donde puedes ingresar
+  con alguno de los administradores iniciales **facundo**, **leo**, **pablo** o
+  **paulo** (todos con contraseña `1234`), o pulsar el botón "Ingresar como
+  invitado". Estos usuarios iniciales se pueden modificar o eliminar desde la
+  sección "Usuarios".
 2. Navega a "Sinóptico" para visualizar la tabla con filtros.
    Los productos añadidos quedan sangrados a la derecha de su cliente y
    muestran una flecha que indica la relación jerárquica.
