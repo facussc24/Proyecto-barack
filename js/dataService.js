@@ -34,12 +34,14 @@ const ready = new Promise((res) => {
 export async function ensureDefaultUser() {
   await ready;
   const users = await getAll('users');
-  if (!users.length) {
+  const initFlag = hasWindow && localStorage.getItem('defaultUserInit');
+  if (!users.length && !initFlag) {
     await add('users', {
       name: 'facundo',
       password: '1234',
       role: 'admin',
     });
+    if (hasWindow) localStorage.setItem('defaultUserInit', '1');
   }
 }
 
@@ -415,6 +417,7 @@ const api = {
       });
     }
     for (const key of Object.keys(memory)) delete memory[key];
+    if (hasWindow) localStorage.removeItem('defaultUserInit');
     _fallbackPersist();
     notifyChange();
   },
