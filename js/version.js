@@ -1,4 +1,4 @@
-export const version = '348';
+export const version = '349';
 export function displayVersion() {
   const div = document.createElement('div');
   div.className = 'version-info';
