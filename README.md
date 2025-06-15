@@ -79,5 +79,9 @@ verifica lo siguiente:
    navegador: para que funcionen las páginas debes usar un servidor local o
    publicarlas mediante **GitHub Pages**.
 
+4. Si el sinóptico aparece vacío, es probable que la base de datos aún no
+   contenga registros. Use `sinoptico-editor.html` o la sección Base de Datos
+   para crearlos o importe un respaldo.
+
 Tras corregir cualquier problema relacionado con el almacenamiento, vuelve a
 intentar la edición.
