@@ -160,20 +160,25 @@ async function update(store = 'sinoptico', id, changes) {
   const key = String(id);
   if (db && db[name]) {
     try {
-      await db[name].update(key, changes);
-      notifyChange();
-      return;
+      let result = await db[name].update(key, changes);
+      if (!result && !isNaN(key)) {
+        result = await db[name].update(Number(key), changes);
+      }
+      if (result) notifyChange();
+      return result;
     } catch (e) {
       console.error(e);
     }
   }
   const arr = memory[name] || [];
-  const item = arr.find(x => String(x.id) === key);
+  const item = arr.find(x => String(x.id) === key || x.id === Number(key));
   if (item) {
     Object.assign(item, changes);
     _fallbackPersist();
     notifyChange();
+    return true;
   }
+  return false;
 }
 
 async function remove(store = 'sinoptico', id) {
@@ -181,20 +186,27 @@ async function remove(store = 'sinoptico', id) {
   const key = String(id);
   if (db && db[name]) {
     try {
-      await db[name].delete(key);
-      notifyChange();
-      return;
+      let result;
+      try {
+        result = await db[name].delete(key);
+      } catch {
+        if (!isNaN(key)) result = await db[name].delete(Number(key));
+      }
+      if (result !== undefined) notifyChange();
+      return result;
     } catch (e) {
       console.error(e);
     }
   }
   const arr = memory[name] || [];
-  const idx = arr.findIndex(x => String(x.id) === key);
+  const idx = arr.findIndex(x => String(x.id) === key || x.id === Number(key));
   if (idx >= 0) {
     arr.splice(idx, 1);
     _fallbackPersist();
     notifyChange();
+    return true;
   }
+  return false;
 }
 
 async function exportJSON() {
