@@ -321,7 +321,10 @@ export async function deleteUser(id) {
 
 export async function validateCredentials(name, password) {
   const users = await getAll('users');
-  return users.find(u => u.name === name && u.password === password);
+  const normalized = String(name || '').trim().toLowerCase();
+  return users.find(
+    u => u.name && u.name.toLowerCase() === normalized && u.password === password
+  );
 }
 
 export async function replaceAll(arr) {

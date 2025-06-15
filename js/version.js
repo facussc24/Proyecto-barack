@@ -1,4 +1,4 @@
-export const version = '364';
+export const version = '365';
 export const POLLING_INTERVAL = 60000;
 export function displayVersion() {
   const div = document.createElement('div');
