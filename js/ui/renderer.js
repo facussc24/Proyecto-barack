@@ -185,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (tipoFiltro && tr.dataset.tipo !== tipoFiltro) return;
       const lvl = parseInt(tr.dataset.level || '0', 10);
       if (mostrarFlags[lvl]) tr.style.display = '';
-      mostrarAncestros(tr.dataset.parent);
+      if (selectedItems.length) mostrarAncestros(tr.dataset.parent);
     });
     hideLoader();
   }
