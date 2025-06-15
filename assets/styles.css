@@ -501,14 +501,15 @@ tr[data-level] td:first-child {
 
 .category-section summary {
   font-weight: bold;
-  background-color: #efefef;
-  color: var(--color-text);
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+  color: #fff;
   padding: 8px;
   border-radius: 4px;
   cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 body.dark-mode .category-section summary {
-  background-color: var(--color-surface-dark);
+  background: linear-gradient(90deg, var(--color-primary-hover), var(--color-accent-hover));
 }
 
 .category-section table {
@@ -518,6 +519,7 @@ body.dark-mode .category-section summary {
   background-color: var(--color-light);
   border-radius: 6px;
   overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
 }
 .category-section th,
 .category-section td {

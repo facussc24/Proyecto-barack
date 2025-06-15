@@ -12,6 +12,10 @@ export function initNewProductDialog() {
   const clienteSelect = dialog.querySelector('#nuevoProductoCliente');
   const descInput = dialog.querySelector('#nuevoProductoDescripcion');
   const codeInput = dialog.querySelector('#nuevoProductoCodigo');
+  const largoInput = dialog.querySelector('#nuevoProductoLargo');
+  const anchoInput = dialog.querySelector('#nuevoProductoAncho');
+  const altoInput = dialog.querySelector('#nuevoProductoAlto');
+  const pesoInput = dialog.querySelector('#nuevoProductoPeso');
 
   openBtn.addEventListener('click', async () => {
     await ready;
@@ -49,7 +53,11 @@ export function initNewProductDialog() {
       Consumo: '',
       Unidad: '',
       Sourcing: '',
-      Código: codeInput?.value.trim() || ''
+      Código: codeInput?.value.trim() || '',
+      Largo: largoInput?.value.trim() || '',
+      Ancho: anchoInput?.value.trim() || '',
+      Alto: altoInput?.value.trim() || '',
+      Peso: pesoInput?.value.trim() || ''
     });
     if (typeof window.mostrarMensaje === 'function') {
       window.mostrarMensaje('Producto creado con éxito', 'success');

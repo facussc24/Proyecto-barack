@@ -6,7 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const tipoFilter = document.getElementById('dbTipoFilter');
   const clientesBody = document.querySelector('#clientesSection tbody');
   const productosBody = document.querySelector('#productosSection tbody');
-  const componentesBody = document.querySelector('#componentesSection tbody');
+  const subproductosBody = document.querySelector('#subproductosSection tbody');
+  const insumosBody = document.querySelector('#insumosSection tbody');
   const tableContainer = document.getElementById('dbTables');
 
   async function load() {
@@ -20,7 +21,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     clientesBody.innerHTML = '';
     productosBody.innerHTML = '';
-    componentesBody.innerHTML = '';
+    subproductosBody.innerHTML = '';
+    insumosBody.innerHTML = '';
     let items = data.slice();
     if (clientFilter.value) {
       items = items.filter(i => i.Cliente === clientFilter.value || i.Descripción === clientFilter.value);
@@ -31,16 +33,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
     items.forEach(item => {
       const tr = document.createElement('tr');
-      tr.innerHTML = `<td>${item.Descripción || ''}</td>` +
-        `<td>${item.Código || ''}</td>` +
-        `<td><button class="db-edit" data-id="${item.ID}">✏️</button>` +
-        `<button class="db-del" data-id="${item.ID}">🗑️</button></td>`;
       if (item.Tipo === 'Cliente') {
+        tr.innerHTML = `<td>${item.Descripción || ''}</td>` +
+          `<td>${item.Código || ''}</td>` +
+          `<td><button class="db-edit" data-id="${item.ID}">✏️</button>` +
+          `<button class="db-del" data-id="${item.ID}">🗑️</button></td>`;
         clientesBody.appendChild(tr);
       } else if (item.Tipo === 'Producto') {
+        tr.innerHTML =
+          `<td>${item.Descripción || ''}</td>` +
+          `<td>${item.Código || ''}</td>` +
+          `<td>${item.Largo || ''}</td>` +
+          `<td>${item.Ancho || ''}</td>` +
+          `<td>${item.Alto || ''}</td>` +
+          `<td>${item.Peso || ''}</td>` +
+          `<td><button class="db-edit" data-id="${item.ID}">✏️</button>` +
+          `<button class="db-del" data-id="${item.ID}">🗑️</button></td>`;
         productosBody.appendChild(tr);
+      } else if (item.Tipo === 'Insumo') {
+        tr.innerHTML =
+          `<td>${item.Unidad || ''}</td>` +
+          `<td>${item.Proveedor || ''}</td>` +
+          `<td>${item.Descripción || ''}</td>` +
+          `<td>${item.Código || ''}</td>` +
+          `<td>${item.Material || ''}</td>` +
+          `<td>${item.Observaciones || ''}</td>` +
+          `<td>${item.Sourcing || ''}</td>` +
+          `<td><button class="db-edit" data-id="${item.ID}">✏️</button>` +
+          `<button class="db-del" data-id="${item.ID}">🗑️</button></td>`;
+        insumosBody.appendChild(tr);
       } else {
-        componentesBody.appendChild(tr);
+        // Subproducto o cualquier otro
+        tr.innerHTML = `<td>${item.Descripción || ''}</td>` +
+          `<td>${item.Código || ''}</td>` +
+          `<td><button class="db-edit" data-id="${item.ID}">✏️</button>` +
+          `<button class="db-del" data-id="${item.ID}">🗑️</button></td>`;
+        subproductosBody.appendChild(tr);
       }
     });
   }
