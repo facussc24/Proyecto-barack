@@ -1,15 +1,15 @@
-import { exportJSON, importJSON } from '../dataService.js';
+// Página de inicio con enlaces directos a las herramientas
 
 export function render(container) {
   container.innerHTML = `
     <section class="hero">
       <h1>Ingeniería Barack</h1>
       <p class="tagline">Soluciones modernas para tu negocio</p>
-      <div class="import-export">
-        <button id="saveJSON">Guardar JSON</button>
-        <input id="jsonFile" type="file" accept="application/json" hidden>
-        <button id="loadJSON">Cargar JSON</button>
-      </div>
+    <div class="quick-links">
+      <a href="sinoptico-editor.html" class="btn-link">Editar Sinóptico</a>
+      <a href="#/sinoptico" class="btn-link">Ver Sinóptico</a>
+      <a href="#/amfe" class="btn-link">AMFE</a>
+    </div>
     </section>
     <section class="intro">
       <h1>Características</h1>
@@ -21,21 +21,5 @@ export function render(container) {
     </section>
   `;
 
-  container.querySelector('#saveJSON').addEventListener('click', async () => {
-    const json = await exportJSON();
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([json], { type: 'application/json' }));
-    a.download = 'sinoptico.json';
-    a.click();
-    URL.revokeObjectURL(a.href);
-  });
-
-  const fileInput = container.querySelector('#jsonFile');
-  container.querySelector('#loadJSON').addEventListener('click', () => fileInput.click());
-  fileInput.addEventListener('change', async ev => {
-    const file = ev.target.files[0];
-    if (!file) return;
-    const text = await file.text();
-    await importJSON(text);
-  });
+  // sin lógica adicional
 }
