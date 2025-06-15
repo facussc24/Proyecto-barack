@@ -31,7 +31,7 @@ const ready = new Promise((res) => {
   readyResolve = res;
 });
 
-async function ensureDefaultUser() {
+export async function ensureDefaultUser() {
   await ready;
   const users = await getAll('users');
   if (!users.length) {
@@ -430,4 +430,4 @@ ensureDefaultUser();
 
 export default api;
 
-export { getAll, add, update, remove, exportJSON, importJSON, ready, validateCredentials };
+export { getAll, add, update, remove, exportJSON, importJSON, ready, validateCredentials, ensureDefaultUser };
