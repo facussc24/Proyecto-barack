@@ -1,6 +1,6 @@
 # Proyecto Barack
 
-Versión actual: **352**
+Versión actual: **354**
 
 Esta es una pequeña SPA (Single Page Application) escrita en HTML, CSS y JavaScript.
 Incluye un módulo llamado *Sinóptico* para gestionar jerarquías de productos.
@@ -9,6 +9,12 @@ Incluye un módulo llamado *Sinóptico* para gestionar jerarquías de productos.
 
 Cada nueva versión debe incluir un número visible junto a la fecha y hora en la parte inferior derecha de la interfaz para confirmar que el cambio ha sido aplicado.
 Todos los cambios en este repositorio incrementarán dicho número.
+
+La página consulta de forma automática `js/version.js` cada cierto tiempo y se
+recarga si detecta una versión distinta.
+Esta comprobación solo está disponible si los archivos se sirven mediante un
+servidor web (por ejemplo `npx serve` o `python -m http.server`). Al abrir el
+archivo directamente (`file://`), la verificación se desactiva.
 
 ## Uso
 
