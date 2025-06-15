@@ -16,9 +16,11 @@ siempre y cuando no se esté ejecutando desde `file://`.
 
 ## Uso
 
-1. Abre `index.html` en tu navegador. Aparecerá la pantalla de inicio de
-   sesión; puedes ingresar con el usuario **facundo** (contraseña `1234`) o
-   pulsar el botón "Ingresar como invitado".
+1. Ejecuta un servidor local desde la carpeta del proyecto, por ejemplo
+   con `python -m http.server`, y abre `http://localhost:8000/index.html` en
+   tu navegador. Verás la pantalla de inicio de sesión donde puedes ingresar
+   con el usuario **facundo** (contraseña `1234`) o pulsar el botón "Ingresar
+   como invitado".
 2. Navega a "Sinóptico" para visualizar la tabla con filtros.
    Los productos añadidos quedan sangrados a la derecha de su cliente y
    muestran una flecha que indica la relación jerárquica.

@@ -1450,6 +1450,15 @@ dialog.modal{border:none;border-radius:8px;padding:20px;box-shadow:0 2px 8px rgb
 
 .version-info { position: fixed; bottom: 4px; right: 4px; font-size: 0.8rem; opacity: 0.6; }
 
+.file-warning {
+  background: #fff3cd;
+  border: 1px solid #f5c2c7;
+  color: #664d03;
+  padding: 0.75em 1em;
+  margin: 1em auto;
+  max-width: 500px;
+}
+
 /* Grid overlay for developer mode */
 body.grid-overlay::before {
   content: '';
