@@ -24,7 +24,8 @@ form.addEventListener('submit', async ev => {
   }
 });
 
-guestBtn.addEventListener('click', () => {
+guestBtn.addEventListener('click', async () => {
+  await ensureDefaultUser();
   saveUser({ name: 'Invitado', role: 'guest' });
   location.href = 'index.html';
 });
