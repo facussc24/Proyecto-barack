@@ -1,6 +1,6 @@
 # Proyecto Barack
 
-Versión actual: **354**
+Versión actual: **356**
 
 Esta es una pequeña SPA (Single Page Application) escrita en HTML, CSS y JavaScript.
 Incluye un módulo llamado *Sinóptico* para gestionar jerarquías de productos.
@@ -16,7 +16,9 @@ siempre y cuando no se esté ejecutando desde `file://`.
 
 ## Uso
 
-1. Abre `index.html` en tu navegador.
+1. Abre `index.html` en tu navegador. Aparecerá la pantalla de inicio de
+   sesión; puedes ingresar con el usuario **facundo** (contraseña `1234`) o
+   pulsar el botón "Ingresar como invitado".
 2. Navega a "Sinóptico" para visualizar la tabla con filtros.
    Los productos añadidos quedan sangrados a la derecha de su cliente y
    muestran una flecha que indica la relación jerárquica.

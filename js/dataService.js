@@ -31,6 +31,18 @@ const ready = new Promise((res) => {
   readyResolve = res;
 });
 
+async function ensureDefaultUser() {
+  await ready;
+  const users = await getAll('users');
+  if (!users.length) {
+    await add('users', {
+      name: 'facundo',
+      password: '1234',
+      role: 'admin',
+    });
+  }
+}
+
 function hydrateFromStorage() {
   if (!hasWindow) return;
   try {
@@ -413,6 +425,8 @@ const api = {
 if (hasWindow) {
   window.dataService = api;
 }
+
+ensureDefaultUser();
 
 export default api;
 
