@@ -372,7 +372,8 @@ export async function getAllSinoptico() {
     }
   }
   try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    const obj = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    return Array.isArray(obj.sinoptico) ? obj.sinoptico : [];
   } catch (e) {
     return [];
   }
