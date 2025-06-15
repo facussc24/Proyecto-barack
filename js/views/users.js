@@ -46,6 +46,7 @@ export async function render(container) {
     if (btn.classList.contains('delete')) {
       if (confirm('¿Eliminar usuario?')) {
         await remove('users', id);
+        if (window.mostrarMensaje) window.mostrarMensaje('Usuario eliminado', 'success');
         await load();
       }
     } else if (btn.classList.contains('edit')) {
@@ -87,8 +88,10 @@ export async function render(container) {
       if (!data.name) return;
       if (user.id) {
         await update('users', user.id, data);
+        if (window.mostrarMensaje) window.mostrarMensaje('Usuario actualizado', 'success');
       } else {
         await add('users', data);
+        if (window.mostrarMensaje) window.mostrarMensaje('Usuario creado', 'success');
       }
       await load();
     });
