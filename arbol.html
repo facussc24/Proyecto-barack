@@ -22,6 +22,14 @@
     <input id="productDesc" type="text" required placeholder="Descripción del producto">
     <label for="productCode">Código:</label>
     <input id="productCode" type="text" placeholder="Código (opcional)">
+    <label for="productLargo">Largo (mm):</label>
+    <input id="productLargo" type="number" step="any" placeholder="Largo">
+    <label for="productAncho">Ancho (mm):</label>
+    <input id="productAncho" type="number" step="any" placeholder="Ancho">
+    <label for="productAlto">Alto (mm):</label>
+    <input id="productAlto" type="number" step="any" placeholder="Alto">
+    <label for="productPeso">Peso (kg):</label>
+    <input id="productPeso" type="number" step="any" placeholder="Peso">
     <div class="form-actions">
       <button id="confirmBtn" type="button">Crear sin subcomponentes</button>
       <button id="continueBtn" type="button">Continuar</button>
@@ -49,6 +57,21 @@
       <input id="insumoDesc" type="text" placeholder="Descripción del insumo">
       <label for="insumoCode">Código:</label>
       <input id="insumoCode" type="text" placeholder="Código (opcional)">
+      <label for="insumoUnidad">Unidad:</label>
+      <input id="insumoUnidad" type="text" placeholder="Unidad">
+      <label for="insumoProveedor">Proveedor:</label>
+      <input id="insumoProveedor" type="text" placeholder="Proveedor">
+      <label for="insumoMaterial">Material:</label>
+      <input id="insumoMaterial" type="text" placeholder="Material">
+      <label for="insumoOrigen">Origen:</label>
+      <select id="insumoOrigen">
+        <option value="Local">Local</option>
+        <option value="Interno">Interno</option>
+        <option value="Importado">Importado</option>
+        <option value="Consignado">Consignado</option>
+      </select>
+      <label for="insumoObs">Observaciones:</label>
+      <input id="insumoObs" type="text" placeholder="Observaciones">
       <label for="insumoParent">Asociado a:</label>
       <select id="insumoParent"></select>
       <button id="addInsumoBtn" type="button">Agregar insumo</button>

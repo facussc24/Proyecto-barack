@@ -23,8 +23,17 @@ document.addEventListener('DOMContentLoaded', async () => {
   const productPreview = document.getElementById('productPreview');
   const insumoDesc = document.getElementById('insumoDesc');
   const insumoCode = document.getElementById('insumoCode');
+  const insumoUnidad = document.getElementById('insumoUnidad');
+  const insumoProveedor = document.getElementById('insumoProveedor');
+  const insumoMaterial = document.getElementById('insumoMaterial');
+  const insumoOrigen = document.getElementById('insumoOrigen');
+  const insumoObs = document.getElementById('insumoObs');
   const insumoParent = document.getElementById('insumoParent');
   const addInsumoBtn = document.getElementById('addInsumoBtn');
+  const productLargo = document.getElementById('productLargo');
+  const productAncho = document.getElementById('productAncho');
+  const productAlto = document.getElementById('productAlto');
+  const productPeso = document.getElementById('productPeso');
 
   await ready;
   const all = await getAll('sinoptico');
@@ -89,7 +98,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     liMap.delete(id);
   }
 
-  function buildProduct(desc, code, clienteId) {
+  function buildProduct(desc, code, clienteId, largo, ancho, alto, peso) {
     return {
       ID: Date.now().toString(),
       ParentID: clienteId,
@@ -103,7 +112,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       Consumo: '',
       Unidad: '',
       Sourcing: '',
-      Código: code || ''
+      Código: code || '',
+      Largo: largo || '',
+      Ancho: ancho || '',
+      Alto: alto || '',
+      Peso: peso || ''
     };
   }
 
@@ -143,8 +156,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         versión: '',
         Imagen: '',
         Consumo: '',
-        Unidad: '',
-        Sourcing: '',
+        Unidad: insumo.unidad || '',
+        Proveedor: insumo.proveedor || '',
+        Material: insumo.material || '',
+        Observaciones: insumo.observaciones || '',
+        Sourcing: insumo.origen || '',
         Código: insumo.code || ''
       };
       await addNode(n);
@@ -157,7 +173,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     const desc = descInput.value.trim();
     if (!cid || !desc) return;
     const code = codeInput.value.trim();
-    const product = buildProduct(desc, code, cid);
+    const product = buildProduct(
+      desc,
+      code,
+      cid,
+      productLargo.value.trim(),
+      productAncho.value.trim(),
+      productAlto.value.trim(),
+      productPeso.value.trim()
+    );
     await persist(product, [], []);
     if (window.mostrarMensaje) window.mostrarMensaje('Producto creado con éxito', 'success');
     window.location.href = 'sinoptico-editor.html';
@@ -168,7 +192,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     const desc = descInput.value.trim();
     if (!cid || !desc) return;
     const code = codeInput.value.trim();
-    productData = { cid, desc, code };
+    productData = {
+      cid,
+      desc,
+      code,
+      largo: productLargo.value.trim(),
+      ancho: productAncho.value.trim(),
+      alto: productAlto.value.trim(),
+      peso: productPeso.value.trim()
+    };
     step1.style.display = 'none';
     step2.style.display = 'flex';
     if (productPreview) {
@@ -230,7 +262,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     const parent = insumoParent?.value || 'root';
     const id = Date.now().toString(16) + Math.random().toString(16).slice(2);
     const level = (levelMap.get(parent) || 0) + 1;
-    insumos.push({ id, parentId: parent, desc: d, code: c });
+    insumos.push({
+      id,
+      parentId: parent,
+      desc: d,
+      code: c,
+      unidad: insumoUnidad.value.trim(),
+      proveedor: insumoProveedor.value.trim(),
+      material: insumoMaterial.value.trim(),
+      origen: insumoOrigen.value,
+      observaciones: insumoObs.value.trim()
+    });
 
     const parentList = domMap.get(parent) || subList;
     const li = document.createElement('li');
@@ -250,11 +292,23 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     insumoDesc.value = '';
     insumoCode.value = '';
+    insumoUnidad.value = '';
+    insumoProveedor.value = '';
+    insumoMaterial.value = '';
+    insumoObs.value = '';
   });
 
   finishBtn?.addEventListener('click', async () => {
     if (!productData) return;
-    const product = buildProduct(productData.desc, productData.code, productData.cid);
+    const product = buildProduct(
+      productData.desc,
+      productData.code,
+      productData.cid,
+      productData.largo,
+      productData.ancho,
+      productData.alto,
+      productData.peso
+    );
     await persist(product, subcomponents, insumos);
     if (window.mostrarMensaje) window.mostrarMensaje('Árbol creado con éxito', 'success');
     window.location.href = 'sinoptico-editor.html';
