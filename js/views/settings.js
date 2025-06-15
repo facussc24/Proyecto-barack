@@ -13,6 +13,14 @@ export async function render(container) {
         <input type="checkbox" id="toggleVersionOverlay">
         Mostrar versión en pantalla
       </label>
+      <label>
+        <input type="checkbox" id="toggleGridOverlay">
+        Mostrar cuadrícula
+      </label>
+      <label>
+        <input type="checkbox" id="toggleEditMode">
+        Activar edición de Sinóptico
+      </label>
     </section>`;
 
   await ready;
@@ -24,6 +32,8 @@ export async function render(container) {
   const range = container.querySelector('#brightnessRange');
   const valueLabel = container.querySelector('#brightnessValue');
   const versionChk = container.querySelector('#toggleVersionOverlay');
+  const gridChk = container.querySelector('#toggleGridOverlay');
+  const editChk = container.querySelector('#toggleEditMode');
 
   const storedBrightness = localStorage.getItem('pageBrightness') || '100';
   range.value = storedBrightness;
@@ -48,5 +58,24 @@ export async function render(container) {
     const state = ev.target.checked;
     if (overlay) overlay.style.display = state ? 'block' : 'none';
     localStorage.setItem('showVersion', state);
+  });
+
+  const gridState = localStorage.getItem('showGrid') === 'true';
+  gridChk.checked = gridState;
+  document.body.classList.toggle('grid-overlay', gridState);
+  gridChk.addEventListener('change', ev => {
+    const val = ev.target.checked;
+    document.body.classList.toggle('grid-overlay', val);
+    localStorage.setItem('showGrid', val);
+  });
+
+  const editState = localStorage.getItem('defaultEditMode') === 'true';
+  editChk.checked = editState;
+  if (editState) sessionStorage.setItem('sinopticoEdit', 'true');
+  editChk.addEventListener('change', ev => {
+    const val = ev.target.checked;
+    sessionStorage.setItem('sinopticoEdit', val.toString());
+    localStorage.setItem('defaultEditMode', val.toString());
+    document.dispatchEvent(new Event('sinoptico-mode'));
   });
 }

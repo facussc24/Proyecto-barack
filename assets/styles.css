@@ -1440,3 +1440,16 @@ body.dark-mode .fila-subens {
 
 .version-info { position: fixed; bottom: 4px; right: 4px; font-size: 0.8rem; opacity: 0.6; }
 
+/* Grid overlay for developer mode */
+body.grid-overlay::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.15) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.15) 1px, transparent 1px);
+  background-size: 20px 20px;
+  z-index: 9999;
+}
+
