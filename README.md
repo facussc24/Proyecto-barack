@@ -70,5 +70,11 @@ verifica lo siguiente:
 3. Revisa la consola de desarrollo del navegador en busca de errores de
    permisos o bloqueos.
 
+   > **Nota:** abrir los HTML directamente desde _GitHub_ (por ejemplo
+   utilizando la vista **Raw**) tampoco permitirá ejecutar los scripts debido a
+   la política de seguridad que aplica ese servicio. No es un problema de tu
+   navegador: para que funcionen las páginas debes usar un servidor local o
+   publicarlas mediante **GitHub Pages**.
+
 Tras corregir cualquier problema relacionado con el almacenamiento, vuelve a
 intentar la edición.
