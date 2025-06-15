@@ -26,6 +26,10 @@ function applyRoleRules() {
   });
 }
 
+if (typeof window !== 'undefined') {
+  window.applyRoleRules = applyRoleRules;
+}
+
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', applyRoleRules);
 } else {
