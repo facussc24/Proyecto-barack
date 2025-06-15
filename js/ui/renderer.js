@@ -267,7 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
       thActions.style.display=show?'':'none';
     }
     // Inline edit helper
-    const fieldOrder=['Descripción','Cliente','Vehículo','RefInterno','versión','Imagen','Consumo','Unidad','Sourcing','Código'];
+    const fieldOrder=['Descripción','Vehículo','Código','Consumo','Unidad','Imagen'];
     function startEditRow(tr,fila) {
       if(tr.classList.contains('editing'))return; 
       tr.classList.add('editing');
@@ -321,9 +321,8 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.onclick=()=>toggleNodo(btn,fila.ID);
       td0.appendChild(btn);
       tr.appendChild(td0);
-      ['Cliente','Vehículo','RefInterno','versión'].forEach(f=>{ const td=document.createElement('td'); td.textContent=fila[f]||''; tr.appendChild(td); });
+      ['Vehículo','Código','Consumo','Unidad'].forEach(f=>{ const td=document.createElement('td'); td.textContent=fila[f]||''; tr.appendChild(td); });
       const tdImg=document.createElement('td'); if(fila.Imagen){ const img=document.createElement('img'); img.src=`images/${fila.Imagen}`;tdImg.appendChild(img);} tr.appendChild(tdImg);
-      ['Consumo','Unidad','Sourcing','Código'].forEach(f=>{ const td=document.createElement('td'); td.textContent=fila[f]||''; tr.appendChild(td); });
       const editing=sessionStorage.getItem('sinopticoEdit')==='true';
       if(editing){
         const tdA=document.createElement('td');

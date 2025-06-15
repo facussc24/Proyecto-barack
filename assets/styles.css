@@ -392,22 +392,22 @@ tr[data-level] td:first-child {
 }
 #sinoptico th:nth-child(2),
 #sinoptico td:nth-child(2) {
-  width: 10%;
+  width: 15%;
   text-align: center;
 }
 #sinoptico th:nth-child(3),
 #sinoptico td:nth-child(3) {
-  width: 10%;
+  width: 15%;
   text-align: center;
 }
 #sinoptico th:nth-child(4),
 #sinoptico td:nth-child(4) {
-  width: 10%;
+  width: 8%;
   text-align: center;
 }
 #sinoptico th:nth-child(5),
 #sinoptico td:nth-child(5) {
-  width: 10%;
+  width: 7%;
   text-align: center;
 }
 #sinoptico th:nth-child(6),
@@ -417,21 +417,6 @@ tr[data-level] td:first-child {
 }
 #sinoptico th:nth-child(7),
 #sinoptico td:nth-child(7) {
-  width: 7%;
-  text-align: center;
-}
-#sinoptico th:nth-child(8),
-#sinoptico td:nth-child(8) {
-  width: 7%;
-  text-align: center;
-}
-#sinoptico th:nth-child(9),
-#sinoptico td:nth-child(9) {
-  width: 11%;
-  text-align: center;
-}
-#sinoptico th:nth-child(10),
-#sinoptico td:nth-child(10) {
   width: 10%;
   text-align: center;
 }

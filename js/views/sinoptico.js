@@ -12,15 +12,11 @@ export async function render(container) {
       <thead>
         <tr>
           <th>Descripción</th>
-          <th>Cliente</th>
-          <th>Vehículo</th>
-          <th>RefInterno</th>
-          <th>versión</th>
-          <th>Imagen</th>
+          <th>Proyecto</th>
+          <th>Código</th>
           <th>Consumo</th>
           <th>Unidad</th>
-          <th>Sourcing</th>
-          <th>Código</th>
+          <th>Imagen</th>
           <th id="thActions" style="display:none">Acciones</th>
         </tr>
       </thead>
