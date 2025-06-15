@@ -100,6 +100,7 @@ const simpleChannel =
 
 function _fallbackPersist() {
   // sync in-memory object to localStorage
+  if (!hasWindow) return;
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(memory));
   } catch (e) {
