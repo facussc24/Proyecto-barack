@@ -430,4 +430,4 @@ ensureDefaultUser();
 
 export default api;
 
-export { getAll, add, update, remove, exportJSON, importJSON, ready, validateCredentials, ensureDefaultUser };
+export { getAll, add, update, remove, exportJSON, importJSON, ready };
