@@ -17,6 +17,7 @@
   --primary-color: var(--color-primary);
   --secondary-color: var(--color-accent);
   --accent-color: var(--color-accent);
+  --page-brightness: 100%;
 }
 
 body.dark-mode {
@@ -59,8 +60,9 @@ body {
   background-color: #fff;
   pointer-events: auto;
   color: var(--color-text);
+  filter: brightness(var(--page-brightness, 100%));
   opacity: 0;
-  transition: opacity 0.15s ease-in-out;
+  transition: opacity 0.15s ease-in-out, filter 0.2s ease-in-out;
 }
 
 body.page-loaded {
@@ -117,6 +119,19 @@ h1 {
 .invalid {
   border: 1px solid red !important;
   background-color: #ffe5e5 !important;
+}
+
+/* Developer options in settings */
+.dev-options {
+  margin: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.dev-options label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 /* ==============================
