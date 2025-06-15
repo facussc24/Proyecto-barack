@@ -1,4 +1,4 @@
-import { ready, validateCredentials } from './dataService.js';
+import { ready, validateCredentials, ensureDefaultUser } from './dataService.js';
 import { saveUser, getUser } from './session.js';
 
 const current = getUser();
@@ -14,6 +14,7 @@ form.addEventListener('submit', async ev => {
   const name = document.getElementById('loginUser').value.trim();
   const pass = document.getElementById('loginPass').value;
   await ready;
+  await ensureDefaultUser();
   const user = await validateCredentials(name, pass);
   if (user) {
     saveUser(user);
