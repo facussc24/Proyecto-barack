@@ -23,6 +23,18 @@ Todos los cambios en este repositorio incrementarán dicho número.
 Hay tres puntos de entrada al Sinóptico: la página standalone `sinoptico.html`, la vista SPA accesible desde `index.html` y el `sinoptico-editor.html` para modificaciones.
 Los datos se guardan localmente mediante **Dexie/IndexedDB**.
 
+### Exportar e importar datos
+
+Todas las vistas utilizan la misma base de datos `ProyectoBarackDB` a través del
+módulo `js/dataService.js`. Para realizar copias de seguridad manuales puedes
+ejecutar en la consola del navegador (o desde Node) lo siguiente:
+
+```js
+const json = await dataService.exportJSON();
+// Guarda el contenido de `json` donde prefieras
+await dataService.importJSON(json); // Restaura la copia
+```
+
 
 Si ya conoces estas páginas, puedes trabajar solo con `sinoptico-editor.html` y consultar los datos desde `sinoptico.html`. La SPA (`index.html`) queda como opción adicional.
 
