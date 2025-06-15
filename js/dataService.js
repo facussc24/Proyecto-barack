@@ -254,6 +254,9 @@ export async function addNode(node) {
   if (n.id && !n.ID) {
     n.ID = String(n.id);
   }
+  if (n.Desactivado === undefined) {
+    n.Desactivado = false;
+  }
   return add('sinoptico', n);
 }
 
