@@ -65,6 +65,7 @@ export async function render(container) {
           <option value="admin"${user.role === 'admin' ? ' selected' : ''}>Admin</option>
           <option value="user"${user.role === 'user' ? ' selected' : ''}>User</option>
         </select>
+        <input type="password" placeholder="Contraseña" />
       </td>
       <td>
         <button class="save">Guardar</button>
@@ -76,11 +77,13 @@ export async function render(container) {
       tbody.appendChild(tr);
     }
 
-    const nameInput = tr.querySelector('input');
+    const nameInput = tr.querySelector('input[type="text"]');
     const roleSelect = tr.querySelector('select');
+    const passwordInput = tr.querySelector('input[type="password"]');
 
     tr.querySelector('.save').addEventListener('click', async () => {
       const data = { name: nameInput.value.trim(), role: roleSelect.value };
+      if (passwordInput.value) data.password = passwordInput.value;
       if (!data.name) return;
       if (user.id) {
         await update('users', user.id, data);

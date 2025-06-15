@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar sesión</title>
+  <link rel="stylesheet" href="assets/styles.css">
+  <script>
+    if (localStorage.getItem('darkMode') === 'true') {
+      document.documentElement.classList.add('dark-mode');
+    }
+  </script>
+</head>
+<body>
+  <div class="login-container">
+    <form id="loginForm" class="login-form">
+      <label for="loginUser">Usuario:</label>
+      <input id="loginUser" type="text" required>
+      <label for="loginPass">Contraseña:</label>
+      <input id="loginPass" type="password" required>
+      <button type="submit">Ingresar</button>
+      <button type="button" id="guestBtn">Ingresar como invitado</button>
+    </form>
+  </div>
+  <script type="module" src="js/login.js"></script>
+</body>
+</html>
