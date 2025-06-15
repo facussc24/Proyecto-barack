@@ -38,3 +38,19 @@ Si ya conoces estas páginas, puedes trabajar solo con `sinoptico-editor.html` y
 El código fuente se encuentra en la carpeta `js/` y las hojas de estilo en
 `assets/styles.css`. Para depurar o extender la funcionalidad del Sinóptico,
 revisa especialmente `js/ui/renderer.js`.
+
+## Solución de problemas
+
+Si los cambios realizados desde la vista **Base de Datos** no se guardan,
+verifica lo siguiente:
+
+1. Asegúrate de abrir el proyecto mediante un servidor local (por ejemplo
+   ejecutando `npx serve`) en lugar de abrir los archivos directamente con
+   `file://`.
+2. Comprueba que el navegador no tenga deshabilitado **IndexedDB** o el
+   almacenamiento local.
+3. Revisa la consola de desarrollo del navegador en busca de errores de
+   permisos o bloqueos.
+
+Tras corregir cualquier problema relacionado con el almacenamiento, vuelve a
+intentar la edición.
