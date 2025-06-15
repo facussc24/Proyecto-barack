@@ -106,6 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
       } else if (btn.classList.contains('db-deact')) {
         if (confirm('¿Desactivar elemento?')) {
           await updateNode(id, { Desactivado: true });
+          tipoFilter.value = 'Desactivado';
           await load();
         }
       } else if (btn.classList.contains('db-activate')) {
