@@ -3,6 +3,7 @@
 
 export const DATA_CHANGED = 'DATA_CHANGED';
 const STORAGE_KEY = 'genericData';
+const DISABLE_DEFAULT_USER_KEY = 'disableDefaultUser';
 
 // Dexie may be loaded via a script tag in the browser. Grab the global instance
 // if present. When running under Node we fallback to requiring the package so
@@ -35,7 +36,8 @@ export async function ensureDefaultUser() {
   await ready;
   const users = await getAll('users');
   const initFlag = hasWindow && localStorage.getItem('defaultUserInit');
-  if (!users.length && !initFlag) {
+  const disableFlag = hasWindow && localStorage.getItem(DISABLE_DEFAULT_USER_KEY);
+  if (!users.length && !initFlag && !disableFlag) {
     await add('users', {
       name: 'facundo',
       password: '1234',
@@ -417,7 +419,10 @@ const api = {
       });
     }
     for (const key of Object.keys(memory)) delete memory[key];
-    if (hasWindow) localStorage.removeItem('defaultUserInit');
+    if (hasWindow) {
+      localStorage.removeItem('defaultUserInit');
+      localStorage.removeItem(DISABLE_DEFAULT_USER_KEY);
+    }
     _fallbackPersist();
     notifyChange();
   },

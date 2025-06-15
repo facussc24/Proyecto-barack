@@ -47,6 +47,10 @@ export async function render(container) {
       if (confirm('¿Eliminar usuario?')) {
         await remove('users', id);
         if (window.mostrarMensaje) window.mostrarMensaje('Usuario eliminado', 'success');
+        const remaining = await getAll('users');
+        if (!remaining.length && typeof localStorage !== 'undefined') {
+          localStorage.setItem('disableDefaultUser', '1');
+        }
         await load();
       }
     } else if (btn.classList.contains('edit')) {
