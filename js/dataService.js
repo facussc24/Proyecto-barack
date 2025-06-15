@@ -54,6 +54,10 @@ if (Dexie) {
     sinoptico: 'id,parentId,nombre,orden',
     users: 'id,name,role',
   });
+  db.version(3).stores({
+    sinoptico: 'id,parentId,nombre,orden',
+    users: 'id,name,role,password',
+  });
   // migrate existing records that used numeric primary keys
   db.open()
     .then(async () => {
@@ -297,6 +301,11 @@ export async function deleteUser(id) {
   return remove('users', id);
 }
 
+export async function validateCredentials(name, password) {
+  const users = await getAll('users');
+  return users.find(u => u.name === name && u.password === password);
+}
+
 export async function replaceAll(arr) {
   if (!Array.isArray(arr)) return;
   const normalized = arr.map(item => {
@@ -388,6 +397,10 @@ const api = {
         sinoptico: 'id,parentId,nombre,orden',
         users: 'id,name,role',
       });
+      db.version(3).stores({
+        sinoptico: 'id,parentId,nombre,orden',
+        users: 'id,name,role,password',
+      });
     }
     for (const key of Object.keys(memory)) delete memory[key];
     _fallbackPersist();
@@ -403,4 +416,4 @@ if (hasWindow) {
 
 export default api;
 
-export { getAll, add, update, remove, exportJSON, importJSON, ready };
+export { getAll, add, update, remove, exportJSON, importJSON, ready, validateCredentials };

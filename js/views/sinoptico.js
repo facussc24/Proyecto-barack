@@ -1,5 +1,6 @@
 import { getAll, remove } from '../dataService.js';
 import { createSinopticoEditor } from '../editors/sinopticoEditor.js';
+import { isGuest } from '../session.js';
 
 export async function render(container) {
   container.innerHTML = `
@@ -23,6 +24,9 @@ export async function render(container) {
       <tbody></tbody>
     </table>
   `;
+  if (isGuest()) {
+    container.querySelector('.toolbar').style.display = 'none';
+  }
 
   const data = await getAll('sinoptico');
   if (typeof window.renderSinoptico === 'function') {

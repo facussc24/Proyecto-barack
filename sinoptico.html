@@ -14,9 +14,10 @@
 <body>
   <nav class="main-nav">
     <a href="index.html">Inicio</a>
-    <a href="database.html">Base de Datos</a>
+    <a href="database.html" class="no-guest">Base de Datos</a>
     <!-- <a href="#/sinoptico">Sinóptico SPA</a> -->
     <button id="toggleDarkMode" type="button">🌙</button>
+    <button type="button" class="logout-link">Salir</button>
   </nav>
   <div class="filtro-contenedor">
     <div class="filtros-texto">
@@ -43,7 +44,7 @@
       <label><input type="checkbox" id="chkMostrarNivel1" checked> Nivel 1</label>
       <label><input type="checkbox" id="chkMostrarNivel2" checked> Nivel 2</label>
       <label><input type="checkbox" id="chkMostrarNivel3" checked> Nivel 3</label>
-      <button id="btnExcel">Exportar Excel</button>
+      <button id="btnExcel" class="no-guest">Exportar Excel</button>
     </div>
   </div>
   <div class="tabla-contenedor">
@@ -63,6 +64,7 @@
   </div>
   <script src="lib/dexie.min.js" defer></script>
   <script src="lib/fuse.min.js" defer></script>
+  <script type="module" src="js/authGuard.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js" defer></script>
   <script type="module" src="js/dataService.js" defer></script>
   <script type="module" src="js/views/sinoptico.js" defer></script>
