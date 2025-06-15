@@ -1,4 +1,4 @@
-export const version = '353';
+export const version = '354';
 export const POLLING_INTERVAL = 60000; // 1 minute
 export function displayVersion() {
   const div = document.createElement('div');
@@ -22,4 +22,6 @@ async function pollVersion() {
   }
 }
 
-setInterval(pollVersion, POLLING_INTERVAL);
+if (location.protocol.startsWith('http')) {
+  setInterval(pollVersion, POLLING_INTERVAL);
+}
