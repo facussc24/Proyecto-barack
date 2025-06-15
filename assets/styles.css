@@ -57,7 +57,7 @@ body {
   font-family: var(--font-base, sans-serif);
   margin: 0;
   padding: 60px 0 0 0;
-  background-color: #fff;
+  background-color: var(--color-bg);
   pointer-events: auto;
   color: var(--color-text);
   filter: brightness(var(--page-brightness, 100%));
