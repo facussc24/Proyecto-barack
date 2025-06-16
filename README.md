@@ -19,7 +19,7 @@ siempre y cuando no se esté ejecutando desde `file://`.
 1. Ejecuta un servidor local desde la carpeta del proyecto, por ejemplo
   con `python -m http.server`, y abre `http://localhost:8000/index.html` en
   tu navegador. Verás la pantalla de inicio de sesión donde puedes ingresar
-  con alguno de los administradores iniciales **facundo**, **leo**, **pablo** o
+  con alguno de los administradores iniciales **admin**, **facundo**, **leo**, **pablo** o
   **paulo** (todos con la misma contraseña predeterminada `1234`), o pulsar el botón
   "Ingresar como invitado". Estos usuarios iniciales se pueden modificar o
   eliminar desde la
