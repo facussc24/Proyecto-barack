@@ -11,7 +11,7 @@ export const API_URL =
   (typeof window !== 'undefined' &&
     (window.API_URL || (window.localStorage && localStorage.getItem('API_URL')))) ||
   (typeof process !== 'undefined' && process.env.API_URL) ||
-  '';
+  'http://localhost:3000/api';
 
 async function httpGet(path) {
   const res = await fetch(API_URL + path);
