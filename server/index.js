@@ -6,7 +6,8 @@ import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const DATA_FILE = join(__dirname, 'data.json');
+const ROOT_DIR = process.pkg ? dirname(process.execPath) : join(__dirname, '..');
+const DATA_FILE = join(ROOT_DIR, 'data.json');
 
 async function readData() {
   try {
@@ -45,6 +46,7 @@ async function createApp() {
     app.use(cors({ origin: allowedOrigin.split(',') }));
   }
   app.use(express.json());
+  app.use(express.static(ROOT_DIR));
 
   await ensureDefaultUsers();
 

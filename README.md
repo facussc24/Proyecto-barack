@@ -1,6 +1,6 @@
 # Proyecto Barack
 
-Versión actual: **379**
+Versión actual: **380**
 
 Esta es una pequeña SPA (Single Page Application) escrita en HTML, CSS y JavaScript.
 Incluye un módulo llamado *Sinóptico* para gestionar jerarquías de productos.
@@ -139,4 +139,14 @@ Sigue estos pasos para poner en producción la aplicación:
    apuntar `window.API_URL` o `localStorage['API_URL']` a dicha dirección.
 3. Ten presente que las cuentas predeterminadas, como **admin**, utilizan la
    contraseña **1234**.
+
+### Ejecutable con pkg
+
+Este proyecto incluye un script que genera un binario auto‑contenible para Windows, macOS y Linux. Tras instalar las dependencias ejecuta:
+
+```bash
+npm run build-exe
+```
+
+Obtendrás tres archivos en la carpeta `dist/`. En macOS y Linux puedes iniciar el servidor con `./dist/proyecto-barack-macos` o `./dist/proyecto-barack-linux`. En Windows basta con abrir `proyecto-barack-win.exe` o ejecutarlo desde la terminal. El binario sirve la aplicación en `http://localhost:3000/`.
 
