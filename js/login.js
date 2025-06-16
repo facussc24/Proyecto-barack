@@ -8,6 +8,16 @@ if (current) {
 
 const form = document.getElementById('loginForm');
 const guestBtn = document.getElementById('guestBtn');
+const toggleBtn = document.getElementById('togglePass');
+const passInput = document.getElementById('loginPass');
+
+if (toggleBtn && passInput) {
+  toggleBtn.addEventListener('click', () => {
+    const isHidden = passInput.type === 'password';
+    passInput.type = isHidden ? 'text' : 'password';
+    toggleBtn.textContent = isHidden ? '🙈' : '👁️';
+  });
+}
 
 form.addEventListener('submit', async ev => {
   ev.preventDefault();
