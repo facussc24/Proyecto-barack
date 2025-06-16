@@ -10,6 +10,9 @@ Incluye un módulo llamado *Sinóptico* para gestionar jerarquías de productos.
 Cada nueva versión debe incluir un número visible junto a la fecha y hora en la parte inferior derecha de la interfaz para confirmar que el cambio ha sido aplicado.
 Todos los cambios en este repositorio incrementarán dicho número.
 
+Recuerda actualizar el valor en `js/version.js` y esta documentación cada vez
+que realices un cambio.
+
 La aplicación comprueba cada minuto si el archivo `js/version.js` ha
 cambiado. Si detecta una nueva versión se recarga automáticamente,
 siempre y cuando no se esté ejecutando desde `file://`.
