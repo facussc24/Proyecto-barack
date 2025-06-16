@@ -822,7 +822,8 @@ body.amfe-page:not(.dark-mode) .logo {
 
 @media (prefers-reduced-motion: reduce) {
   .fade-in,
-  .scale {
+  .scale,
+  .fade-out {
     animation: none;
   }
 }
