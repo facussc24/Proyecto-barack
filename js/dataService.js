@@ -35,9 +35,10 @@ const ready = new Promise((res) => {
 export async function ensureDefaultUsers() {
   await ready;
   const users = await getAll('users');
-  const initFlag = hasWindow && localStorage.getItem('defaultUserInit');
+  // check optional local storage flag to disable automatic user creation
   const disableFlag = hasWindow && localStorage.getItem(DISABLE_DEFAULT_USER_KEY);
-  if (!users.length && !initFlag && !disableFlag) {
+  // recreate default users if none exist regardless of initialization flag
+  if (!users.length && !disableFlag) {
     const defaults = [
       { name: 'admin', password: '1234', role: 'admin' },
       { name: 'facundo', password: '1234', role: 'admin' },
@@ -445,4 +446,4 @@ ensureDefaultUsers();
 
 export default api;
 
-export { getAll, add, update, remove, exportJSON, importJSON, ready, ensureDefaultUsers };
+export { getAll, add, update, remove, exportJSON, importJSON, ready };
