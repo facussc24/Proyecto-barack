@@ -5,6 +5,44 @@ export const DATA_CHANGED = 'DATA_CHANGED';
 const STORAGE_KEY = 'genericData';
 const DISABLE_DEFAULT_USER_KEY = 'disableDefaultUser';
 
+// Base URL for the REST API
+export const API_URL =
+  (typeof window !== 'undefined' &&
+    (window.API_URL || (window.localStorage && localStorage.getItem('API_URL')))) ||
+  '';
+
+async function httpGet(path) {
+  const res = await fetch(API_URL + path);
+  if (!res.ok) throw new Error(res.statusText);
+  return res.json();
+}
+
+async function httpPost(path, data) {
+  const res = await fetch(API_URL + path, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error(res.statusText);
+  return res.json();
+}
+
+async function httpPut(path, data) {
+  const res = await fetch(API_URL + path, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw new Error(res.statusText);
+  return res.json();
+}
+
+async function httpDelete(path) {
+  const res = await fetch(API_URL + path, { method: 'DELETE' });
+  if (!res.ok) throw new Error(res.statusText);
+  return res.json();
+}
+
 // Dexie may be loaded via a script tag in the browser. Grab the global instance
 // if present. When running under Node we fallback to requiring the package so
 // the same file can be used in tests or server side scripts.
@@ -294,14 +332,41 @@ export async function addNode(node) {
   if (n.Desactivado === undefined) {
     n.Desactivado = false;
   }
+  if (API_URL) {
+    try {
+      const saved = await httpPost('/sinoptico', n);
+      await add('sinoptico', saved);
+      return saved.id;
+    } catch (e) {
+      console.error('API addNode failed', e);
+    }
+  }
   return add('sinoptico', n);
 }
 
 export async function updateNode(id, changes) {
+  if (API_URL) {
+    try {
+      const updated = await httpPut(`/sinoptico/${id}`, changes);
+      await update('sinoptico', id, updated);
+      return true;
+    } catch (e) {
+      console.error('API updateNode failed', e);
+    }
+  }
   return update('sinoptico', id, changes);
 }
 
 export async function deleteNode(id) {
+  if (API_URL) {
+    try {
+      await httpDelete(`/sinoptico/${id}`);
+      await remove('sinoptico', id);
+      return true;
+    } catch (e) {
+      console.error('API deleteNode failed', e);
+    }
+  }
   return remove('sinoptico', id);
 }
 
@@ -310,14 +375,41 @@ export async function getAllUsers() {
 }
 
 export async function addUser(user) {
+  if (API_URL) {
+    try {
+      const saved = await httpPost('/users', user);
+      await add('users', saved);
+      return saved.id;
+    } catch (e) {
+      console.error('API addUser failed', e);
+    }
+  }
   return add('users', user);
 }
 
 export async function updateUser(id, changes) {
+  if (API_URL) {
+    try {
+      const updated = await httpPut(`/users/${id}`, changes);
+      await update('users', id, updated);
+      return true;
+    } catch (e) {
+      console.error('API updateUser failed', e);
+    }
+  }
   return update('users', id, changes);
 }
 
 export async function deleteUser(id) {
+  if (API_URL) {
+    try {
+      await httpDelete(`/users/${id}`);
+      await remove('users', id);
+      return true;
+    } catch (e) {
+      console.error('API deleteUser failed', e);
+    }
+  }
   return remove('users', id);
 }
 
