@@ -32,7 +32,7 @@ function createApp() {
   }
   app.use(express.json());
 
-  app.get('/events', sse.init);
+  app.get('/api/events', sse.init);
 
   // Sinoptico routes
   app.get('/api/sinoptico', async (req, res) => {
