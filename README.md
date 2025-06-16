@@ -1,6 +1,6 @@
 # Proyecto Barack
 
-Versión actual: **371**
+Versión actual: **372**
 
 Esta es una pequeña SPA (Single Page Application) escrita en HTML, CSS y JavaScript.
 Incluye un módulo llamado *Sinóptico* para gestionar jerarquías de productos.
@@ -97,8 +97,9 @@ Para exponer los datos mediante una API REST se añadió un pequeño servidor ba
 
 1. Ejecuta `npm install` para descargar las dependencias.
 2. Inicia el servidor con `npm start` (puedes definir el puerto usando la variable `PORT`).
-3. Los datos se guardan en `server/data.json`.
-4. Están disponibles las rutas `/api/sinoptico` y `/api/users` para operaciones CRUD.
+3. Puedes controlar los orígenes permitidos con la variable `CORS_ORIGIN` (por defecto `*`).
+4. Los datos se guardan en `server/data.json`.
+5. Están disponibles las rutas `/api/sinoptico` y `/api/users` para operaciones CRUD.
 
 ### Configurar API_URL
 

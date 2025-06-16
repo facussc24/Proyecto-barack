@@ -1,5 +1,6 @@
 import express from 'express';
 import SSE from 'express-sse';
+import cors from 'cors';
 import { readFile, writeFile } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -23,6 +24,12 @@ async function writeData(data) {
 function createApp() {
   const app = express();
   const sse = new SSE();
+  const allowedOrigin = process.env.CORS_ORIGIN || '*';
+  if (allowedOrigin === '*') {
+    app.use(cors());
+  } else {
+    app.use(cors({ origin: allowedOrigin.split(',') }));
+  }
   app.use(express.json());
 
   app.get('/events', sse.init);
