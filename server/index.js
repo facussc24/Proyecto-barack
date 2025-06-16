@@ -1,4 +1,5 @@
 import express from 'express';
+import SSE from 'express-sse';
 import { readFile, writeFile } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -21,7 +22,10 @@ async function writeData(data) {
 
 function createApp() {
   const app = express();
+  const sse = new SSE();
   app.use(express.json());
+
+  app.get('/events', sse.init);
 
   // Sinoptico routes
   app.get('/api/sinoptico', async (req, res) => {
@@ -35,6 +39,7 @@ function createApp() {
     if (!item.id) item.id = Date.now().toString();
     data.sinoptico.push(item);
     await writeData(data);
+    sse.send({ type: 'update' });
     res.status(201).json(item);
   });
 
@@ -44,6 +49,7 @@ function createApp() {
     if (idx === -1) return res.status(404).end();
     data.sinoptico[idx] = { ...data.sinoptico[idx], ...req.body, id: data.sinoptico[idx].id };
     await writeData(data);
+    sse.send({ type: 'update' });
     res.json(data.sinoptico[idx]);
   });
 
@@ -53,6 +59,7 @@ function createApp() {
     if (idx === -1) return res.status(404).end();
     const removed = data.sinoptico.splice(idx, 1)[0];
     await writeData(data);
+    sse.send({ type: 'update' });
     res.json(removed);
   });
 
@@ -68,6 +75,7 @@ function createApp() {
     if (!user.id) user.id = Date.now().toString();
     data.users.push(user);
     await writeData(data);
+    sse.send({ type: 'update' });
     res.status(201).json(user);
   });
 
@@ -77,6 +85,7 @@ function createApp() {
     if (idx === -1) return res.status(404).end();
     data.users[idx] = { ...data.users[idx], ...req.body, id: data.users[idx].id };
     await writeData(data);
+    sse.send({ type: 'update' });
     res.json(data.users[idx]);
   });
 
@@ -86,6 +95,7 @@ function createApp() {
     if (idx === -1) return res.status(404).end();
     const removed = data.users.splice(idx, 1)[0];
     await writeData(data);
+    sse.send({ type: 'update' });
     res.json(removed);
   });
 
