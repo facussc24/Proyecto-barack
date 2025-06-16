@@ -21,6 +21,24 @@ async function writeData(data) {
   await writeFile(DATA_FILE, JSON.stringify(data, null, 2));
 }
 
+async function ensureDefaultUsers() {
+  const data = await readData();
+  if (Array.isArray(data.users) && data.users.length === 0) {
+    const defaults = [
+      { name: 'admin', password: '1234', role: 'admin' },
+      { name: 'facundo', password: '1234', role: 'admin' },
+      { name: 'leo', password: '1234', role: 'admin' },
+      { name: 'pablo', password: '1234', role: 'admin' },
+      { name: 'paulo', password: '1234', role: 'admin' },
+    ];
+    defaults.forEach((u, i) => {
+      u.id = Date.now().toString() + i;
+      data.users.push(u);
+    });
+    await writeData(data);
+  }
+}
+
 function createApp() {
   const app = express();
   const sse = new SSE();
@@ -110,6 +128,7 @@ function createApp() {
 }
 
 export async function startServer(port = process.env.PORT || 3000) {
+  await ensureDefaultUsers();
   const app = createApp();
   return new Promise(resolve => {
     const server = app.listen(port, () => {
