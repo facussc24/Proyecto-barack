@@ -1,6 +1,6 @@
 # Proyecto Barack
 
-Versión actual: **375**
+Versión actual: **376**
 
 Esta es una pequeña SPA (Single Page Application) escrita en HTML, CSS y JavaScript.
 Incluye un módulo llamado *Sinóptico* para gestionar jerarquías de productos.
@@ -21,19 +21,23 @@ siempre y cuando no se esté ejecutando desde `file://`.
 
 ## Uso
 
-1. Ejecuta un servidor local desde la carpeta del proyecto, por ejemplo
-  con `python -m http.server`, y abre `http://localhost:8000/index.html` en
-  tu navegador. Verás la pantalla de inicio de sesión donde puedes ingresar
-  con el usuario predeterminado **admin** y contraseña **admin**, o pulsar el botón
-  "Ingresar como invitado". Este usuario inicial se puede modificar o eliminar
-  desde la sección "Usuarios".
-  El ingreso no distingue mayúsculas o minúsculas en el nombre de usuario.
-2. Navega a "Sinóptico" para visualizar la tabla con filtros.
-   Los productos añadidos quedan sangrados a la derecha de su cliente y
-   muestran una flecha que indica la relación jerárquica.
-3. Puedes crear clientes desde cualquier vista con el botón "Nuevo cliente".
-4. Desde "Editar Sinóptico" puedes modificar los datos almacenados en el
-   servidor.
+1. Inicia la API ejecutando `npm start` (por defecto escuchará en
+   `http://localhost:3000/api`).
+2. En otra terminal ejecuta un servidor estático, por ejemplo con
+   `python -m http.server`, y abre `http://localhost:8000/index.html` en tu
+   navegador. Verás la pantalla de inicio de sesión donde puedes ingresar con el
+   usuario predeterminado **admin** y contraseña **admin**, o pulsar el botón
+   "Ingresar como invitado". Este usuario inicial se puede modificar o eliminar
+   desde la sección "Usuarios". El ingreso no distingue mayúsculas o minúsculas en
+   el nombre de usuario.
+3. Comprueba en la sección **Ajustes** que el campo "URL de la API" apunte a
+   `http://localhost:3000/api`. Si el servidor se ejecuta en otra dirección,
+   actualiza ese valor y recarga la página.
+4. Navega a "Sinóptico" para visualizar la tabla con filtros. Los productos
+   añadidos quedan sangrados a la derecha de su cliente y muestran una flecha que
+   indica la relación jerárquica.
+5. Puedes crear clientes desde cualquier vista con el botón "Nuevo cliente".
+6. Desde "Editar Sinóptico" puedes modificar los datos almacenados en el servidor.
 
 Hay dos puntos de entrada al Sinóptico: la vista SPA accesible desde `index.html` y el `sinoptico-editor.html` para modificaciones. El archivo `sinoptico.html` solo redirige a `index.html#/sinoptico`.
 Los datos se guardan ahora de forma centralizada en el servidor mediante una API REST.
