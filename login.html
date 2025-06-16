@@ -17,7 +17,10 @@
     <h1 class="login-title">Acceso</h1>
     <form id="loginForm" class="login-form">
       <input id="loginUser" type="text" required placeholder="Usuario">
-      <input id="loginPass" type="password" required placeholder="Contraseña">
+      <div class="password-wrapper">
+        <input id="loginPass" type="password" required placeholder="Contraseña">
+        <button id="togglePass" type="button" class="toggle-password" aria-label="Mostrar contraseña">👁️</button>
+      </div>
       <button type="submit">Ingresar</button>
       <button type="button" id="guestBtn">Ingresar como invitado</button>
     </form>

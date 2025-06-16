@@ -988,6 +988,23 @@ select {
   align-items: center;
   gap: 4px;
 }
+
+.password-wrapper {
+  position: relative;
+}
+.password-wrapper input {
+  padding-right: 2rem;
+}
+.toggle-password {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text);
+}
 .login-form button:hover,
 .admin-panel button:hover {
   background-color: var(--color-primary-hover);
