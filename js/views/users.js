@@ -2,14 +2,16 @@ import { getAll, add, update, remove, ready } from '../dataService.js';
 
 export async function render(container) {
   container.innerHTML = `
-    <h1>Usuarios</h1>
-    <table class="users-table">
-      <thead>
-        <tr><th>Nombre</th><th>Rol</th><th>Acciones</th></tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-    <button id="addUserBtn">Añadir usuario</button>
+    <div class="users-container">
+      <h1>Usuarios</h1>
+      <table class="users-table">
+        <thead>
+          <tr><th>Nombre</th><th>Rol</th><th>Acciones</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <button id="addUserBtn">Añadir usuario</button>
+    </div>
   `;
 
   const tbody = container.querySelector('tbody');

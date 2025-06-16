@@ -1420,6 +1420,18 @@ select {
 /* ==============================
    TABLA DE USUARIOS
    ============================== */
+.users-container {
+  width: 95%;
+  margin: 20px auto;
+  max-width: 650px;
+  background-color: var(--color-light);
+  padding: 1rem;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+.dark-mode .users-container {
+  background-color: #1e1e1e;
+}
 .users-table {
   width: 100%;
   max-width: 600px;
@@ -1436,6 +1448,12 @@ select {
   color: var(--color-light);
   text-align: left;
 }
+.users-table tbody tr:nth-child(even) {
+  background-color: #f7f7f7;
+}
+.users-table tbody tr:hover {
+  background-color: #eee;
+}
 .users-table td select,
 .users-table td button {
   padding: 4px 6px;
@@ -1449,6 +1467,29 @@ select {
 }
 .users-table td button:hover {
   background-color: var(--color-accent-hover);
+}
+.dark-mode .users-table tbody tr:nth-child(even) {
+  background-color: #1a1a1a;
+}
+.dark-mode .users-table tbody tr:hover {
+  background-color: #333;
+}
+.dark-mode .users-table th,
+.dark-mode .users-table td {
+  border-color: #444;
+}
+#addUserBtn {
+  display: block;
+  margin: 10px auto;
+  padding: 6px 12px;
+  background-color: var(--color-primary);
+  color: var(--color-light);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+#addUserBtn:hover {
+  background-color: var(--color-primary-hover);
 }
 
 dialog.modal{border:none;border-radius:8px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.3);position:relative;}dialog.modal form{display:flex;flex-direction:column;gap:8px;}
