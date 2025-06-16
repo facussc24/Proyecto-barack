@@ -25,11 +25,7 @@ async function ensureDefaultUsers() {
   const data = await readData();
   if (Array.isArray(data.users) && data.users.length === 0) {
     const defaults = [
-      { name: 'admin', password: '1234', role: 'admin' },
-      { name: 'facundo', password: '1234', role: 'admin' },
-      { name: 'leo', password: '1234', role: 'admin' },
-      { name: 'pablo', password: '1234', role: 'admin' },
-      { name: 'paulo', password: '1234', role: 'admin' },
+      { name: 'admin', password: 'admin', role: 'admin' },
     ];
     defaults.forEach((u, i) => {
       u.id = Date.now().toString() + i;

@@ -244,11 +244,7 @@ export async function ensureDefaultUsers() {
   const disableFlag = hasWindow && localStorage.getItem(DISABLE_DEFAULT_USER_KEY);
   if (!users.length && !disableFlag) {
     const defaults = [
-      { name: 'admin', password: '1234', role: 'admin' },
-      { name: 'facundo', password: '1234', role: 'admin' },
-      { name: 'leo', password: '1234', role: 'admin' },
-      { name: 'pablo', password: '1234', role: 'admin' },
-      { name: 'paulo', password: '1234', role: 'admin' },
+      { name: 'admin', password: 'admin', role: 'admin' },
     ];
     for (const u of defaults) await addUser(u);
     if (hasWindow) localStorage.setItem('defaultUserInit', '1');
