@@ -17,10 +17,6 @@ async function readData() {
   }
 }
 
-async function writeData(data) {
-  await writeFile(DATA_FILE, JSON.stringify(data, null, 2));
-}
-
 async function ensureDefaultUsers() {
   const data = await readData();
   if (Array.isArray(data.users) && data.users.length === 0) {
@@ -35,7 +31,11 @@ async function ensureDefaultUsers() {
   }
 }
 
-function createApp() {
+async function writeData(data) {
+  await writeFile(DATA_FILE, JSON.stringify(data, null, 2));
+}
+
+async function createApp() {
   const app = express();
   const sse = new SSE();
   const allowedOrigin = process.env.CORS_ORIGIN || '*';
@@ -45,6 +45,8 @@ function createApp() {
     app.use(cors({ origin: allowedOrigin.split(',') }));
   }
   app.use(express.json());
+
+  await ensureDefaultUsers();
 
   app.get('/api/events', sse.init);
 
@@ -124,8 +126,7 @@ function createApp() {
 }
 
 export async function startServer(port = process.env.PORT || 3000) {
-  await ensureDefaultUsers();
-  const app = createApp();
+  const app = await createApp();
   return new Promise(resolve => {
     const server = app.listen(port, () => {
       console.log(`Server listening on port ${port}`);
