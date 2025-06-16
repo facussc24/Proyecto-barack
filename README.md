@@ -1,6 +1,6 @@
 # Proyecto Barack
 
-Versión actual: **378**
+Versión actual: **379**
 
 Esta es una pequeña SPA (Single Page Application) escrita en HTML, CSS y JavaScript.
 Incluye un módulo llamado *Sinóptico* para gestionar jerarquías de productos.
@@ -112,8 +112,20 @@ Puedes indicar la URL base de la API para que el frontend se conecte al servidor
 1. Define `window.API_URL` antes de cargar los scripts de la aplicación.
 2. O bien guarda el valor en `localStorage` bajo la clave `API_URL`.
 
+
 La sección **Ajustes** incluye un campo para modificar este valor. Al cambiarlo
 se recargará la página y `dataService` usará la nueva dirección.
+
+## Pruebas
+
+Para ejecutar las pruebas debes asegurarte de que la API está en
+funcionamiento y que la variable `API_URL` apunta a dicha dirección
+(por ejemplo `http://localhost:3000/api`). Con el servidor en marcha,
+ejecuta:
+
+```bash
+npm test
+```
 
 ## Despliegue
 
