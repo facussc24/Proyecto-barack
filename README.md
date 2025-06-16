@@ -98,3 +98,13 @@ Para exponer los datos mediante una API REST se añadió un pequeño servidor ba
 3. Los datos se guardan en `server/data.json`.
 4. Están disponibles las rutas `/api/sinoptico` y `/api/users` para operaciones CRUD.
 
+### Configurar API_URL
+
+Puedes indicar la URL base de la API para que el frontend se conecte al servidor.
+
+1. Define `window.API_URL` antes de cargar los scripts de la aplicación.
+2. O bien guarda el valor en `localStorage` bajo la clave `API_URL`.
+
+La sección **Ajustes** incluye un campo para modificar este valor. Al cambiarlo
+se recargará la página y `dataService` usará la nueva dirección.
+

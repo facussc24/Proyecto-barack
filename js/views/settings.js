@@ -17,7 +17,12 @@ export async function render(container) {
         <input type="checkbox" id="toggleGridOverlay">
         Mostrar cuadrícula
       </label>
-    </section>`;
+      <label>
+        URL de la API:
+        <input id="apiUrlInput" type="text">
+      </label>
+    </section>
+    <p id="apiUrlDisplay"></p>`;
 
   await ready;
   const data = await getAll('sinoptico');
@@ -29,6 +34,17 @@ export async function render(container) {
   const valueLabel = container.querySelector('#brightnessValue');
   const versionChk = container.querySelector('#toggleVersionOverlay');
   const gridChk = container.querySelector('#toggleGridOverlay');
+  const apiInput = container.querySelector('#apiUrlInput');
+  const apiDisplay = container.querySelector('#apiUrlDisplay');
+
+  const currentApi =
+    localStorage.getItem('API_URL') || (typeof window !== 'undefined' && window.API_URL) || '';
+  apiInput.value = currentApi;
+  apiDisplay.textContent = 'URL actual: ' + (currentApi || '(vacía)');
+  apiInput.addEventListener('change', ev => {
+    localStorage.setItem('API_URL', ev.target.value.trim());
+    location.reload();
+  });
 
   const storedBrightness = localStorage.getItem('pageBrightness') || '100';
   range.value = storedBrightness;
