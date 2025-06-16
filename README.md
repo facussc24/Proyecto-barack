@@ -1,6 +1,6 @@
 # Proyecto Barack
 
-Versión actual: **376**
+Versión actual: **377**
 
 Esta es una pequeña SPA (Single Page Application) escrita en HTML, CSS y JavaScript.
 Incluye un módulo llamado *Sinóptico* para gestionar jerarquías de productos.
@@ -25,8 +25,8 @@ siempre y cuando no se esté ejecutando desde `file://`.
    `http://localhost:3000/api`).
 2. En otra terminal ejecuta un servidor estático, por ejemplo con
    `python -m http.server`, y abre `http://localhost:8000/index.html` en tu
-   navegador. Verás la pantalla de inicio de sesión donde puedes ingresar con el
-   usuario predeterminado **admin** y contraseña **admin**, o pulsar el botón
+  navegador. Verás la pantalla de inicio de sesión donde puedes ingresar con el
+  usuario predeterminado **admin** y contraseña **1234**, o pulsar el botón
    "Ingresar como invitado". Este usuario inicial se puede modificar o eliminar
    desde la sección "Usuarios". El ingreso no distingue mayúsculas o minúsculas en
    el nombre de usuario.
@@ -114,4 +114,17 @@ Puedes indicar la URL base de la API para que el frontend se conecte al servidor
 
 La sección **Ajustes** incluye un campo para modificar este valor. Al cambiarlo
 se recargará la página y `dataService` usará la nueva dirección.
+
+## Despliegue
+
+Sigue estos pasos para poner en producción la aplicación:
+
+1. Inicia la API con `npm start` o `node server/index.js`. Este proceso
+   almacena los datos en `server/data.json` y, por defecto, escucha en
+   `http://localhost:3000/api`.
+2. Sirve los archivos estáticos (HTML, CSS y JS) desde cualquier servidor. Si
+   utilizas **GitHub Pages** tendrás que ejecutar la API en otro lugar y
+   apuntar `window.API_URL` o `localStorage['API_URL']` a dicha dirección.
+3. Ten presente que las cuentas predeterminadas, como **admin**, utilizan la
+   contraseña **1234**.
 
