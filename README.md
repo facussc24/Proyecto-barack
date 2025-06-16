@@ -1,6 +1,6 @@
 # Proyecto Barack
 
-Versión actual: **368**
+Versión actual: **371**
 
 Esta es una pequeña SPA (Single Page Application) escrita en HTML, CSS y JavaScript.
 Incluye un módulo llamado *Sinóptico* para gestionar jerarquías de productos.
@@ -30,10 +30,10 @@ siempre y cuando no se esté ejecutando desde `file://`.
    muestran una flecha que indica la relación jerárquica.
 3. Puedes crear clientes desde cualquier vista con el botón "Nuevo cliente".
 4. Desde "Editar Sinóptico" puedes modificar los datos almacenados en el
-   navegador.
+   servidor.
 
 Hay dos puntos de entrada al Sinóptico: la vista SPA accesible desde `index.html` y el `sinoptico-editor.html` para modificaciones. El archivo `sinoptico.html` solo redirige a `index.html#/sinoptico`.
-Los datos se guardan localmente mediante **Dexie/IndexedDB**.
+Los datos se guardan ahora de forma centralizada en el servidor mediante una API REST.
 
 ### Exportar e importar datos
 
@@ -71,8 +71,7 @@ verifica lo siguiente:
 1. Asegúrate de abrir el proyecto mediante un servidor local (por ejemplo
    ejecutando `npx serve`) en lugar de abrir los archivos directamente con
    `file://`.
-2. Comprueba que el navegador no tenga deshabilitado **IndexedDB** o el
-   almacenamiento local.
+2. Comprueba que el navegador pueda conectarse con el servidor y que la URL de la API sea correcta.
 3. Revisa la consola de desarrollo del navegador en busca de errores de
    permisos o bloqueos.
 
@@ -86,7 +85,7 @@ verifica lo siguiente:
    contenga registros. Use `sinoptico-editor.html` o la sección Base de Datos
    para crearlos o importe un respaldo.
 
-Tras corregir cualquier problema relacionado con el almacenamiento, vuelve a
+Tras corregir cualquier problema de conexión con el servidor, vuelve a
 intentar la edición.
 
 ### Servidor Express
