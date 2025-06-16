@@ -7,7 +7,7 @@ export function render(container) {
       <p class="tagline">Soluciones modernas para tu negocio</p>
     <div class="quick-links">
       <a href="sinoptico-editor.html" class="btn-link no-guest">Editar Sinóptico</a>
-      <a href="#/sinoptico" class="btn-link">Ver Sinóptico</a>
+      <a href="sinoptico.html" class="btn-link">Ver Sinóptico</a>
       <a href="#/amfe" class="btn-link">AMFE</a>
     </div>
     </section>

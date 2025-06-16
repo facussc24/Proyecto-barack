@@ -4,6 +4,7 @@ import { isGuest } from '../session.js';
 
 export async function render(container) {
   container.innerHTML = `
+    <h1 class="editor-title">Sinóptico</h1>
     <div class="toolbar">
       <button id="sin-edit">Editar</button>
       <button id="btnNuevoCliente">Nuevo cliente</button>
