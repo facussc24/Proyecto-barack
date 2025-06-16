@@ -184,6 +184,15 @@ function notifyChange() {
   }
 }
 
+// connect to server-sent events for live updates
+const eventSource =
+  hasWindow && typeof EventSource !== 'undefined'
+    ? new EventSource(API_URL + '/events')
+    : null;
+if (eventSource) {
+  eventSource.addEventListener('message', () => notifyChange());
+}
+
 async function getAll(store = 'sinoptico') {
   const name = String(store);
   if (db && db[name]) {
