@@ -358,15 +358,6 @@ document.addEventListener('DOMContentLoaded', () => {
     await ready;
     try { sinopticoData = await dataService.getAll(); } catch { sinopticoData = []; }
     await ready;
-    if (!sinopticoData.length) {
-      const msg = document.getElementById('appMessage');
-      if (msg) {
-        msg.textContent = 'No hay datos en el sinóptico';
-        msg.style.display = 'block';
-      }
-      hideLoader();
-      return;
-    }
     // Si la base está vacía simplemente mostramos una tabla sin datos. Ya no
     // generamos registros de demostración para permitir que el usuario elimine
     // por completo los valores iniciales.

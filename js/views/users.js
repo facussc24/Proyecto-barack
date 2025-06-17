@@ -2,16 +2,14 @@ import { getAll, add, update, remove, ready } from '../dataService.js';
 
 export async function render(container) {
   container.innerHTML = `
-    <div class="users-container">
-      <h1>Usuarios</h1>
-      <table class="users-table">
-        <thead>
-          <tr><th>Nombre</th><th>Rol</th><th>Acciones</th></tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-      <button id="addUserBtn">Añadir usuario</button>
-    </div>
+    <h1>Usuarios</h1>
+    <table class="users-table">
+      <thead>
+        <tr><th>Nombre</th><th>Rol</th><th>Acciones</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <button id="addUserBtn">Añadir usuario</button>
   `;
 
   const tbody = container.querySelector('tbody');
@@ -48,11 +46,6 @@ export async function render(container) {
     if (btn.classList.contains('delete')) {
       if (confirm('¿Eliminar usuario?')) {
         await remove('users', id);
-        if (window.mostrarMensaje) window.mostrarMensaje('Usuario eliminado', 'success');
-        const remaining = await getAll('users');
-        if (!remaining.length && typeof localStorage !== 'undefined') {
-          localStorage.setItem('disableDefaultUser', '1');
-        }
         await load();
       }
     } else if (btn.classList.contains('edit')) {
@@ -65,8 +58,6 @@ export async function render(container) {
 
   function showEditor(user = {}, refRow) {
     const tr = document.createElement('tr');
-    const pwdPlaceholder = user.id ? 'Nueva contraseña' : 'Contraseña';
-    const pwdRequired = user.id ? '' : ' required';
     tr.innerHTML = `
       <td><input type="text" value="${user.name || ''}" /></td>
       <td>
@@ -74,7 +65,6 @@ export async function render(container) {
           <option value="admin"${user.role === 'admin' ? ' selected' : ''}>Admin</option>
           <option value="user"${user.role === 'user' ? ' selected' : ''}>User</option>
         </select>
-        <input type="password" placeholder="${pwdPlaceholder}"${pwdRequired} />
       </td>
       <td>
         <button class="save">Guardar</button>
@@ -86,20 +76,16 @@ export async function render(container) {
       tbody.appendChild(tr);
     }
 
-    const nameInput = tr.querySelector('input[type="text"]');
+    const nameInput = tr.querySelector('input');
     const roleSelect = tr.querySelector('select');
-    const passwordInput = tr.querySelector('input[type="password"]');
 
     tr.querySelector('.save').addEventListener('click', async () => {
       const data = { name: nameInput.value.trim(), role: roleSelect.value };
-      if (passwordInput.value) data.password = passwordInput.value;
       if (!data.name) return;
       if (user.id) {
         await update('users', user.id, data);
-        if (window.mostrarMensaje) window.mostrarMensaje('Usuario actualizado', 'success');
       } else {
         await add('users', data);
-        if (window.mostrarMensaje) window.mostrarMensaje('Usuario creado', 'success');
       }
       await load();
     });
