@@ -55,6 +55,7 @@ Si ya conoces estas páginas, puedes trabajar solo con `sinoptico-editor.html` y
 ## Sincronización de datos
 
 Este proyecto incluye un pequeño servidor Flask (`server.py`) para almacenar la base de datos en `BASE DE DATOS/base_datos.json`.
+El servidor debe ejecutarse en un único equipo o servidor accesible por la red para que todos los usuarios compartan la misma información.
 
 Para iniciar el servicio ejecuta:
 
@@ -63,7 +64,8 @@ pip install -r requirements.txt
 python server.py
 ```
 
-Las páginas pueden seguir alojándose en GitHub Pages, pero asegúrate de que la constante `API_URL` de `js/dataService.js` apunte a la URL del servidor.
+GitHub Pages solo aloja archivos estáticos y no puede ejecutar este servidor.
+Cuando uses varias PC, configura la constante `API_URL` de `js/dataService.js` con la dirección IP o dominio del equipo donde corre `server.py`.
 
 
 ## Desarrollo
