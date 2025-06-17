@@ -1474,3 +1474,40 @@ body.grid-overlay::before {
   z-index: 9999;
 }
 
+/* ===== New maestro table ===== */
+#maestro-table {
+  border-collapse: collapse;
+  width: 100%;
+}
+#maestro-table thead th {
+  background: #44546A;
+  color: #fff;
+  text-transform: uppercase;
+  position: sticky;
+  top: 0;
+}
+#maestro-table th:nth-child(1) { width: 40px; }
+#maestro-table th:nth-child(2) { width: 200px; }
+#maestro-table tbody tr:nth-child(even) { background: #F3F6F9; }
+#maestro-table tbody tr:nth-child(odd) { background: #fff; }
+.doc-link {
+  text-decoration: none;
+  position: relative;
+}
+.doc-link:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  background: #333;
+  color: #fff;
+  padding: 2px 4px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  border-radius: 3px;
+}
+
+.modal-historial table { width: 100%; border-collapse: collapse; }
+.modal-historial th, .modal-historial td { border: 1px solid #ccc; padding: 4px; }
+.modal-historial { padding: 10px; border: none; border-radius: 6px; }
+
