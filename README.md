@@ -11,6 +11,15 @@ Todo se ejecuta en el navegador y no requiere servidor.
 Cada nueva versión debe incluir un número visible junto a la fecha y hora en la parte inferior derecha de la interfaz para confirmar que el cambio ha sido aplicado.
 Todos los cambios en este repositorio incrementarán dicho número.
 
+Para automatizar este proceso puedes usar `tools/bump_version.py`:
+
+```bash
+python tools/bump_version.py <nuevo-numero>
+```
+
+El script actualiza `package.json`, `package-lock.json`, `README.md` y
+`docs/js/version.js` con la versión indicada.
+
 ## Uso
 
 1. Abre `docs/login.html` en tu navegador.
