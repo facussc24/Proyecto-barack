@@ -3,7 +3,7 @@ import { logout, isAdmin, isGuest } from './session.js';
 // guests shouldn't access certain pages directly
 const guestOnlyPages = ['sinoptico-editor.html', 'database.html', 'arbol.html'];
 if (isGuest() && guestOnlyPages.some(p => location.pathname.endsWith(p))) {
-  location.href = 'index.html#/sinoptico';
+  location.href = 'sinoptico.html';
 }
 
 function applyRoleRules() {
