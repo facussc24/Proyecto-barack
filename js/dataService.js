@@ -3,6 +3,8 @@
 
 export const DATA_CHANGED = 'DATA_CHANGED';
 const STORAGE_KEY = 'genericData';
+// URL of the backend API used to store and retrieve data
+const API_URL = 'http://localhost:5000/api/data';
 
 // Dexie may be loaded via a script tag in the browser. Grab the global instance
 // if present. When running under Node we fallback to requiring the package so
@@ -214,6 +216,18 @@ async function remove(store = 'sinoptico', id) {
 }
 
 async function exportJSON() {
+  // Try to fetch the data from the server first
+  try {
+    const resp = await fetch(API_URL);
+    if (resp.ok) {
+      const serverData = await resp.json();
+      return JSON.stringify(serverData);
+    }
+  } catch (e) {
+    console.error('Failed to fetch data from server', e);
+  }
+
+  // Fallback to local storage/IndexedDB when offline
   const result = {};
   if (db) {
     for (const table of db.tables) {
@@ -239,6 +253,18 @@ async function importJSON(json) {
     return;
   }
   if (!data || typeof data !== 'object') return;
+
+  // Attempt to persist the data on the server first
+  try {
+    await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+  } catch (e) {
+    console.error('Failed to send data to server', e);
+  }
+
   if (db) {
     try {
       await db.transaction('rw', db.tables, async () => {
