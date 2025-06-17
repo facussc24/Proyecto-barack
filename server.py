@@ -8,7 +8,7 @@ from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from apscheduler.schedulers.background import BackgroundScheduler
 
-DATA_DIR = "data"
+DATA_DIR = os.getenv("DATA_DIR", "data")
 DATA_FILE = os.path.join(DATA_DIR, "latest.json")
 HISTORY_FILE = os.path.join(DATA_DIR, "history.json")
 BACKUP_DIR = os.path.join(DATA_DIR, "backups")
