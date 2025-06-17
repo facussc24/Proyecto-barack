@@ -18,6 +18,8 @@
   --secondary-color: var(--color-accent);
   --accent-color: var(--color-accent);
   --page-brightness: 100%;
+  --maestro-header-bg: #44546A;
+  --maestro-row-alt: #F3F6F9;
 }
 
 .dark-mode {
@@ -30,6 +32,8 @@
   --color-danger: #e74c3c;
   --color-danger-hover: #c0392b;
   --color-surface-dark: #1e1e1e;
+  --maestro-header-bg: #2e3b4e;
+  --maestro-row-alt: #1a1a1a;
 }
 
 /* mantener la hero de la página de inicio con sus colores originales */
@@ -493,6 +497,19 @@ tr[data-level] td:first-child {
 #maestro {
   max-height: 70vh;
   overflow-y: auto;
+}
+
+#maestro thead th {
+  position: sticky;
+  top: 0;
+  background-color: var(--maestro-header-bg);
+  color: var(--color-light);
+  padding: 8px;
+  z-index: 1;
+}
+
+#maestro tbody tr:nth-child(even) {
+  background-color: var(--maestro-row-alt);
 }
 
 .category-section {
