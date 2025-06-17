@@ -35,6 +35,16 @@ function crearCeldaInput(valor) {
 function renderTabla(container) {
   const tbody = container.querySelector('#maestro tbody');
   tbody.innerHTML = '';
+  if (!maestroData.length) {
+    const tr = document.createElement('tr');
+    tr.id = 'maestro-empty';
+    const td = document.createElement('td');
+    td.colSpan = 8;
+    td.textContent = 'No hay datos disponibles';
+    tr.appendChild(td);
+    tbody.appendChild(tr);
+    return;
+  }
   maestroData.forEach(item => {
     const tr = document.createElement('tr');
     tr.dataset.id = item.id;
@@ -57,8 +67,12 @@ function renderTabla(container) {
 
 function agregarHistorial(id, campo, antes, despues) {
   const usuario = (getUser() || {}).name || 'Admin';
+  const hasCrypto = typeof crypto !== 'undefined';
   const entry = {
-    hist_id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(),
+    hist_id:
+      hasCrypto && crypto.randomUUID
+        ? crypto.randomUUID()
+        : Date.now().toString(),
     elemento_id: id,
     timestamp: new Date().toISOString(),
     usuario,
