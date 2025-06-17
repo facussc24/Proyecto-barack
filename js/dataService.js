@@ -51,8 +51,7 @@ if (Dexie) {
     sinoptico: 'id,parentId,nombre,orden',
   });
   db.version(2).stores({
-    sinoptico: 'id,parentId,nombre,orden',
-    users: 'id,name,role',
+    sinoptico: 'id,parentId,nombre,orden'
   });
   // migrate existing records that used numeric primary keys
   db.open()
@@ -366,8 +365,7 @@ const api = {
       db = new Dexie('ProyectoBarackDB');
       db.version(1).stores({ sinoptico: 'id,parentId,nombre,orden' });
       db.version(2).stores({
-        sinoptico: 'id,parentId,nombre,orden',
-        users: 'id,name,role',
+        sinoptico: 'id,parentId,nombre,orden'
       });
     }
     for (const key of Object.keys(memory)) delete memory[key];
