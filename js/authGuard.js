@@ -1,9 +1,4 @@
-import { getUser, logout, isAdmin, isGuest } from './session.js';
-
-const user = getUser();
-if (!user) {
-  location.href = 'login.html';
-}
+import { logout, isAdmin, isGuest } from './session.js';
 
 // guests shouldn't access certain pages directly
 const guestOnlyPages = ['sinoptico-editor.html', 'database.html', 'arbol.html'];
