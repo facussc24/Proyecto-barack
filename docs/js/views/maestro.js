@@ -68,7 +68,7 @@ function renderTabla(container) {
       <td>${item.codigo_producto || ''}</td>
       <td>${item.revision || ''}</td>
       <td>${formatDate(item.fecha_ultima_revision)}</td>
-      <td>${item.link ? `<a href="${item.link}" target="_blank">📂</a>` : ''}</td>
+      <td>${item.link ? `<span title="Abrir carpeta"><a href="${item.link}" target="_blank" aria-label="Abrir carpeta">📂</a></span>` : ''}</td>
       <td>
         <button class="edit-row">✏️</button>
         <button class="del-row">🗑️</button>
