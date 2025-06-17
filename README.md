@@ -1,6 +1,6 @@
 # Proyecto Barack
 
-Versión actual: **357**
+Versión actual: **358**
 
 Esta es una pequeña SPA (Single Page Application) escrita en HTML, CSS y JavaScript.
 Incluye un módulo llamado *Sinóptico* para gestionar jerarquías de productos.
@@ -29,8 +29,13 @@ Los datos se guardan localmente mediante **Dexie/IndexedDB**.
 ### Exportar e importar datos
 
 Todas las vistas utilizan la misma base de datos `ProyectoBarackDB` a través del
-módulo `js/dataService.js`. Para realizar copias de seguridad manuales abre la
-consola del navegador y ejecuta lo siguiente:
+módulo `js/dataService.js`. A partir de la versión 358 puedes exportar e
+importar la información desde la página de inicio mediante dos botones. El
+archivo descargado se llama `base_datos.json` y puedes guardarlo en la carpeta
+`BASE DE DATOS` incluida en este repositorio.
+
+Para realizar copias de seguridad manuales desde la consola del navegador sigue
+si lo prefieres este procedimiento:
 
 ```js
 const json = await dataService.exportJSON();
