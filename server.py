@@ -1,10 +1,15 @@
 import os
 import json
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static', static_url_path='')
 CORS(app)
+
+@app.route('/', defaults={'path': 'index.html'})
+@app.route('/<path:path>')
+def static_proxy(path):
+    return send_from_directory(app.static_folder, path)
 
 DATA_FILE = os.path.join(os.path.dirname(__file__), 'BASE DE DATOS', 'base_datos.json')
 
