@@ -30,6 +30,19 @@ async function applyServerData(data) {
   notifyChange();
 }
 
+async function persistCurrentState() {
+  try {
+    const json = await exportJSON(true);
+    await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: json,
+    });
+  } catch (e) {
+    console.error('Failed to sync data with server', e);
+  }
+}
+
 // Dexie may be loaded via a script tag in the browser. Grab the global instance
 // if present. When running under Node we fallback to requiring the package so
 // the same file can be used in tests or server side scripts.
@@ -189,6 +202,7 @@ async function add(store = 'sinoptico', obj) {
     try {
       await db[name].add(item);
       notifyChange();
+      await persistCurrentState();
       return item.id;
     } catch (e) {
       console.error(e);
@@ -198,6 +212,7 @@ async function add(store = 'sinoptico', obj) {
   memory[name].push(item);
   _fallbackPersist();
   notifyChange();
+  await persistCurrentState();
   return item.id;
 }
 
@@ -210,7 +225,10 @@ async function update(store = 'sinoptico', id, changes) {
       if (!result && !isNaN(key)) {
         result = await db[name].update(Number(key), changes);
       }
-      if (result) notifyChange();
+      if (result) {
+        notifyChange();
+        await persistCurrentState();
+      }
       return result;
     } catch (e) {
       console.error(e);
@@ -222,6 +240,7 @@ async function update(store = 'sinoptico', id, changes) {
     Object.assign(item, changes);
     _fallbackPersist();
     notifyChange();
+    await persistCurrentState();
     return true;
   }
   return false;
@@ -238,7 +257,10 @@ async function remove(store = 'sinoptico', id) {
       } catch {
         if (!isNaN(key)) result = await db[name].delete(Number(key));
       }
-      if (result !== undefined) notifyChange();
+      if (result !== undefined) {
+        notifyChange();
+        await persistCurrentState();
+      }
       return result;
     } catch (e) {
       console.error(e);
@@ -250,21 +272,24 @@ async function remove(store = 'sinoptico', id) {
     arr.splice(idx, 1);
     _fallbackPersist();
     notifyChange();
+    await persistCurrentState();
     return true;
   }
   return false;
 }
 
-async function exportJSON() {
-  // Try to fetch the data from the server first
-  try {
-    const resp = await fetch(API_URL);
-    if (resp.ok) {
-      const serverData = await resp.json();
-      return JSON.stringify(serverData);
+async function exportJSON(preferLocal = false) {
+  // Try to fetch the data from the server first unless we prefer local data
+  if (!preferLocal) {
+    try {
+      const resp = await fetch(API_URL);
+      if (resp.ok) {
+        const serverData = await resp.json();
+        return JSON.stringify(serverData);
+      }
+    } catch (e) {
+      console.error('Failed to fetch data from server', e);
     }
-  } catch (e) {
-    console.error('Failed to fetch data from server', e);
   }
 
   // Fallback to local storage/IndexedDB when offline
