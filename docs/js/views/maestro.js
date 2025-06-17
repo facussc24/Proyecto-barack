@@ -70,7 +70,6 @@ function renderTabla(container) {
       <td>${formatDate(item.fecha_ultima_revision)}</td>
       <td>${item.link ? `<span title="Abrir carpeta"><a href="${item.link}" target="_blank" aria-label="Abrir carpeta">📂</a></span>` : ''}</td>
       <td>
-        <button class="edit-row">✏️</button>
         <button class="del-row">🗑️</button>
         <button class="ok-row">✔</button>
       </td>`;
@@ -275,12 +274,61 @@ export async function render(container) {
         maestroData.splice(idx, 1);
         renderTabla(container);
       }
-    } else if (btn.classList.contains('edit-row')) {
-      startEdit(tr, item);
     } else if (btn.classList.contains('ok-row')) {
       await setNotification(id, true);
       renderTabla(container);
     }
+  });
+
+  const columnMap = [null, 'tipo', 'nro', 'codigo_producto', 'revision',
+    'fecha_ultima_revision', 'link'];
+
+  tbody.addEventListener('dblclick', ev => {
+    const cell = ev.target.closest('td');
+    if (!cell) return;
+    const tr = cell.closest('tr');
+    if (!tr) return;
+    const cells = Array.from(tr.children);
+    const colIndex = cells.indexOf(cell);
+    if (colIndex <= 0 || colIndex >= cells.length - 1) return;
+    if (cell.querySelector('input')) return;
+    const rowId = tr.dataset.id;
+    const key = columnMap[colIndex];
+    if (!key) return;
+    const row = maestroData.find(r => r.id === rowId);
+    if (!row) return;
+    const original = row[key] || '';
+    cell.innerHTML = '';
+    const inp = document.createElement('input');
+    inp.type = 'text';
+    inp.value = key === 'fecha_ultima_revision' ? formatDate(original) : original;
+    cell.appendChild(inp);
+    inp.focus();
+    inp.select();
+
+    const finish = () => {
+      const val = inp.value.trim();
+      cell.innerHTML =
+        key === 'link' && val ? `<a href="${val}" target="_blank">📂</a>` : val;
+      onCellEdit(rowId, key, val);
+    };
+
+    const onKey = e => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        inp.blur();
+      } else if (e.key === 'Escape') {
+        cell.innerHTML =
+          key === 'link' && original
+            ? `<a href="${original}" target="_blank">📂</a>`
+            : key === 'fecha_ultima_revision'
+            ? formatDate(original)
+            : original;
+      }
+    };
+
+    inp.addEventListener('blur', finish, { once: true });
+    inp.addEventListener('keydown', onKey);
   });
 
   container.querySelector('#btnNuevoMaestro').addEventListener('click', async () => {
