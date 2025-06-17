@@ -5,6 +5,30 @@ export const DATA_CHANGED = 'DATA_CHANGED';
 const STORAGE_KEY = 'genericData';
 // URL of the backend API used to store and retrieve data
 const API_URL = 'http://192.168.1.154:5000/api/data';
+const SOCKET_URL = API_URL.replace(/\/api\/data$/, '');
+
+async function applyServerData(data) {
+  if (!data || typeof data !== 'object') return;
+  if (db) {
+    try {
+      await db.transaction('rw', db.tables, async () => {
+        for (const table of db.tables) {
+          const arr = Array.isArray(data[table.name]) ? data[table.name] : [];
+          await table.clear();
+          if (arr.length) await table.bulkAdd(arr);
+        }
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  for (const key of Object.keys(memory)) delete memory[key];
+  for (const key in data) {
+    if (Array.isArray(data[key])) memory[key] = [...data[key]];
+  }
+  _fallbackPersist();
+  notifyChange();
+}
 
 // Dexie may be loaded via a script tag in the browser. Grab the global instance
 // if present. When running under Node we fallback to requiring the package so
@@ -32,6 +56,22 @@ let readyResolve;
 const ready = new Promise((res) => {
   readyResolve = res;
 });
+
+let socket;
+if (hasWindow && typeof io !== 'undefined') {
+  socket = io(SOCKET_URL);
+  socket.on('data_updated', async () => {
+    try {
+      const resp = await fetch(API_URL);
+      if (resp.ok) {
+        const serverData = await resp.json();
+        await applyServerData(serverData);
+      }
+    } catch (e) {
+      console.error('Failed to refresh data from server', e);
+    }
+  });
+}
 
 function hydrateFromStorage() {
   if (!hasWindow) return;
