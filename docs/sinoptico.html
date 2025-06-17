@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Editor de Sinóptico</title>
+  <title>Sinóptico</title>
   <link rel="stylesheet" href="assets/styles.css">
   <script>
     if (localStorage.getItem('darkMode') === 'true') {
@@ -14,21 +14,11 @@
 <body>
   <nav class="main-nav">
     <a href="index.html">Inicio</a>
-    <a href="sinoptico.html">Ver Sinóptico</a>
     <a href="database.html" class="no-guest">Base de Datos</a>
+    <!-- <a href="#/sinoptico">Sinóptico SPA</a> -->
     <button id="toggleDarkMode" type="button">🌙</button>
     <button type="button" class="logout-link">Salir</button>
   </nav>
-  <header class="editor-header">
-    <h1 class="editor-title">Editor de Sinóptico</h1>
-  </header>
-  <div class="editor-menu">
-    <button id="btnNuevoCliente">Nuevo cliente</button>
-    <button id="btnEliminar">Eliminar</button>
-    <button id="btnArbol" onclick="window.location.href='arbol.html'">Crear árbol producto</button>
-  </div>
-  <div id="loading"></div>
-  <div id="appMessage" role="alert" aria-live="polite"></div>
   <div class="filtro-contenedor">
     <div class="filtros-texto">
       <label for="search">Buscar:</label>
@@ -45,15 +35,16 @@
         <option value="Subproducto">Subproducto</option>
         <option value="Insumo">Insumo</option>
       </select>
-      <span class="filtro-opciones">
-        <label><input type="checkbox" id="chkMostrarNivel0" checked> Nivel 0</label>
-        <label><input type="checkbox" id="chkMostrarNivel1" checked> Nivel 1</label>
-        <label><input type="checkbox" id="chkMostrarNivel2" checked> Nivel 2</label>
-        <label><input type="checkbox" id="chkMostrarNivel3" checked> Nivel 3</label>
-      </span>
       <div id="selectedItems" class="chips"></div>
       <button id="expandirTodo">Expandir todo</button>
       <button id="colapsarTodo">Colapsar todo</button>
+    </div>
+    <div class="filtro-opciones">
+      <label><input type="checkbox" id="chkMostrarNivel0" checked> Nivel 0</label>
+      <label><input type="checkbox" id="chkMostrarNivel1" checked> Nivel 1</label>
+      <label><input type="checkbox" id="chkMostrarNivel2" checked> Nivel 2</label>
+      <label><input type="checkbox" id="chkMostrarNivel3" checked> Nivel 3</label>
+      <button id="btnExcel" class="no-guest">Exportar Excel</button>
     </div>
   </div>
   <div class="tabla-contenedor">
@@ -71,41 +62,9 @@
       <tbody id="sinopticoBody"></tbody>
     </table>
   </div>
-  <dialog id="dlgNuevoCliente" class="modal">
-    <form method="dialog">
-      <label for="nuevoClienteNombre">Nombre del cliente:</label>
-      <input id="nuevoClienteNombre" type="text" required>
-      <div class="form-actions">
-        <button type="submit">Crear</button>
-        <button type="button">Cancelar</button>
-      </div>
-    </form>
-  </dialog>
-  <dialog id="dlgNuevoProducto" class="modal">
-    <form method="dialog">
-      <label for="nuevoProductoCliente">Cliente:</label>
-      <select id="nuevoProductoCliente" required></select>
-      <label for="nuevoProductoDescripcion">Descripción del producto:</label>
-      <input id="nuevoProductoDescripcion" type="text" required>
-      <label for="nuevoProductoCodigo">Código:</label>
-      <input id="nuevoProductoCodigo" type="text" required>
-      <label for="nuevoProductoLargo">Largo (mm):</label>
-      <input id="nuevoProductoLargo" type="number" step="any">
-      <label for="nuevoProductoAncho">Ancho (mm):</label>
-      <input id="nuevoProductoAncho" type="number" step="any">
-      <label for="nuevoProductoAlto">Alto (mm):</label>
-      <input id="nuevoProductoAlto" type="number" step="any">
-      <label for="nuevoProductoPeso">Peso (kg):</label>
-      <input id="nuevoProductoPeso" type="number" step="any">
-      <div class="form-actions">
-        <button type="submit">Crear</button>
-        <button id="cancelNuevoProducto" type="button">Cancelar</button>
-      </div>
-    </form>
-  </dialog>
   <script src="lib/dexie.min.js" defer></script>
   <script src="lib/fuse.min.js" defer></script>
-  <script src="/socket.io/socket.io.js" defer></script>
+  <script src="./socket.io/socket.io.js" defer></script>
   <script type="module" src="js/authGuard.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js" defer></script>
   <script type="module" src="js/dataService.js" defer></script>
@@ -115,12 +74,10 @@
   <script type="module" src="js/darkMode.js" defer></script>
   <script type="module" src="js/pageSettings.js" defer></script>
   <script type="module" src="js/hideLoading.js" defer></script>
-  <script type="module" src="js/editorUI.js" defer></script>
   <script type="module" src="js/newClientDialog.js" defer></script>
-  <script type="module" src="js/newProductDialog.js" defer></script>
   <script type="module" src="js/version.js" defer></script>
   <script>
-    sessionStorage.setItem('sinopticoEdit', 'true');
+    sessionStorage.setItem('sinopticoEdit', 'false');
   </script>
 </body>
 </html>

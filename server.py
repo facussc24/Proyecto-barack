@@ -24,7 +24,7 @@ if os.path.exists(HISTORY_FILE):
 else:
     history = []
 
-app = Flask(__name__, static_folder='static', static_url_path='')
+app = Flask(__name__, static_folder='docs', static_url_path='')
 from flask_socketio import SocketIO
 socketio = SocketIO(app, async_mode='eventlet')
 CORS(app)
