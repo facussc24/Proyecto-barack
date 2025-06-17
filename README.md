@@ -13,7 +13,7 @@ Todos los cambios en este repositorio incrementarán dicho número.
 
 ## Uso
 
-1. Abre `static/login.html` en tu navegador.
+1. Abre `docs/login.html` en tu navegador.
 2. Inicia sesión como **Admin** o pulsa *Ingresar como invitado*.
    El rol de invitado oculta las opciones de edición y solo permite consultar el
    Sinóptico.
@@ -23,7 +23,7 @@ Todos los cambios en este repositorio incrementarán dicho número.
    Sinóptico".
 4. Los datos pueden guardarse localmente en el navegador o en el servidor.
 
-Hay tres puntos de entrada al Sinóptico: la página standalone `static/sinoptico.html`, la vista SPA accesible desde `index.html` y el `static/sinoptico-editor.html` para modificaciones.
+Hay tres puntos de entrada al Sinóptico: la página standalone `docs/sinoptico.html`, la vista SPA accesible desde `index.html` y el `docs/sinoptico-editor.html` para modificaciones.
 Por defecto se usa **Dexie/IndexedDB** para el almacenamiento local, pero `js/dataService.js` puede sincronizar los datos con un servidor.
 
 ### Exportar e importar datos
@@ -44,9 +44,9 @@ await dataService.importJSON(json); // Restaura la copia
 ```
 
 
-Si ya conoces estas páginas, puedes trabajar solo con `static/sinoptico-editor.html` y consultar los datos desde `static/sinoptico.html`. La SPA (`index.html`) queda como opción adicional.
+Si ya conoces estas páginas, puedes trabajar solo con `docs/sinoptico-editor.html` y consultar los datos desde `docs/sinoptico.html`. La SPA (`index.html`) queda como opción adicional.
 
-### Crear un nuevo producto con `static/arbol.html`
+### Crear un nuevo producto con `docs/arbol.html`
 
 - Selecciona el cliente, la descripción y el código del producto.
 - Verás una vista previa del nodo seguido de sus subcomponentes e insumos.
@@ -55,7 +55,7 @@ Si ya conoces estas páginas, puedes trabajar solo con `static/sinoptico-editor.
 ## Sincronización de datos
 
 Este proyecto incluye un pequeño servidor Flask (`server.py`) para almacenar la base de datos en `BASE DE DATOS/base_datos.json`.
-A partir de esta versión el mismo script también sirve la interfaz web desde la carpeta `static`, de modo que todas las páginas quedan disponibles en `http://<IP>:5000/` (por ejemplo, `http://192.168.1.154:5000/`).
+A partir de esta versión el mismo script también sirve la interfaz web desde la carpeta `docs`, de modo que todas las páginas quedan disponibles en `http://<IP>:5000/` (por ejemplo, `http://192.168.1.154:5000/`).
 El servidor debe ejecutarse en un único equipo o servidor accesible por la red para que todos los usuarios compartan la misma información.
 
 El archivo activo se guarda en `data/latest.json` y cada día se crea una copia automática en `data/backups/AAAA-MM-DD.json`. Los respaldos con más de seis meses se eliminan al iniciar el servidor.
