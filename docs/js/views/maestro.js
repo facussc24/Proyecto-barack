@@ -290,14 +290,57 @@ export async function render(container) {
     renderTabla(container);
   });
 
-  container.querySelector('#btnExportMaestro').addEventListener('click', () => {
+  container.querySelector('#btnExportMaestro').addEventListener('click', async () => {
     if (typeof XLSX === 'undefined') return;
     const headers = Array.from(container.querySelectorAll('#maestro thead th')).map(th => th.textContent);
     const rows = maestroData.map(r => [r.notificado ? 'OK' : 'ALERTA', r.tipo, r.nro, r.codigo_producto, r.revision, formatDate(r.fecha_ultima_revision), r.link]);
     const wb = XLSX.utils.book_new();
     const ws = XLSX.utils.aoa_to_sheet([headers.slice(0,7), ...rows]);
+
+    const headerStyle = { font: { color: { rgb: 'FFFFFF' }, bold: true }, fill: { fgColor: { rgb: '44546A' } } };
+    headers.slice(0,7).forEach((_, idx) => {
+      const cell = ws[XLSX.utils.encode_cell({ r: 0, c: idx })];
+      if (cell) cell.s = headerStyle;
+    });
+
+    rows.forEach((row, rIdx) => {
+      const addr = XLSX.utils.encode_cell({ r: rIdx + 1, c: 0 });
+      const cell = ws[addr];
+      if (cell) cell.s = { fill: { fgColor: { rgb: row[0] === 'OK' ? '00B050' : 'FF0000' } } };
+    });
+
+    const colWidths = headers.slice(0,7).map((h, i) => {
+      if (i === 0) return { wch: 10 };
+      const max = Math.max(h.length, ...rows.map(r => String(r[i] || '').length));
+      return { wch: max + 2 };
+    });
+    ws['!cols'] = colWidths;
+
+    const histHeaders = ['Fecha/hora','Usuario','Tipo','Nro','Campo','Antes','Después'];
+    const historial = await getAll('maestroHist');
+    historial.sort((a,b)=>new Date(a.timestamp)-new Date(b.timestamp));
+    const histRows = historial.map(h => [
+      new Date(h.timestamp).toLocaleString('es-ES'),
+      h.usuario,
+      maestroData.find(x=>x.id===h.elemento_id)?.tipo||'',
+      maestroData.find(x=>x.id===h.elemento_id)?.nro||'',
+      h.campo,
+      h.antes,
+      h.despues
+    ]);
+    const wsHist = XLSX.utils.aoa_to_sheet([histHeaders, ...histRows]);
+    histHeaders.forEach((_, idx) => {
+      const cell = wsHist[XLSX.utils.encode_cell({ r: 0, c: idx })];
+      if (cell) cell.s = headerStyle;
+    });
+    wsHist['!cols'] = histHeaders.map((h,i)=>{
+      const max = Math.max(h.length, ...histRows.map(r=>String(r[i]||'').length));
+      return { wch: max + 2 };
+    });
+
     XLSX.utils.book_append_sheet(wb, ws, 'Maestro');
-    XLSX.writeFile(wb, 'maestro.xlsx');
+    XLSX.utils.book_append_sheet(wb, wsHist, 'Historial');
+    XLSX.writeFile(wb, 'ListadoMaestro.xlsx');
   });
 
   const dlg = container.querySelector('#historialDlg');
