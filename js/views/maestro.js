@@ -3,6 +3,19 @@ import { getUser } from '../session.js';
 
 let maestroData = [];
 
+// Dependencies between document types. When a document revision changes
+// the related documents listed here will be marked as pending review.
+const dependencies = {
+  'Flujograma': ['AMFE', 'Hoja de Operaciones'],
+  AMFE: [],
+  'Hoja de Operaciones': [],
+  Mylar: [],
+  Planos: [],
+  ULM: [],
+  'Ficha de Embalaje': [],
+  Tizada: []
+};
+
 function formatDate(dateStr) {
   if (!dateStr) return '';
   try {
@@ -83,6 +96,28 @@ function agregarHistorial(id, campo, antes, despues) {
   add('maestroHist', entry);
 }
 
+// When a document revision changes, mark dependent documents of the same
+// product as pending by clearing their revision and setting notificado=false.
+async function aplicarDependencias(item, cambios) {
+  if (!cambios.revision) return;
+  const dependents = dependencies[item.tipo] || [];
+  if (!dependents.length) return;
+  for (const depTipo of dependents) {
+    const depRow = maestroData.find(
+      r => r.codigo_producto === item.codigo_producto && r.tipo === depTipo
+    );
+    if (depRow) {
+      const oldRev = depRow.revision || '';
+      if (oldRev !== '') {
+        agregarHistorial(depRow.id, 'revision', oldRev, '');
+      }
+      depRow.revision = '';
+      depRow.notificado = false;
+      await update('maestro', depRow.id, { revision: '', notificado: false });
+    }
+  }
+}
+
 function startEdit(tr, item) {
   if (tr.classList.contains('editing')) return;
   tr.classList.add('editing');
@@ -133,6 +168,7 @@ function startEdit(tr, item) {
     if (cambios.revision || cambios.nro || cambios.codigo_producto) {
       cambios.notificado = false;
     }
+    await aplicarDependencias(item, cambios);
     Object.assign(item, cambios);
     await update('maestro', item.id, cambios);
     tr.classList.remove('editing');
