@@ -76,6 +76,8 @@ function renderTabla(container) {
       </td>`;
     tbody.appendChild(tr);
   });
+
+  applyFilters(container);
 }
 
 function agregarHistorial(id, campo, antes, despues) {
@@ -167,6 +169,56 @@ function refreshSemaphore(rowId) {
   if (cell) cell.textContent = row.notificado ? '🟢' : '🔴';
 }
 
+function saveFilters(container) {
+  const ids = ['Status','Tipo','Nro','Codigo','Rev','Fecha','Link'];
+  const data = {};
+  ids.forEach(k => {
+    const el = container.querySelector(`#filter${k}`);
+    if (el) data[k] = el.value || '';
+  });
+  localStorage.setItem('maestroFilters', JSON.stringify(data));
+}
+
+function loadFilters(container) {
+  try {
+    const stored = JSON.parse(localStorage.getItem('maestroFilters') || '{}');
+    Object.entries(stored).forEach(([k,v]) => {
+      const el = container.querySelector(`#filter${k}`);
+      if (el) el.value = v;
+    });
+  } catch {}
+}
+
+function applyFilters(container) {
+  const val = id =>
+    (container.querySelector(`#${id}`)?.value || '').trim().toLowerCase();
+  const status = val('filterStatus');
+  const tipo = val('filterTipo');
+  const nro = val('filterNro');
+  const codigo = val('filterCodigo');
+  const rev = val('filterRev');
+  const fecha = val('filterFecha');
+  const link = val('filterLink');
+
+  container
+    .querySelectorAll('#maestro tbody tr')
+    .forEach(row => {
+      const cells = row.querySelectorAll('td');
+      let show = true;
+      if (status) {
+        const icon = cells[0].textContent.includes('🟢') ? 'ok' : 'alerta';
+        if (status !== icon) show = false;
+      }
+      if (show && tipo && !cells[1].textContent.toLowerCase().includes(tipo)) show = false;
+      if (show && nro && !cells[2].textContent.toLowerCase().includes(nro)) show = false;
+      if (show && codigo && !cells[3].textContent.toLowerCase().includes(codigo)) show = false;
+      if (show && rev && !cells[4].textContent.toLowerCase().includes(rev)) show = false;
+      if (show && fecha && !cells[5].textContent.toLowerCase().includes(fecha)) show = false;
+      if (show && link && !cells[6].textContent.toLowerCase().includes(link)) show = false;
+      row.style.display = show ? '' : 'none';
+    });
+}
+
 function startEdit(tr, item) {
   if (tr.classList.contains('editing')) return;
   tr.classList.add('editing');
@@ -235,6 +287,20 @@ export async function render(container) {
             <th>Link</th>
             <th></th>
           </tr>
+          <tr>
+            <th><select id="filterStatus" class="maestro-filter">
+                <option value=""></option>
+                <option value="ok">🟢</option>
+                <option value="alerta">🔴</option>
+            </select></th>
+            <th><input id="filterTipo" class="maestro-filter" type="text"></th>
+            <th><input id="filterNro" class="maestro-filter" type="text"></th>
+            <th><input id="filterCodigo" class="maestro-filter" type="text"></th>
+            <th><input id="filterRev" class="maestro-filter" type="text"></th>
+            <th><input id="filterFecha" class="maestro-filter" type="text"></th>
+            <th><input id="filterLink" class="maestro-filter" type="text"></th>
+            <th></th>
+          </tr>
         </thead>
         <tbody></tbody>
       </table>
@@ -268,6 +334,16 @@ export async function render(container) {
   await ready;
   maestroData = await getAll('maestro');
   renderTabla(container);
+  loadFilters(container);
+  applyFilters(container);
+
+  container.querySelectorAll('.maestro-filter').forEach(inp => {
+    const ev = inp.tagName === 'SELECT' ? 'change' : 'input';
+    inp.addEventListener(ev, () => {
+      applyFilters(container);
+      saveFilters(container);
+    });
+  });
 
   const tbody = container.querySelector('#maestro tbody');
   tbody.addEventListener('click', async ev => {
