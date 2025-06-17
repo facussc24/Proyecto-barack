@@ -1,6 +1,6 @@
 # Proyecto Barack
 
-Versión actual: **355**
+Versión actual: **356**
 
 Esta es una pequeña SPA (Single Page Application) escrita en HTML, CSS y JavaScript.
 Incluye un módulo llamado *Sinóptico* para gestionar jerarquías de productos.
@@ -19,8 +19,8 @@ Todos los cambios en este repositorio incrementarán dicho número.
    Sinóptico.
 3. Tras iniciar sesión se carga `index.html`, desde donde puedes navegar por las
    distintas páginas.
-   Los administradores tienen acceso completo a "Base de Datos", "Editar
-   Sinóptico" y "Usuarios".
+   Los administradores tienen acceso completo a "Base de Datos" y "Editar
+   Sinóptico".
 4. Los datos se guardan localmente en el navegador.
 
 Hay tres puntos de entrada al Sinóptico: la página standalone `sinoptico.html`, la vista SPA accesible desde `index.html` y el `sinoptico-editor.html` para modificaciones.
