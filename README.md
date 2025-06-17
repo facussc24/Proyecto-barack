@@ -21,10 +21,10 @@ Todos los cambios en este repositorio incrementarán dicho número.
    distintas páginas.
    Los administradores tienen acceso completo a "Base de Datos" y "Editar
    Sinóptico".
-4. Los datos se guardan localmente en el navegador.
+4. Los datos pueden guardarse localmente en el navegador o en el servidor.
 
 Hay tres puntos de entrada al Sinóptico: la página standalone `sinoptico.html`, la vista SPA accesible desde `index.html` y el `sinoptico-editor.html` para modificaciones.
-Los datos se guardan localmente mediante **Dexie/IndexedDB**.
+Por defecto se usa **Dexie/IndexedDB** para el almacenamiento local, pero `js/dataService.js` puede sincronizar los datos con un servidor.
 
 ### Exportar e importar datos
 
@@ -52,6 +52,19 @@ Si ya conoces estas páginas, puedes trabajar solo con `sinoptico-editor.html` y
 - Verás una vista previa del nodo seguido de sus subcomponentes e insumos.
 - Con los botones 🗑 puedes eliminar entradas que no quieras conservar.
 - Finalmente confirma para guardar todo el árbol.
+## Sincronización de datos
+
+Este proyecto incluye un pequeño servidor Flask (`server.py`) para almacenar la base de datos en `BASE DE DATOS/base_datos.json`.
+
+Para iniciar el servicio ejecuta:
+
+```bash
+pip install -r requirements.txt
+python server.py
+```
+
+Las páginas pueden seguir alojándose en GitHub Pages, pero asegúrate de que la constante `API_URL` de `js/dataService.js` apunte a la URL del servidor.
+
 
 ## Desarrollo
 
