@@ -5,27 +5,19 @@ if (current) {
   location.href = 'index.html';
 }
 
-const form = document.getElementById('loginForm');
+const adminBtn = document.getElementById('adminBtn');
 const guestBtn = document.getElementById('guestBtn');
-const toggleBtn = document.getElementById('togglePass');
-const passInput = document.getElementById('loginPass');
 
-if (toggleBtn && passInput) {
-  toggleBtn.addEventListener('click', () => {
-    const isHidden = passInput.type === 'password';
-    passInput.type = isHidden ? 'text' : 'password';
-    toggleBtn.textContent = isHidden ? '🙈' : '👁️';
+if (adminBtn) {
+  adminBtn.addEventListener('click', () => {
+    saveUser({ name: 'Administrador', role: 'admin' });
+    location.href = 'index.html';
   });
 }
 
-form.addEventListener('submit', ev => {
-  ev.preventDefault();
-  const name = document.getElementById('loginUser').value.trim();
-  saveUser({ name, role: 'admin' });
-  location.href = 'index.html';
-});
-
-guestBtn.addEventListener('click', () => {
-  saveUser({ name: 'Invitado', role: 'guest' });
-  location.href = 'index.html';
-});
+if (guestBtn) {
+  guestBtn.addEventListener('click', () => {
+    saveUser({ name: 'Invitado', role: 'guest' });
+    location.href = 'index.html';
+  });
+}
