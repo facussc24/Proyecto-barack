@@ -22,6 +22,8 @@ Todos los cambios en este repositorio incrementarán dicho número.
    Los administradores tienen acceso completo a "Base de Datos" y "Editar
    Sinóptico".
 4. Los datos pueden guardarse localmente en el navegador o en el servidor.
+5. La página `history.html` está reservada para administradores.
+   Los invitados son redirigidos automáticamente al abrirla.
 
 Hay tres puntos de entrada al Sinóptico: la página standalone `docs/sinoptico.html`, la vista SPA accesible desde `index.html` y el `docs/sinoptico-editor.html` para modificaciones.
 Por defecto se usa **Dexie/IndexedDB** para el almacenamiento local, pero `js/dataService.js` puede sincronizar los datos con un servidor.
