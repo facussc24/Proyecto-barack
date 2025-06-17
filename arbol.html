@@ -14,9 +14,8 @@
 <body>
   <nav class="main-nav">
     <a href="index.html">Inicio</a>
-    <a href="sinoptico-editor.html" class="no-guest">Editor Sinóptico</a>
+    <a href="sinoptico-editor.html">Editor Sinóptico</a>
     <button id="toggleDarkMode" type="button">🌙</button>
-    <button type="button" class="logout-link">Salir</button>
   </nav>
   <div id="loading"></div>
   <div id="appMessage" role="alert" aria-live="polite"></div>
@@ -86,7 +85,7 @@
       <button id="finishBtn" type="button">Finalizar</button>
     </div>
   </div>
-  <script type="module" src="js/authGuard.js"></script>
+  <script src="lib/dexie.min.js" defer></script>
   <script type="module" src="js/dataService.js" defer></script>
   <script type="module" src="js/arbol.js" defer></script>
   <script type="module" src="js/ui/animations.js" defer></script>

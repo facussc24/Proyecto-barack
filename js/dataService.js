@@ -1,48 +1,19 @@
 'use strict';
-
-// Simple data service that communicates only with the REST API
-// and keeps a small in-memory cache per store.
+// js/dataService.js
 
 export const DATA_CHANGED = 'DATA_CHANGED';
-const DISABLE_DEFAULT_USER_KEY = 'disableDefaultUser';
+const STORAGE_KEY = 'genericData';
 
-// Base URL for the REST API
-export const API_URL =
-  (typeof window !== 'undefined' &&
-    (window.API_URL || (window.localStorage && localStorage.getItem('API_URL')))) ||
-  (typeof process !== 'undefined' && process.env.API_URL) ||
-  'http://localhost:3000/api';
-
-async function httpGet(path) {
-  const res = await fetch(API_URL + path);
-  if (!res.ok) throw new Error(res.statusText);
-  return res.json();
-}
-
-async function httpPost(path, data) {
-  const res = await fetch(API_URL + path, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  });
-  if (!res.ok) throw new Error(res.statusText);
-  return res.json();
-}
-
-async function httpPut(path, data) {
-  const res = await fetch(API_URL + path, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  });
-  if (!res.ok) throw new Error(res.statusText);
-  return res.json();
-}
-
-async function httpDelete(path) {
-  const res = await fetch(API_URL + path, { method: 'DELETE' });
-  if (!res.ok) throw new Error(res.statusText);
-  return res.json();
+// Dexie may be loaded via a script tag in the browser. Grab the global instance
+// if present. When running under Node we fallback to requiring the package so
+// the same file can be used in tests or server side scripts.
+let Dexie = typeof globalThis !== 'undefined' ? globalThis.Dexie : undefined;
+if (!Dexie && typeof require === 'function') {
+  try {
+    Dexie = require('dexie');
+  } catch {
+    // ignore, fallback storage will be used
+  }
 }
 
 const isNode =
@@ -51,11 +22,69 @@ const isNode =
   process.versions.node != null;
 const hasWindow = !isNode && typeof window !== 'undefined' && window.document;
 
-// in-memory cache per store
-const cache = {};
+let db = null;
+// in-memory fallback per store
+const memory = {};
+// promise that resolves once IndexedDB is ready (or failed)
+let readyResolve;
+const ready = new Promise((res) => {
+  readyResolve = res;
+});
 
-// ready resolves immediately now that there is no IndexedDB setup
-export const ready = Promise.resolve();
+function hydrateFromStorage() {
+  if (!hasWindow) return;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    const obj = raw ? JSON.parse(raw) : {};
+    if (obj && typeof obj === 'object') {
+      Object.assign(memory, obj);
+    }
+  } catch (e) {
+    console.error('Failed to load fallback storage', e);
+  }
+}
+
+// initialize IndexedDB if Dexie is available
+if (Dexie) {
+  db = new Dexie('ProyectoBarackDB');
+  db.version(1).stores({
+    sinoptico: 'id,parentId,nombre,orden',
+  });
+  db.version(2).stores({
+    sinoptico: 'id,parentId,nombre,orden',
+    users: 'id,name,role',
+  });
+  // migrate existing records that used numeric primary keys
+  db.open()
+    .then(async () => {
+      const all = await db.sinoptico.toArray();
+      const needsFix = all.filter(
+        r => typeof r.id !== 'string' || r.id !== r.ID || !r.ID
+      );
+      if (needsFix.length) {
+        await db.transaction('rw', db.sinoptico, async () => {
+          for (const rec of needsFix) {
+            await db.sinoptico.delete(rec.id);
+            const fixedId = String(rec.ID || rec.id);
+            const newRec = { ...rec, id: fixedId, ID: fixedId };
+            await db.sinoptico.add(newRec);
+          }
+        });
+      }
+    })
+    .catch(() => {
+      db = null;
+      hydrateFromStorage();
+    })
+    .finally(() => {
+      if (readyResolve) readyResolve();
+    });
+} else if (hasWindow) {
+  hydrateFromStorage();
+  if (readyResolve) readyResolve();
+} else {
+  if (readyResolve) readyResolve();
+}
 
 // setup cross-tab/channel notifications
 const channelName = 'sinoptico-channel';
@@ -63,10 +92,21 @@ const channel =
   hasWindow && typeof BroadcastChannel !== 'undefined'
     ? new BroadcastChannel(channelName)
     : null;
+// secondary channel used by the simplified API
 const simpleChannel =
   hasWindow && typeof BroadcastChannel !== 'undefined'
     ? new BroadcastChannel('sinoptico')
     : null;
+
+function _fallbackPersist() {
+  // sync in-memory object to localStorage
+  if (!hasWindow) return;
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(memory));
+  } catch (e) {
+    console.error('Failed to persist fallback storage', e);
+  }
+}
 
 function notifyChange() {
   if (channel && channel.postMessage) {
@@ -76,92 +116,118 @@ function notifyChange() {
     simpleChannel.postMessage('changed');
   }
   if (hasWindow) {
+    // dispatch a DOM event for same-page listeners
     document.dispatchEvent(new Event(DATA_CHANGED));
     document.dispatchEvent(new Event('sinopticoUpdated'));
   }
 }
 
-// connect to server-sent events for live updates
-const eventSource =
-  hasWindow && typeof EventSource !== 'undefined'
-    ? new EventSource(API_URL + '/events')
-    : null;
-if (eventSource) {
-  eventSource.addEventListener('message', () => notifyChange());
-}
-
-async function loadStore(store = 'sinoptico') {
-  try {
-    const data = await httpGet(`/${store}`);
-    cache[store] = Array.isArray(data) ? [...data] : [];
-  } catch (e) {
-    console.error(e);
-    cache[store] = [];
+async function getAll(store = 'sinoptico') {
+  const name = String(store);
+  if (db && db[name]) {
+    try {
+      return await db[name].toArray();
+    } catch (e) {
+      console.error(e);
+      return [];
+    }
   }
-  return cache[store].slice();
+  const arr = Array.isArray(memory[name]) ? memory[name] : [];
+  return arr.slice();
 }
 
-export async function getAll(store = 'sinoptico') {
-  if (!cache[store]) {
-    return loadStore(store);
-  }
-  return cache[store].slice();
-}
-
-export async function add(store = 'sinoptico', obj) {
+async function add(store = 'sinoptico', obj) {
+  const name = String(store);
   const item = { ...obj };
   if (!item.id) item.id = Date.now().toString();
-  try {
-    const saved = await httpPost(`/${store}`, item);
-    cache[store] = cache[store] || [];
-    cache[store].push(saved);
-    notifyChange();
-    return saved.id;
-  } catch (e) {
-    console.error(e);
-    return null;
+  if (db && db[name]) {
+    try {
+      await db[name].add(item);
+      notifyChange();
+      return item.id;
+    } catch (e) {
+      console.error(e);
+    }
   }
+  if (!memory[name]) memory[name] = [];
+  memory[name].push(item);
+  _fallbackPersist();
+  notifyChange();
+  return item.id;
 }
 
-export async function update(store = 'sinoptico', id, changes) {
+async function update(store = 'sinoptico', id, changes) {
+  const name = String(store);
   const key = String(id);
-  try {
-    const updated = await httpPut(`/${store}/${key}`, changes);
-    if (cache[store]) {
-      const idx = cache[store].findIndex(x => String(x.id) === key);
-      if (idx >= 0) cache[store][idx] = { ...cache[store][idx], ...updated };
+  if (db && db[name]) {
+    try {
+      let result = await db[name].update(key, changes);
+      if (!result && !isNaN(key)) {
+        result = await db[name].update(Number(key), changes);
+      }
+      if (result) notifyChange();
+      return result;
+    } catch (e) {
+      console.error(e);
     }
+  }
+  const arr = memory[name] || [];
+  const item = arr.find(x => String(x.id) === key || x.id === Number(key));
+  if (item) {
+    Object.assign(item, changes);
+    _fallbackPersist();
     notifyChange();
     return true;
-  } catch (e) {
-    console.error(e);
-    return false;
   }
+  return false;
 }
 
-export async function remove(store = 'sinoptico', id) {
+async function remove(store = 'sinoptico', id) {
+  const name = String(store);
   const key = String(id);
-  try {
-    await httpDelete(`/${store}/${key}`);
-    if (cache[store]) {
-      const idx = cache[store].findIndex(x => String(x.id) === key);
-      if (idx >= 0) cache[store].splice(idx, 1);
+  if (db && db[name]) {
+    try {
+      let result;
+      try {
+        result = await db[name].delete(key);
+      } catch {
+        if (!isNaN(key)) result = await db[name].delete(Number(key));
+      }
+      if (result !== undefined) notifyChange();
+      return result;
+    } catch (e) {
+      console.error(e);
     }
+  }
+  const arr = memory[name] || [];
+  const idx = arr.findIndex(x => String(x.id) === key || x.id === Number(key));
+  if (idx >= 0) {
+    arr.splice(idx, 1);
+    _fallbackPersist();
     notifyChange();
     return true;
-  } catch (e) {
-    console.error(e);
-    return false;
   }
+  return false;
 }
 
-export async function exportJSON() {
-  const sinoptico = await getAll('sinoptico');
-  const users = await getAll('users');
-  return JSON.stringify({ sinoptico, users });
+async function exportJSON() {
+  const result = {};
+  if (db) {
+    for (const table of db.tables) {
+      try {
+        result[table.name] = await table.toArray();
+      } catch (e) {
+        console.error(e);
+        result[table.name] = [];
+      }
+    }
+  } else {
+    Object.assign(result, memory);
+  }
+  return JSON.stringify(result);
 }
 
-export async function importJSON(json) {
+async function importJSON(json) {
   let data;
   try {
     data = typeof json === 'string' ? JSON.parse(json) : json;
@@ -170,27 +236,28 @@ export async function importJSON(json) {
     return;
   }
   if (!data || typeof data !== 'object') return;
-
-  const currentSinoptico = await getAll('sinoptico');
-  for (const item of currentSinoptico) {
-    await remove('sinoptico', item.id);
-  }
-  const currentUsers = await getAll('users');
-  for (const u of currentUsers) {
-    await remove('users', u.id);
-  }
-  if (Array.isArray(data.sinoptico)) {
-    for (const n of data.sinoptico) {
-      await add('sinoptico', n);
+  if (db) {
+    try {
+      await db.transaction('rw', db.tables, async () => {
+        for (const table of db.tables) {
+          const arr = Array.isArray(data[table.name]) ? data[table.name] : [];
+          await table.clear();
+          if (arr.length) await table.bulkAdd(arr);
+        }
+      });
+    } catch (e) {
+      console.error(e);
     }
   }
-  if (Array.isArray(data.users)) {
-    for (const u of data.users) {
-      await add('users', u);
-    }
+  // replace memory
+  for (const key of Object.keys(memory)) delete memory[key];
+  for (const key in data) {
+    if (Array.isArray(data[key])) memory[key] = [...data[key]];
   }
+  _fallbackPersist();
   notifyChange();
 }
+
 
 export async function addNode(node) {
   const n = { ...node };
@@ -230,42 +297,38 @@ export async function deleteUser(id) {
   return remove('users', id);
 }
 
-export async function validateCredentials(name, password) {
-  const users = await getAll('users');
-  const normalized = String(name || '').trim().toLowerCase();
-  return users.find(
-    u => u.name && u.name.toLowerCase() === normalized && u.password === password
-  );
-}
-
-export async function ensureDefaultUsers() {
-  await ready;
-  const users = await getAll('users');
-  const disableFlag = hasWindow && localStorage.getItem(DISABLE_DEFAULT_USER_KEY);
-  if (!users.length && !disableFlag) {
-    const defaults = [
-      { name: 'admin', password: 'admin', role: 'admin' },
-    ];
-    for (const u of defaults) await addUser(u);
-    if (hasWindow) localStorage.setItem('defaultUserInit', '1');
-  }
-}
-
 export async function replaceAll(arr) {
   if (!Array.isArray(arr)) return;
-  const current = await getAll('sinoptico');
-  for (const item of current) {
-    await deleteNode(item.id);
-  }
-  for (const item of arr) {
-    await addNode(item);
+  const normalized = arr.map(item => {
+    const obj = { ...item };
+    const fixedId = String(obj.ID || obj.id || Date.now().toString());
+    if (!obj.id) obj.id = fixedId;
+    if (!obj.ID) obj.ID = fixedId;
+    return obj;
+  });
+  if (db) {
+    try {
+      await db.transaction('rw', db.sinoptico, async () => {
+        await db.sinoptico.clear();
+        if (normalized.length) await db.sinoptico.bulkAdd(normalized);
+      });
+      notifyChange();
+    } catch (e) {
+      console.error(e);
+    }
+  } else {
+    memory.sinoptico = [...normalized];
+    _fallbackPersist();
+    notifyChange();
   }
 }
 
 export function subscribeToChanges(handler) {
   if (channel) {
-    channel.addEventListener('message', ev => {
-      if (ev.data && ev.data.type === DATA_CHANGED) handler();
+    channel.addEventListener('message', (ev) => {
+      if (ev.data && ev.data.type === DATA_CHANGED) {
+        handler();
+      }
     });
   }
   if (hasWindow) {
@@ -275,7 +338,19 @@ export function subscribeToChanges(handler) {
 
 // simplified API used by sinoptico.html
 export async function getAllSinoptico() {
-  return getAll('sinoptico');
+  if (db) {
+    try {
+      return await db.sinoptico.toArray();
+    } catch (e) {
+      console.error(e);
+      return [];
+    }
+  }
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  } catch (e) {
+    return [];
+  }
 }
 
 export function subscribeSinopticoChanges(handler) {
@@ -285,19 +360,6 @@ export function subscribeSinopticoChanges(handler) {
   if (hasWindow) {
     document.addEventListener('sinopticoUpdated', handler);
   }
-}
-
-export async function reset() {
-  const sinoptico = await getAll('sinoptico');
-  for (const n of sinoptico) await deleteNode(n.id);
-  const users = await getAll('users');
-  for (const u of users) await deleteUser(u.id);
-  Object.keys(cache).forEach(k => delete cache[k]);
-  if (hasWindow) {
-    localStorage.removeItem('defaultUserInit');
-    localStorage.removeItem(DISABLE_DEFAULT_USER_KEY);
-  }
-  notifyChange();
 }
 
 const api = {
@@ -317,7 +379,20 @@ const api = {
   exportJSON,
   importJSON,
   ready,
-  reset,
+  async reset() {
+    if (db) {
+      await db.delete();
+      db = new Dexie('ProyectoBarackDB');
+      db.version(1).stores({ sinoptico: 'id,parentId,nombre,orden' });
+      db.version(2).stores({
+        sinoptico: 'id,parentId,nombre,orden',
+        users: 'id,name,role',
+      });
+    }
+    for (const key of Object.keys(memory)) delete memory[key];
+    _fallbackPersist();
+    notifyChange();
+  },
   subscribeToChanges,
   subscribeSinopticoChanges,
 };
@@ -326,8 +401,6 @@ if (hasWindow) {
   window.dataService = api;
 }
 
-ensureDefaultUsers();
-
 export default api;
 
-
+export { getAll, add, update, remove, exportJSON, importJSON, ready };

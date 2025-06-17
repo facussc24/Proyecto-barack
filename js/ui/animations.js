@@ -27,27 +27,20 @@ export function animateRemove(el, cb) {
 // Add smooth page transitions
 window.addEventListener('DOMContentLoaded', () => {
   document.body.classList.add('page-loaded');
-  document.addEventListener('click', evt => {
-    const a = evt.target.closest('a[href]');
-    if (!a) return;
+  document.querySelectorAll('a[href]').forEach(a => {
     const url = a.getAttribute('href');
-    if (
-      a.target === '_blank' ||
-      !url ||
-      url.startsWith('#') ||
-      url.startsWith('mailto:') ||
-      new URL(a.href, location.href).origin !== location.origin
-    ) {
-      return;
-    }
-    if (evt.button !== 0 || evt.metaKey || evt.ctrlKey || evt.shiftKey || evt.altKey) return;
-    evt.preventDefault();
-    document.body.classList.add('fade-out');
-    document.body.classList.remove('page-loaded');
-    const href = a.href;
-    setTimeout(() => {
-      window.location.href = href;
-    }, 100);
+    if (a.target === '_blank' || !url || url.startsWith('#') || url.startsWith('mailto:')) return;
+    a.addEventListener('click', evt => {
+      // only intercept left click without modifier keys
+      if (evt.button !== 0 || evt.metaKey || evt.ctrlKey || evt.shiftKey || evt.altKey) return;
+      evt.preventDefault();
+      document.body.classList.add('fade-out');
+      document.body.classList.remove('page-loaded');
+      const href = a.href;
+      setTimeout(() => {
+        window.location.href = href;
+      }, 100);
+    });
   });
 });
 

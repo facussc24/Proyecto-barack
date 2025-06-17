@@ -38,9 +38,6 @@ export function router() {
 
   container.innerHTML = '';
   routes[hash](container);
-  if (typeof window.applyRoleRules === 'function') {
-    window.applyRoleRules();
-  }
 }
 
 window.addEventListener('DOMContentLoaded', router);
