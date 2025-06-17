@@ -34,7 +34,8 @@
       "assets/**/*",
       "images/**/*",
       "js/**/*",
-      "lib/**/*"
+      "lib/**/*",
+      "server/data.sample.json"
     ]
   }
 }

@@ -5,6 +5,10 @@ import { readFile, writeFile } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
+process.on('uncaughtException', err => {
+  console.error(err.stack || err);
+});
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT_DIR = process.pkg ? dirname(process.execPath) : join(__dirname, '..');
 const DATA_FILE = join(ROOT_DIR, 'data.json');
@@ -138,7 +142,8 @@ export async function startServer(port = process.env.PORT || 3000) {
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  startServer();
+  startServer().catch(err => console.error(err));
+  setTimeout(() => {}, 1e9);
 }
 
 export default createApp;
