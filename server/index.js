@@ -4,9 +4,14 @@ import cors from 'cors';
 import { readFile, writeFile } from 'fs/promises';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import readline from 'readline';
 
 process.on('uncaughtException', err => {
   console.error(err.stack || err);
+});
+
+process.on('unhandledRejection', err => {
+  console.error('Unhandled rejection:', err);
 });
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -141,9 +146,22 @@ export async function startServer(port = process.env.PORT || 3000) {
   });
 }
 
+async function main() {
+  try {
+    await startServer();
+    const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+    rl.question('Press ENTER to exit', () => {
+      rl.close();
+      process.exit();
+    });
+  } catch (err) {
+    console.error(err);
+    process.exit(1);
+  }
+}
+
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  startServer().catch(err => console.error(err));
-  setTimeout(() => {}, 1e9);
+  main();
 }
 
 export default createApp;
