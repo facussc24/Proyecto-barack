@@ -33,8 +33,9 @@ Por defecto se usa **Dexie/IndexedDB** para el almacenamiento local, pero `js/da
 Todas las vistas utilizan la misma base de datos `ProyectoBarackDB` a través del
 módulo `js/dataService.js`. A partir de la versión 358 puedes exportar e
 importar la información desde la página de inicio mediante dos botones. El
-archivo descargado se llama `base_datos.json` y puedes guardarlo en la carpeta
-`BASE DE DATOS` incluida en este repositorio.
+archivo descargado se guarda como `data/latest.json`. El registro de cambios se
+almacena en `data/history.json` y las copias de seguridad se guardan en
+`data/backups/`.
 
 Para realizar copias de seguridad manuales desde la consola del navegador sigue
 si lo prefieres este procedimiento:
