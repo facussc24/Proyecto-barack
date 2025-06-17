@@ -1,5 +1,11 @@
 $ErrorActionPreference = 'Stop'
 
+# Ensure Node.js and npm are available
+if (-not (Get-Command npm -ErrorAction SilentlyContinue)) {
+    Write-Host 'Node.js 18 o superior es necesario para compilar. Desc\u00e1rgalo desde https://nodejs.org/'
+    exit 1
+}
+
 # Directory of this script
 $scriptRoot   = $PSScriptRoot
 $projectRoot  = Resolve-Path (Join-Path $scriptRoot '..')
