@@ -4,7 +4,7 @@
 export const DATA_CHANGED = 'DATA_CHANGED';
 const STORAGE_KEY = 'genericData';
 // URL of the backend API used to store and retrieve data
-const API_URL = 'http://localhost:5000/api/data';
+const API_URL = 'http://192.168.1.154:5000/api/data';
 
 // Dexie may be loaded via a script tag in the browser. Grab the global instance
 // if present. When running under Node we fallback to requiring the package so
