@@ -53,6 +53,10 @@ if (Dexie) {
   db.version(2).stores({
     sinoptico: 'id,parentId,nombre,orden'
   });
+  db.version(3).stores({
+    maestro: 'id',
+    maestroHist: 'hist_id,elemento_id'
+  });
   // migrate existing records that used numeric primary keys
   db.open()
     .then(async () => {
@@ -366,6 +370,10 @@ const api = {
       db.version(1).stores({ sinoptico: 'id,parentId,nombre,orden' });
       db.version(2).stores({
         sinoptico: 'id,parentId,nombre,orden'
+      });
+      db.version(3).stores({
+        maestro: 'id',
+        maestroHist: 'hist_id,elemento_id'
       });
     }
     for (const key of Object.keys(memory)) delete memory[key];
