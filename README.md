@@ -1,9 +1,10 @@
 # Proyecto Barack
 
-Versión actual: **354**
+Versión actual: **355**
 
 Esta es una pequeña SPA (Single Page Application) escrita en HTML, CSS y JavaScript.
 Incluye un módulo llamado *Sinóptico* para gestionar jerarquías de productos.
+Todo se ejecuta en el navegador y no requiere servidor.
 
 ## Control de versiones
 
@@ -12,13 +13,15 @@ Todos los cambios en este repositorio incrementarán dicho número.
 
 ## Uso
 
-1. Abre `index.html` en tu navegador.
-2. Navega a "Sinóptico" para visualizar la tabla con filtros.
-   Los productos añadidos quedan sangrados a la derecha de su cliente y
-   muestran una flecha que indica la relación jerárquica.
-3. Puedes crear clientes desde cualquier vista con el botón "Nuevo cliente".
-4. Desde "Editar Sinóptico" puedes modificar los datos almacenados en el
-   navegador.
+1. Abre `login.html` en tu navegador.
+2. Inicia sesión como **Admin** o pulsa *Ingresar como invitado*.
+   El rol de invitado oculta las opciones de edición y solo permite consultar el
+   Sinóptico.
+3. Tras iniciar sesión se carga `index.html`, desde donde puedes navegar por las
+   distintas páginas.
+   Los administradores tienen acceso completo a "Base de Datos", "Editar
+   Sinóptico" y "Usuarios".
+4. Los datos se guardan localmente en el navegador.
 
 Hay tres puntos de entrada al Sinóptico: la página standalone `sinoptico.html`, la vista SPA accesible desde `index.html` y el `sinoptico-editor.html` para modificaciones.
 Los datos se guardan localmente mediante **Dexie/IndexedDB**.
@@ -26,8 +29,8 @@ Los datos se guardan localmente mediante **Dexie/IndexedDB**.
 ### Exportar e importar datos
 
 Todas las vistas utilizan la misma base de datos `ProyectoBarackDB` a través del
-módulo `js/dataService.js`. Para realizar copias de seguridad manuales puedes
-ejecutar en la consola del navegador (o desde Node) lo siguiente:
+módulo `js/dataService.js`. Para realizar copias de seguridad manuales abre la
+consola del navegador y ejecuta lo siguiente:
 
 ```js
 const json = await dataService.exportJSON();
@@ -56,13 +59,9 @@ revisa especialmente `js/ui/renderer.js`.
 Si los cambios realizados desde la vista **Base de Datos** no se guardan,
 verifica lo siguiente:
 
-1. Asegúrate de abrir el proyecto mediante un servidor local (por ejemplo
-   ejecutando `npx serve`) en lugar de abrir los archivos directamente con
-   `file://`.
-2. Comprueba que el navegador no tenga deshabilitado **IndexedDB** o el
-   almacenamiento local.
-3. Revisa la consola de desarrollo del navegador en busca de errores de
-   permisos o bloqueos.
+1. Asegúrate de usar un navegador moderno que permita cargar módulos y acceder
+   a **IndexedDB**.
+2. Revisa la consola de desarrollo en busca de errores de permisos o bloqueos.
 
 Tras corregir cualquier problema relacionado con el almacenamiento, vuelve a
 intentar la edición.
