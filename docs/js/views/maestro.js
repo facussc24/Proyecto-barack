@@ -1,5 +1,6 @@
 import { getAll, add, update, remove, ready } from '../dataService.js';
 import { getUser } from '../session.js';
+import { showDeleteDialog } from './maestro_vivo.js';
 
 let maestroData = [];
 
@@ -270,7 +271,8 @@ export async function render(container) {
     const idx = maestroData.findIndex(x => x.id === id);
     const item = maestroData[idx];
     if (btn.classList.contains('del-row')) {
-      if (confirm('¿Eliminar fila?')) {
+      const ok = await showDeleteDialog();
+      if (ok) {
         await remove('maestro', id);
         maestroData.splice(idx, 1);
         renderTabla(container);
