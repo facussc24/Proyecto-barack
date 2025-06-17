@@ -26,7 +26,7 @@ siempre y cuando no se esté ejecutando desde `file://`.
 2. En otra terminal ejecuta un servidor estático, por ejemplo con
    `python -m http.server`, y abre `http://localhost:8000/index.html` en tu
   navegador. Verás la pantalla de inicio de sesión donde puedes ingresar con el
-  usuario predeterminado **admin** y contraseña **1234**, o pulsar el botón
+  usuario predeterminado **admin** y contraseña **admin**, o pulsar el botón
    "Ingresar como invitado". Este usuario inicial se puede modificar o eliminar
    desde la sección "Usuarios". El ingreso no distingue mayúsculas o minúsculas en
    el nombre de usuario.
@@ -138,7 +138,7 @@ Sigue estos pasos para poner en producción la aplicación:
    utilizas **GitHub Pages** tendrás que ejecutar la API en otro lugar y
    apuntar `window.API_URL` o `localStorage['API_URL']` a dicha dirección.
 3. Ten presente que las cuentas predeterminadas, como **admin**, utilizan la
-   contraseña **1234**.
+   contraseña **admin**.
 
 ### Ejecutable con pkg
 
