@@ -14,12 +14,13 @@
 <body>
   <nav class="main-nav">
     <a href="#/home">Inicio</a>
-    <a href="sinoptico-editor.html">Editar Sinóptico</a>
-    <a href="database.html">Base de Datos</a>
+    <a href="sinoptico-editor.html" class="no-guest">Editar Sinóptico</a>
+    <a href="database.html" class="no-guest">Base de Datos</a>
     <a href="#/amfe">AMFE</a>
-    <a href="#/settings">Ajustes</a>
-    <a href="#/users">Usuarios</a>
+    <a href="#/settings" class="no-guest">Ajustes</a>
+    <a href="#/users" class="admin-only">Usuarios</a>
     <button id="toggleDarkMode" type="button">🌙</button>
+    <button type="button" class="logout-link">Salir</button>
   </nav>
   <div id="loading"></div>
   <div id="appMessage" role="alert" aria-live="polite"></div>
@@ -36,6 +37,7 @@
   </dialog>
   <script src="lib/dexie.min.js" defer></script>
   <script src="lib/fuse.min.js" defer></script>
+  <script type="module" src="js/authGuard.js"></script>
   <script type="module" src="js/router.js" defer></script>
   <script type="module" src="js/dataService.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js" defer></script>
