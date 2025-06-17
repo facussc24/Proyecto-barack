@@ -1,17 +1,21 @@
 import os
 import json
 import glob
-from datetime import datetime
+import shutil
+from datetime import datetime, timedelta
 from threading import Lock
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
+from apscheduler.schedulers.background import BackgroundScheduler
 
 DATA_DIR = 'data'
 DATA_FILE = os.path.join(DATA_DIR, 'latest.json')
 HISTORY_FILE = os.path.join(DATA_DIR, 'history.json')
+BACKUP_DIR = os.path.join(DATA_DIR, 'backups')
 write_lock = Lock()
 
 os.makedirs(DATA_DIR, exist_ok=True)
+os.makedirs(BACKUP_DIR, exist_ok=True)
 if os.path.exists(DATA_FILE):
     with open(DATA_FILE, 'r', encoding='utf-8') as f:
         memory = json.load(f)
@@ -28,6 +32,23 @@ app = Flask(__name__, static_folder='docs', static_url_path='')
 from flask_socketio import SocketIO
 socketio = SocketIO(app, async_mode='eventlet')
 CORS(app)
+
+def backup_latest():
+    if os.path.exists(DATA_FILE):
+        today = datetime.utcnow().strftime('%Y-%m-%d')
+        dest = os.path.join(BACKUP_DIR, f'{today}.json')
+        shutil.copy2(DATA_FILE, dest)
+
+
+def cleanup_backups():
+    cutoff = datetime.utcnow() - timedelta(days=180)
+    for path in glob.glob(os.path.join(BACKUP_DIR, '*.json')):
+        try:
+            date = datetime.strptime(os.path.basename(path)[:-5], '%Y-%m-%d')
+        except ValueError:
+            continue
+        if date < cutoff:
+            os.remove(path)
 
 @app.route('/', defaults={'path': 'index.html'})
 @app.route('/<path:path>')
@@ -70,6 +91,11 @@ def get_history():
 
 
 if __name__ == '__main__':
+    cleanup_backups()
+    scheduler = BackgroundScheduler(daemon=True)
+    scheduler.add_job(backup_latest, 'interval', days=1)
+    scheduler.start()
+
     # Usa socketio.run para incluir WebSocket y hot-reload
     socketio.run(app,
                  host='0.0.0.0',
