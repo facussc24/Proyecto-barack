@@ -150,3 +150,7 @@ npm run build-exe
 
 Obtendrás tres archivos en la carpeta `dist/`. En macOS y Linux puedes iniciar el servidor con `./dist/proyecto-barack-macos` o `./dist/proyecto-barack-linux`. En Windows basta con abrir `proyecto-barack-win.exe` o ejecutarlo desde la terminal. El binario sirve la aplicación en `http://localhost:3000/`.
 
+
+## License
+
+This project is licensed under the [ISC License](LICENSE).
