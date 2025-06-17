@@ -150,3 +150,16 @@ npm run build-exe
 
 Obtendrás tres archivos en la carpeta `dist/`. En macOS y Linux puedes iniciar el servidor con `./dist/proyecto-barack-macos` o `./dist/proyecto-barack-linux`. En Windows basta con abrir `proyecto-barack-win.exe` o ejecutarlo desde la terminal. El binario sirve la aplicación en `http://localhost:3000/`.
 
+
+## Compilar aplicación
+
+Se requiere **Node.js 18 o superior** para empaquetar la aplicación con `pkg`.
+En sistemas Windows se proporciona el script `scripts/build.ps1` que automatiza
+el proceso. Puedes ejecutarlo de dos formas:
+
+1. Haciendo doble clic sobre el archivo.
+2. Abriéndolo desde PowerShell con `./scripts/build.ps1`.
+
+El script solicitará privilegios de administrador, instalará las dependencias y
+lanzará `npm run build-exe`. Al finalizar encontrarás los ejecutables en la
+carpeta `dist/`.
