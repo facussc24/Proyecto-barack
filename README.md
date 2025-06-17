@@ -154,6 +154,13 @@ Obtendrás tres archivos en la carpeta `dist/`. En macOS y Linux puedes iniciar 
 ## Compilar aplicación
 
 Se requiere **Node.js 18 o superior** para empaquetar la aplicación con `pkg`.
+Antes de ejecutarlo asegúrate de que Node.js esté instalado y que el comando
+`node` se encuentre en el `PATH`. Puedes comprobar la versión con:
+
+```bash
+node -v
+```
+
 En sistemas Windows se proporciona el script `scripts/build.ps1` que automatiza
 el proceso. Puedes ejecutarlo de dos formas:
 
