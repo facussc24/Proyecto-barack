@@ -5,7 +5,6 @@ from datetime import datetime
 from threading import Lock
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
-from flask_socketio import SocketIO
 
 DATA_DIR = 'data'
 DATA_FILE = os.path.join(DATA_DIR, 'latest.json')
@@ -26,8 +25,9 @@ else:
     history = []
 
 app = Flask(__name__, static_folder='static', static_url_path='')
+from flask_socketio import SocketIO
+socketio = SocketIO(app, async_mode='eventlet')
 CORS(app)
-socketio = SocketIO(app, cors_allowed_origins='*')
 
 @app.route('/', defaults={'path': 'index.html'})
 @app.route('/<path:path>')
@@ -70,5 +70,8 @@ def get_history():
 
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    socketio.run(app, host='0.0.0.0', port=port)
+    # Usa socketio.run para incluir WebSocket y hot-reload
+    socketio.run(app,
+                 host='0.0.0.0',
+                 port=5000,
+                 debug=True)
