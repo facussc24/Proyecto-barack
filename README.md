@@ -55,6 +55,7 @@ Si ya conoces estas páginas, puedes trabajar solo con `static/sinoptico-editor.
 ## Sincronización de datos
 
 Este proyecto incluye un pequeño servidor Flask (`server.py`) para almacenar la base de datos en `BASE DE DATOS/base_datos.json`.
+A partir de esta versión el mismo script también sirve la interfaz web desde la carpeta `static`, de modo que todas las páginas quedan disponibles en `http://<IP>:5000/` (por ejemplo, `http://192.168.1.154:5000/`).
 El servidor debe ejecutarse en un único equipo o servidor accesible por la red para que todos los usuarios compartan la misma información.
 
 Para iniciar el servicio ejecuta:
@@ -62,6 +63,14 @@ Para iniciar el servicio ejecuta:
 ```bash
 pip install -r requirements.txt
 python server.py
+```
+
+En Windows puedes ejecutar los siguientes comandos:
+
+```bash
+cd "C:\\Users\\FacundoS-PC\\Documents\\Proyecto-barack-main (11)\\Proyecto-barack-main"
+py -3 -m pip install -r requirements.txt
+py -3 server.py
 ```
 
 GitHub Pages solo aloja archivos estáticos y no puede ejecutar este servidor.
