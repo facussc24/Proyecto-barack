@@ -118,6 +118,55 @@ async function aplicarDependencias(item, cambios) {
   }
 }
 
+async function onCellEdit(rowId, columnKey, newValue) {
+  const row = maestroData.find(r => r.id === rowId);
+  if (!row) return;
+  const oldValue = row[columnKey] || '';
+  if (oldValue === newValue) return;
+  row[columnKey] = newValue;
+  row.fecha_ultima_revision = new Date().toISOString();
+  row.notificado = false;
+  agregarHistorial(rowId, columnKey, oldValue, newValue);
+  await update('maestro', rowId, {
+    [columnKey]: newValue,
+    fecha_ultima_revision: row.fecha_ultima_revision,
+    notificado: false
+  });
+  if (columnKey === 'revision') {
+    const dependents = dependencies[row.tipo] || [];
+    for (const depTipo of dependents) {
+      const depRow = maestroData.find(
+        r => r.codigo_producto === row.codigo_producto && r.tipo === depTipo
+      );
+      if (depRow) {
+        const oldRev = depRow.revision || '';
+        if (oldRev !== '') agregarHistorial(depRow.id, 'revision', oldRev, '');
+        depRow.revision = '';
+        depRow.notificado = false;
+        await update('maestro', depRow.id, { revision: '', notificado: false });
+        refreshSemaphore(depRow.id);
+      }
+    }
+  }
+  refreshSemaphore(rowId);
+}
+
+async function setNotification(rowId, state) {
+  const row = maestroData.find(r => r.id === rowId);
+  if (!row) return;
+  row.notificado = state;
+  await update('maestro', rowId, { notificado: state });
+}
+
+function refreshSemaphore(rowId) {
+  const tr = document.querySelector(`#maestro tbody tr[data-id="${rowId}"]`);
+  if (!tr) return;
+  const row = maestroData.find(r => r.id === rowId);
+  if (!row) return;
+  const cell = tr.querySelector('td');
+  if (cell) cell.textContent = row.notificado ? '🟢' : '🔴';
+}
+
 function startEdit(tr, item) {
   if (tr.classList.contains('editing')) return;
   tr.classList.add('editing');
@@ -149,28 +198,14 @@ function startEdit(tr, item) {
   cancel.textContent = 'Cancelar';
   actions.appendChild(cancel);
 
-  save.addEventListener('click', async () => {
-    const nuevo = {
-      tipo: tipo.value.trim(),
-      nro: nro.value.trim(),
-      codigo_producto: codigo.value.trim(),
-      revision: rev.value.trim(),
-      link: link.value.trim(),
-      fecha_ultima_revision: new Date().toISOString()
-    };
-    const cambios = {};
-    for (const campo of Object.keys(nuevo)) {
-      if (nuevo[campo] !== (item[campo] || '')) {
-        cambios[campo] = nuevo[campo];
-        agregarHistorial(item.id, campo, item[campo] || '', nuevo[campo]);
-      }
-    }
-    if (cambios.revision || cambios.nro || cambios.codigo_producto) {
-      cambios.notificado = false;
-    }
-    await aplicarDependencias(item, cambios);
-    Object.assign(item, cambios);
-    await update('maestro', item.id, cambios);
+  tipo.addEventListener('change', () => onCellEdit(item.id, 'tipo', tipo.value.trim()));
+  nro.addEventListener('change', () => onCellEdit(item.id, 'nro', nro.value.trim()));
+  codigo.addEventListener('change', () => onCellEdit(item.id, 'codigo_producto', codigo.value.trim()));
+  rev.addEventListener('change', () => onCellEdit(item.id, 'revision', rev.value.trim()));
+  fecha.addEventListener('change', () => onCellEdit(item.id, 'fecha_ultima_revision', fecha.value.trim()));
+  link.addEventListener('change', () => onCellEdit(item.id, 'link', link.value.trim()));
+
+  save.addEventListener('click', () => {
     tr.classList.remove('editing');
     renderTabla(tr.closest('table').closest('.tabla-contenedor').parentNode);
   });
@@ -243,8 +278,7 @@ export async function render(container) {
     } else if (btn.classList.contains('edit-row')) {
       startEdit(tr, item);
     } else if (btn.classList.contains('ok-row')) {
-      item.notificado = true;
-      await update('maestro', id, { notificado: true });
+      await setNotification(id, true);
       renderTabla(container);
     }
   });
