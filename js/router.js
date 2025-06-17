@@ -34,6 +34,9 @@ export function router() {
 
   container.innerHTML = '';
   routes[hash](container);
+  if (window.applyRoleRules) {
+    window.applyRoleRules();
+  }
 }
 
 window.addEventListener('DOMContentLoaded', router);
