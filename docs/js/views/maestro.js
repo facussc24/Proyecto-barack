@@ -2,6 +2,7 @@ import { getAll, add, update, remove, ready } from '../dataService.js';
 import { getUser } from '../session.js';
 
 let maestroData = [];
+let historialData = [];
 
 // Dependencies between document types. When a document revision changes
 // the related documents listed here will be marked as pending review.
@@ -239,8 +240,14 @@ export async function render(container) {
         <tbody></tbody>
       </table>
     </div>
-    <dialog id="historialDlg">
-      <table>
+    <dialog id="historialDlg" class="modal">
+      <div class="filtros-texto">
+        <label>Desde <input id="historialDesde" type="date"></label>
+        <label>Hasta <input id="historialHasta" type="date"></label>
+        <label>Usuario <input id="historialUsuario" type="text"></label>
+        <label>Producto <input id="historialProducto" type="text"></label>
+      </div>
+      <table class="db-table">
         <thead>
           <tr>
             <th>Fecha/hora</th>
@@ -254,7 +261,9 @@ export async function render(container) {
         </thead>
         <tbody id="historialBody"></tbody>
       </table>
-      <button id="cerrarHistorial">Cerrar</button>
+      <div class="form-actions">
+        <button id="cerrarHistorial" type="button">Cerrar</button>
+      </div>
     </dialog>
   `;
   await ready;
@@ -301,24 +310,58 @@ export async function render(container) {
   });
 
   const dlg = container.querySelector('#historialDlg');
-  container.querySelector('#btnHistorial').addEventListener('click', async () => {
-    const body = dlg.querySelector('#historialBody');
-    const historial = await getAll('maestroHist');
+  const body = dlg.querySelector('#historialBody');
+  const desdeInp = dlg.querySelector('#historialDesde');
+  const hastaInp = dlg.querySelector('#historialHasta');
+  const usuarioInp = dlg.querySelector('#historialUsuario');
+  const productoInp = dlg.querySelector('#historialProducto');
+
+  function renderHist() {
     body.innerHTML = '';
-    historial.sort((a,b)=>new Date(a.timestamp)-new Date(b.timestamp));
-    historial.forEach(h => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${new Date(h.timestamp).toLocaleString('es-ES')}</td>
-        <td>${h.usuario}</td>
-        <td>${maestroData.find(x=>x.id===h.elemento_id)?.tipo||''}</td>
-        <td>${maestroData.find(x=>x.id===h.elemento_id)?.nro||''}</td>
-        <td>${h.campo}</td>
-        <td>${h.antes}</td>
-        <td>${h.despues}</td>`;
-      body.appendChild(tr);
-    });
+    const start = desdeInp.value ? new Date(desdeInp.value) : null;
+    if (start) start.setHours(0, 0, 0, 0);
+    const end = hastaInp.value ? new Date(hastaInp.value) : null;
+    if (end) end.setHours(23, 59, 59, 999);
+    const usuario = usuarioInp.value.toLowerCase();
+    const producto = productoInp.value.toLowerCase();
+
+    historialData
+      .filter(h => {
+        const ts = new Date(h.timestamp);
+        if (start && ts < start) return false;
+        if (end && ts > end) return false;
+        if (usuario && !h.usuario.toLowerCase().includes(usuario)) return false;
+        if (producto) {
+          const item = maestroData.find(x => x.id === h.elemento_id);
+          const codigo = item?.codigo_producto || '';
+          if (!codigo.toLowerCase().includes(producto)) return false;
+        }
+        return true;
+      })
+      .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
+      .forEach(h => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${new Date(h.timestamp).toLocaleString('es-ES')}</td>
+          <td>${h.usuario}</td>
+          <td>${maestroData.find(x => x.id === h.elemento_id)?.tipo || ''}</td>
+          <td>${maestroData.find(x => x.id === h.elemento_id)?.nro || ''}</td>
+          <td>${h.campo}</td>
+          <td>${h.antes}</td>
+          <td>${h.despues}</td>`;
+        body.appendChild(tr);
+      });
+  }
+
+  [desdeInp, hastaInp, usuarioInp, productoInp].forEach(inp =>
+    inp.addEventListener('input', renderHist)
+  );
+
+  container.querySelector('#btnHistorial').addEventListener('click', async () => {
+    historialData = await getAll('maestroHist');
+    renderHist();
     dlg.showModal();
+    desdeInp.focus();
   });
-  dlg.querySelector('#cerrarHistorial').addEventListener('click',()=>dlg.close());
+  dlg.querySelector('#cerrarHistorial').addEventListener('click', () => dlg.close());
 }
