@@ -6,8 +6,8 @@ export function render(container) {
       <h1>Ingeniería Barack</h1>
       <p class="tagline">Soluciones modernas para tu negocio</p>
     <div class="quick-links">
-      <a href="sinoptico-editor.html" class="btn-link">Editar Sinóptico</a>
-      <a href="#/sinoptico" class="btn-link">Ver Sinóptico</a>
+      <a href="sinoptico-editor.html" class="btn-link no-guest">Editar Sinóptico</a>
+      <a href="sinoptico.html" class="btn-link">Ver Sinóptico</a>
       <a href="#/amfe" class="btn-link">AMFE</a>
     </div>
     </section>
@@ -18,7 +18,7 @@ export function render(container) {
         <li>Visualización de sinóptico interactivo</li>
         <li>Modo oscuro integrado</li>
       </ul>
-      <div class="db-actions">
+      <div class="db-actions no-guest">
         <button id="exportBtn">Exportar datos</button>
         <button id="importBtn">Importar datos</button>
         <input id="importFile" type="file" accept="application/json" hidden>
