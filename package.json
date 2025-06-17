@@ -7,22 +7,14 @@
     "lib": "lib"
   },
   "scripts": {
-    "test": "node login.test.js",
-    "start": "node server/index.js",
-    "build-exe": "pkg server/index.js --output dist/proyecto-barack -t node18-win-x64,node18-macos-x64,node18-linux-x64"
+    "test": "node login.test.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
-  "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^4.21.2",
-    "express-sse": "^1.0.0"
-  },
-  "devDependencies": {
-    "pkg": "^5.8.1"
-  },
+  "dependencies": {},
+  "devDependencies": {},
   "pkg": {
     "assets": [
       "index.html",
@@ -34,8 +26,7 @@
       "assets/**/*",
       "images/**/*",
       "js/**/*",
-      "lib/**/*",
-      "server/data.sample.json"
+      "lib/**/*"
     ]
   }
 }
