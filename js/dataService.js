@@ -281,21 +281,6 @@ export async function deleteNode(id) {
   return remove('sinoptico', id);
 }
 
-export async function getAllUsers() {
-  return getAll('users');
-}
-
-export async function addUser(user) {
-  return add('users', user);
-}
-
-export async function updateUser(id, changes) {
-  return update('users', id, changes);
-}
-
-export async function deleteUser(id) {
-  return remove('users', id);
-}
 
 export async function replaceAll(arr) {
   if (!Array.isArray(arr)) return;
@@ -368,10 +353,6 @@ const api = {
   addNode,
   updateNode,
   deleteNode,
-  getAllUsers,
-  addUser,
-  updateUser,
-  deleteUser,
   replaceAll,
   add,
   update,
