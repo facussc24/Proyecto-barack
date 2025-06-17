@@ -4,7 +4,25 @@
 export const DATA_CHANGED = 'DATA_CHANGED';
 const STORAGE_KEY = 'genericData';
 // URL of the backend API used to store and retrieve data
-const API_URL = 'http://192.168.1.154:5000/api/data';
+const DEFAULT_API_URL = 'http://localhost:5000/api/data';
+let API_URL = DEFAULT_API_URL;
+
+// Prefer value from localStorage
+if (typeof localStorage !== 'undefined') {
+  try {
+    const stored = localStorage.getItem('apiUrl');
+    if (stored) API_URL = stored;
+  } catch {
+    // ignore
+  }
+}
+
+// Fallback to environment variable when running under Node
+if (API_URL === DEFAULT_API_URL && typeof process !== 'undefined' && process.env) {
+  const envUrl = process.env.API_URL || process.env.apiUrl;
+  if (envUrl) API_URL = envUrl;
+}
+
 const SOCKET_URL = API_URL.replace(/\/api\/data$/, '');
 
 async function applyServerData(data) {
