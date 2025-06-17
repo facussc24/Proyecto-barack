@@ -3,7 +3,19 @@
 Versión actual: **380**
 
 Esta es una pequeña SPA (Single Page Application) escrita en HTML, CSS y JavaScript.
+
 Incluye un módulo llamado *Sinóptico* para gestionar jerarquías de productos.
+
+## Guía rápida
+
+1. Instala **Node.js 18** o superior.
+2. Clona este repositorio y entra en la carpeta del proyecto.
+3. Ejecuta `npm install` para descargar las dependencias.
+4. Inicia la API con `npm start`.
+5. En otra terminal ejecuta un servidor estático con `python -m http.server` o `npx serve`.
+6. Abre `http://localhost:8000/index.html` en tu navegador.
+7. Ingresa con el usuario **admin** y contraseña **admin**.
+8. _(Opcional)_ ejecuta `scripts/crear-aplicacion.ps1` o `npm run build-exe` para generar los ejecutables.
 
 ## Control de versiones
 
