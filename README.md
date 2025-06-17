@@ -1,6 +1,6 @@
 # Proyecto Barack
 
-Versión actual: **362**
+Versión actual: **363**
 
 Esta es una pequeña SPA (Single Page Application) escrita en HTML, CSS y JavaScript.
 Incluye un módulo llamado *Sinóptico* para gestionar jerarquías de productos.
@@ -76,7 +76,12 @@ py -3 server.py
 ```
 
 GitHub Pages solo aloja archivos estáticos y no puede ejecutar este servidor.
-Cuando uses varias PC, configura la constante `API_URL` de `js/dataService.js` con la dirección IP o dominio del equipo donde corre `server.py`.
+Cuando uses varias PC debes indicar la URL del servidor. Puedes hacerlo con:
+
+1. Guardar la dirección en `localStorage` usando `localStorage.setItem('apiUrl', 'http://<IP>:5000/api/data')` desde la consola del navegador.
+2. O bien establecer la variable de entorno `API_URL` antes de iniciar la aplicación.
+
+Si no se define ningún valor se usará `http://localhost:5000/api/data` por defecto.
 
 
 ## Desarrollo
