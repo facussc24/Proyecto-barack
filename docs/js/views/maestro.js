@@ -1,118 +1,42 @@
-import { getAll, add, update, remove, ready } from '../dataService.js';
+import { getAll, add, update, ready } from '../dataService.js';
 import { getUser } from '../session.js';
-import { showDeleteDialog } from './maestro_vivo.js';
 
 let maestroData = [];
 let historialData = [];
 
-// Dependencies between document types. When a document revision changes
-// the related documents listed here will be marked as pending review.
+const columns = [
+  { key: 'id', label: 'Producto' },
+  { key: 'flujograma', label: 'Flujograma' },
+  { key: 'amfe', label: 'AMFE' },
+  { key: 'hojaOp', label: 'Hoja Op' },
+  { key: 'mylar', label: 'Mylar' },
+  { key: 'planos', label: 'Planos' },
+  { key: 'ulm', label: 'ULM' },
+  { key: 'fichaEmb', label: 'Ficha Embalaje' },
+  { key: 'tizada', label: 'Tizada' },
+  { key: 'notificado', label: 'Notificado' }
+];
+
 const dependencies = {
-  // Cambiar el flujograma reinicia el AMFE y la hoja de operaciones
-  'Flujograma': ['AMFE', 'Hoja de Operaciones'],
-  // Actualizar el AMFE implica volver a revisar la hoja de operaciones
-  AMFE: ['Hoja de Operaciones'],
-  // Modificar la hoja de operaciones impacta en la documentación posterior
-  'Hoja de Operaciones': ['Mylar', 'Planos', 'ULM', 'Ficha de Embalaje', 'Tizada'],
-  // Los planos dependen del Mylar
-  Mylar: ['Planos'],
-  Planos: [],
-  ULM: [],
-  'Ficha de Embalaje': [],
-  Tizada: []
+  flujograma: ['amfe', 'hojaOp'],
+  amfe: ['hojaOp'],
+  hojaOp: ['mylar', 'planos', 'ulm', 'fichaEmb', 'tizada'],
+  mylar: ['planos'],
+  planos: [],
+  ulm: [],
+  fichaEmb: [],
+  tizada: []
 };
 
-export function getDependentsForType(tipo) {
-  return dependencies[tipo] || [];
-}
-
-export function clearDependentRevisions(row, data) {
-  const dependents = getDependentsForType(row.tipo);
-  const changes = [];
-  for (const depTipo of dependents) {
-    const depRow = data.find(
-      r => r.codigo_producto === row.codigo_producto && r.tipo === depTipo
-    );
-    if (depRow && depRow.revision !== '') {
-      changes.push({ id: depRow.id, oldValue: depRow.revision });
-      depRow.revision = '';
-      depRow.notificado = false;
-    }
-  }
-  return changes;
-}
-
-function formatDate(dateStr) {
-  if (!dateStr) return '';
-  try {
-    const d = new Date(dateStr);
-    return d.toLocaleDateString('es-ES');
-  } catch {
-    return dateStr;
-  }
-}
-
-function nuevaFila() {
-  return {
-    id: Date.now().toString(),
-    tipo: '',
-    nro: '',
-    codigo_producto: '',
-    revision: '',
-    link: '',
-    fecha_ultima_revision: new Date().toISOString(),
-    notificado: true
-  };
-}
-
-function crearCeldaInput(valor) {
-  const inp = document.createElement('input');
-  inp.value = valor || '';
-  return inp;
-}
-
-function renderTabla(container) {
-  const tbody = container.querySelector('#maestro tbody');
-  tbody.innerHTML = '';
-  if (!maestroData.length) {
-    const tr = document.createElement('tr');
-    tr.id = 'maestro-empty';
-    const td = document.createElement('td');
-    td.colSpan = 8;
-    td.textContent = 'No hay datos disponibles';
-    tr.appendChild(td);
-    tbody.appendChild(tr);
-    return;
-  }
-  maestroData.forEach(item => {
-    const tr = document.createElement('tr');
-    tr.dataset.id = item.id;
-    tr.innerHTML = `
-      <td>${item.notificado ? '🟢' : '🔴'}</td>
-      <td>${item.tipo || ''}</td>
-      <td>${item.nro || ''}</td>
-      <td>${item.codigo_producto || ''}</td>
-      <td>${item.revision || ''}</td>
-      <td>${formatDate(item.fecha_ultima_revision)}</td>
-      <td>${item.link ? `<span title="Abrir carpeta"><a href="${item.link}" target="_blank" aria-label="Abrir carpeta">📂</a></span>` : ''}</td>
-      <td>
-        <button class="del-row">🗑️</button>
-        <button class="ok-row">✔</button>
-      </td>`;
-    tbody.appendChild(tr);
-  });
-
-  applyFilters(container);
+function dependents(key) {
+  return dependencies[key] || [];
 }
 
 function agregarHistorial(id, campo, antes, despues) {
   const usuario = (getUser() || {}).name || 'Admin';
   const hasCrypto = typeof crypto !== 'undefined';
   const entry = {
-    hist_id:
-      hasCrypto && crypto.randomUUID
-        ? crypto.randomUUID()
-        : Date.now().toString(),
+    hist_id: hasCrypto && crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(),
     elemento_id: id,
     timestamp: new Date().toISOString(),
     usuario,
@@ -123,156 +47,162 @@ function agregarHistorial(id, campo, antes, despues) {
   add('maestroHist', entry);
 }
 
-// When a document revision changes, mark dependent documents of the same
-// product as pending by clearing their revision and setting notificado=false.
-async function aplicarDependencias(item, cambios) {
-  if (!cambios.revision) return;
-  const changed = clearDependentRevisions(item, maestroData);
-  for (const { id, oldValue } of changed) {
-    agregarHistorial(id, 'revision', oldValue, '');
-    await update('maestro', id, { revision: '', notificado: false });
-  }
-}
-
-async function onCellEdit(rowId, columnKey, newValue) {
-  const row = maestroData.find(r => r.id === rowId);
-  if (!row) return;
-  const oldValue = row[columnKey] || '';
-  if (oldValue === newValue) return;
-  row[columnKey] = newValue;
-  row.fecha_ultima_revision = new Date().toISOString();
-  row.notificado = false;
-  agregarHistorial(rowId, columnKey, oldValue, newValue);
-  await update('maestro', rowId, {
-    [columnKey]: newValue,
-    fecha_ultima_revision: row.fecha_ultima_revision,
-    notificado: false
-  });
-  if (columnKey === 'revision') {
-    const changes = clearDependentRevisions(row, maestroData);
-    for (const { id, oldValue } of changes) {
-      agregarHistorial(id, 'revision', oldValue, '');
-      await update('maestro', id, { revision: '', notificado: false });
-      refreshSemaphore(id);
+function clearDependents(row, key) {
+  const changes = [];
+  for (const dep of dependents(key)) {
+    if (row[dep]) {
+      changes.push({ field: dep, old: row[dep] });
+      row[dep] = '';
     }
   }
-  refreshSemaphore(rowId);
+  if (changes.length) row.notificado = false;
+  return changes;
 }
 
-async function setNotification(rowId, state) {
-  const row = maestroData.find(r => r.id === rowId);
-  if (!row) return;
-  row.notificado = state;
-  await update('maestro', rowId, { notificado: state });
-}
-
-function refreshSemaphore(rowId) {
-  const tr = document.querySelector(`#maestro tbody tr[data-id="${rowId}"]`);
-  if (!tr) return;
-  const row = maestroData.find(r => r.id === rowId);
-  if (!row) return;
-  const cell = tr.querySelector('td');
-  if (cell) cell.textContent = row.notificado ? '🟢' : '🔴';
+function nuevaFila(codigo) {
+  return {
+    id: codigo || Date.now().toString(),
+    flujograma: '',
+    amfe: '',
+    hojaOp: '',
+    mylar: '',
+    planos: '',
+    ulm: '',
+    fichaEmb: '',
+    tizada: '',
+    notificado: false
+  };
 }
 
 function saveFilters(container) {
-  const ids = ['Status','Tipo','Nro','Codigo','Rev','Fecha','Link'];
   const data = {};
-  ids.forEach(k => {
-    const el = container.querySelector(`#filter${k}`);
-    if (el) data[k] = el.value || '';
+  columns.forEach(c => {
+    const el = container.querySelector(`#filter_${c.key}`);
+    if (el) data[c.key] = el.value || '';
   });
   localStorage.setItem('maestroFilters', JSON.stringify(data));
 }
 
 function loadFilters(container) {
   try {
-    const stored = JSON.parse(localStorage.getItem('maestroFilters') || '{}');
-    Object.entries(stored).forEach(([k,v]) => {
-      const el = container.querySelector(`#filter${k}`);
+    const obj = JSON.parse(localStorage.getItem('maestroFilters') || '{}');
+    Object.entries(obj).forEach(([k, v]) => {
+      const el = container.querySelector(`#filter_${k}`);
       if (el) el.value = v;
     });
   } catch {}
 }
 
 function applyFilters(container) {
-  const val = id =>
-    (container.querySelector(`#${id}`)?.value || '').trim().toLowerCase();
-  const status = val('filterStatus');
-  const tipo = val('filterTipo');
-  const nro = val('filterNro');
-  const codigo = val('filterCodigo');
-  const rev = val('filterRev');
-  const fecha = val('filterFecha');
-  const link = val('filterLink');
-
-  container
-    .querySelectorAll('#maestro tbody tr')
-    .forEach(row => {
-      const cells = row.querySelectorAll('td');
-      let show = true;
-      if (status) {
-        const icon = cells[0].textContent.includes('🟢') ? 'ok' : 'alerta';
-        if (status !== icon) show = false;
+  const vals = {};
+  columns.forEach(c => {
+    const el = container.querySelector(`#filter_${c.key}`);
+    vals[c.key] = (el?.value || '').trim().toLowerCase();
+  });
+  container.querySelectorAll('#maestro tbody tr').forEach(tr => {
+    const row = maestroData.find(r => r.id === tr.dataset.id);
+    let show = true;
+    columns.forEach((c, idx) => {
+      if (!show) return;
+      if (c.key === 'notificado') {
+        if (vals.notificado) {
+          const state = row.notificado ? 'ok' : 'alerta';
+          if (state !== vals.notificado) show = false;
+        }
+      } else {
+        const val = String(row[c.key] || '').toLowerCase();
+        if (vals[c.key] && !val.includes(vals[c.key])) show = false;
       }
-      if (show && tipo && !cells[1].textContent.toLowerCase().includes(tipo)) show = false;
-      if (show && nro && !cells[2].textContent.toLowerCase().includes(nro)) show = false;
-      if (show && codigo && !cells[3].textContent.toLowerCase().includes(codigo)) show = false;
-      if (show && rev && !cells[4].textContent.toLowerCase().includes(rev)) show = false;
-      if (show && fecha && !cells[5].textContent.toLowerCase().includes(fecha)) show = false;
-      if (show && link && !cells[6].textContent.toLowerCase().includes(link)) show = false;
-      row.style.display = show ? '' : 'none';
     });
+    tr.style.display = show ? '' : 'none';
+  });
 }
 
-function startEdit(tr, item) {
-  if (tr.classList.contains('editing')) return;
-  tr.classList.add('editing');
-  const cells = tr.querySelectorAll('td');
-  cells[1].textContent = '';
-  const tipo = crearCeldaInput(item.tipo);
-  cells[1].appendChild(tipo);
-  cells[2].textContent = '';
-  const nro = crearCeldaInput(item.nro);
-  cells[2].appendChild(nro);
-  cells[3].textContent = '';
-  const codigo = crearCeldaInput(item.codigo_producto);
-  cells[3].appendChild(codigo);
-  cells[4].textContent = '';
-  const rev = crearCeldaInput(item.revision);
-  cells[4].appendChild(rev);
-  cells[5].textContent = '';
-  const fecha = crearCeldaInput(formatDate(item.fecha_ultima_revision));
-  cells[5].appendChild(fecha);
-  cells[6].textContent = '';
-  const link = crearCeldaInput(item.link);
-  cells[6].appendChild(link);
-  const actions = cells[7];
-  actions.innerHTML = '';
-  const save = document.createElement('button');
-  save.textContent = 'Guardar';
-  actions.appendChild(save);
-  const cancel = document.createElement('button');
-  cancel.textContent = 'Cancelar';
-  actions.appendChild(cancel);
-
-  tipo.addEventListener('change', () => onCellEdit(item.id, 'tipo', tipo.value.trim()));
-  nro.addEventListener('change', () => onCellEdit(item.id, 'nro', nro.value.trim()));
-  codigo.addEventListener('change', () => onCellEdit(item.id, 'codigo_producto', codigo.value.trim()));
-  rev.addEventListener('change', () => onCellEdit(item.id, 'revision', rev.value.trim()));
-  fecha.addEventListener('change', () => onCellEdit(item.id, 'fecha_ultima_revision', fecha.value.trim()));
-  link.addEventListener('change', () => onCellEdit(item.id, 'link', link.value.trim()));
-
-  save.addEventListener('click', () => {
-    tr.classList.remove('editing');
-    renderTabla(tr.closest('table').closest('.tabla-contenedor').parentNode);
+function renderTabla(container) {
+  const tbody = container.querySelector('#maestro tbody');
+  tbody.innerHTML = '';
+  maestroData.forEach(row => {
+    const tr = document.createElement('tr');
+    tr.dataset.id = row.id;
+    columns.forEach(col => {
+      const td = document.createElement('td');
+      if (col.key === 'notificado') {
+        td.className = 'notify-cell';
+        td.textContent = row.notificado ? '🟢' : '🔴';
+      } else {
+        td.textContent = row[col.key] || '';
+      }
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
   });
-  cancel.addEventListener('click', () => {
-    renderTabla(tr.closest('table').closest('.tabla-contenedor').parentNode);
+  applyFilters(container);
+}
+
+async function onCellEdit(rowId, key, value) {
+  const row = maestroData.find(r => r.id === rowId);
+  if (!row) return;
+  const old = row[key] || '';
+  if (old === value) return;
+  row[key] = value;
+  row.notificado = false;
+  agregarHistorial(rowId, key, old, value);
+  const dep = clearDependents(row, key);
+  const changes = { [key]: value, notificado: false };
+  dep.forEach(d => {
+    agregarHistorial(rowId, d.field, d.old, '');
+    changes[d.field] = '';
+  });
+  await update('maestro', rowId, changes);
+  renderTabla(document.querySelector('.maestro-page'));
+}
+
+function setupEditing(container) {
+  const tbody = container.querySelector('#maestro tbody');
+  tbody.addEventListener('dblclick', ev => {
+    const cell = ev.target.closest('td');
+    if (!cell) return;
+    const tr = cell.closest('tr');
+    const idx = Array.from(tr.children).indexOf(cell);
+    const col = columns[idx];
+    if (!col || col.key === 'id' || col.key === 'notificado') return;
+    if (cell.querySelector('input')) return;
+    const rowId = tr.dataset.id;
+    const original = maestroData.find(r => r.id === rowId)[col.key] || '';
+    cell.textContent = '';
+    const inp = document.createElement('input');
+    inp.type = 'text';
+    inp.value = original;
+    cell.appendChild(inp);
+    inp.focus();
+    inp.select();
+    const finish = () => {
+      const val = inp.value.trim();
+      cell.textContent = val;
+      onCellEdit(rowId, col.key, val);
+    };
+    const onKey = e => {
+      if (e.key === 'Enter') { e.preventDefault(); inp.blur(); }
+      else if (e.key === 'Escape') { cell.textContent = original; }
+    };
+    inp.addEventListener('blur', finish, { once: true });
+    inp.addEventListener('keydown', onKey);
+  });
+
+  tbody.addEventListener('click', ev => {
+    const cell = ev.target.closest('td.notify-cell');
+    if (!cell) return;
+    const tr = cell.closest('tr');
+    const rowId = tr.dataset.id;
+    const row = maestroData.find(r => r.id === rowId);
+    row.notificado = !row.notificado;
+    cell.textContent = row.notificado ? '🟢' : '🔴';
+    update('maestro', rowId, { notificado: row.notificado });
   });
 }
 
 export async function render(container) {
+  container.classList.add('maestro-page');
   container.innerHTML = `
     <h1>Listado Maestro</h1>
     <div class="maestro-header">
@@ -284,28 +214,17 @@ export async function render(container) {
       <table id="maestro">
         <thead>
           <tr>
-            <th>⚠️</th>
-            <th>Tipo</th>
-            <th>Nro</th>
-            <th>Código producto</th>
-            <th>Revisión</th>
-            <th>Fecha última revisión</th>
-            <th>Link</th>
-            <th></th>
+            ${columns.map(c => `<th>${c.label}</th>`).join('')}
           </tr>
           <tr>
-            <th><select id="filterStatus" class="maestro-filter">
-                <option value=""></option>
-                <option value="ok">🟢</option>
-                <option value="alerta">🔴</option>
-            </select></th>
-            <th><input id="filterTipo" class="maestro-filter" type="text"></th>
-            <th><input id="filterNro" class="maestro-filter" type="text"></th>
-            <th><input id="filterCodigo" class="maestro-filter" type="text"></th>
-            <th><input id="filterRev" class="maestro-filter" type="text"></th>
-            <th><input id="filterFecha" class="maestro-filter" type="text"></th>
-            <th><input id="filterLink" class="maestro-filter" type="text"></th>
-            <th></th>
+            ${columns
+              .map(c => {
+                if (c.key === 'notificado') {
+                  return `<th><select id="filter_${c.key}" class="maestro-filter"><option value=""></option><option value="ok">🟢</option><option value="alerta">🔴</option></select></th>`;
+                }
+                return `<th><input id="filter_${c.key}" class="maestro-filter" type="text"></th>`;
+              })
+              .join('')}
           </tr>
         </thead>
         <tbody></tbody>
@@ -323,8 +242,7 @@ export async function render(container) {
           <tr>
             <th>Fecha/hora</th>
             <th>Usuario</th>
-            <th>Tipo</th>
-            <th>Nro</th>
+            <th>Producto</th>
             <th>Campo</th>
             <th>Antes</th>
             <th>Después</th>
@@ -337,11 +255,11 @@ export async function render(container) {
       </div>
     </dialog>
   `;
+
   await ready;
   maestroData = await getAll('maestro');
   renderTabla(container);
   loadFilters(container);
-  applyFilters(container);
 
   container.querySelectorAll('.maestro-filter').forEach(inp => {
     const ev = inp.tagName === 'SELECT' ? 'change' : 'input';
@@ -351,80 +269,16 @@ export async function render(container) {
     });
   });
 
-  const tbody = container.querySelector('#maestro tbody');
-  tbody.addEventListener('click', async ev => {
-    const btn = ev.target.closest('button');
-    if (!btn) return;
-    const tr = btn.closest('tr');
-    const id = tr.dataset.id;
-    const idx = maestroData.findIndex(x => x.id === id);
-    const item = maestroData[idx];
-    if (btn.classList.contains('del-row')) {
-      const ok = await showDeleteDialog();
-      if (ok) {
-        await remove('maestro', id);
-        maestroData.splice(idx, 1);
-        renderTabla(container);
-      }
-    } else if (btn.classList.contains('ok-row')) {
-      await setNotification(id, true);
-      renderTabla(container);
-    }
-  });
-
-  const columnMap = [null, 'tipo', 'nro', 'codigo_producto', 'revision',
-    'fecha_ultima_revision', 'link'];
-
-  tbody.addEventListener('dblclick', ev => {
-    const cell = ev.target.closest('td');
-    if (!cell) return;
-    const tr = cell.closest('tr');
-    if (!tr) return;
-    const cells = Array.from(tr.children);
-    const colIndex = cells.indexOf(cell);
-    if (colIndex <= 0 || colIndex >= cells.length - 1) return;
-    if (cell.querySelector('input')) return;
-    const rowId = tr.dataset.id;
-    const key = columnMap[colIndex];
-    if (!key) return;
-    const row = maestroData.find(r => r.id === rowId);
-    if (!row) return;
-    const original = row[key] || '';
-    cell.innerHTML = '';
-    const inp = document.createElement('input');
-    inp.type = 'text';
-    inp.value = key === 'fecha_ultima_revision' ? formatDate(original) : original;
-    cell.appendChild(inp);
-    inp.focus();
-    inp.select();
-
-    const finish = () => {
-      const val = inp.value.trim();
-      cell.innerHTML =
-        key === 'link' && val ? `<a href="${val}" target="_blank">📂</a>` : val;
-      onCellEdit(rowId, key, val);
-    };
-
-    const onKey = e => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        inp.blur();
-      } else if (e.key === 'Escape') {
-        cell.innerHTML =
-          key === 'link' && original
-            ? `<a href="${original}" target="_blank">📂</a>`
-            : key === 'fecha_ultima_revision'
-            ? formatDate(original)
-            : original;
-      }
-    };
-
-    inp.addEventListener('blur', finish, { once: true });
-    inp.addEventListener('keydown', onKey);
-  });
+  setupEditing(container);
 
   container.querySelector('#btnNuevoMaestro').addEventListener('click', async () => {
-    const row = nuevaFila();
+    const codigo = prompt('Código de producto?');
+    if (!codigo) return;
+    if (maestroData.some(r => r.id === codigo)) {
+      alert('Ya existe un producto con ese código');
+      return;
+    }
+    const row = nuevaFila(codigo);
     maestroData.push(row);
     await add('maestro', row);
     renderTabla(container);
@@ -432,49 +286,50 @@ export async function render(container) {
 
   container.querySelector('#btnExportMaestro').addEventListener('click', async () => {
     if (typeof XLSX === 'undefined') return;
-    const headers = Array.from(container.querySelectorAll('#maestro thead th')).map(th => th.textContent);
-    const rows = maestroData.map(r => [r.notificado ? 'OK' : 'ALERTA', r.tipo, r.nro, r.codigo_producto, r.revision, formatDate(r.fecha_ultima_revision), r.link]);
+    const headers = columns.map(c => c.label);
+    const rows = maestroData.map(r => [
+      r.id,
+      r.flujograma,
+      r.amfe,
+      r.hojaOp,
+      r.mylar,
+      r.planos,
+      r.ulm,
+      r.fichaEmb,
+      r.tizada,
+      r.notificado ? 'OK' : 'ALERTA'
+    ]);
     const wb = XLSX.utils.book_new();
-    const ws = XLSX.utils.aoa_to_sheet([headers.slice(0,7), ...rows]);
-
+    const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
     const headerStyle = { font: { color: { rgb: 'FFFFFF' }, bold: true }, fill: { fgColor: { rgb: '44546A' } } };
-    headers.slice(0,7).forEach((_, idx) => {
+    headers.forEach((_, idx) => {
       const cell = ws[XLSX.utils.encode_cell({ r: 0, c: idx })];
       if (cell) cell.s = headerStyle;
     });
-
-    rows.forEach((row, rIdx) => {
-      const addr = XLSX.utils.encode_cell({ r: rIdx + 1, c: 0 });
-      const cell = ws[addr];
-      if (cell) cell.s = { fill: { fgColor: { rgb: row[0] === 'OK' ? '00B050' : 'FF0000' } } };
-    });
-
-    const colWidths = headers.slice(0,7).map((h, i) => {
-      if (i === 0) return { wch: 10 };
+    const colWidths = headers.map((h, i) => {
       const max = Math.max(h.length, ...rows.map(r => String(r[i] || '').length));
       return { wch: max + 2 };
     });
     ws['!cols'] = colWidths;
 
-    const histHeaders = ['Fecha/hora','Usuario','Tipo','Nro','Campo','Antes','Después'];
-    const historial = await getAll('maestroHist');
-    historial.sort((a,b)=>new Date(a.timestamp)-new Date(b.timestamp));
-    const histRows = historial.map(h => [
-      new Date(h.timestamp).toLocaleString('es-ES'),
-      h.usuario,
-      maestroData.find(x=>x.id===h.elemento_id)?.tipo||'',
-      maestroData.find(x=>x.id===h.elemento_id)?.nro||'',
-      h.campo,
-      h.antes,
-      h.despues
-    ]);
+    const histHeaders = ['Fecha/hora', 'Usuario', 'Producto', 'Campo', 'Antes', 'Después'];
+    const histRows = (await getAll('maestroHist'))
+      .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
+      .map(h => [
+        new Date(h.timestamp).toLocaleString('es-ES'),
+        h.usuario,
+        h.elemento_id,
+        h.campo,
+        h.antes,
+        h.despues
+      ]);
     const wsHist = XLSX.utils.aoa_to_sheet([histHeaders, ...histRows]);
     histHeaders.forEach((_, idx) => {
       const cell = wsHist[XLSX.utils.encode_cell({ r: 0, c: idx })];
       if (cell) cell.s = headerStyle;
     });
-    wsHist['!cols'] = histHeaders.map((h,i)=>{
-      const max = Math.max(h.length, ...histRows.map(r=>String(r[i]||'').length));
+    wsHist['!cols'] = histHeaders.map((h, i) => {
+      const max = Math.max(h.length, ...histRows.map(r => String(r[i] || '').length));
       return { wch: max + 2 };
     });
 
@@ -497,7 +352,7 @@ export async function render(container) {
     const end = hastaInp.value ? new Date(hastaInp.value) : null;
     if (end) end.setHours(23, 59, 59, 999);
     const usuario = usuarioInp.value.toLowerCase();
-    const producto = productoInp.value.toLowerCase();
+    const prod = productoInp.value.toLowerCase();
 
     historialData
       .filter(h => {
@@ -505,11 +360,7 @@ export async function render(container) {
         if (start && ts < start) return false;
         if (end && ts > end) return false;
         if (usuario && !h.usuario.toLowerCase().includes(usuario)) return false;
-        if (producto) {
-          const item = maestroData.find(x => x.id === h.elemento_id);
-          const codigo = item?.codigo_producto || '';
-          if (!codigo.toLowerCase().includes(producto)) return false;
-        }
+        if (prod && !String(h.elemento_id).toLowerCase().includes(prod)) return false;
         return true;
       })
       .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
@@ -518,8 +369,7 @@ export async function render(container) {
         tr.innerHTML = `
           <td>${new Date(h.timestamp).toLocaleString('es-ES')}</td>
           <td>${h.usuario}</td>
-          <td>${maestroData.find(x => x.id === h.elemento_id)?.tipo || ''}</td>
-          <td>${maestroData.find(x => x.id === h.elemento_id)?.nro || ''}</td>
+          <td>${h.elemento_id}</td>
           <td>${h.campo}</td>
           <td>${h.antes}</td>
           <td>${h.despues}</td>`;
@@ -527,9 +377,7 @@ export async function render(container) {
       });
   }
 
-  [desdeInp, hastaInp, usuarioInp, productoInp].forEach(inp =>
-    inp.addEventListener('input', renderHist)
-  );
+  [desdeInp, hastaInp, usuarioInp, productoInp].forEach(inp => inp.addEventListener('input', renderHist));
 
   container.querySelector('#btnHistorial').addEventListener('click', async () => {
     historialData = await getAll('maestroHist');
