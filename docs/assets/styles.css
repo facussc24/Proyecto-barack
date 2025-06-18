@@ -693,6 +693,19 @@ tr[data-level] td:first-child {
   margin-bottom: 20px;
 }
 
+.maestro-header button {
+  padding: 6px 12px;
+  background-color: var(--color-primary);
+  color: var(--color-light);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.maestro-header button:hover {
+  background-color: var(--color-primary-hover);
+}
+
 .maestro-help {
   text-align: center;
   color: #555;
