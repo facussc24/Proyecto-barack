@@ -1548,6 +1548,8 @@ body.grid-overlay::before {
 
 td[contenteditable="true"]:focus {
   outline: 2px solid var(--color-accent);
+  background-color: #fff5a3;
+  transition: background-color 0.2s;
 }
 
 td[contenteditable="true"]:focus::before {
