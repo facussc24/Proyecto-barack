@@ -42,6 +42,7 @@ tr:not(.pending) td:first-child::before{content:"\1F7E2";}
 <th>ULM</th>
 <th>Ficha de Embalaje</th>
 <th>Tizada</th>
+<th>Acciones</th>
 </tr>
 </thead>
 <tbody></tbody>
@@ -92,6 +93,9 @@ function render(){
     td.textContent=val;
     tr.appendChild(td);
   });
+  const delTd=document.createElement('td');
+  delTd.innerHTML='<button class="delete-row">🗑️</button>';
+  tr.appendChild(delTd);
   tbody.appendChild(tr);
  });
  filterRows();
@@ -125,8 +129,15 @@ function handleInput(e){
 function addRow(){data.push({producto:'',amfe:'',flujograma:'',hojaOp:'',mylar:'',planos:'',ulm:'',fichaEmb:'',tizada:'',pending:false});render();save();}
 function exportExcel(){if(typeof XLSX==='undefined')return;const headers=['Producto / Código','AMFE','Flujograma','Hoja de Operaciones','Mylar','Planos','ULM','Ficha de Embalaje','Tizada','Estado'];const rows=data.map(r=>[r.producto||'',r.amfe||'',r.flujograma||'',r.hojaOp||'',r.mylar||'',r.planos||'',r.ulm||'',r.fichaEmb||'',r.tizada||'',r.pending?'ALERTA':'OK']);const wb=XLSX.utils.book_new();const ws=XLSX.utils.aoa_to_sheet([headers,...rows]);XLSX.utils.book_append_sheet(wb,ws,'Maestro');const histHeaders=['Fecha/hora','Producto','Columna','Antes','Después'];const histRows=history.map(h=>[new Date(h.timestamp).toLocaleString('es-ES'),h.producto,h.columna,h.antes,h.despues]);const wsHist=XLSX.utils.aoa_to_sheet([histHeaders,...histRows]);XLSX.utils.book_append_sheet(wb,wsHist,'Historial');XLSX.writeFile(wb,'ListadoMaestro.xlsx');}
 function openHistory(){const tbody=document.getElementById('historyBody');tbody.innerHTML='';history.forEach(h=>{const tr=document.createElement('tr');tr.innerHTML=`<td>${new Date(h.timestamp).toLocaleString('es-ES')}</td><td>${h.producto}</td><td>${h.columna}</td><td>${h.antes}</td><td>${h.despues}</td>`;tbody.appendChild(tr);});document.getElementById('historyDialog').showModal();}
-function filterRows(){const term=(searchInput.value||'').toLowerCase();document.querySelectorAll('#maestro tbody tr').forEach(tr=>{const text=tr.textContent.toLowerCase();tr.style.display=text.includes(term)?'':'none';});}
-document.getElementById('closeHist').onclick=()=>document.getElementById('historyDialog').close();document.getElementById('addRow').onclick=addRow;document.getElementById('export').onclick=exportExcel;document.getElementById('showHistory').onclick=openHistory;document.querySelector('#maestro tbody').addEventListener('input',handleInput);load();render();
+function filterRows(){const term=(searchInput.value||'').toLowerCase();document.querySelectorAll('#maestro tbody tr').forEach(tr=>{const text=tr.textContent.toLowerCase();tr.style.display=text.includes(term)?'':'';});}
+function handleClick(e){
+ const btn=e.target.closest('.delete-row');
+ if(!btn)return;
+ const tr=btn.closest('tr');
+ const rowIndex=Array.from(tr.parentElement.children).indexOf(tr);
+ if(confirm('¿Eliminar fila?')){data.splice(rowIndex,1);save();render();}
+}
+document.getElementById('closeHist').onclick=()=>document.getElementById('historyDialog').close();document.getElementById('addRow').onclick=addRow;document.getElementById('export').onclick=exportExcel;document.getElementById('showHistory').onclick=openHistory;const tbodyEl=document.querySelector('#maestro tbody');tbodyEl.addEventListener('input',handleInput);tbodyEl.addEventListener('click',handleClick);load();render();
 searchInput.addEventListener('input',filterRows);
 </script>
 <script type="module" src="js/version.js" defer></script>

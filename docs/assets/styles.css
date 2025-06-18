@@ -1538,3 +1538,11 @@ body.grid-overlay::before {
   z-index: 9999;
 }
 
+td[contenteditable="true"]:focus {
+  outline: 2px solid var(--color-accent);
+}
+
+td[contenteditable="true"]:focus::before {
+  content: '✏️ ';
+}
+
