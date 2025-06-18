@@ -64,6 +64,27 @@ Si ya conoces estas páginas, puedes trabajar solo con `docs/sinoptico-editor.ht
 - Verás una vista previa del nodo seguido de sus subcomponentes e insumos.
 - Con los botones 🗑 puedes eliminar entradas que no quieras conservar.
 - Finalmente confirma para guardar todo el árbol.
+
+## Listado Maestro
+
+El Listado Maestro ofrece una vista consolidada de los documentos de cada
+producto. Puedes acceder a esta sección desde la SPA (`index.html`) mediante la
+opción **Listado Maestro** del menú principal.
+
+1. Haz doble clic en una celda para editarla en línea.
+2. Pulsa **Historial** para ver quién modificó cada campo y cuándo lo hizo.
+3. Con **Exportar Excel** obtendrás un archivo `ListadoMaestro.xlsx` con los
+   datos actuales y el historial.
+
+El sistema de semáforo marca con 🟢 los productos notificados y con 🔴 aquellos
+pendientes de revisión. Cuando se actualiza un documento se limpian las
+revisiones dependientes siguiendo estas reglas:
+
+- `flujograma` afecta a `amfe` y `hojaOp`.
+- `amfe` afecta a `hojaOp`.
+- `hojaOp` limpia `mylar`, `planos`, `ulm`, `fichaEmb` y `tizada`.
+- `mylar` depende de `planos`.
+
 ## Sincronización de datos
 
 Este proyecto incluye un pequeño servidor Flask (`server.py`) para almacenar la base de datos en `data/latest.json`.
