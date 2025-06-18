@@ -506,6 +506,14 @@ tr[data-level] td:first-child {
   overflow-y: auto;
   overflow-x: auto;
   display: block;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#maestro th,
+#maestro td {
+  padding: 8px;
+  border: 1px solid #ccc;
 }
 
 #maestro thead th {
@@ -513,6 +521,7 @@ tr[data-level] td:first-child {
   top: 0;
   background-color: var(--maestro-header-bg);
   color: var(--color-light);
+  text-transform: uppercase;
   padding: 8px;
   z-index: 1;
 }
@@ -1595,26 +1604,6 @@ td[contenteditable="true"]:focus::before {
   background: #004c99;
 }
 
-#maestro {
-  border-collapse: collapse;
-  width: 100%;
-}
-
-#maestro th,
-#maestro td {
-  padding: 8px;
-  border: 1px solid #ccc;
-}
-
-#maestro thead th {
-  background: #44546A;
-  color: #fff;
-  text-transform: uppercase;
-}
-
-#maestro tbody tr:nth-child(even) {
-  background: #F3F6F9;
-}
 
 tr.pending td:first-child::before {
   content: "\1F534";
