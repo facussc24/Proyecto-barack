@@ -2,6 +2,7 @@ import { render as renderHome } from './views/home.js';
 import { render as renderSinoptico } from './views/sinoptico.js';
 import { render as renderAmfe } from './views/amfe.js';
 import { render as renderSettings } from './views/settings.js';
+// Use the live view implementation for the Maestro list
 import { render as renderMaestro } from './views/maestroLive.js';
 
 const routes = {
