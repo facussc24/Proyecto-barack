@@ -3,14 +3,14 @@ import { render as renderSinoptico } from './views/sinoptico.js';
 import { render as renderAmfe } from './views/amfe.js';
 import { render as renderSettings } from './views/settings.js';
 // Use the live view implementation for the Maestro list
-import { render } from './views/maestroLive.js';
+import { render as renderMaestro } from './views/maestroLive.js';
 
 const routes = {
   '#/home': renderHome,
   '#/sinoptico': renderSinoptico,
   '#/amfe': renderAmfe,
   '#/settings': renderSettings,
-  '#/maestro': render,
+  '#/maestro': renderMaestro,
 };
 
 const bodyClasses = {
