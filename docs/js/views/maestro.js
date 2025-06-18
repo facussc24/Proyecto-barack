@@ -1,4 +1,4 @@
-import { getAll, add, update, ready } from '../dataService.js';
+import { getAll, add, update, remove, ready } from '../dataService.js';
 import { getUser } from '../session.js';
 
 let maestroData = [];
@@ -7,13 +7,21 @@ let historialData = [];
 const columns = [
   { key: 'id', label: 'Producto' },
   { key: 'flujograma', label: 'Flujograma' },
+  { key: 'flujogramaVer', label: 'Versión' },
   { key: 'amfe', label: 'AMFE' },
+  { key: 'amfeVer', label: 'Versión' },
   { key: 'hojaOp', label: 'Hoja Op' },
+  { key: 'hojaOpVer', label: 'Versión' },
   { key: 'mylar', label: 'Mylar' },
+  { key: 'mylarVer', label: 'Versión' },
   { key: 'planos', label: 'Planos' },
+  { key: 'planosVer', label: 'Versión' },
   { key: 'ulm', label: 'ULM' },
+  { key: 'ulmVer', label: 'Versión' },
   { key: 'fichaEmb', label: 'Ficha Embalaje' },
+  { key: 'fichaEmbVer', label: 'Versión' },
   { key: 'tizada', label: 'Tizada' },
+  { key: 'tizadaVer', label: 'Versión' },
   { key: 'notificado', label: 'Notificado' }
 ];
 
@@ -53,6 +61,11 @@ function clearDependents(row, key) {
     if (row[dep]) {
       changes.push({ field: dep, old: row[dep] });
       row[dep] = '';
+      const verKey = dep + 'Ver';
+      if (row[verKey]) {
+        changes.push({ field: verKey, old: row[verKey] });
+        row[verKey] = '';
+      }
     }
   }
   if (changes.length) row.notificado = false;
@@ -83,13 +96,21 @@ function nuevaFila(codigo) {
   return {
     id: codigo || Date.now().toString(),
     flujograma: '',
+    flujogramaVer: '',
     amfe: '',
+    amfeVer: '',
     hojaOp: '',
+    hojaOpVer: '',
     mylar: '',
+    mylarVer: '',
     planos: '',
+    planosVer: '',
     ulm: '',
+    ulmVer: '',
     fichaEmb: '',
+    fichaEmbVer: '',
     tizada: '',
+    tizadaVer: '',
     notificado: false
   };
 }
@@ -179,6 +200,20 @@ async function onCellEdit(rowId, key, value) {
   if (!row) return;
   const old = row[key] || '';
   if (old === value) return;
+  if (key === 'id') {
+    if (!value) { renderTabla(document.querySelector('.maestro-page')); return; }
+    if (maestroData.some(r => r.id === value && r !== row)) {
+      alert('Ya existe un producto con ese código');
+      renderTabla(document.querySelector('.maestro-page'));
+      return;
+    }
+    agregarHistorial(rowId, key, old, value);
+    row.id = value;
+    await remove('maestro', rowId);
+    await add('maestro', row);
+    renderTabla(document.querySelector('.maestro-page'));
+    return;
+  }
   row[key] = value;
   row.notificado = false;
   agregarHistorial(rowId, key, old, value);
@@ -207,7 +242,7 @@ function setupEditing(container) {
     const tr = cell.closest('tr');
     const idx = Array.from(tr.children).indexOf(cell);
     const col = columns[idx];
-    if (!col || col.key === 'id' || col.key === 'notificado') return;
+    if (!col || col.key === 'notificado') return;
     if (cell.querySelector('input')) return;
     const rowId = tr.dataset.id;
     const original = maestroData.find(r => r.id === rowId)[col.key] || '';
@@ -260,7 +295,7 @@ export async function render(container) {
     <h1>Listado Maestro</h1>
     <p class="maestro-help">Doble clic en una celda para editarla</p>
     <div class="maestro-header">
-      <button id="btnNuevoMaestro">+ Nuevo</button>
+      <button id="btnNuevoMaestro">Agregar documento</button>
       <button id="btnExportMaestro">Exportar Excel</button>
       <button id="btnHistorial">Historial</button>
       <input id="searchMaestro" type="text" placeholder="Buscar...">
@@ -332,34 +367,19 @@ export async function render(container) {
   setupEditing(container);
 
   container.querySelector('#btnNuevoMaestro').addEventListener('click', async () => {
-    const codigo = prompt('Código de producto?');
-    if (!codigo) return;
-    if (maestroData.some(r => r.id === codigo)) {
-      alert('Ya existe un producto con ese código');
-      return;
-    }
-    const row = nuevaFila(codigo);
+    const row = nuevaFila();
     maestroData.push(row);
     await add('maestro', row);
     renderTabla(container);
-    startEdit(codigo);
+    startEdit(row.id, 'id');
   });
 
   container.querySelector('#btnExportMaestro').addEventListener('click', async () => {
     if (typeof XLSX === 'undefined') return;
     const headers = columns.map(c => c.label);
-    const rows = maestroData.map(r => [
-      r.id,
-      r.flujograma,
-      r.amfe,
-      r.hojaOp,
-      r.mylar,
-      r.planos,
-      r.ulm,
-      r.fichaEmb,
-      r.tizada,
-      r.notificado ? 'OK' : 'ALERTA'
-    ]);
+    const rows = maestroData.map(r =>
+      columns.map(c => (c.key === 'notificado' ? (r.notificado ? 'OK' : 'ALERTA') : r[c.key] || ''))
+    );
     const wb = XLSX.utils.book_new();
     const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
     const headerStyle = { font: { color: { rgb: 'FFFFFF' }, bold: true }, fill: { fgColor: { rgb: '44546A' } } };
