@@ -1,7 +1,15 @@
+import { version, displayVersion } from './version.js';
+
 const columns = ['producto','amfe','flujograma','hojaOp','mylar','planos','ulm','fichaEmb','tizada'];
 let data = [];
 let history = [];
 const searchInput = document.getElementById('searchInput');
+
+const stored = localStorage.getItem('maestroVivoVersion');
+if (stored !== version) {
+  localStorage.removeItem('maestroVivo');
+  localStorage.setItem('maestroVivoVersion', version);
+}
 
 function load() {
   const raw = localStorage.getItem('maestroVivo');
@@ -136,3 +144,4 @@ tbodyEl.addEventListener('click', handleClick);
 load();
 render();
 searchInput.addEventListener('input', filterRows);
+displayVersion();
