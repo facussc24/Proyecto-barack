@@ -494,18 +494,6 @@ tr[data-level] td:first-child {
   margin: 0 auto;
 }
 
-.ag-theme-alpine {
-  font-family: var(--font-base, sans-serif);
-}
-
-.ag-theme-alpine .ag-header {
-  background-color: var(--maestro-header-bg);
-  color: var(--color-light);
-}
-
-.ag-theme-alpine .ag-row:nth-child(even) {
-  background-color: var(--maestro-row-alt);
-}
 
 #maestro {
   max-height: 70vh;
