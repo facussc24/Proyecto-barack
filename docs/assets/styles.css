@@ -494,10 +494,18 @@ tr[data-level] td:first-child {
   margin: 0 auto;
 }
 
+@media (max-width: 600px) {
+  .maestro-container {
+    width: 100%;
+  }
+}
+
 
 #maestro {
   max-height: 70vh;
   overflow-y: auto;
+  overflow-x: auto;
+  display: block;
 }
 
 #maestro thead th {
