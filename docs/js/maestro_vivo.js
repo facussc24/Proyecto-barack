@@ -9,7 +9,7 @@ const searchInput = document.getElementById('searchInput');
 function rowFromStore(rec = {}) {
   return {
     id: rec.id || Date.now().toString(),
-    producto: rec.id || '',
+    producto: rec.producto || '',
     amfe: rec.amfe || '',
     flujograma: rec.flujograma || '',
     hojaOp: rec.hojaOp || '',
