@@ -67,12 +67,12 @@ Si ya conoces estas páginas, puedes trabajar solo con `docs/sinoptico-editor.ht
 
 ## Listado Maestro
 
-El Listado Maestro ofrece una vista consolidada de los documentos de cada
-producto. Puedes acceder a esta sección desde la SPA (`index.html`) mediante la
-opción **Listado Maestro** del menú principal.
+El proyecto incluye una versión simplificada llamada **Listado Maestro Vivo**
+disponible en `docs/maestro_vivo.html`. La antigua vista con **AG‑Grid** que se
+abría desde la SPA (`index.html`) está en desuso y ya no se mantiene.
 
-1. Haz doble clic en una celda para editarla en línea.
-2. Pulsa **Historial** para ver quién modificó cada campo y cuándo lo hizo.
+1. Haz clic en una celda para editarla en línea.
+2. Pulsa **Ver Historial** para revisar las modificaciones realizadas.
 3. Con **Exportar Excel** obtendrás un archivo `ListadoMaestro.xlsx` con los
    datos actuales y el historial.
 
