@@ -508,6 +508,12 @@ tr[data-level] td:first-child {
   padding: 8px;
   z-index: 1;
 }
+#maestro th.ver-col,
+#maestro td.ver-col {
+  width: 70px;
+  max-width: 70px;
+  text-align: center;
+}
 
 #maestro tbody tr:nth-child(even) {
   background-color: var(--maestro-row-alt);
