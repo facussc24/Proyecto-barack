@@ -6,15 +6,39 @@ let maestroData = [];
 // Dependencies between document types. When a document revision changes
 // the related documents listed here will be marked as pending review.
 const dependencies = {
+  // Cambiar el flujograma reinicia el AMFE y la hoja de operaciones
   'Flujograma': ['AMFE', 'Hoja de Operaciones'],
-  AMFE: [],
-  'Hoja de Operaciones': [],
-  Mylar: [],
+  // Actualizar el AMFE implica volver a revisar la hoja de operaciones
+  AMFE: ['Hoja de Operaciones'],
+  // Modificar la hoja de operaciones impacta en la documentación posterior
+  'Hoja de Operaciones': ['Mylar', 'Planos', 'ULM', 'Ficha de Embalaje', 'Tizada'],
+  // Los planos dependen del Mylar
+  Mylar: ['Planos'],
   Planos: [],
   ULM: [],
   'Ficha de Embalaje': [],
   Tizada: []
 };
+
+export function getDependentsForType(tipo) {
+  return dependencies[tipo] || [];
+}
+
+export function clearDependentRevisions(row, data) {
+  const dependents = getDependentsForType(row.tipo);
+  const changes = [];
+  for (const depTipo of dependents) {
+    const depRow = data.find(
+      r => r.codigo_producto === row.codigo_producto && r.tipo === depTipo
+    );
+    if (depRow && depRow.revision !== '') {
+      changes.push({ id: depRow.id, oldValue: depRow.revision });
+      depRow.revision = '';
+      depRow.notificado = false;
+    }
+  }
+  return changes;
+}
 
 function formatDate(dateStr) {
   if (!dateStr) return '';
@@ -100,21 +124,10 @@ function agregarHistorial(id, campo, antes, despues) {
 // product as pending by clearing their revision and setting notificado=false.
 async function aplicarDependencias(item, cambios) {
   if (!cambios.revision) return;
-  const dependents = dependencies[item.tipo] || [];
-  if (!dependents.length) return;
-  for (const depTipo of dependents) {
-    const depRow = maestroData.find(
-      r => r.codigo_producto === item.codigo_producto && r.tipo === depTipo
-    );
-    if (depRow) {
-      const oldRev = depRow.revision || '';
-      if (oldRev !== '') {
-        agregarHistorial(depRow.id, 'revision', oldRev, '');
-      }
-      depRow.revision = '';
-      depRow.notificado = false;
-      await update('maestro', depRow.id, { revision: '', notificado: false });
-    }
+  const changed = clearDependentRevisions(item, maestroData);
+  for (const { id, oldValue } of changed) {
+    agregarHistorial(id, 'revision', oldValue, '');
+    await update('maestro', id, { revision: '', notificado: false });
   }
 }
 
@@ -133,19 +146,11 @@ async function onCellEdit(rowId, columnKey, newValue) {
     notificado: false
   });
   if (columnKey === 'revision') {
-    const dependents = dependencies[row.tipo] || [];
-    for (const depTipo of dependents) {
-      const depRow = maestroData.find(
-        r => r.codigo_producto === row.codigo_producto && r.tipo === depTipo
-      );
-      if (depRow) {
-        const oldRev = depRow.revision || '';
-        if (oldRev !== '') agregarHistorial(depRow.id, 'revision', oldRev, '');
-        depRow.revision = '';
-        depRow.notificado = false;
-        await update('maestro', depRow.id, { revision: '', notificado: false });
-        refreshSemaphore(depRow.id);
-      }
+    const changes = clearDependentRevisions(row, maestroData);
+    for (const { id, oldValue } of changes) {
+      agregarHistorial(id, 'revision', oldValue, '');
+      await update('maestro', id, { revision: '', notificado: false });
+      refreshSemaphore(id);
     }
   }
   refreshSemaphore(rowId);
