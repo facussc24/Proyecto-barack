@@ -56,7 +56,7 @@ await dataService.importJSON(json); // Restaura la copia
 ```
 
 
-Si ya conoces estas páginas, puedes trabajar solo con `docs/sinoptico-editor.html` y consultar los datos desde `docs/sinoptico.html`. La SPA (`index.html`) queda como opción adicional.
+Si ya conoces estas páginas, puedes trabajar solo con `docs/sinoptico-editor.html` y consultar los datos desde `docs/sinoptico.html`. Para el listado maestro utiliza `docs/maestro_editor.html` o consulta `docs/maestro.html`. La SPA (`index.html`) queda como opción adicional.
 
 ### Crear un nuevo producto con `docs/arbol.html`
 
@@ -67,12 +67,13 @@ Si ya conoces estas páginas, puedes trabajar solo con `docs/sinoptico-editor.ht
 
 ## Listado Maestro
 
-El proyecto incluye una versión simplificada llamada **Listado Maestro Vivo**
-disponible en `docs/maestro_vivo.html`. La antigua vista con **AG‑Grid** que se
-abría desde la SPA (`index.html`) está en desuso y ya no se mantiene.
+El Listado Maestro ahora se divide en dos páginas:
+- `docs/maestro.html` muestra la tabla en modo solo lectura.
+- `docs/maestro_editor.html` permite crear y editar filas.
 
-1. Haz clic en una celda para editarla en línea.
-2. Pulsa **Ver Historial** para revisar las modificaciones realizadas.
+1. Abre `maestro_editor.html` para modificar las celdas en línea.
+2. `maestro.html` mantiene la búsqueda, el historial y la exportación sin
+   opciones de edición.
 3. Con **Exportar Excel** obtendrás un archivo `ListadoMaestro.xlsx` con los
    datos actuales y el historial.
 4. Si la versión de la aplicación cambia se vacía la tabla guardada y su
