@@ -1,4 +1,4 @@
-import { version, displayVersion } from './version.js';
+import { version } from './version.js';
 
 const columns = ['producto','amfe','flujograma','hojaOp','mylar','planos','ulm','fichaEmb','tizada'];
 let data = [];
@@ -78,5 +78,4 @@ document.getElementById('showHistory').onclick = openHistory;
 load();
 render();
 searchInput.addEventListener('input', filterRows);
-displayVersion();
 

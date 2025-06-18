@@ -1,4 +1,4 @@
-import { version, displayVersion } from './version.js';
+import './version.js';
 import { getAll, add, update, remove, ready } from './dataService.js';
 
 const columns = ['producto','amfe','flujograma','hojaOp','mylar','planos','ulm','fichaEmb','tizada'];
@@ -191,4 +191,3 @@ tbodyEl.addEventListener('click', handleClick);
   render();
 })();
 searchInput.addEventListener('input', filterRows);
-displayVersion();
