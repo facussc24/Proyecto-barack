@@ -94,7 +94,7 @@ export function clearDependentRevisions(row, data) {
 
 function nuevaFila(codigo) {
   return {
-    id: codigo || Date.now().toString(),
+    id: codigo || '',
     flujograma: '',
     flujogramaVer: '',
     amfe: '',
@@ -186,6 +186,7 @@ function renderTabla(container) {
         td.className = 'notify-cell';
         td.textContent = row.notificado ? '🟢' : '🔴';
       } else {
+        if (col.key.endsWith('Ver')) td.classList.add('ver-col');
         td.textContent = row[col.key] || '';
       }
       tr.appendChild(td);
@@ -304,7 +305,9 @@ export async function render(container) {
       <table id="maestro">
         <thead>
           <tr>
-            ${columns.map(c => `<th>${c.label}</th>`).join('')}
+            ${columns
+              .map(c => `<th${c.key.endsWith('Ver') ? ' class="ver-col"' : ''}>${c.label}</th>`)
+              .join('')}
           </tr>
           <tr>
             ${columns
@@ -312,7 +315,8 @@ export async function render(container) {
                 if (c.key === 'notificado') {
                   return `<th><select id="filter_${c.key}" class="maestro-filter"><option value=""></option><option value="ok">🟢</option><option value="alerta">🔴</option></select></th>`;
                 }
-                return `<th><input id="filter_${c.key}" class="maestro-filter" type="text"></th>`;
+                const cls = c.key.endsWith('Ver') ? ' class="ver-col"' : '';
+                return `<th${cls}><input id="filter_${c.key}" class="maestro-filter" type="text"></th>`;
               })
               .join('')}
           </tr>
