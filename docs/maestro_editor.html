@@ -45,6 +45,19 @@
 <button id="closeHist">Cerrar</button>
 </div>
 </dialog>
+<div id="fileWarning" class="file-warning" style="display:none">
+  Para utilizar la aplicación abre el archivo en un navegador moderno.
+</div>
+<script>
+  if (location.protocol === 'file:') {
+    document.getElementById('fileWarning').style.display = 'block';
+  }
+</script>
+<noscript>
+  <p class="noscript-warning">
+    Esta página necesita JavaScript para funcionar. Si la estás viendo desde GitHub, descárgala y ábrela localmente con un navegador.
+  </p>
+</noscript>
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 <script type="module" src="js/maestro_vivo.js" defer></script>
 </body>
