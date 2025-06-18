@@ -100,4 +100,11 @@ if __name__ == "__main__":
     scheduler.start()
 
     # Usa socketio.run para incluir WebSocket y hot-reload
-    socketio.run(app, host="0.0.0.0", port=5000, debug=True)
+    run_args = {"host": "0.0.0.0", "port": 5000, "debug": True}
+    cert = os.getenv("SSL_CERT")
+    key = os.getenv("SSL_KEY")
+    if cert and key:
+        run_args["certfile"] = cert
+        run_args["keyfile"] = key
+
+    socketio.run(app, **run_args)

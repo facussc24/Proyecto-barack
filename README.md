@@ -111,6 +111,18 @@ py -3 -m pip install -r requirements.txt
 py -3 server.py
 ```
 
+Para habilitar HTTPS puedes crear un certificado autofirmado con:
+
+```bash
+openssl req -x509 -newkey rsa:4096 -nodes -keyout key.pem -out cert.pem -days 365
+```
+
+Luego inicia el servidor indicando las rutas en `SSL_CERT` y `SSL_KEY`:
+
+```bash
+SSL_CERT=cert.pem SSL_KEY=key.pem python server.py
+```
+
 GitHub Pages solo aloja archivos estáticos y no puede ejecutar este servidor.
 Cuando uses varias PC debes indicar la URL del servidor. Puedes hacerlo con:
 
