@@ -693,6 +693,13 @@ tr[data-level] td:first-child {
   margin-bottom: 20px;
 }
 
+.maestro-help {
+  text-align: center;
+  color: #555;
+  margin: 10px 0;
+  font-size: 0.9rem;
+}
+
 .maestro-header input[type="text"] {
   padding: 6px;
   border: 1px solid #bbb;
