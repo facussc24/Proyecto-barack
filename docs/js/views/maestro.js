@@ -243,10 +243,22 @@ function setupEditing(container) {
   });
 }
 
+function startEdit(rowId, key = 'flujograma') {
+  const tbody = document.querySelector('#maestro tbody');
+  const tr = tbody?.querySelector(`tr[data-id="${rowId}"]`);
+  if (!tr) return;
+  const idx = columns.findIndex(c => c.key === key);
+  const cell = tr.children[idx];
+  if (cell) {
+    cell.dispatchEvent(new MouseEvent('dblclick', { bubbles: true }));
+  }
+}
+
 export async function render(container) {
   container.classList.add('maestro-page');
   container.innerHTML = `
     <h1>Listado Maestro</h1>
+    <p class="maestro-help">Doble clic en una celda para editarla</p>
     <div class="maestro-header">
       <button id="btnNuevoMaestro">+ Nuevo</button>
       <button id="btnExportMaestro">Exportar Excel</button>
@@ -330,6 +342,7 @@ export async function render(container) {
     maestroData.push(row);
     await add('maestro', row);
     renderTabla(container);
+    startEdit(codigo);
   });
 
   container.querySelector('#btnExportMaestro').addEventListener('click', async () => {
