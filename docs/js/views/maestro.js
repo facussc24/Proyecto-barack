@@ -311,6 +311,7 @@ export async function render(container) {
     <p class="maestro-help">Doble clic en una celda para editarla</p>
     <div class="maestro-header">
       <button id="btnNuevoMaestro">Agregar documento</button>
+      <button id="btnCrearProducto">Crear producto</button>
       <button id="btnExportMaestro">Exportar Excel</button>
       <button id="btnHistorial">Historial</button>
       <input id="searchMaestro" type="text" placeholder="Buscar...">
@@ -391,6 +392,10 @@ export async function render(container) {
     await add('maestro', row);
     renderTabla(container);
     startEdit(row.id, 'id');
+  });
+
+  container.querySelector('#btnCrearProducto')?.addEventListener('click', () => {
+    location.href = 'arbol.html';
   });
 
   container.querySelector('#btnExportMaestro').addEventListener('click', async () => {
