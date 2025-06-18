@@ -1,29 +1,51 @@
 import { version, displayVersion } from './version.js';
+import { getAll, add, update, remove, ready } from './dataService.js';
 
 const columns = ['producto','amfe','flujograma','hojaOp','mylar','planos','ulm','fichaEmb','tizada'];
 let data = [];
 let history = [];
 const searchInput = document.getElementById('searchInput');
 
-const stored = localStorage.getItem('maestroVivoVersion');
-if (stored !== version) {
-  localStorage.removeItem('maestroVivo');
-  localStorage.setItem('maestroVivoVersion', version);
+function rowFromStore(rec = {}) {
+  return {
+    id: rec.id || Date.now().toString(),
+    producto: rec.id || '',
+    amfe: rec.amfe || '',
+    flujograma: rec.flujograma || '',
+    hojaOp: rec.hojaOp || '',
+    mylar: rec.mylar || '',
+    planos: rec.planos || '',
+    ulm: rec.ulm || '',
+    fichaEmb: rec.fichaEmb || '',
+    tizada: rec.tizada || '',
+    pending: rec.notificado === false,
+  };
 }
 
-function load() {
-  const raw = localStorage.getItem('maestroVivo');
-  if (raw) {
-    try {
-      const obj = JSON.parse(raw);
-      data = Array.isArray(obj.data) ? obj.data : [];
-      history = Array.isArray(obj.history) ? obj.history : [];
-    } catch {}
+function rowToStore(row = {}) {
+  return {
+    id: row.id,
+    flujograma: row.flujograma || '',
+    amfe: row.amfe || '',
+    hojaOp: row.hojaOp || '',
+    mylar: row.mylar || '',
+    planos: row.planos || '',
+    ulm: row.ulm || '',
+    fichaEmb: row.fichaEmb || '',
+    tizada: row.tizada || '',
+    notificado: row.pending ? false : true,
+  };
+}
+
+async function load() {
+  await ready;
+  try {
+    data = (await getAll('maestro')).map(rowFromStore);
+    history = await getAll('maestroHist');
+  } catch {
+    data = [];
+    history = [];
   }
-}
-
-function save() {
-  localStorage.setItem('maestroVivo', JSON.stringify({ data, history }));
 }
 
 function render() {
@@ -47,17 +69,23 @@ function render() {
   filterRows();
 }
 
-function addHistory(prod, col, before, after) {
-  history.push({
+async function addHistory(id, col, before, after) {
+  const entry = {
+    hist_id:
+      typeof crypto !== 'undefined' && crypto.randomUUID
+        ? crypto.randomUUID()
+        : Date.now().toString(),
+    elemento_id: id,
     timestamp: new Date().toISOString(),
-    producto: prod,
-    columna: col,
+    campo: col,
     antes: before,
-    despues: after
-  });
+    despues: after,
+  };
+  history.push(entry);
+  await add('maestroHist', entry);
 }
 
-function handleInput(e) {
+async function handleInput(e) {
   const td = e.target.closest('td[contenteditable="true"]');
   if (!td) return;
   const tr = td.parentElement;
@@ -67,26 +95,43 @@ function handleInput(e) {
   const before = data[rowIndex][key] || '';
   const after = td.textContent.trim();
   if (before === after) return;
-  addHistory(data[rowIndex].producto || '', key, before, after);
-  data[rowIndex][key] = after;
+  const row = data[rowIndex];
+  await addHistory(row.id, key, before, after);
+  row[key] = after;
   if (key === 'flujograma') {
     ['amfe', 'hojaOp'].forEach((depKey, idx) => {
-      if (data[rowIndex][depKey]) {
-        addHistory(data[rowIndex].producto || '', depKey, data[rowIndex][depKey], '');
-        data[rowIndex][depKey] = '';
+      if (row[depKey]) {
+        addHistory(row.id, depKey, row[depKey], '');
+        row[depKey] = '';
         tr.children[idx + 2].textContent = '';
       }
     });
   }
-  data[rowIndex].pending = true;
+  row.pending = true;
   tr.classList.add('pending');
-  save();
+  await update('maestro', row.id, rowToStore(row));
 }
 
-function addRow() {
-  data.push({ producto: '', amfe: '', flujograma: '', hojaOp: '', mylar: '', planos: '', ulm: '', fichaEmb: '', tizada: '', pending: false });
+async function addRow() {
+  const row = {
+    id:
+      typeof crypto !== 'undefined' && crypto.randomUUID
+        ? crypto.randomUUID()
+        : Date.now().toString(),
+    producto: '',
+    amfe: '',
+    flujograma: '',
+    hojaOp: '',
+    mylar: '',
+    planos: '',
+    ulm: '',
+    fichaEmb: '',
+    tizada: '',
+    pending: false,
+  };
+  data.push(row);
+  await add('maestro', rowToStore(row));
   render();
-  save();
 }
 
 function exportExcel() {
@@ -97,7 +142,7 @@ function exportExcel() {
   const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
   XLSX.utils.book_append_sheet(wb, ws, 'Maestro');
   const histHeaders = ['Fecha/hora','Producto','Columna','Antes','Después'];
-  const histRows = history.map(h => [new Date(h.timestamp).toLocaleString('es-ES'), h.producto, h.columna, h.antes, h.despues]);
+  const histRows = history.map(h => [new Date(h.timestamp).toLocaleString('es-ES'), h.elemento_id, h.campo, h.antes, h.despues]);
   const wsHist = XLSX.utils.aoa_to_sheet([histHeaders, ...histRows]);
   XLSX.utils.book_append_sheet(wb, wsHist, 'Historial');
   XLSX.writeFile(wb, 'ListadoMaestro.xlsx');
@@ -108,7 +153,7 @@ function openHistory() {
   tbody.innerHTML = '';
   history.forEach(h => {
     const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${new Date(h.timestamp).toLocaleString('es-ES')}</td><td>${h.producto}</td><td>${h.columna}</td><td>${h.antes}</td><td>${h.despues}</td>`;
+    tr.innerHTML = `<td>${new Date(h.timestamp).toLocaleString('es-ES')}</td><td>${h.elemento_id}</td><td>${h.campo}</td><td>${h.antes}</td><td>${h.despues}</td>`;
     tbody.appendChild(tr);
   });
   document.getElementById('historyDialog').showModal();
@@ -122,14 +167,14 @@ function filterRows() {
   });
 }
 
-function handleClick(e) {
+async function handleClick(e) {
   const btn = e.target.closest('.delete-row');
   if (!btn) return;
   const tr = btn.closest('tr');
   const rowIndex = Array.from(tr.parentElement.children).indexOf(tr);
   if (confirm('¿Eliminar fila?')) {
-    data.splice(rowIndex, 1);
-    save();
+    const row = data.splice(rowIndex, 1)[0];
+    if (row) await remove('maestro', row.id);
     render();
   }
 }
@@ -141,7 +186,9 @@ document.getElementById('showHistory').onclick = openHistory;
 const tbodyEl = document.querySelector('#maestro tbody');
 tbodyEl.addEventListener('input', handleInput);
 tbodyEl.addEventListener('click', handleClick);
-load();
-render();
+(async () => {
+  await load();
+  render();
+})();
 searchInput.addEventListener('input', filterRows);
 displayVersion();

@@ -78,6 +78,8 @@ El Listado Maestro ahora se divide en dos páginas:
    datos actuales y el historial.
 4. Si la versión de la aplicación cambia se vacía la tabla guardada y su
    historial para evitar inconsistencias.
+5. Cuando el servidor `server.py` está activo los cambios se guardan en
+   `data/latest.json` y se comparten automáticamente con el resto de usuarios.
 
 El sistema de semáforo marca con 🟢 los productos notificados y con 🔴 aquellos
 pendientes de revisión. Cuando se actualiza un documento se limpian las
