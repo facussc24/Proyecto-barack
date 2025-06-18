@@ -1546,3 +1546,9 @@ td[contenteditable="true"]:focus::before {
   content: '✏️ ';
 }
 
+#maestro td:not(.notify-cell):hover::after {
+  content: '✏️';
+  margin-left: 4px;
+  opacity: 0.6;
+}
+
