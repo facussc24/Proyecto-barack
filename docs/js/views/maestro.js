@@ -100,6 +100,8 @@ function saveFilters(container) {
     const el = container.querySelector(`#filter_${c.key}`);
     if (el) data[c.key] = el.value || '';
   });
+  const search = container.querySelector('#searchMaestro');
+  if (search) data._search = search.value || '';
   localStorage.setItem('maestroFilters', JSON.stringify(data));
 }
 
@@ -110,10 +112,16 @@ function loadFilters(container) {
       const el = container.querySelector(`#filter_${k}`);
       if (el) el.value = v;
     });
+    if (obj._search) {
+      const s = container.querySelector('#searchMaestro');
+      if (s) s.value = obj._search;
+    }
   } catch {}
 }
 
 function applyFilters(container) {
+  const search = container.querySelector('#searchMaestro');
+  const global = (search?.value || '').trim().toLowerCase();
   const vals = {};
   columns.forEach(c => {
     const el = container.querySelector(`#filter_${c.key}`);
@@ -122,6 +130,13 @@ function applyFilters(container) {
   container.querySelectorAll('#maestro tbody tr').forEach(tr => {
     const row = maestroData.find(r => r.id === tr.dataset.id);
     let show = true;
+    if (global) {
+      const g = columns.some(c => {
+        if (c.key === 'notificado') return false;
+        return String(row[c.key] || '').toLowerCase().includes(global);
+      });
+      if (!g) show = false;
+    }
     columns.forEach((c, idx) => {
       if (!show) return;
       if (c.key === 'notificado') {
@@ -236,6 +251,7 @@ export async function render(container) {
       <button id="btnNuevoMaestro">+ Nuevo</button>
       <button id="btnExportMaestro">Exportar Excel</button>
       <button id="btnHistorial">Historial</button>
+      <input id="searchMaestro" type="text" placeholder="Buscar...">
     </div>
     <div class="tabla-contenedor maestro-container">
       <table id="maestro">
@@ -294,6 +310,11 @@ export async function render(container) {
       applyFilters(container);
       saveFilters(container);
     });
+  });
+  const searchInput = container.querySelector('#searchMaestro');
+  searchInput?.addEventListener('input', () => {
+    applyFilters(container);
+    saveFilters(container);
   });
 
   setupEditing(container);

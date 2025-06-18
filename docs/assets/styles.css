@@ -693,6 +693,12 @@ tr[data-level] td:first-child {
   margin-bottom: 20px;
 }
 
+.maestro-header input[type="text"] {
+  padding: 6px;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+}
+
 .edit-button {
   padding: 4px 8px;
   font-size: 0.9rem;
@@ -1126,7 +1132,21 @@ select {
   transition: transform 0.2s;
 }
 
+.editor-menu a {
+  padding: 10px 18px;
+  background: linear-gradient(135deg, var(--color-accent), var(--color-primary));
+  color: var(--color-light);
+  text-decoration: none;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s;
+}
+
 .editor-menu button:hover {
+  transform: scale(1.05);
+}
+
+.editor-menu a:hover {
   transform: scale(1.05);
 }
 
