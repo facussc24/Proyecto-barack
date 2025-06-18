@@ -9,6 +9,8 @@ def update_json_version(path: Path, version: str) -> None:
         data = json.load(f)
 
     data["version"] = version
+    if path.name == "package.json" and "description" in data:
+        data["description"] = f"Versión actual: **{version}**"
     if "packages" in data and "" in data["packages"]:
         data["packages"][""]["version"] = version
 
