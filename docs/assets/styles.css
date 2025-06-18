@@ -1563,7 +1563,7 @@ td[contenteditable="true"]:focus::before {
 }
 
 /* Maestro Vivo page */
-body {
+.maestro-page {
   font-family: sans-serif;
   font-size: 14px;
   margin: 20px;
