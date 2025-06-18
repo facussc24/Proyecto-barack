@@ -22,7 +22,8 @@ const columns = [
   { key: 'fichaEmbVer', label: 'Versión' },
   { key: 'tizada', label: 'Tizada' },
   { key: 'tizadaVer', label: 'Versión' },
-  { key: 'notificado', label: 'Notificado' }
+  { key: 'notificado', label: 'Notificado' },
+  { key: '_actions', label: 'Acciones' }
 ];
 
 const dependencies = {
@@ -145,6 +146,7 @@ function applyFilters(container) {
   const global = (search?.value || '').trim().toLowerCase();
   const vals = {};
   columns.forEach(c => {
+    if (c.key.startsWith('_')) return;
     const el = container.querySelector(`#filter_${c.key}`);
     vals[c.key] = (el?.value || '').trim().toLowerCase();
   });
@@ -153,7 +155,7 @@ function applyFilters(container) {
     let show = true;
     if (global) {
       const g = columns.some(c => {
-        if (c.key === 'notificado') return false;
+        if (c.key === 'notificado' || c.key.startsWith('_')) return false;
         return String(row[c.key] || '').toLowerCase().includes(global);
       });
       if (!g) show = false;
@@ -165,7 +167,7 @@ function applyFilters(container) {
           const state = row.notificado ? 'ok' : 'alerta';
           if (state !== vals.notificado) show = false;
         }
-      } else {
+      } else if (!c.key.startsWith('_')) {
         const val = String(row[c.key] || '').toLowerCase();
         if (vals[c.key] && !val.includes(vals[c.key])) show = false;
       }
@@ -185,6 +187,8 @@ function renderTabla(container) {
       if (col.key === 'notificado') {
         td.className = 'notify-cell';
         td.textContent = row.notificado ? '🟢' : '🔴';
+      } else if (col.key === '_actions') {
+        td.innerHTML = `<button class="maestro-del" data-id="${row.id}">🗑️</button>`;
       } else {
         if (col.key.endsWith('Ver')) td.classList.add('ver-col');
         td.textContent = row[col.key] || '';
@@ -267,7 +271,17 @@ function setupEditing(container) {
     inp.addEventListener('keydown', onKey);
   });
 
-  tbody.addEventListener('click', ev => {
+  tbody.addEventListener('click', async ev => {
+    const btn = ev.target.closest('button.maestro-del');
+    if (btn) {
+      const rowId = btn.dataset.id;
+      if (confirm('¿Eliminar fila?')) {
+        await remove('maestro', rowId);
+        maestroData = maestroData.filter(r => r.id !== rowId);
+        renderTabla(container);
+      }
+      return;
+    }
     const cell = ev.target.closest('td.notify-cell');
     if (!cell) return;
     const tr = cell.closest('tr');
@@ -312,6 +326,7 @@ export async function render(container) {
           <tr>
             ${columns
               .map(c => {
+                if (c.key === '_actions') return '<th></th>';
                 if (c.key === 'notificado') {
                   return `<th><select id="filter_${c.key}" class="maestro-filter"><option value=""></option><option value="ok">🟢</option><option value="alerta">🔴</option></select></th>`;
                 }
