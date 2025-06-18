@@ -25,6 +25,44 @@ if (API_URL === DEFAULT_API_URL && typeof process !== 'undefined' && process.env
 
 const SOCKET_URL = API_URL.replace(/\/api\/data$/, '');
 
+const docMap = {
+  'Flujograma': 'flujograma',
+  Flujograma: 'flujograma',
+  AMFE: 'amfe',
+  'Hoja de Operaciones': 'hojaOp',
+  Mylar: 'mylar',
+  Planos: 'planos',
+  ULM: 'ulm',
+  'Ficha de Embalaje': 'fichaEmb',
+  Tizada: 'tizada'
+};
+
+function transformOldMaestro(arr = []) {
+  const map = {};
+  for (const r of arr) {
+    const code = r.codigo_producto || r.id;
+    if (!code) continue;
+    if (!map[code]) {
+      map[code] = {
+        id: String(code),
+        flujograma: '',
+        amfe: '',
+        hojaOp: '',
+        mylar: '',
+        planos: '',
+        ulm: '',
+        fichaEmb: '',
+        tizada: '',
+        notificado: true
+      };
+    }
+    const key = docMap[r.tipo];
+    if (key) map[code][key] = r.revision || '';
+    if (r.notificado === false) map[code].notificado = false;
+  }
+  return Object.values(map);
+}
+
 async function applyServerData(data) {
   if (!data || typeof data !== 'object') return;
   if (db) {
@@ -43,6 +81,9 @@ async function applyServerData(data) {
   for (const key of Object.keys(memory)) delete memory[key];
   for (const key in data) {
     if (Array.isArray(data[key])) memory[key] = [...data[key]];
+  }
+  if (Array.isArray(memory.maestro) && memory.maestro[0]?.tipo) {
+    memory.maestro = transformOldMaestro(memory.maestro);
   }
   _fallbackPersist();
   notifyChange();
@@ -111,6 +152,10 @@ function hydrateFromStorage() {
     const obj = raw ? JSON.parse(raw) : {};
     if (obj && typeof obj === 'object') {
       Object.assign(memory, obj);
+      if (Array.isArray(memory.maestro) && memory.maestro[0]?.tipo) {
+        memory.maestro = transformOldMaestro(memory.maestro);
+        _fallbackPersist();
+      }
     }
   } catch (e) {
     console.error('Failed to load fallback storage', e);
@@ -129,6 +174,18 @@ if (Dexie) {
   db.version(3).stores({
     maestro: 'id',
     maestroHist: 'hist_id,elemento_id'
+  });
+  db.version(4).stores({
+    maestro: 'id',
+    maestroHist: 'hist_id,elemento_id',
+    sinoptico: 'id,parentId,nombre,orden'
+  }).upgrade(async tx => {
+    const oldRows = await tx.table('maestro').toArray();
+    if (oldRows.length && oldRows[0].tipo) {
+      const transformed = transformOldMaestro(oldRows);
+      await tx.table('maestro').clear();
+      if (transformed.length) await tx.table('maestro').bulkAdd(transformed);
+    }
   });
   // migrate existing records that used numeric primary keys
   db.open()
@@ -366,6 +423,9 @@ async function importJSON(json) {
   for (const key in data) {
     if (Array.isArray(data[key])) memory[key] = [...data[key]];
   }
+  if (Array.isArray(memory.maestro) && memory.maestro[0]?.tipo) {
+    memory.maestro = transformOldMaestro(memory.maestro);
+  }
   _fallbackPersist();
   notifyChange();
 }
@@ -483,6 +543,11 @@ const api = {
       db.version(3).stores({
         maestro: 'id',
         maestroHist: 'hist_id,elemento_id'
+      });
+      db.version(4).stores({
+        maestro: 'id',
+        maestroHist: 'hist_id,elemento_id',
+        sinoptico: 'id,parentId,nombre,orden'
       });
     }
     for (const key of Object.keys(memory)) delete memory[key];
