@@ -59,6 +59,26 @@ function clearDependents(row, key) {
   return changes;
 }
 
+// Clear revision numbers of dependent documents when working with the old
+// maestro schema. This is a no-op for the new schema where `tipo` is not
+// defined on the row.
+export function clearDependentRevisions(row, data) {
+  if (!row || !row.tipo) return [];
+  const dependents = dependencies[row.tipo] || [];
+  const result = [];
+  for (const tipo of dependents) {
+    const dep = data.find(
+      r => r.codigo_producto === row.codigo_producto && r.tipo === tipo
+    );
+    if (dep && dep.revision !== '') {
+      result.push({ id: dep.id, oldValue: dep.revision });
+      dep.revision = '';
+      dep.notificado = false;
+    }
+  }
+  return result;
+}
+
 function nuevaFila(codigo) {
   return {
     id: codigo || Date.now().toString(),
@@ -147,6 +167,13 @@ async function onCellEdit(rowId, key, value) {
   row[key] = value;
   row.notificado = false;
   agregarHistorial(rowId, key, old, value);
+  if (key === 'nro') {
+    const affected = clearDependentRevisions(row, maestroData);
+    for (const { id, oldValue } of affected) {
+      agregarHistorial(id, 'revision', oldValue, '');
+      await update('maestro', id, { revision: '', notificado: false });
+    }
+  }
   const dep = clearDependents(row, key);
   const changes = { [key]: value, notificado: false };
   dep.forEach(d => {
