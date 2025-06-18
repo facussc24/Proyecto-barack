@@ -55,6 +55,14 @@ tr:not(.pending) td:first-child::before{content:"\1F7E2";}
 </div>
 </dialog>
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<script type="module">
+import { version } from './js/version.js';
+const stored = localStorage.getItem('maestroVivoVersion');
+if (stored !== version) {
+  localStorage.removeItem('maestroVivo');
+  localStorage.setItem('maestroVivoVersion', version);
+}
+</script>
 <script>
 const columns=['producto','amfe','flujograma','hojaOp','mylar','planos','ulm','fichaEmb','tizada'];
 let data=[];
@@ -113,5 +121,6 @@ function exportExcel(){if(typeof XLSX==='undefined')return;const headers=['Produ
 function openHistory(){const tbody=document.getElementById('historyBody');tbody.innerHTML='';history.forEach(h=>{const tr=document.createElement('tr');tr.innerHTML=`<td>${new Date(h.timestamp).toLocaleString('es-ES')}</td><td>${h.producto}</td><td>${h.columna}</td><td>${h.antes}</td><td>${h.despues}</td>`;tbody.appendChild(tr);});document.getElementById('historyDialog').showModal();}
 document.getElementById('closeHist').onclick=()=>document.getElementById('historyDialog').close();document.getElementById('addRow').onclick=addRow;document.getElementById('export').onclick=exportExcel;document.getElementById('showHistory').onclick=openHistory;document.querySelector('#maestro tbody').addEventListener('input',handleInput);load();render();
 </script>
+<script type="module" src="js/version.js" defer></script>
 </body>
 </html>

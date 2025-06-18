@@ -75,6 +75,8 @@ abría desde la SPA (`index.html`) está en desuso y ya no se mantiene.
 2. Pulsa **Ver Historial** para revisar las modificaciones realizadas.
 3. Con **Exportar Excel** obtendrás un archivo `ListadoMaestro.xlsx` con los
    datos actuales y el historial.
+4. Si la versión de la aplicación cambia se vacía la tabla guardada y su
+   historial para evitar inconsistencias.
 
 El sistema de semáforo marca con 🟢 los productos notificados y con 🔴 aquellos
 pendientes de revisión. Cuando se actualiza un documento se limpian las
