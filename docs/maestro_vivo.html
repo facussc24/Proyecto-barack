@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Listado Maestro Vivo</title>
+<style>
+body{font-family:sans-serif;font-size:14px;margin:20px;}
+#actions{margin-bottom:10px;}
+#actions button{margin-right:8px;padding:4px 8px;}
+#maestro{border-collapse:collapse;width:100%;}
+#maestro th, #maestro td{padding:8px;border:1px solid #ccc;}
+#maestro thead th{background:#44546A;color:#fff;text-transform:uppercase;}
+#maestro tbody tr:nth-child(even){background:#F3F6F9;}
+tr.pending td:first-child::before{content:"\1F534";}
+tr:not(.pending) td:first-child::before{content:"\1F7E2";}
+#historyDialog table{width:100%;border-collapse:collapse;font-size:14px;margin-top:10px;}
+#historyDialog th,#historyDialog td{border:1px solid #ccc;padding:4px 6px;}
+</style>
+</head>
+<body>
+<h1>Listado Maestro Vivo</h1>
+<div id="actions">
+<button id="addRow">+ Nuevo</button>
+<button id="export">Exportar Excel</button>
+<button id="showHistory">Ver Historial</button>
+</div>
+<table id="maestro">
+<thead>
+<tr>
+<th></th>
+<th>Producto / Código</th>
+<th>AMFE</th>
+<th>Flujograma</th>
+<th>Hoja de Operaciones</th>
+<th>Mylar</th>
+<th>Planos</th>
+<th>ULM</th>
+<th>Ficha de Embalaje</th>
+<th>Tizada</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+<dialog id="historyDialog">
+<h3>Historial</h3>
+<table>
+<thead>
+<tr><th>Fecha/hora</th><th>Producto</th><th>Columna</th><th>Antes</th><th>Después</th></tr>
+</thead>
+<tbody id="historyBody"></tbody>
+</table>
+<div style="text-align:right;margin-top:10px;">
+<button id="closeHist">Cerrar</button>
+</div>
+</dialog>
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<script>
+const columns=['producto','amfe','flujograma','hojaOp','mylar','planos','ulm','fichaEmb','tizada'];
+let data=[];
+let history=[];
+function load(){
+ const raw=localStorage.getItem('maestroVivo');
+ if(raw){
+  try{const obj=JSON.parse(raw);data=Array.isArray(obj.data)?obj.data:[];history=Array.isArray(obj.history)?obj.history:[];}catch{}
+ }
+}
+function save(){localStorage.setItem('maestroVivo',JSON.stringify({data,history}));}
+function render(){
+ const tbody=document.querySelector('#maestro tbody');
+ tbody.innerHTML='';
+ data.forEach(row=>{
+  const tr=document.createElement('tr');
+  if(row.pending)tr.classList.add('pending');
+  const cells=['',row.producto||'',row.amfe||'',row.flujograma||'',row.hojaOp||'',row.mylar||'',row.planos||'',row.ulm||'',row.fichaEmb||'',row.tizada||''];
+  cells.forEach((val,i)=>{
+    const td=document.createElement('td');
+    if(i>0)td.contentEditable='true';
+    td.textContent=val;
+    tr.appendChild(td);
+  });
+  tbody.appendChild(tr);
+ });
+}
+function addHistory(prod,col,before,after){history.push({timestamp:new Date().toISOString(),producto:prod,columna:col,antes:before,despues:after});}
+function handleInput(e){
+ const td=e.target.closest('td[contenteditable="true"]');
+ if(!td)return;
+ const tr=td.parentElement;
+ const rowIndex=Array.from(tr.parentElement.children).indexOf(tr);
+ const colIndex=Array.from(tr.children).indexOf(td)-1;
+ const key=columns[colIndex];
+ const before=data[rowIndex][key]||'';
+ const after=td.textContent.trim();
+ if(before===after)return;
+ addHistory(data[rowIndex].producto||'',key,before,after);
+ data[rowIndex][key]=after;
+ if(key==='flujograma'){
+   ['amfe','hojaOp'].forEach((depKey,idx)=>{
+     if(data[rowIndex][depKey]){
+       addHistory(data[rowIndex].producto||'',depKey,data[rowIndex][depKey],'');
+       data[rowIndex][depKey]='';
+       tr.children[idx+2].textContent='';
+     }
+   });
+ }
+ data[rowIndex].pending=true;
+ tr.classList.add('pending');
+ save();
+}
+function addRow(){data.push({producto:'',amfe:'',flujograma:'',hojaOp:'',mylar:'',planos:'',ulm:'',fichaEmb:'',tizada:'',pending:false});render();save();}
+function exportExcel(){if(typeof XLSX==='undefined')return;const headers=['Producto / Código','AMFE','Flujograma','Hoja de Operaciones','Mylar','Planos','ULM','Ficha de Embalaje','Tizada','Estado'];const rows=data.map(r=>[r.producto||'',r.amfe||'',r.flujograma||'',r.hojaOp||'',r.mylar||'',r.planos||'',r.ulm||'',r.fichaEmb||'',r.tizada||'',r.pending?'ALERTA':'OK']);const wb=XLSX.utils.book_new();const ws=XLSX.utils.aoa_to_sheet([headers,...rows]);XLSX.utils.book_append_sheet(wb,ws,'Maestro');const histHeaders=['Fecha/hora','Producto','Columna','Antes','Después'];const histRows=history.map(h=>[new Date(h.timestamp).toLocaleString('es-ES'),h.producto,h.columna,h.antes,h.despues]);const wsHist=XLSX.utils.aoa_to_sheet([histHeaders,...histRows]);XLSX.utils.book_append_sheet(wb,wsHist,'Historial');XLSX.writeFile(wb,'ListadoMaestro.xlsx');}
+function openHistory(){const tbody=document.getElementById('historyBody');tbody.innerHTML='';history.forEach(h=>{const tr=document.createElement('tr');tr.innerHTML=`<td>${new Date(h.timestamp).toLocaleString('es-ES')}</td><td>${h.producto}</td><td>${h.columna}</td><td>${h.antes}</td><td>${h.despues}</td>`;tbody.appendChild(tr);});document.getElementById('historyDialog').showModal();}
+document.getElementById('closeHist').onclick=()=>document.getElementById('historyDialog').close();document.getElementById('addRow').onclick=addRow;document.getElementById('export').onclick=exportExcel;document.getElementById('showHistory').onclick=openHistory;document.querySelector('#maestro tbody').addEventListener('input',handleInput);load();render();
+</script>
+</body>
+</html>
