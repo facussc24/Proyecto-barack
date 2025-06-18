@@ -3,11 +3,10 @@ import { addNode, getAll, ready } from './dataService.js';
 
 export function initNewProductDialog() {
   const dialog = document.getElementById('dlgNuevoProducto');
-  const openBtn = document.getElementById('btnArbol');
+  const openBtn = document.getElementById('btnNuevoProducto');
   if (!dialog ||
       !openBtn ||
-      openBtn.tagName !== 'BUTTON' ||
-      openBtn.hasAttribute('onclick')) return;
+      openBtn.tagName !== 'BUTTON') return;
 
   const clienteSelect = dialog.querySelector('#nuevoProductoCliente');
   const descInput = dialog.querySelector('#nuevoProductoDescripcion');
