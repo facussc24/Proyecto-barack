@@ -6,3 +6,4 @@
 3. Probar la misma página sirviéndola con `python -m http.server` o habilitando GitHub Pages.
 4. Confirmar que en ese entorno la página se carga normalmente.
 5. Si persisten errores, revisar otros scripts (por ejemplo `xlsx`) y evaluar reemplazar la librería.
+6. Implementar una versión de la librería `xlsx` sin `eval` (`xlsx.full.noeval.js`) y cargarla desde `docs/lib/` para cumplir con la CSP.
