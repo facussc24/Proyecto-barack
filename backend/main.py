@@ -3,9 +3,13 @@ import sqlite3
 import queue
 import json
 from datetime import datetime
-from flask import Flask, request, jsonify, Response
+from flask import Flask, request, jsonify, Response, send_file
 from flask_cors import CORS
 from flask_socketio import SocketIO
+from io import BytesIO
+import xlsxwriter
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
 
 DB_PATH = os.getenv("DB_PATH", os.path.join("data", "db.sqlite"))
 os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
@@ -159,6 +163,76 @@ def get_history():
     rows = conn.execute(query, params).fetchall()
     conn.close()
     return jsonify([dict(r) for r in rows])
+
+
+@app.get("/api/<module>/export")
+def export_module(module):
+    fmt = request.args.get("format", "excel")
+
+    if module == "products":
+        conn = get_db()
+        rows = conn.execute("SELECT * FROM products").fetchall()
+        conn.close()
+        data = [dict(r) for r in rows]
+    elif module == "history":
+        product = request.args.get("product")
+        user = request.args.get("user")
+        from_ts = request.args.get("from")
+
+        query = "SELECT * FROM history WHERE 1=1"
+        params = []
+        if product:
+            query += " AND product_id = ?"
+            params.append(product)
+        if user:
+            query += " AND user = ?"
+            params.append(user)
+        if from_ts:
+            query += " AND timestamp >= ?"
+            params.append(from_ts)
+
+        conn = get_db()
+        rows = conn.execute(query, params).fetchall()
+        conn.close()
+        data = [dict(r) for r in rows]
+    else:
+        return jsonify({"error": "not found"}), 404
+
+    if fmt == "pdf":
+        output = BytesIO()
+        c = canvas.Canvas(output, pagesize=letter)
+        text = c.beginText(40, 750)
+        for row in data:
+            text.textLine(json.dumps(row, ensure_ascii=False))
+        c.drawText(text)
+        c.showPage()
+        c.save()
+        output.seek(0)
+        return send_file(
+            output,
+            mimetype="application/pdf",
+            as_attachment=True,
+            download_name=f"{module}.pdf",
+        )
+
+    output = BytesIO()
+    wb = xlsxwriter.Workbook(output, {"in_memory": True})
+    ws = wb.add_worksheet()
+    if data:
+        headers = list(data[0].keys())
+        for col, header in enumerate(headers):
+            ws.write(0, col, header)
+        for r, item in enumerate(data, start=1):
+            for c, header in enumerate(headers):
+                ws.write(r, c, item.get(header))
+    wb.close()
+    output.seek(0)
+    return send_file(
+        output,
+        mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        as_attachment=True,
+        download_name=f"{module}.xlsx",
+    )
 
 
 if __name__ == "__main__":
