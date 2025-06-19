@@ -2,6 +2,30 @@
 
 export function render(container) {
   container.innerHTML = `
+    <section class="kpi-panel">
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <span class="kpi-icon" aria-hidden="true">📈</span>
+          <span class="kpi-number">120</span>
+          <span class="kpi-label">Proyectos</span>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-icon" aria-hidden="true">👥</span>
+          <span class="kpi-number">50</span>
+          <span class="kpi-label">Clientes</span>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-icon" aria-hidden="true">⚙️</span>
+          <span class="kpi-number">300</span>
+          <span class="kpi-label">Equipos</span>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-icon" aria-hidden="true">⭐</span>
+          <span class="kpi-number">95%</span>
+          <span class="kpi-label">Satisfacción</span>
+        </div>
+      </div>
+    </section>
     <section class="hero">
       <div class="hero-content">
         <h1>Ingeniería Barack</h1>

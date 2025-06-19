@@ -807,6 +807,42 @@ body.amfe-page:not(.dark-mode) .logo {
   border-radius: 4px;
 }
 
+.kpi-panel {
+  background-color: var(--color-light);
+  padding: 20px;
+}
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 15px;
+  max-width: 900px;
+  margin: 0 auto 40px;
+}
+
+.kpi-card {
+  background: var(--color-primary);
+  color: var(--color-light);
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.kpi-icon {
+  font-size: 1.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.kpi-number {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.kpi-label {
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
+
 .hero {
   min-height: 85vh;
   background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
