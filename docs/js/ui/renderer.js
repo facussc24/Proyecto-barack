@@ -333,7 +333,17 @@ document.addEventListener('DOMContentLoaded', () => {
       td0.appendChild(btn);
       tr.appendChild(td0);
       ['Vehículo','Código','Consumo','Unidad'].forEach(f=>{ const td=document.createElement('td'); td.textContent=fila[f]||''; tr.appendChild(td); });
-      const tdImg=document.createElement('td'); if(fila.Imagen){ const img=document.createElement('img'); img.src=`images/${fila.Imagen}`;tdImg.appendChild(img);} tr.appendChild(tdImg);
+      const tdImg=document.createElement('td');
+      const vBtn=document.createElement('button');
+      vBtn.className='view-img-btn';
+      vBtn.textContent='Ver';
+      vBtn.addEventListener('click',()=>{
+        const code=(fila['Código']||'').replace(/[^a-z0-9]/gi,'').toLowerCase();
+        const src=code?`imagenes_sinoptico/${code}.jpg`:'';
+        if(window.showImageModal) window.showImageModal(src);
+     });
+      tdImg.appendChild(vBtn);
+      tr.appendChild(tdImg);
       const editing=sessionStorage.getItem('sinopticoEdit')==='true';
       if(editing){
         const tdA=document.createElement('td');

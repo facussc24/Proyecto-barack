@@ -1,6 +1,6 @@
 # Proyecto Barack
 
-Versión actual: **379**
+Versión actual: **380**
 
 Esta es una pequeña SPA (Single Page Application) escrita en HTML, CSS y JavaScript.
 Incluye un módulo llamado *Sinóptico* para gestionar jerarquías de productos.
@@ -141,10 +141,22 @@ Para mas detalles consulta `docs/backend.md`.
 
 Los módulos de exportación comprueban el valor de
 `localStorage.getItem('useMock')`. Si guardas
+
 `localStorage.setItem('useMock', 'true')` en la consola del navegador,
 puedes interceptar las descargas y usar datos locales sin depender del
 servidor. Vuelve al comportamiento normal eliminando esa clave o
 estableciéndola en `'false'`.
+
+### Imágenes del Sinóptico
+
+Las fotografías de productos e insumos se guardan en la carpeta
+`docs/imagenes_sinoptico`. Cada archivo debe llamarse igual que el
+código del elemento pero eliminando cualquier carácter que no sea letra
+o número y en minúsculas. Por ejemplo, si el código es `A-123 45`, el
+archivo correspondiente será `a12345.jpg`.
+
+Coloca aquí las imágenes con la extensión que prefieras (`.jpg`, `.png`,
+etc.) para que puedan visualizarse desde la tabla.
 
 
 ## Desarrollo

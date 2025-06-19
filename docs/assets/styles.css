@@ -1768,6 +1768,13 @@ dialog.modal{border:none;border-radius:8px;padding:20px;box-shadow:0 2px 8px rgb
 .db-table tbody tr:nth-child(even){background-color:#f7f7f7;}
 .db-table button{background-color:var(--color-accent);color:var(--color-light);border:none;border-radius:4px;cursor:pointer;padding:2px 6px;}
 .db-table button:hover{background-color:var(--color-accent-hover);}
+.view-img-btn{background:#fff;border:1px solid #ccc;border-radius:4px;padding:2px 6px;cursor:pointer;color:var(--color-text);} 
+.view-img-btn:hover{background:#f0f0f0;} 
+.dark .view-img-btn{background:#333;border-color:#555;color:#fff;} 
+.dark .view-img-btn:hover{background:#444;} 
+.image-modal::backdrop{background:rgba(0,0,0,0.5);} 
+.image-modal .img-wrapper{max-width:90vw;max-height:90vh;} 
+.image-modal img{display:block;max-width:100%;max-height:100%;}
 .dark .db-table tbody tr:nth-child(even){background-color:var(--maestro-row-alt);}
 .dark .db-table th,.dark .db-table td{border-color:#444;}
 
