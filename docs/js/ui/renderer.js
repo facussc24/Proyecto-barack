@@ -223,8 +223,17 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   function toggleNodo(btn, parentId) {
     const exp = btn.getAttribute('data-expanded') === 'true';
-    if (exp) { btn.textContent='+'; btn.setAttribute('data-expanded','false'); hideSubtree(parentId); }
-    else { btn.textContent='–'; btn.setAttribute('data-expanded','true'); showChildren(parentId); }
+    if (exp) {
+      btn.textContent = '+';
+      btn.setAttribute('data-expanded', 'false');
+      btn.setAttribute('aria-label', 'Expandir');
+      hideSubtree(parentId);
+    } else {
+      btn.textContent = '–';
+      btn.setAttribute('data-expanded', 'true');
+      btn.setAttribute('aria-label', 'Colapsar');
+      showChildren(parentId);
+    }
   }
   document.getElementById('expandirTodo')?.addEventListener('click', () => {
     document.querySelectorAll('#sinoptico tbody tr').forEach(tr => tr.style.display = '');
@@ -318,6 +327,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const btn=document.createElement('button');
       btn.classList.add('toggle-btn');
       btn.textContent='+';
+      btn.setAttribute('aria-label', 'Expandir');
+      btn.setAttribute('title', 'Expandir');
       btn.onclick=()=>toggleNodo(btn,fila.ID);
       td0.appendChild(btn);
       tr.appendChild(td0);

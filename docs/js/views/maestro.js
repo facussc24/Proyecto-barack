@@ -6,11 +6,11 @@ export async function render(container) {
     <div class="editor-menu">
       <label for="search">Buscar:</label>
       <input id="search" type="text">
-      <button id="exportExcel">Exportar Excel</button>
-      <button id="exportSrv">Exportar...</button>
+      <button id="exportExcel" aria-label="Exportar a Excel" title="Exportar a Excel">Exportar Excel</button>
+      <button id="exportSrv" aria-label="Opciones de exportación" title="Opciones de exportación">Exportar...</button>
       <div class="export-menu">
-        <button data-fmt="excel">Excel</button> |
-        <button data-fmt="pdf">PDF</button>
+        <button data-fmt="excel" aria-label="Exportar a Excel" title="Exportar a Excel">Excel</button> |
+        <button data-fmt="pdf" aria-label="Exportar a PDF" title="Exportar a PDF">PDF</button>
       </div>
     </div>
     <div class="tabla-contenedor">

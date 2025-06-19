@@ -25,10 +25,10 @@
 .dark-mode {
   --color-bg: #000;
   --color-text: #e0e0e0;
-  --color-primary: #1e88e5;
+  --color-primary: #1a73e8;
   --color-primary-hover: #1565c0;
-  --color-accent: #42a5f5;
-  --color-accent-hover: #2196f3;
+  --color-accent: #1565c0;
+  --color-accent-hover: #0d47a1;
   --color-danger: #e74c3c;
   --color-danger-hover: #c0392b;
   --color-surface-dark: #000;
@@ -38,8 +38,8 @@
 
 /* ajustar colores en modo oscuro para mejor contraste en la página de inicio */
 .home.dark-mode {
-  --color-primary: #1e88e5;
-  --color-accent: #42a5f5;
+  --color-primary: #1a73e8;
+  --color-accent: #1565c0;
 }
 
 /* barra de navegación en modo oscuro */
@@ -1524,9 +1524,9 @@ select {
 .builder-card { background:linear-gradient(135deg,#ffffff,#f0f4ff); padding:12px; border-radius:8px; box-shadow:0 2px 4px rgba(0,0,0,0.1); margin:10px 0; position:relative; overflow-x:auto; }
 .dark-mode .builder-card { background:linear-gradient(135deg,#000,#111); }
 .builder-card .add-btn { position:absolute; top:8px; right:8px; width:24px; height:24px; border:none; border-radius:50%; background:#0066cc; color:#fff; cursor:pointer; }
-.dark-mode .builder-card .add-btn { background:#42a5f5; }
+.dark-mode .builder-card .add-btn { background:var(--color-accent); }
 .builder-card .add-btn:hover { background:#004c99; }
-.dark-mode .builder-card .add-btn:hover { background:#2196f3; }
+.dark-mode .builder-card .add-btn:hover { background:var(--color-accent-hover); }
 .builder-card .children { margin-left:30px; }
 
 .inline-form { display:flex; gap:6px; margin-top:8px; }
