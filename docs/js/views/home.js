@@ -3,8 +3,10 @@
 export function render(container) {
   container.innerHTML = `
     <section class="hero">
-      <h1>Ingeniería Barack</h1>
-      <p class="tagline">Soluciones modernas para tu negocio</p>
+      <div class="hero-content">
+        <h1>Ingeniería Barack</h1>
+        <p class="tagline">Soluciones modernas para tu negocio</p>
+      </div>
     </section>
     <section class="home-menu">
       <div class="menu-grid">
