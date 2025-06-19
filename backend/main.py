@@ -1,7 +1,9 @@
 import os
 import sqlite3
+import queue
+import json
 from datetime import datetime
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Response
 from flask_cors import CORS
 from flask_socketio import SocketIO
 
@@ -11,6 +13,28 @@ os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
 app = Flask(__name__)
 CORS(app)
 socketio = SocketIO(app, async_mode="eventlet", cors_allowed_origins="*")
+sse_clients = []
+
+
+def publish_update(row):
+    socketio.emit("product_updated", row)
+    for q in list(sse_clients):
+        q.put(json.dumps(row))
+
+
+@app.get("/api/stream")
+def stream():
+    def gen():
+        q = queue.Queue()
+        sse_clients.append(q)
+        try:
+            while True:
+                data = q.get()
+                yield f"data: {data}\n\n"
+        finally:
+            sse_clients.remove(q)
+
+    return Response(gen(), mimetype="text/event-stream")
 
 
 def get_db():
@@ -104,7 +128,7 @@ def update_product(prod_id):
     conn.close()
 
     result = dict(updated)
-    socketio.emit("product_updated", result)
+    publish_update(result)
     return jsonify(result)
 
 
