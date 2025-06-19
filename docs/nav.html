@@ -1,8 +1,26 @@
 <nav class="main-nav">
-  <a href="index.html#/home">Inicio</a>
-  <a href="sinoptico.html">Sinóptico</a>
-  <a href="index.html#/amfe">AMFE</a>
-  <a href="maestro.html">Listado Maestro</a>
+  <div class="nav-item"><a href="index.html#/home">Inicio</a></div>
+  <div class="nav-item dropdown">
+    <a href="sinoptico.html">Sinóptico</a>
+    <div class="dropdown-menu">
+      <a href="sinoptico-editor.html">Editar Sinóptico</a>
+      <a href="sinoptico.html">Ver Sinóptico</a>
+    </div>
+  </div>
+  <div class="nav-item dropdown">
+    <a href="index.html#/amfe">AMFE</a>
+    <div class="dropdown-menu">
+      <a href="#/amfe?mode=edit">Editar AMFE</a>
+      <a href="#/amfe">Ver AMFE</a>
+    </div>
+  </div>
+  <div class="nav-item dropdown">
+    <a href="maestro.html">Listado Maestro</a>
+    <div class="dropdown-menu">
+      <a href="maestro.html">Ver maestro</a>
+      <a href="maestro.html#export">Exportar maestro</a>
+    </div>
+  </div>
   <button type="button" class="logout-link" aria-label="Cerrar sesión" title="Cerrar sesión">Salir</button>
   <button id="toggleDarkMode" type="button" aria-label="Alternar modo oscuro" title="Alternar modo oscuro">🌙</button>
 </nav>
