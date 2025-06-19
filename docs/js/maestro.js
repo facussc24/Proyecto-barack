@@ -1,5 +1,23 @@
 import { version } from './version.js';
 
+function showError(msg) {
+  const div = document.createElement('div');
+  div.style.position = 'fixed';
+  div.style.top = '0';
+  div.style.left = '0';
+  div.style.right = '0';
+  div.style.background = '#fdd';
+  div.style.color = '#900';
+  div.style.padding = '10px';
+  div.style.fontFamily = 'sans-serif';
+  div.textContent = msg;
+  document.body.prepend(div);
+}
+
+window.addEventListener('error', e => {
+  showError('Error en la página: ' + e.message);
+});
+
 const columns = ['producto','amfe','flujograma','hojaOp','mylar','planos','ulm','fichaEmb','tizada'];
 let data = [];
 let history = [];
