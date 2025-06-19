@@ -143,12 +143,16 @@ function loadFilters(container) {
 
 function applyFilters(container) {
   const search = container.querySelector('#searchMaestro');
-  const global = (search?.value || '').trim().toLowerCase();
+  const global = (search && search.value ? search.value : '')
+    .trim()
+    .toLowerCase();
   const vals = {};
   columns.forEach(c => {
     if (c.key.startsWith('_')) return;
     const el = container.querySelector(`#filter_${c.key}`);
-    vals[c.key] = (el?.value || '').trim().toLowerCase();
+    vals[c.key] = (el && el.value ? el.value : '')
+      .trim()
+      .toLowerCase();
   });
   container.querySelectorAll('#maestro tbody tr').forEach(tr => {
     const row = maestroData.find(r => r.id === tr.dataset.id);
@@ -295,7 +299,7 @@ function setupEditing(container) {
 
 function startEdit(rowId, key = 'flujograma') {
   const tbody = document.querySelector('#maestro tbody');
-  const tr = tbody?.querySelector(`tr[data-id="${rowId}"]`);
+  const tr = tbody ? tbody.querySelector(`tr[data-id="${rowId}"]`) : null;
   if (!tr) return;
   const idx = columns.findIndex(c => c.key === key);
   const cell = tr.children[idx];
@@ -379,10 +383,12 @@ export async function render(container) {
     });
   });
   const searchInput = container.querySelector('#searchMaestro');
-  searchInput?.addEventListener('input', () => {
-    applyFilters(container);
-    saveFilters(container);
-  });
+  if (searchInput) {
+    searchInput.addEventListener('input', () => {
+      applyFilters(container);
+      saveFilters(container);
+    });
+  }
 
   setupEditing(container);
 
@@ -394,9 +400,12 @@ export async function render(container) {
     startEdit(row.id, 'id');
   });
 
-  container.querySelector('#btnCrearProducto')?.addEventListener('click', () => {
-    location.href = 'arbol.html';
-  });
+  const createBtn = container.querySelector('#btnCrearProducto');
+  if (createBtn) {
+    createBtn.addEventListener('click', () => {
+      location.href = 'arbol.html';
+    });
+  }
 
   container.querySelector('#btnExportMaestro').addEventListener('click', async () => {
     if (typeof XLSX === 'undefined') return;

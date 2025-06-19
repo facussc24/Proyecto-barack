@@ -82,7 +82,11 @@ async function applyServerData(data) {
   for (const key in data) {
     if (Array.isArray(data[key])) memory[key] = [...data[key]];
   }
-  if (Array.isArray(memory.maestro) && memory.maestro[0]?.tipo) {
+  if (
+    Array.isArray(memory.maestro) &&
+    memory.maestro[0] &&
+    memory.maestro[0].tipo
+  ) {
     memory.maestro = transformOldMaestro(memory.maestro);
   }
   _fallbackPersist();
@@ -152,7 +156,11 @@ function hydrateFromStorage() {
     const obj = raw ? JSON.parse(raw) : {};
     if (obj && typeof obj === 'object') {
       Object.assign(memory, obj);
-      if (Array.isArray(memory.maestro) && memory.maestro[0]?.tipo) {
+      if (
+        Array.isArray(memory.maestro) &&
+        memory.maestro[0] &&
+        memory.maestro[0].tipo
+      ) {
         memory.maestro = transformOldMaestro(memory.maestro);
         _fallbackPersist();
       }
@@ -423,7 +431,11 @@ async function importJSON(json) {
   for (const key in data) {
     if (Array.isArray(data[key])) memory[key] = [...data[key]];
   }
-  if (Array.isArray(memory.maestro) && memory.maestro[0]?.tipo) {
+  if (
+    Array.isArray(memory.maestro) &&
+    memory.maestro[0] &&
+    memory.maestro[0].tipo
+  ) {
     memory.maestro = transformOldMaestro(memory.maestro);
   }
   _fallbackPersist();
