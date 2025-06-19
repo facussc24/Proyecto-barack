@@ -2,30 +2,6 @@
 
 export function render(container) {
   container.innerHTML = `
-    <section class="kpi-panel">
-      <div class="kpi-grid">
-        <div class="kpi-card">
-          <span class="kpi-icon" aria-hidden="true">📈</span>
-          <span class="kpi-number">120</span>
-          <span class="kpi-label">Proyectos</span>
-        </div>
-        <div class="kpi-card">
-          <span class="kpi-icon" aria-hidden="true">👥</span>
-          <span class="kpi-number">50</span>
-          <span class="kpi-label">Clientes</span>
-        </div>
-        <div class="kpi-card">
-          <span class="kpi-icon" aria-hidden="true">⚙️</span>
-          <span class="kpi-number">300</span>
-          <span class="kpi-label">Equipos</span>
-        </div>
-        <div class="kpi-card">
-          <span class="kpi-icon" aria-hidden="true">⭐</span>
-          <span class="kpi-number">95%</span>
-          <span class="kpi-label">Satisfacción</span>
-        </div>
-      </div>
-    </section>
     <section class="hero">
       <div class="hero-content">
         <h1>Ingeniería Barack</h1>
@@ -35,55 +11,42 @@ export function render(container) {
         </div>
       </div>
     </section>
+    <section class="kpi-panel">
+      <div class="kpi-grid" id="kpiGrid"></div>
+    </section>
     <section class="home-menu">
       <div class="menu-grid">
-        <a href="sinoptico-editor.html" class="menu-item no-guest">
-          <div>
-            <span class="menu-icon" aria-hidden="true">📝</span>
-            <span class="menu-text">Editar Sinóptico</span>
-          </div>
+        <a href="sinoptico-editor.html" class="menu-item card no-guest">
+          <span class="menu-icon" aria-hidden="true">📝</span>
+          <span class="menu-text">Editar Sinóptico</span>
         </a>
-        <a href="sinoptico.html" class="menu-item">
-          <div>
-            <span class="menu-icon" aria-hidden="true">📄</span>
-            <span class="menu-text">Ver Sinóptico</span>
-          </div>
+        <a href="sinoptico.html" class="menu-item card">
+          <span class="menu-icon" aria-hidden="true">📄</span>
+          <span class="menu-text">Ver Sinóptico</span>
         </a>
-        <a href="#/amfe" class="menu-item">
-          <div>
-            <span class="menu-icon" aria-hidden="true">🔧</span>
-            <span class="menu-text">AMFE</span>
-          </div>
+        <a href="#/amfe" class="menu-item card">
+          <span class="menu-icon" aria-hidden="true">🔧</span>
+          <span class="menu-text">AMFE</span>
         </a>
-        <a href="maestro.html" class="menu-item">
-          <div>
-            <span class="menu-icon" aria-hidden="true">📋</span>
-            <span class="menu-text">Listado Maestro</span>
-          </div>
+        <a href="maestro.html" class="menu-item card">
+          <span class="menu-icon" aria-hidden="true">📋</span>
+          <span class="menu-text">Listado Maestro</span>
         </a>
-        <a href="maestro_editor.html" class="menu-item no-guest">
-          <div>
-            <span class="menu-icon" aria-hidden="true">✏️</span>
-            <span class="menu-text">Editar Maestro</span>
-          </div>
+        <a href="maestro_editor.html" class="menu-item card no-guest">
+          <span class="menu-icon" aria-hidden="true">✏️</span>
+          <span class="menu-text">Editar Maestro</span>
         </a>
-        <a href="database.html" class="menu-item no-guest">
-          <div>
-            <span class="menu-icon" aria-hidden="true">🗄️</span>
-            <span class="menu-text">Base de Datos</span>
-          </div>
+        <a href="database.html" class="menu-item card no-guest">
+          <span class="menu-icon" aria-hidden="true">🗄️</span>
+          <span class="menu-text">Base de Datos</span>
         </a>
-        <a href="history.html" class="menu-item admin-only">
-          <div>
-            <span class="menu-icon" aria-hidden="true">📜</span>
-            <span class="menu-text">Historial</span>
-          </div>
+        <a href="history.html" class="menu-item card admin-only">
+          <span class="menu-icon" aria-hidden="true">📜</span>
+          <span class="menu-text">Historial</span>
         </a>
-        <a href="#/settings" class="menu-item no-guest">
-          <div>
-            <span class="menu-icon" aria-hidden="true">⚙️</span>
-            <span class="menu-text">Ajustes</span>
-          </div>
+        <a href="#/settings" class="menu-item card no-guest">
+          <span class="menu-icon" aria-hidden="true">⚙️</span>
+          <span class="menu-text">Ajustes</span>
         </a>
       </div>
       <div class="db-actions no-guest">
@@ -112,4 +75,29 @@ export function render(container) {
     alert('Datos importados');
     fileInput.value = '';
   });
+
+  const kpiGrid = container.querySelector('#kpiGrid');
+  if (kpiGrid) loadKpis(kpiGrid);
+}
+
+async function loadKpis(el) {
+  if (!window.API_BASE) return;
+  try {
+    const resp = await fetch(`${window.API_BASE}/api/server-info`);
+    if (!resp.ok) return;
+    const info = await resp.json();
+    const data = [
+      { icon: '📦', label: 'Productos', value: info.data_keys?.length || 0 },
+      { icon: '⏳', label: 'Pendientes', value: info.pending || 0 },
+      { icon: '✅', label: 'Completados', value: info.completed || 0 },
+      { icon: '📝', label: 'Cambios', value: info.history_entries || 0 },
+    ];
+    el.innerHTML = data
+      .map(
+        d => `\n      <div class="kpi-card">\n        <span class="kpi-icon" aria-hidden="true">${d.icon}</span>\n        <span class="kpi-number">${d.value}</span>\n        <span class="kpi-label">${d.label}</span>\n      </div>`
+      )
+      .join('');
+  } catch (err) {
+    console.error('KPI fetch failed', err);
+  }
 }
