@@ -20,6 +20,8 @@
   --page-brightness: 100%;
   --maestro-header-bg: #44546A;
   --maestro-row-alt: #F3F6F9;
+  --hero-start: var(--color-primary);
+  --hero-end: var(--color-accent);
 }
 
 .dark-mode {
@@ -34,6 +36,8 @@
   --color-surface-dark: #000;
   --maestro-header-bg: #000;
   --maestro-row-alt: #111;
+  --hero-start: #0a1a33;
+  --hero-end: #1a73e8;
 }
 
 /* ajustar colores en modo oscuro para mejor contraste en la página de inicio */
@@ -849,7 +853,7 @@ body.amfe-page:not(.dark-mode) .logo {
 
 .hero {
   min-height: 85vh;
-  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+  background: linear-gradient(135deg, var(--hero-start), var(--hero-end));
   color: var(--color-light);
   display: flex;
   align-items: center;
@@ -889,6 +893,20 @@ body.amfe-page:not(.dark-mode) .logo {
 .tagline {
   font-size: clamp(1rem, 3vw, 1.5rem);
   margin-bottom: 1.5rem;
+}
+.tagline-card {
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  backdrop-filter: blur(3px);
+}
+.tagline-card p {
+  margin: 0;
+}
+.review-count {
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  opacity: 0.9;
 }
 
 @media (min-width: 900px) {

@@ -29,7 +29,10 @@ export function render(container) {
     <section class="hero">
       <div class="hero-content">
         <h1>Ingeniería Barack</h1>
-        <p class="tagline">Soluciones modernas para tu negocio</p>
+        <div class="tagline-card">
+          <p class="tagline">Soluciones modernas para tu negocio</p>
+          <p id="reviewCount" class="review-count"></p>
+        </div>
       </div>
     </section>
     <section class="home-menu">
@@ -52,6 +55,13 @@ export function render(container) {
 
   const importBtn = container.querySelector('#importBtn');
   const fileInput = container.querySelector('#importFile');
+  const reviewCountEl = container.querySelector('#reviewCount');
+  const count = parseInt(localStorage.getItem('reviewCount') || '0', 10);
+  if (count > 0) {
+    reviewCountEl.textContent = `Hoy ${count} archivos por revisar`;
+  } else {
+    reviewCountEl.remove();
+  }
 
   importBtn.addEventListener('click', () => fileInput.click());
   fileInput.addEventListener('change', async ev => {
