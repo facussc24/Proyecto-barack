@@ -347,6 +347,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const editing=sessionStorage.getItem('sinopticoEdit')==='true';
       if(editing){
         const tdA=document.createElement('td');
+        tdA.className='actions-col';
         const tipo=(fila.Tipo||'').toLowerCase();
         const allowEdit=!['cliente','producto','pieza final'].includes(tipo);
         if(allowEdit){
