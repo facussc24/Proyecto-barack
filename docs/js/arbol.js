@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const node = {
         ID: Date.now().toString() + Math.random().toString(16).slice(2),
         ParentID: parentId,
-        Tipo: 'Subcomponente',
+        Tipo: 'Subproducto',
         Descripción: sub.desc,
         Cliente: product.Cliente,
         Vehículo: '',

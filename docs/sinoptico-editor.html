@@ -25,6 +25,8 @@
   <div class="editor-menu">
     <button id="btnNuevoCliente">Nuevo cliente</button>
     <button id="btnNuevoProducto">Nuevo producto</button>
+    <button id="btnNuevoSub">Nuevo subproducto</button>
+    <button id="btnNuevoInsumo">Nuevo insumo</button>
     <button id="btnEliminar">Eliminar</button>
     <a id="linkArbol" href="arbol.html">Crear árbol</a>
   </div>
@@ -104,6 +106,44 @@
       </div>
     </form>
   </dialog>
+  <dialog id="dlgNuevoSub" class="modal">
+    <form method="dialog">
+      <label for="nuevoSubParent">Padre:</label>
+      <select id="nuevoSubParent" required></select>
+      <label for="nuevoSubDescripcion">Descripción del subproducto:</label>
+      <input id="nuevoSubDescripcion" type="text" required>
+      <label for="nuevoSubCodigo">Código:</label>
+      <input id="nuevoSubCodigo" type="text">
+      <div class="form-actions">
+        <button type="submit">Crear</button>
+        <button id="cancelNuevoSub" type="button">Cancelar</button>
+      </div>
+    </form>
+  </dialog>
+  <dialog id="dlgNuevoInsumo" class="modal">
+    <form method="dialog">
+      <label for="nuevoInsumoParent">Padre:</label>
+      <select id="nuevoInsumoParent" required></select>
+      <label for="nuevoInsumoUnidad">Unidad:</label>
+      <input id="nuevoInsumoUnidad" type="text">
+      <label for="nuevoInsumoProveedor">Proveedor:</label>
+      <input id="nuevoInsumoProveedor" type="text">
+      <label for="nuevoInsumoDescripcion">Descripción del insumo:</label>
+      <input id="nuevoInsumoDescripcion" type="text" required>
+      <label for="nuevoInsumoCodigo">Código:</label>
+      <input id="nuevoInsumoCodigo" type="text">
+      <label for="nuevoInsumoMaterial">Material:</label>
+      <input id="nuevoInsumoMaterial" type="text">
+      <label for="nuevoInsumoObservaciones">Observaciones:</label>
+      <input id="nuevoInsumoObservaciones" type="text">
+      <label for="nuevoInsumoOrigen">Origen:</label>
+      <input id="nuevoInsumoOrigen" type="text">
+      <div class="form-actions">
+        <button type="submit">Crear</button>
+        <button id="cancelNuevoInsumo" type="button">Cancelar</button>
+      </div>
+    </form>
+  </dialog>
   <script src="lib/dexie.min.js" defer></script>
   <script src="lib/fuse.min.js" defer></script>
   <script src="./socket.io/socket.io.js" defer></script>
@@ -119,6 +159,8 @@
   <script type="module" src="js/editorUI.js" defer></script>
   <script type="module" src="js/newClientDialog.js" defer></script>
   <script type="module" src="js/newProductDialog.js" defer></script>
+  <script type="module" src="js/newSubDialog.js" defer></script>
+  <script type="module" src="js/newInsumoDialog.js" defer></script>
   <script type="module" src="js/version.js" defer></script>
   <script>
     sessionStorage.setItem('sinopticoEdit', 'true');
