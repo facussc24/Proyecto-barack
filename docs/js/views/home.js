@@ -37,14 +37,54 @@ export function render(container) {
     </section>
     <section class="home-menu">
       <div class="menu-grid">
-        <a href="sinoptico-editor.html" class="menu-item no-guest">Editar Sinóptico</a>
-        <a href="sinoptico.html" class="menu-item">Ver Sinóptico</a>
-        <a href="#/amfe" class="menu-item">AMFE</a>
-        <a href="maestro.html" class="menu-item">Listado Maestro</a>
-        <a href="maestro_editor.html" class="menu-item no-guest">Editar Maestro</a>
-        <a href="database.html" class="menu-item no-guest">Base de Datos</a>
-        <a href="history.html" class="menu-item admin-only">Historial</a>
-        <a href="#/settings" class="menu-item no-guest">Ajustes</a>
+        <a href="sinoptico-editor.html" class="menu-item no-guest">
+          <div>
+            <span class="menu-icon" aria-hidden="true">📝</span>
+            <span class="menu-text">Editar Sinóptico</span>
+          </div>
+        </a>
+        <a href="sinoptico.html" class="menu-item">
+          <div>
+            <span class="menu-icon" aria-hidden="true">📄</span>
+            <span class="menu-text">Ver Sinóptico</span>
+          </div>
+        </a>
+        <a href="#/amfe" class="menu-item">
+          <div>
+            <span class="menu-icon" aria-hidden="true">🔧</span>
+            <span class="menu-text">AMFE</span>
+          </div>
+        </a>
+        <a href="maestro.html" class="menu-item">
+          <div>
+            <span class="menu-icon" aria-hidden="true">📋</span>
+            <span class="menu-text">Listado Maestro</span>
+          </div>
+        </a>
+        <a href="maestro_editor.html" class="menu-item no-guest">
+          <div>
+            <span class="menu-icon" aria-hidden="true">✏️</span>
+            <span class="menu-text">Editar Maestro</span>
+          </div>
+        </a>
+        <a href="database.html" class="menu-item no-guest">
+          <div>
+            <span class="menu-icon" aria-hidden="true">🗄️</span>
+            <span class="menu-text">Base de Datos</span>
+          </div>
+        </a>
+        <a href="history.html" class="menu-item admin-only">
+          <div>
+            <span class="menu-icon" aria-hidden="true">📜</span>
+            <span class="menu-text">Historial</span>
+          </div>
+        </a>
+        <a href="#/settings" class="menu-item no-guest">
+          <div>
+            <span class="menu-icon" aria-hidden="true">⚙️</span>
+            <span class="menu-text">Ajustes</span>
+          </div>
+        </a>
       </div>
       <div class="db-actions no-guest">
         <button id="importBtn">Importar datos</button>
