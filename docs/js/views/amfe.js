@@ -50,6 +50,9 @@ export async function render(container) {
     menu.style.display = 'none';
     showSpinner();
     try {
+      // Interception point: set localStorage.setItem('useMock','true') to
+      // bypass the network request and provide your own Blob when testing
+      // offline or mocking the server.
       const resp = await fetch(`/api/amfe/export?format=${fmt}`);
       if (!resp.ok) throw new Error('fail');
       const blob = await resp.blob();

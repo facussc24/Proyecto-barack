@@ -116,6 +116,8 @@ export async function render(container) {
     menu.style.display = 'none';
     showSpinner();
     try {
+      // Interception point: if localStorage.getItem('useMock') is 'true',
+      // you can skip this fetch and return a local Blob for offline tests.
       const resp = await fetch(`/api/maestro/export?format=${fmt}`);
       if (!resp.ok) throw new Error('fail');
       const blob = await resp.blob();

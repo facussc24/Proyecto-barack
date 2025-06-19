@@ -136,6 +136,16 @@ Si no se define ningún valor se usará `http://localhost:5000/api/data` por def
 Para mas detalles consulta `docs/backend.md`.
 
 
+### Pruebas sin conexión
+
+Los módulos de exportación comprueban el valor de
+`localStorage.getItem('useMock')`. Si guardas
+`localStorage.setItem('useMock', 'true')` en la consola del navegador,
+puedes interceptar las descargas y usar datos locales sin depender del
+servidor. Vuelve al comportamiento normal eliminando esa clave o
+estableciéndola en `'false'`.
+
+
 ## Desarrollo
 
 El código fuente se encuentra en la carpeta `js/` y las hojas de estilo en
