@@ -1,12 +1,12 @@
-import { getAll, remove } from '../dataService.js';
+import { getAll } from '../dataService.js';
 import { createSinopticoEditor } from '../editors/sinopticoEditor.js';
 
 export async function render(container) {
   container.innerHTML = `
     <div class="toolbar">
       <button id="sin-edit">Editar</button>
-      <button id="btnNuevoCliente">Nuevo cliente</button>
-      <button id="sin-delete">Borrar</button>
+      <a id="linkCrear" href="arbol.html">Crear</a>
+      <a id="linkBaseDatos" href="database.html">Base de Datos</a>
       <button id="sin-export">Exportar...</button>
       <div class="export-menu">
         <button data-fmt="excel">Excel</button> |
@@ -91,10 +91,6 @@ export async function render(container) {
 
   checkHealth();
 
-  container.querySelector('#btnNuevoCliente').addEventListener('click', () => {
-    const dlg = document.getElementById('dlgNuevoCliente');
-    if (dlg && dlg.showModal) dlg.showModal();
-  });
 
   container.querySelector('#sin-edit').addEventListener('click', () => {
     const curr = sessionStorage.getItem('sinopticoEdit') === 'true';
@@ -102,11 +98,7 @@ export async function render(container) {
     document.dispatchEvent(new Event('sinoptico-mode'));
   });
 
-  container.querySelector('#sin-delete').addEventListener('click', async () => {
-    if (!confirm('¿Eliminar todos los elementos?')) return;
-    const items = await getAll('sinoptico');
-    for (const item of items) await remove('sinoptico', item.id);
-  });
+
 
 }
 
