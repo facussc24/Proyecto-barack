@@ -36,6 +36,11 @@ clients = {}
 CORS(app)
 
 
+@app.get("/health")
+def health():
+    return jsonify({"status": "ok"})
+
+
 def backup_latest():
     if os.path.exists(DATA_FILE):
         today = datetime.utcnow().strftime("%Y-%m-%d")

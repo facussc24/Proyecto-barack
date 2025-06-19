@@ -16,6 +16,11 @@ socketio = SocketIO(app, async_mode="eventlet", cors_allowed_origins="*")
 sse_clients = []
 
 
+@app.get("/health")
+def health():
+    return jsonify({"status": "ok"})
+
+
 def publish_update(row):
     socketio.emit("product_updated", row)
     for q in list(sse_clients):
