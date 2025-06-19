@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Listado Maestro Basico</title>
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body class="maestro-page">
+<h1>Listado Maestro Basico</h1>
+<input id="searchInput" type="text" placeholder="Buscar...">
+<table id="maestro">
+<thead>
+<tr>
+<th>Producto / Código</th>
+<th>AMFE</th>
+<th>Flujograma</th>
+<th>Hoja de Operaciones</th>
+<th>Mylar</th>
+<th>Planos</th>
+<th>ULM</th>
+<th>Ficha de Embalaje</th>
+<th>Tizada</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+<script>
+const columns=['producto','amfe','flujograma','hojaOp','mylar','planos','ulm','fichaEmb','tizada'];
+let data=[];
+try{
+ const raw=localStorage.getItem('maestroVivo');
+ if(raw){
+   const obj=JSON.parse(raw);
+   data=Array.isArray(obj.data)?obj.data:[];
+ }
+}catch{}
+function render(){
+ const tbody=document.querySelector('#maestro tbody');
+ tbody.innerHTML='';
+ if(!data.length){
+   const td=document.createElement('td');
+   td.colSpan=columns.length;
+   td.textContent='No hay registros disponibles';
+   const tr=document.createElement('tr');
+   tr.appendChild(td);
+   tbody.appendChild(tr);
+ }else{
+   data.forEach(row=>{
+     const tr=document.createElement('tr');
+     columns.forEach(key=>{
+       const td=document.createElement('td');
+       td.textContent=row[key]||'';
+       tr.appendChild(td);
+     });
+     tbody.appendChild(tr);
+   });
+ }
+ filter();
+}
+function filter(){
+ const term=document.getElementById('searchInput').value.toLowerCase();
+ document.querySelectorAll('#maestro tbody tr').forEach(tr=>{
+   const text=tr.textContent.toLowerCase();
+   tr.style.display=text.includes(term)?'':'';
+ });
+}
+render();
+document.getElementById('searchInput').addEventListener('input',filter);
+</script>
+</body>
+</html>
