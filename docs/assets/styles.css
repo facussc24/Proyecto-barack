@@ -110,17 +110,27 @@ h1 {
 
 #loading {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
-  font-size: 1.2rem;
+  background: rgba(255, 255, 255, 0.8);
   z-index: 2000;
+}
+
+#loading .spinner {
+  width: 48px;
+  height: 48px;
+  border: 6px solid #ccc;
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* highlight invalid form fields */
@@ -1867,4 +1877,115 @@ tr:not(.pending) td:first-child::before {
 }
 .btn-excel { background: #1b6e1b; }
 .btn-pdf { background: #c0392b; }
+
+/* ===== Maestro professional listing ===== */
+.maestro-page {
+  background: var(--color-light);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.maestro-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.maestro-tabs button {
+  padding: 6px 12px;
+  border: none;
+  background: var(--color-light);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.maestro-tabs button.active {
+  background: var(--color-accent);
+  color: #fff;
+}
+
+.advanced-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.advanced-filters select,
+.advanced-filters input {
+  padding: 6px 8px;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+}
+
+.top-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.master-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.master-table th {
+  position: sticky;
+  top: 0;
+  background: var(--color-primary);
+  color: #fff;
+  padding: 8px;
+  text-align: left;
+  z-index: 1;
+}
+
+.master-table tbody tr:nth-child(even) {
+  background: #f9f9f9;
+}
+
+.master-table tbody tr:hover {
+  background: var(--maestro-row-alt);
+}
+
+.master-table td,
+.master-table th {
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+}
+
+.checkbox-col {
+  width: 32px;
+  text-align: center;
+}
+
+.results-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10px 0;
+  font-size: 0.9rem;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.pagination button {
+  padding: 6px 12px;
+  border: none;
+  background: var(--color-primary);
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.pagination button[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 
