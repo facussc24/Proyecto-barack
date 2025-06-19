@@ -16,8 +16,9 @@ if (btnTheme) {
 }
 
 // Dropdown de usuario
-const um = document.querySelector('.user-menu');
-if (um) {
+function setupUserMenu() {
+  const um = document.querySelector('.user-menu');
+  if (!um) return;
   um.querySelector('.avatar').addEventListener('click', () => {
     um.classList.toggle('open');
   });
@@ -25,6 +26,8 @@ if (um) {
     if (!um.contains(e.target)) um.classList.remove('open');
   });
 }
+setupUserMenu();
+document.addEventListener('navLoaded', setupUserMenu);
 
 function setupDarkMode() {
   const btn = document.getElementById('toggleDarkMode');
