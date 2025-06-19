@@ -10,6 +10,8 @@
     if (localStorage.getItem('darkMode') === 'true') {
       document.documentElement.classList.add('dark');
     }
+    // Ensure edit mode is active before loading modules
+    sessionStorage.setItem('sinopticoEdit', 'true');
   </script>
 </head>
 <body>
@@ -19,7 +21,16 @@
     <h1 class="editor-title">Editor de Sinóptico</h1>
   </header>
   <section class="editor-menu">
-    <a id="linkCrear" href="arbol.html">Crear</a>
+    <div class="dropdown">
+      <button id="btnMenuCrear" type="button">Crear ▼</button>
+      <div class="dropdown-menu crear-menu">
+        <button id="btnNuevoCliente" type="button">Cliente</button>
+        <button id="btnNuevoProducto" type="button">Producto</button>
+        <button id="btnNuevoSub" type="button">Subcomponente</button>
+        <button id="btnNuevoInsumo" type="button">Insumo</button>
+        <a id="linkArbol" href="arbol.html">Árbol de producto</a>
+      </div>
+    </div>
     <a id="linkBaseDatos" href="database.html">Base de Datos</a>
   </section>
   <section id="loading"></section>
@@ -148,6 +159,7 @@
   <script type="module" src="js/ui/animations.js" defer></script>
   <script type="module" src="js/backButton.js" defer></script>
   <script type="module" src="js/imageViewer.js" defer></script>
+  <script type="module" src="js/crearMenu.js" defer></script>
   <script type="module" src="js/app.js" defer></script>
   <script type="module" src="js/pageSettings.js" defer></script>
   <script type="module" src="js/hideLoading.js" defer></script>
@@ -157,8 +169,5 @@
   <script type="module" src="js/newSubDialog.js" defer></script>
   <script type="module" src="js/newInsumoDialog.js" defer></script>
   <script type="module" src="js/version.js" defer></script>
-  <script>
-    sessionStorage.setItem('sinopticoEdit', 'true');
-  </script>
 </body>
 </html>
