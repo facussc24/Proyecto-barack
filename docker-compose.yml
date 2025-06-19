@@ -1,12 +1,10 @@
 version: '3.8'
 services:
   backend:
-    image: python:3.11-slim
-    working_dir: /app
+    build: .
+    image: barack-backend:latest
     volumes:
-      - .:/app
       - ./data:/data
-    command: sh -c "pip install --no-cache-dir -r requirements.txt && python backend/main.py"
     ports:
       - "8000:8000"
   docs:
