@@ -51,6 +51,15 @@ async function load() {
 function render() {
   const tbody = document.querySelector('#maestro tbody');
   tbody.innerHTML = '';
+  if (!data.length) {
+    const tr = document.createElement('tr');
+    const td = document.createElement('td');
+    td.colSpan = columns.length + 2;
+    td.textContent = 'No hay registros disponibles';
+    tr.appendChild(td);
+    tbody.appendChild(tr);
+    return;
+  }
   data.forEach(row => {
     const tr = document.createElement('tr');
     if (row.pending) tr.classList.add('pending');
