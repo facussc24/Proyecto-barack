@@ -93,6 +93,20 @@ async function applyServerData(data) {
   notifyChange();
 }
 
+function applyProductUpdate(row) {
+  if (!row || typeof row !== 'object') return;
+  const store = 'products';
+  if (db && db[store]) {
+    db[store].put(row).catch(e => console.error(e));
+  }
+  if (!Array.isArray(memory[store])) memory[store] = [];
+  const idx = memory[store].findIndex(r => String(r.id) === String(row.id));
+  if (idx >= 0) memory[store][idx] = row;
+  else memory[store].push(row);
+  _fallbackPersist();
+  notifyChange();
+}
+
 async function persistCurrentState() {
   try {
     const json = await exportJSON(true);
@@ -134,6 +148,7 @@ const ready = new Promise((res) => {
 });
 
 let socket;
+let sse;
 if (hasWindow && typeof io !== 'undefined') {
   socket = io(SOCKET_URL);
   socket.on('data_updated', async () => {
@@ -147,6 +162,25 @@ if (hasWindow && typeof io !== 'undefined') {
       console.error('Failed to refresh data from server', e);
     }
   });
+  socket.on('product_updated', row => {
+    applyProductUpdate(row);
+  });
+}
+
+if (hasWindow && typeof EventSource !== 'undefined') {
+  try {
+    sse = new EventSource(SOCKET_URL + '/api/stream');
+    sse.addEventListener('message', ev => {
+      try {
+        const row = JSON.parse(ev.data);
+        applyProductUpdate(row);
+      } catch (e) {
+        console.error('Failed to parse SSE data', e);
+      }
+    });
+  } catch {
+    // ignore
+  }
 }
 
 function hydrateFromStorage() {
@@ -194,6 +228,12 @@ if (Dexie) {
       await tx.table('maestro').clear();
       if (transformed.length) await tx.table('maestro').bulkAdd(transformed);
     }
+  });
+  db.version(5).stores({
+    maestro: 'id',
+    maestroHist: 'hist_id,elemento_id',
+    sinoptico: 'id,parentId,nombre,orden',
+    products: 'id'
   });
   // migrate existing records that used numeric primary keys
   db.open()
@@ -560,6 +600,12 @@ const api = {
         maestro: 'id',
         maestroHist: 'hist_id,elemento_id',
         sinoptico: 'id,parentId,nombre,orden'
+      });
+      db.version(5).stores({
+        maestro: 'id',
+        maestroHist: 'hist_id,elemento_id',
+        sinoptico: 'id,parentId,nombre,orden',
+        products: 'id'
       });
     }
     for (const key of Object.keys(memory)) delete memory[key];
