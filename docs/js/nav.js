@@ -4,6 +4,7 @@ export async function loadNav() {
   try {
     const html = await fetch('nav.html').then(r => r.text());
     placeholder.outerHTML = html;
+    document.dispatchEvent(new Event('navLoaded'));
     if (window.applyRoleRules) {
       window.applyRoleRules();
     }
