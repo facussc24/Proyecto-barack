@@ -143,6 +143,15 @@ El código fuente se encuentra en la carpeta `js/` y las hojas de estilo en
 `assets/styles.css`. Para depurar o extender la funcionalidad del Sinóptico,
 revisa especialmente `js/ui/renderer.js`.
 
+### Bibliotecas locales
+
+El directorio `docs/lib/` incluye versiones minificadas de varias librerías
+para evitar dependencias externas. Entre ellas se encuentra
+`xlsx.full.min.js`, una compilación compatible con políticas CSP.
+Si en algún momento es necesario actualizarla, instala `xlsx` con
+`npm install xlsx` y copia `node_modules/xlsx/dist/xlsx.full.min.js` a
+`docs/lib/`.
+
 ## Solución de problemas
 
 Si los cambios realizados desde la vista **Base de Datos** no se guardan,
