@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editor Sinóptico</title>
+  <link rel="stylesheet" href="assets/styles.css">
+  <script>
+    if (localStorage.getItem('darkMode') === 'true') {
+      document.documentElement.classList.add('dark-mode');
+    }
+  </script>
+</head>
+<body>
+  <nav class="main-nav">
+    <a href="index.html">Inicio</a>
+    <button id="toggleDarkMode" type="button">🌙</button>
+    <button type="button" class="logout-link">Salir</button>
+  </nav>
+  <h1 class="editor-title">Editor Sinóptico</h1>
+  <div class="editor-menu">
+    <label for="productSelector">Producto:</label>
+    <select id="productSelector"></select>
+    <button id="addStep" type="button">Agregar paso</button>
+  </div>
+  <div id="stepsContainer" class="steps-container"></div>
+  <button id="saveBtn" type="button">Guardar</button>
+  <div id="fileWarning" class="file-warning" style="display:none">
+    Para utilizar la aplicación abre el archivo en un navegador moderno.
+  </div>
+  <script>
+    if (location.protocol === 'file:') {
+      document.getElementById('fileWarning').style.display = 'block';
+    }
+  </script>
+  <noscript>
+    <p class="noscript-warning">
+      Esta página necesita JavaScript para funcionar. Si la estás viendo desde GitHub, descárgala y ábrela localmente con un navegador.
+    </p>
+  </noscript>
+  <script type="module" src="js/authGuard.js"></script>
+  <script type="module" src="js/dataService.js"></script>
+  <script type="module" src="js/editarSinoptico.js"></script>
+  <script type="module" src="js/darkMode.js"></script>
+  <script type="module" src="js/pageSettings.js"></script>
+  <script type="module" src="js/version.js"></script>
+</body>
+</html>
