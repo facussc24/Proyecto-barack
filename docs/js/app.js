@@ -2,7 +2,7 @@ const API_BASE = window.location.hostname.includes('github.io')
   ? null
   : 'http://TU_IP:5000';
 
-document.addEventListener('DOMContentLoaded', () => {
+function setupDarkMode() {
   const btn = document.getElementById('toggleDarkMode');
   if (!btn) return;
   const apply = state => {
@@ -16,4 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
     apply(!active);
     localStorage.setItem('darkMode', !active);
   });
-});
+}
+
+document.addEventListener('navLoaded', setupDarkMode);
