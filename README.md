@@ -67,9 +67,11 @@ Si ya conoces estas páginas, puedes trabajar solo con `docs/sinoptico-editor.ht
 
 ## Listado Maestro
 
-El Listado Maestro ahora se divide en dos páginas:
+El Listado Maestro ahora se divide en varias páginas:
 - `docs/maestro.html` muestra la tabla en modo solo lectura.
 - `docs/maestro_editor.html` permite crear y editar filas.
+- `docs/maestro_basico.html` es una versión simplificada para diagnosticar 
+  problemas cuando otras vistas no cargan correctamente.
 
 1. Abre `maestro_editor.html` para modificar las celdas en línea.
 2. `maestro.html` mantiene la búsqueda, el historial y la exportación sin
