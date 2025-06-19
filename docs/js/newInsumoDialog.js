@@ -19,7 +19,9 @@ export function initNewInsumoDialog() {
     await ready;
     if (parentSelect) {
       const nodes = await getAll('sinoptico');
-      const padres = nodes.filter(n => n.Tipo === 'Producto' || n.Tipo === 'Subproducto');
+      const padres = nodes.filter(n =>
+        n.Tipo === 'Producto' || n.Tipo === 'Pieza final' || n.Tipo === 'Subproducto'
+      );
       parentSelect.innerHTML = padres
         .map(p => `<option value="${p.ID}">${p.Descripción}</option>`)
         .join('');
