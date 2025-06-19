@@ -12,9 +12,9 @@
   </script>
 </head>
 <body>
-  <div id="nav-placeholder"></div>
-  <div class="filtro-contenedor">
-    <div class="filtros-texto">
+  <nav id="nav-placeholder"></nav>
+  <section class="filtro-contenedor">
+    <section class="filtros-texto">
       <label for="search">Buscar:</label>
       <div class="input-wrapper">
         <input id="search" type="text" autocomplete="off" />
@@ -32,16 +32,16 @@
       <div id="selectedItems" class="chips"></div>
       <button id="expandirTodo" aria-label="Expandir todo" title="Expandir todo">Expandir todo</button>
       <button id="colapsarTodo" aria-label="Colapsar todo" title="Colapsar todo">Colapsar todo</button>
-    </div>
-    <div class="filtro-opciones">
+    </section>
+    <section class="filtro-opciones">
       <label><input type="checkbox" id="chkMostrarNivel0" checked> Nivel 0</label>
       <label><input type="checkbox" id="chkMostrarNivel1" checked> Nivel 1</label>
       <label><input type="checkbox" id="chkMostrarNivel2" checked> Nivel 2</label>
       <label><input type="checkbox" id="chkMostrarNivel3" checked> Nivel 3</label>
       <button id="btnExcel" class="no-guest" aria-label="Exportar a Excel" title="Exportar a Excel">Exportar Excel</button>
-    </div>
-  </div>
-  <div class="tabla-contenedor">
+    </section>
+  </section>
+  <section class="tabla-contenedor">
     <table id="sinoptico">
       <thead>
         <tr>
@@ -55,7 +55,7 @@
       </thead>
       <tbody id="sinopticoBody"></tbody>
     </table>
-  </div>
+  </section>
   <script src="lib/dexie.min.js" defer></script>
   <script src="lib/fuse.min.js" defer></script>
   <script src="./socket.io/socket.io.js" defer></script>

@@ -12,10 +12,10 @@
   </script>
 </head>
 <body>
-  <div id="nav-placeholder"></div>
-  <div id="loading"></div>
-  <div id="appMessage" role="alert" aria-live="polite"></div>
-  <div id="step1" class="node-form">
+  <nav id="nav-placeholder"></nav>
+  <section id="loading"></section>
+  <section id="appMessage" role="alert" aria-live="polite"></section>
+  <section id="step1" class="node-form">
     <h2>Nuevo Producto</h2>
     <label for="productCliente">Cliente:</label>
     <select id="productCliente"></select>
@@ -35,8 +35,8 @@
       <button id="confirmBtn" type="button">Crear sin subcomponentes</button>
       <button id="continueBtn" type="button">Continuar</button>
     </div>
-  </div>
-  <div id="step2" class="node-form" style="display:none">
+  </section>
+  <section id="step2" class="node-form" style="display:none">
     <h2>Subcomponentes e Insumos</h2>
     <div class="tree-preview">
       <span id="productPreview" class="tree-node product-node"></span>
@@ -80,7 +80,7 @@
     <div class="form-actions">
       <button id="finishBtn" type="button">Finalizar</button>
     </div>
-  </div>
+  </section>
   <script src="lib/dexie.min.js" defer></script>
   <script src="./socket.io/socket.io.js" defer></script>
   <script type="module" src="js/authGuard.js"></script>

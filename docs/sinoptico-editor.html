@@ -12,22 +12,22 @@
   </script>
 </head>
 <body>
-  <div id="nav-placeholder"></div>
+  <nav id="nav-placeholder"></nav>
   <header class="editor-header">
     <h1 class="editor-title">Editor de Sinóptico</h1>
   </header>
-  <div class="editor-menu">
+  <section class="editor-menu">
     <button id="btnNuevoCliente">Nuevo cliente</button>
     <button id="btnNuevoProducto">Nuevo producto</button>
     <button id="btnNuevoSub">Nuevo subproducto</button>
     <button id="btnNuevoInsumo">Nuevo insumo</button>
     <button id="btnEliminar">Eliminar</button>
     <a id="linkArbol" href="arbol.html">Crear árbol</a>
-  </div>
-  <div id="loading"></div>
-  <div id="appMessage" role="alert" aria-live="polite"></div>
-  <div class="filtro-contenedor">
-    <div class="filtros-texto">
+  </section>
+  <section id="loading"></section>
+  <section id="appMessage" role="alert" aria-live="polite"></section>
+  <section class="filtro-contenedor">
+    <section class="filtros-texto">
       <label for="search">Buscar:</label>
       <div class="input-wrapper">
         <input id="search" type="text" autocomplete="off" />
@@ -51,9 +51,9 @@
       <div id="selectedItems" class="chips"></div>
       <button id="expandirTodo">Expandir todo</button>
       <button id="colapsarTodo">Colapsar todo</button>
-    </div>
-  </div>
-  <div class="tabla-contenedor">
+    </section>
+  </section>
+  <section class="tabla-contenedor">
     <table id="sinoptico">
       <thead>
         <tr>
@@ -67,7 +67,7 @@
       </thead>
       <tbody id="sinopticoBody"></tbody>
     </table>
-  </div>
+  </section>
   <dialog id="dlgNuevoCliente" class="modal">
     <form method="dialog">
       <label for="nuevoClienteNombre">Nombre del cliente:</label>

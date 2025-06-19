@@ -12,14 +12,14 @@
   </script>
 </head>
 <body>
-  <div id="nav-placeholder"></div>
+  <nav id="nav-placeholder"></nav>
   <h1>Listado Maestro</h1>
-  <div class="editor-menu">
+  <section class="editor-menu">
     <label for="search">Buscar:</label>
     <input id="search" type="text">
     <button id="exportExcel" aria-label="Exportar a Excel" title="Exportar a Excel">Exportar Excel</button>
-  </div>
-  <div class="tabla-contenedor">
+  </section>
+  <section class="tabla-contenedor">
     <table id="maestroTable" class="db-table">
       <thead>
         <tr>
@@ -37,10 +37,10 @@
       </thead>
       <tbody id="maestroBody"></tbody>
     </table>
-  </div>
-  <div id="fileWarning" class="file-warning" style="display:none">
+  </section>
+  <section id="fileWarning" class="file-warning" style="display:none">
     Para utilizar la aplicación abre el archivo en un navegador moderno.
-  </div>
+  </section>
   <script>
     if (location.protocol === 'file:') {
       document.getElementById('fileWarning').style.display = 'block';
