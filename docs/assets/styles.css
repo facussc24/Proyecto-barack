@@ -23,7 +23,7 @@
 }
 
 .dark-mode {
-  --color-bg: #121212;
+  --color-bg: #000;
   --color-text: #e0e0e0;
   --color-primary: #1e88e5;
   --color-primary-hover: #1565c0;
@@ -31,9 +31,9 @@
   --color-accent-hover: #2196f3;
   --color-danger: #e74c3c;
   --color-danger-hover: #c0392b;
-  --color-surface-dark: #1e1e1e;
-  --maestro-header-bg: #2e3b4e;
-  --maestro-row-alt: #1a1a1a;
+  --color-surface-dark: #000;
+  --maestro-header-bg: #000;
+  --maestro-row-alt: #111;
 }
 
 /* ajustar colores en modo oscuro para mejor contraste en la página de inicio */
@@ -296,10 +296,10 @@ table#sinoptico tbody td {
 }
 
 .dark-mode table#sinoptico tbody tr:nth-child(even) {
-  background-color: #1a1a1a;
+  background-color: var(--maestro-row-alt);
 }
 .dark-mode table#sinoptico tbody tr:hover {
-  background-color: #333;
+  background-color: #222;
 }
 .dark-mode table#sinoptico tbody td {
   border-bottom: 1px solid #444;
@@ -582,7 +582,7 @@ tr[data-level] td:first-child {
   background-color: #f7f7f7;
 }
 .dark-mode .category-section tbody tr:nth-child(even) {
-  background-color: #1a1a1a;
+  background-color: var(--maestro-row-alt);
 }
 .maestro-form {
   display: flex;
@@ -642,7 +642,7 @@ tr[data-level] td:first-child {
 }
 
 .dark-mode .suggestions-list li:hover {
-  background-color: #333;
+  background-color: #222;
 }
 
 .filter-banner {
@@ -1055,7 +1055,7 @@ select {
   box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
 .dark-mode .login-container {
-  background: #1e1e1e;
+  background: #000;
   box-shadow: 0 2px 6px rgba(0,0,0,0.6);
 }
 .login-form,
@@ -1362,7 +1362,7 @@ select {
   word-break: break-word;
 }
 .dark-mode .flow-diagram .tree-node {
-  background: linear-gradient(135deg, #1e1e1e, #2a2a2a);
+  background: linear-gradient(135deg, #000, #111);
   color: var(--color-text);
 }
 
@@ -1506,7 +1506,7 @@ select {
 }
 
 .builder-card { background:linear-gradient(135deg,#ffffff,#f0f4ff); padding:12px; border-radius:8px; box-shadow:0 2px 4px rgba(0,0,0,0.1); margin:10px 0; position:relative; overflow-x:auto; }
-.dark-mode .builder-card { background:linear-gradient(135deg,#1e1e1e,#2c2c2c); }
+.dark-mode .builder-card { background:linear-gradient(135deg,#000,#111); }
 .builder-card .add-btn { position:absolute; top:8px; right:8px; width:24px; height:24px; border:none; border-radius:50%; background:#0066cc; color:#fff; cursor:pointer; }
 .dark-mode .builder-card .add-btn { background:#42a5f5; }
 .builder-card .add-btn:hover { background:#004c99; }
@@ -1561,7 +1561,7 @@ dialog.modal{border:none;border-radius:8px;padding:20px;box-shadow:0 2px 8px rgb
 .db-table tbody tr:nth-child(even){background-color:#f7f7f7;}
 .db-table button{background-color:var(--color-accent);color:var(--color-light);border:none;border-radius:4px;cursor:pointer;padding:2px 6px;}
 .db-table button:hover{background-color:var(--color-accent-hover);}
-.dark-mode .db-table tbody tr:nth-child(even){background-color:#1a1a1a;}
+.dark-mode .db-table tbody tr:nth-child(even){background-color:var(--maestro-row-alt);}
 .dark-mode .db-table th,.dark-mode .db-table td{border-color:#444;}
 
 /* ==============================
