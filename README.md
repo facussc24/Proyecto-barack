@@ -56,7 +56,7 @@ await dataService.importJSON(json); // Restaura la copia
 ```
 
 
-Si ya conoces estas páginas, puedes trabajar solo con `docs/sinoptico-editor.html` y consultar los datos desde `docs/sinoptico.html`. Para el listado maestro utiliza `docs/maestro_editor.html` o consulta `docs/maestro.html`. La SPA (`index.html`) queda como opción adicional.
+Si ya conoces estas páginas, puedes trabajar solo con `docs/sinoptico-editor.html` y consultar los datos desde `docs/sinoptico.html`. La SPA (`index.html`) queda como opción adicional.
 
 ### Crear un nuevo producto con `docs/arbol.html`
 
@@ -64,33 +64,6 @@ Si ya conoces estas páginas, puedes trabajar solo con `docs/sinoptico-editor.ht
 - Verás una vista previa del nodo seguido de sus subcomponentes e insumos.
 - Con los botones 🗑 puedes eliminar entradas que no quieras conservar.
 - Finalmente confirma para guardar todo el árbol.
-
-## Listado Maestro
-
-El Listado Maestro ahora se divide en varias páginas:
-- `docs/maestro.html` muestra la tabla en modo solo lectura.
-- `docs/maestro_editor.html` permite crear y editar filas.
-- `docs/maestro_basico.html` es una versión simplificada para diagnosticar 
-  problemas cuando otras vistas no cargan correctamente.
-
-1. Abre `maestro_editor.html` para modificar las celdas en línea.
-2. `maestro.html` mantiene la búsqueda, el historial y la exportación sin
-   opciones de edición.
-3. Con **Exportar Excel** obtendrás un archivo `ListadoMaestro.xlsx` con los
-   datos actuales y el historial.
-4. Si la versión de la aplicación cambia se vacía la tabla guardada y su
-   historial para evitar inconsistencias.
-5. Cuando el servidor `server.py` está activo los cambios se guardan en
-   `data/latest.json` y se comparten automáticamente con el resto de usuarios.
-
-El sistema de semáforo marca con 🟢 los productos notificados y con 🔴 aquellos
-pendientes de revisión. Cuando se actualiza un documento se limpian las
-revisiones dependientes siguiendo estas reglas:
-
-- `flujograma` afecta a `amfe` y `hojaOp`.
-- `amfe` afecta a `hojaOp`.
-- `hojaOp` limpia `mylar`, `planos`, `ulm`, `fichaEmb` y `tizada`.
-- `mylar` depende de `planos`.
 
 ## Sincronización de datos
 
