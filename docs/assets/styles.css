@@ -24,7 +24,7 @@
   --hero-end: var(--color-accent);
 }
 
-.dark-mode {
+.dark {
   --color-bg: #000;
   --color-text: #e0e0e0;
   --color-primary: #1a73e8;
@@ -41,23 +41,23 @@
 }
 
 /* ajustar colores en modo oscuro para mejor contraste en la página de inicio */
-.home.dark-mode {
+.home.dark {
   --color-primary: #1a73e8;
   --color-accent: #1565c0;
 }
 
 /* barra de navegación en modo oscuro */
-.dark-mode .main-nav {
+.dark .main-nav {
   background-color: #000;
 }
-.dark-mode .main-nav a {
+.dark .main-nav a {
   color: var(--color-light);
 }
-.dark-mode .column-toggle-container,
-.dark-mode .tabla-contenedor,
-.dark-mode .category-section table,
-.dark-mode .intro,
-.dark-mode .suggestions-list {
+.dark .column-toggle-container,
+.dark .tabla-contenedor,
+.dark .category-section table,
+.dark .intro,
+.dark .suggestions-list {
   background-color: var(--color-surface-dark);
 }
 
@@ -299,13 +299,13 @@ table#sinoptico tbody td {
   text-overflow: ellipsis;
 }
 
-.dark-mode table#sinoptico tbody tr:nth-child(even) {
+.dark table#sinoptico tbody tr:nth-child(even) {
   background-color: var(--maestro-row-alt);
 }
-.dark-mode table#sinoptico tbody tr:hover {
+.dark table#sinoptico tbody tr:hover {
   background-color: #222;
 }
-.dark-mode table#sinoptico tbody td {
+.dark table#sinoptico tbody td {
   border-bottom: 1px solid #444;
 }
 
@@ -324,13 +324,13 @@ table#sinoptico tbody td {
 tr.fila-cliente td {
   padding-top: 20px;
 }
-.dark-mode .fila-cliente {
+.dark .fila-cliente {
   background-color: #00284d !important;
 }
-.dark-mode .fila-pieza {
+.dark .fila-pieza {
   background-color: #00325f !important;
 }
-.dark-mode .fila-oper {
+.dark .fila-oper {
   background-color: #00477d !important;
 }
 /* ==============================
@@ -563,7 +563,7 @@ tr[data-level] td:first-child {
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
-.dark-mode .category-section summary {
+.dark .category-section summary {
   background: linear-gradient(90deg, var(--color-primary-hover), var(--color-accent-hover));
 }
 
@@ -585,7 +585,7 @@ tr[data-level] td:first-child {
 .category-section tbody tr:nth-child(even) {
   background-color: #f7f7f7;
 }
-.dark-mode .category-section tbody tr:nth-child(even) {
+.dark .category-section tbody tr:nth-child(even) {
   background-color: var(--maestro-row-alt);
 }
 .maestro-form {
@@ -645,7 +645,7 @@ tr[data-level] td:first-child {
   background-color: #eee;
 }
 
-.dark-mode .suggestions-list li:hover {
+.dark .suggestions-list li:hover {
   background-color: #222;
 }
 
@@ -809,7 +809,7 @@ header {
   max-width: 250px;
   height: auto;
 }
-body.amfe-page:not(.dark-mode) .logo {
+body.amfe-page:not(.dark) .logo {
   background-color: var(--color-primary);
   padding: 4px;
   border-radius: 4px;
@@ -1128,7 +1128,7 @@ select {
   border-radius: 6px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
-.dark-mode .login-container {
+.dark .login-container {
   background: #000;
   box-shadow: 0 2px 6px rgba(0,0,0,0.6);
 }
@@ -1435,7 +1435,7 @@ select {
   white-space: normal;
   word-break: break-word;
 }
-.dark-mode .flow-diagram .tree-node {
+.dark .flow-diagram .tree-node {
   background: linear-gradient(135deg, #000, #111);
   color: var(--color-text);
 }
@@ -1448,7 +1448,7 @@ select {
   width: 14px;
   border-top: 2px solid #ccc;
 }
-.dark-mode .flow-diagram li > .tree-node::after {
+.dark .flow-diagram li > .tree-node::after {
   border-top-color: #555;
 }
 .flow-diagram li > .tree-node::before {
@@ -1461,7 +1461,7 @@ select {
   border-color: transparent transparent transparent #ccc;
   transform: translateY(-50%);
 }
-.dark-mode .flow-diagram li > .tree-node::before {
+.dark .flow-diagram li > .tree-node::before {
   border-color: transparent transparent transparent #555;
 }
 
@@ -1478,7 +1478,7 @@ select {
   width: 20px;
   border-top: 2px solid #ccc;
 }
-.dark-mode .flow-diagram li > ul::before {
+.dark .flow-diagram li > ul::before {
   border-top-color: #555;
 }
 
@@ -1580,11 +1580,11 @@ select {
 }
 
 .builder-card { background:linear-gradient(135deg,#ffffff,#f0f4ff); padding:12px; border-radius:8px; box-shadow:0 2px 4px rgba(0,0,0,0.1); margin:10px 0; position:relative; overflow-x:auto; }
-.dark-mode .builder-card { background:linear-gradient(135deg,#000,#111); }
+.dark .builder-card { background:linear-gradient(135deg,#000,#111); }
 .builder-card .add-btn { position:absolute; top:8px; right:8px; width:24px; height:24px; border:none; border-radius:50%; background:#0066cc; color:#fff; cursor:pointer; }
-.dark-mode .builder-card .add-btn { background:var(--color-accent); }
+.dark .builder-card .add-btn { background:var(--color-accent); }
 .builder-card .add-btn:hover { background:#004c99; }
-.dark-mode .builder-card .add-btn:hover { background:var(--color-accent-hover); }
+.dark .builder-card .add-btn:hover { background:var(--color-accent-hover); }
 .builder-card .children { margin-left:30px; }
 
 .inline-form { display:flex; gap:6px; margin-top:8px; }
@@ -1635,8 +1635,8 @@ dialog.modal{border:none;border-radius:8px;padding:20px;box-shadow:0 2px 8px rgb
 .db-table tbody tr:nth-child(even){background-color:#f7f7f7;}
 .db-table button{background-color:var(--color-accent);color:var(--color-light);border:none;border-radius:4px;cursor:pointer;padding:2px 6px;}
 .db-table button:hover{background-color:var(--color-accent-hover);}
-.dark-mode .db-table tbody tr:nth-child(even){background-color:var(--maestro-row-alt);}
-.dark-mode .db-table th,.dark-mode .db-table td{border-color:#444;}
+.dark .db-table tbody tr:nth-child(even){background-color:var(--maestro-row-alt);}
+.dark .db-table th,.dark .db-table td{border-color:#444;}
 
 /* ==============================
    SUBPRODUCT ITEM
@@ -1644,7 +1644,7 @@ dialog.modal{border:none;border-radius:8px;padding:20px;box-shadow:0 2px 8px rgb
 .fila-subens {
   background-color: #d0eaff !important;
 } /* Azul muy claro (Subensamble) */
-.dark-mode .fila-subens {
+.dark .fila-subens {
   background-color: #003d73 !important;
 }
 
