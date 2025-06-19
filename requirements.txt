@@ -3,3 +3,5 @@ flask_cors
 flask_socketio>=5.0.0
 eventlet>=0.33.0
 APScheduler
+xlsxwriter
+reportlab

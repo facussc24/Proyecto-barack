@@ -4,9 +4,13 @@ import glob
 import shutil
 from datetime import datetime, timedelta
 from threading import Lock
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory, send_file
 from flask_cors import CORS
 from apscheduler.schedulers.background import BackgroundScheduler
+from io import BytesIO
+import xlsxwriter
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
 
 DATA_DIR = os.getenv("DATA_DIR", "data")
 DATA_FILE = os.path.join(DATA_DIR, "latest.json")
@@ -108,6 +112,56 @@ def server_info():
         "data_keys": list(memory.keys()),
     }
     return jsonify(info)
+
+
+@app.get("/api/<module>/export")
+def export_module(module):
+    fmt = request.args.get("format", "excel")
+    if module == "data":
+        rows = [memory]
+    elif module == "history":
+        rows = history
+    else:
+        return jsonify({"error": "not found"}), 404
+
+    if fmt == "pdf":
+        output = BytesIO()
+        c = canvas.Canvas(output, pagesize=letter)
+        text = c.beginText(40, 750)
+        for row in rows:
+            text.textLine(json.dumps(row, ensure_ascii=False))
+        c.drawText(text)
+        c.showPage()
+        c.save()
+        output.seek(0)
+        return send_file(
+            output,
+            mimetype="application/pdf",
+            as_attachment=True,
+            download_name=f"{module}.pdf",
+        )
+
+    output = BytesIO()
+    wb = xlsxwriter.Workbook(output, {"in_memory": True})
+    ws = wb.add_worksheet()
+    if rows and isinstance(rows[0], dict):
+        headers = list(rows[0].keys())
+        for col, header in enumerate(headers):
+            ws.write(0, col, header)
+        for r, item in enumerate(rows, start=1):
+            for c, header in enumerate(headers):
+                ws.write(r, c, item.get(header))
+    else:
+        for idx, item in enumerate(rows):
+            ws.write(idx, 0, json.dumps(item, ensure_ascii=False))
+    wb.close()
+    output.seek(0)
+    return send_file(
+        output,
+        mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        as_attachment=True,
+        download_name=f"{module}.xlsx",
+    )
 
 
 @socketio.on("connect")
