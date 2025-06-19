@@ -372,5 +372,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   loadData();
 
+  // refresh view when edit mode toggles
+  document.addEventListener('sinoptico-mode', loadData);
+
   if(dataService.subscribeToChanges) dataService.subscribeToChanges(loadData);
 });
