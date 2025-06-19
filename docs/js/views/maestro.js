@@ -7,6 +7,11 @@ export async function render(container) {
       <label for="search">Buscar:</label>
       <input id="search" type="text">
       <button id="exportExcel">Exportar Excel</button>
+      <button id="exportSrv">Exportar...</button>
+      <div class="export-menu">
+        <button data-fmt="excel">Excel</button> |
+        <button data-fmt="pdf">PDF</button>
+      </div>
     </div>
     <div class="tabla-contenedor">
       <table id="maestroTable" class="db-table">
@@ -32,6 +37,8 @@ export async function render(container) {
   const tbody = container.querySelector('#maestroBody');
   const search = container.querySelector('#search');
   const exportBtn = container.querySelector('#exportExcel');
+  const exportSrv = container.querySelector('#exportSrv');
+  const menu = container.querySelector('.export-menu');
 
   await ready;
   let rows = await getAll('maestro');
@@ -78,6 +85,58 @@ export async function render(container) {
     XLSX.utils.book_append_sheet(wb, ws, 'Maestro');
     XLSX.writeFile(wb, 'maestro.xlsx');
   });
+
+  function showSpinner() {
+    const el = document.getElementById('loading');
+    if (el) el.style.display = 'flex';
+  }
+
+  function hideSpinner() {
+    const el = document.getElementById('loading');
+    if (el) el.style.display = 'none';
+  }
+
+  async function checkHealth() {
+    try {
+      const resp = await fetch('/health');
+      if (!resp.ok) throw new Error('bad');
+    } catch {
+      exportSrv.disabled = true;
+    }
+  }
+
+  exportSrv?.addEventListener('click', () => {
+    if (menu) menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+  });
+
+  menu?.addEventListener('click', async ev => {
+    const btn = ev.target.closest('button[data-fmt]');
+    if (!btn) return;
+    const fmt = btn.getAttribute('data-fmt');
+    menu.style.display = 'none';
+    showSpinner();
+    try {
+      const resp = await fetch(`/api/maestro/export?format=${fmt}`);
+      if (!resp.ok) throw new Error('fail');
+      const blob = await resp.blob();
+      const url = URL.createObjectURL(blob);
+      const ext = fmt === 'excel' ? 'xlsx' : 'pdf';
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `maestro.${ext}`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      if (window.mostrarMensaje) window.mostrarMensaje('Exportación completa', 'success');
+    } catch (e) {
+      if (window.mostrarMensaje) window.mostrarMensaje('Error al exportar');
+    } finally {
+      hideSpinner();
+    }
+  });
+
+  checkHealth();
 
   renderRows();
 }
