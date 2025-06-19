@@ -972,16 +972,6 @@ body.amfe-page:not(.dark) .logo {
   background-color: var(--color-accent-hover);
 }
 
-.db-actions {
-  display: flex;
-  gap: 0.5rem;
-  justify-content: center;
-  margin-top: 0;
-}
-.db-actions button {
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
-}
 
 /* Home menu layout */
 .home-menu {
@@ -995,10 +985,11 @@ body.amfe-page:not(.dark) .logo {
   display: grid;
   gap: 15px;
   grid-template-columns: repeat(2, 1fr);
-  margin-bottom: 1.5rem;
+  margin: 0 auto 1.5rem;
+  max-width: 900px;
 }
 
-@media (min-width: 600px) {
+@media (min-width: 900px) {
   .menu-grid {
     grid-template-columns: repeat(4, 1fr);
   }
