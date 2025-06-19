@@ -6,6 +6,12 @@ if (isGuest() && guestOnlyPages.some(p => location.pathname.endsWith(p))) {
   location.href = 'sinoptico.html';
 }
 
+// pages reserved only for administrators
+const adminPages = ['editar-sinoptico.html'];
+if (!isAdmin() && adminPages.some(p => location.pathname.endsWith(p))) {
+  location.href = 'index.html';
+}
+
 function applyRoleRules() {
   if (isGuest()) {
     document.querySelectorAll('.no-guest').forEach(el => el.style.display = 'none');
