@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Listado Maestro</title>
+  <link rel="stylesheet" href="assets/styles.css">
+  <script>
+    if (localStorage.getItem('darkMode') === 'true') {
+      document.documentElement.classList.add('dark-mode');
+    }
+  </script>
+</head>
+<body>
+  <nav class="main-nav">
+    <a href="index.html">Inicio</a>
+    <button id="toggleDarkMode" type="button">🌙</button>
+    <button type="button" class="logout-link">Salir</button>
+  </nav>
+  <h1>Listado Maestro</h1>
+  <div class="editor-menu">
+    <label for="search">Buscar:</label>
+    <input id="search" type="text">
+    <button id="exportExcel">Exportar Excel</button>
+  </div>
+  <div class="tabla-contenedor">
+    <table id="maestroTable" class="db-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Flujograma</th>
+          <th>AMFE</th>
+          <th>Hoja Op</th>
+          <th>Mylar</th>
+          <th>Planos</th>
+          <th>ULM</th>
+          <th>Ficha Emb.</th>
+          <th>Tizada</th>
+          <th>Notificado</th>
+        </tr>
+      </thead>
+      <tbody id="maestroBody"></tbody>
+    </table>
+  </div>
+  <script src="lib/dexie.min.js" defer></script>
+  <script src="./socket.io/socket.io.js" defer></script>
+  <script type="module" src="js/dataService.js" defer></script>
+  <script src="lib/xlsx.full.noeval.js" defer></script>
+  <script type="module" src="js/maestro.js" defer></script>
+  <script type="module" src="js/darkMode.js" defer></script>
+  <script type="module" src="js/pageSettings.js" defer></script>
+  <script type="module" src="js/version.js" defer></script>
+</body>
+</html>
