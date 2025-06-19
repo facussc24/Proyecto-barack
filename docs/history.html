@@ -12,12 +12,7 @@
   </script>
 </head>
 <body>
-  <nav class="main-nav">
-    <a href="index.html">Inicio</a>
-    <a href="history.html" class="admin-only">Historial</a>
-    <button id="toggleDarkMode" type="button">🌙</button>
-    <button type="button" class="logout-link">Salir</button>
-  </nav>
+  <div id="nav-placeholder"></div>
   <h1>Historial reciente</h1>
   <div class="tabla-contenedor">
     <table id="historyTable">
@@ -32,6 +27,7 @@
     </table>
   </div>
   <script type="module" src="js/authGuard.js"></script>
+  <script type="module" src="js/nav.js" defer></script>
   <script type="module" src="js/history.js"></script>
   <script type="module" src="js/ui/animations.js" defer></script>
   <script type="module" src="js/darkMode.js" defer></script>

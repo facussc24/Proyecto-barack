@@ -12,11 +12,7 @@
   </script>
 </head>
 <body>
-  <nav class="main-nav">
-    <a href="index.html">Inicio</a>
-    <button id="toggleDarkMode" type="button">🌙</button>
-    <button type="button" class="logout-link">Salir</button>
-  </nav>
+  <div id="nav-placeholder"></div>
   <h1>Listado Maestro</h1>
   <div class="editor-menu">
     <label for="search">Buscar:</label>
@@ -59,6 +55,7 @@
   <script src="lib/dexie.min.js" defer></script>
   <script src="./socket.io/socket.io.js" defer></script>
   <script type="module" src="js/authGuard.js"></script>
+  <script type="module" src="js/nav.js" defer></script>
   <script type="module" src="js/dataService.js" defer></script>
   <script src="lib/xlsx.full.noeval.js" defer></script>
   <script type="module" src="js/maestro.js" defer></script>

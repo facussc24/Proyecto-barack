@@ -12,13 +12,7 @@
   </script>
 </head>
 <body>
-  <nav class="main-nav">
-    <a href="index.html">Inicio</a>
-    <a href="database.html" class="no-guest">Base de Datos</a>
-    <!-- <a href="#/sinoptico">Sinóptico SPA</a> -->
-    <button id="toggleDarkMode" type="button">🌙</button>
-    <button type="button" class="logout-link">Salir</button>
-  </nav>
+  <div id="nav-placeholder"></div>
   <div class="filtro-contenedor">
     <div class="filtros-texto">
       <label for="search">Buscar:</label>
@@ -66,6 +60,7 @@
   <script src="lib/fuse.min.js" defer></script>
   <script src="./socket.io/socket.io.js" defer></script>
   <script type="module" src="js/authGuard.js"></script>
+  <script type="module" src="js/nav.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js" defer></script>
   <script type="module" src="js/dataService.js" defer></script>
   <script type="module" src="js/views/sinoptico.js" defer></script>
