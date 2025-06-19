@@ -1989,3 +1989,54 @@ tr:not(.pending) td:first-child::before {
   cursor: not-allowed;
 }
 
+.navbar {
+  display: flex;
+  align-items: center;
+  background: #1f324d;
+  padding: 0 1rem;
+}
+.nav-list {
+  display: flex;
+  list-style: none;
+  margin: 0; padding: 0;
+}
+.nav-item {
+  margin-right: 1rem;
+}
+.nav-item a {
+  color: #ddd;
+  text-decoration: none;
+  padding: .75rem 1rem;
+  display: block;
+}
+.nav-item.active a,
+.nav-item a:hover {
+  color: #fff;
+  border-bottom: 3px solid #08f;
+}
+.spacer { flex: 1; }
+.theme-toggle {
+  background: none; border: none; font-size: 1.2rem;
+  color: #ddd; cursor: pointer; margin-right: 1rem;
+}
+.user-menu {
+  position: relative;
+}
+.user-menu .avatar {
+  width: 32px; height: 32px; border-radius: 50%; cursor: pointer;
+}
+.user-menu .dropdown {
+  display: none;
+  position: absolute; right: 0; top: 110%;
+  background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  border-radius: .5rem; list-style: none; padding: .5rem 0;
+}
+.user-menu.open .dropdown { display: block; }
+.user-menu .dropdown li button {
+  background: none; border: none; width: 100%;
+  padding: .5rem 1.5rem; text-align: left; cursor: pointer;
+}
+.user-menu .dropdown li button:hover {
+  background: #f0f0f0;
+}
+
