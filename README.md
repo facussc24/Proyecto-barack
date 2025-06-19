@@ -127,6 +127,7 @@ Cuando uses varias PC debes indicar la URL del servidor. Puedes hacerlo con:
 2. O bien establecer la variable de entorno `API_URL` antes de iniciar la aplicación.
 
 Si no se define ningún valor se usará `http://localhost:5000/api/data` por defecto.
+Para mas detalles consulta `docs/backend.md`.
 
 
 ## Desarrollo
