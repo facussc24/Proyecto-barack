@@ -1,6 +1,6 @@
 # Proyecto Barack
 
-Versión actual: **373**
+Versión actual: **374**
 
 Esta es una pequeña SPA (Single Page Application) escrita en HTML, CSS y JavaScript.
 Incluye un módulo llamado *Sinóptico* para gestionar jerarquías de productos.
@@ -30,6 +30,7 @@ El script actualiza `package.json`, `package-lock.json`, `README.md` y
    distintas páginas.
    Los administradores tienen acceso completo a "Base de Datos" y "Editar
    Sinóptico".
+   También encontrarás el enlace "Listado Maestro" que abre `maestro.html`.
 4. Los datos pueden guardarse localmente en el navegador o en el servidor.
 5. La página `history.html` está reservada para administradores.
    Los invitados son redirigidos automáticamente al abrirla.
