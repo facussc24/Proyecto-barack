@@ -1851,3 +1851,15 @@ tr:not(.pending) td:first-child::before {
   text-decoration: underline;
 }
 
+/* export buttons */
+.btn-excel,
+.btn-pdf {
+  padding: 10px 18px;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.btn-excel { background: #1b6e1b; }
+.btn-pdf { background: #c0392b; }
+

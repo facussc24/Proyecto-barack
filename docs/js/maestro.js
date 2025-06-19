@@ -4,7 +4,8 @@ import { getAll, ready } from './dataService.js';
 document.addEventListener('DOMContentLoaded', async () => {
   const tbody = document.getElementById('maestroBody');
   const search = document.getElementById('search');
-  const exportBtn = document.getElementById('exportExcel');
+  const exportExcelBtn = document.getElementById('exportExcelSrv');
+  const exportPdfBtn = document.getElementById('exportPdfSrv');
 
   await ready;
   let rows = await getAll('maestro');
@@ -22,8 +23,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       })
       .forEach(r => {
         const tr = document.createElement('tr');
+        if (r.id) tr.dataset.id = r.id; // keep ID for internal use
         tr.innerHTML = `
-          <td>${r.id || ''}</td>
           <td>${r.flujograma || ''}</td>
           <td>${r.amfe || ''}</td>
           <td>${r.hojaOp || ''}</td>
@@ -40,19 +41,43 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   search.addEventListener('input', render);
 
-  exportBtn?.addEventListener('click', () => {
-    if (typeof XLSX === 'undefined') return;
-    const headers = Array.from(
-      document.querySelectorAll('#maestroTable thead th')
-    ).map(th => th.textContent);
-    const data = Array.from(
-      document.querySelectorAll('#maestroTable tbody tr')
-    ).map(tr => Array.from(tr.children).map(td => td.textContent));
-    const wb = XLSX.utils.book_new();
-    const ws = XLSX.utils.aoa_to_sheet([headers, ...data]);
-    XLSX.utils.book_append_sheet(wb, ws, 'Maestro');
-    XLSX.writeFile(wb, 'maestro.xlsx');
-  });
+  function showSpinner() {
+    const el = document.getElementById('loading');
+    if (el) el.style.display = 'flex';
+  }
+
+  function hideSpinner() {
+    const el = document.getElementById('loading');
+    if (el) el.style.display = 'none';
+  }
+
+  async function exportServer(fmt) {
+    showSpinner();
+    try {
+      // If localStorage.getItem('useMock') === 'true', intercept this fetch
+      // and return a Blob of your choice for offline mode.
+      const resp = await fetch(`/api/maestro/export?format=${fmt}`);
+      if (!resp.ok) throw new Error('fail');
+      const blob = await resp.blob();
+      const url = URL.createObjectURL(blob);
+      const ext = fmt === 'excel' ? 'xlsx' : 'pdf';
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `maestro.${ext}`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      if (window.mostrarMensaje) window.mostrarMensaje('Exportación completa', 'success');
+    } catch {
+      if (window.mostrarMensaje) window.mostrarMensaje('Error al exportar');
+    } finally {
+      hideSpinner();
+    }
+  }
+
+  exportExcelBtn?.addEventListener('click', () => exportServer('excel'));
+  exportPdfBtn?.addEventListener('click', () => exportServer('pdf'));
 
   render();
 });
