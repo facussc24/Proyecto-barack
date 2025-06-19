@@ -1,12 +1,16 @@
 version: '3.8'
 services:
   backend:
-    build: .
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
     image: barack-backend:latest
+    environment:
+      - DB_PATH=/data/db.sqlite
     volumes:
-      - ./data:/data
+      - ./data/db.sqlite:/data/db.sqlite
     ports:
-      - "8000:8000"
+      - "5000:5000"
   docs:
     image: nginx:alpine
     volumes:
