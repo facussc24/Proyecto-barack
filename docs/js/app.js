@@ -1,3 +1,7 @@
+const API_BASE = window.location.hostname.includes('github.io')
+  ? null
+  : 'http://TU_IP:5000';
+
 document.addEventListener('DOMContentLoaded', () => {
   const btn = document.getElementById('toggleDarkMode');
   if (!btn) return;
