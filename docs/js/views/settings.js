@@ -1,5 +1,6 @@
 import { getAll, ready } from '../dataService.js';
 import { getUser } from '../session.js';
+import { activateDevMode } from '../pageSettings.js';
 
 export async function render(container) {
   container.innerHTML = `
@@ -27,6 +28,8 @@ export async function render(container) {
       <p>Entradas historial: <span id="devHistory">-</span></p>
     </section>`;
 
+  activateDevMode();
+
   await ready;
   const data = await getAll('sinoptico');
   const p = document.createElement('p');
@@ -53,6 +56,7 @@ export async function render(container) {
   });
   range.addEventListener('change', ev => {
     localStorage.setItem('pageBrightness', ev.target.value);
+    activateDevMode();
   });
 
   const overlay = document.querySelector('.version-info');
@@ -74,6 +78,7 @@ export async function render(container) {
     const val = ev.target.checked;
     document.body.classList.toggle('grid-overlay', val);
     localStorage.setItem('showGrid', val);
+    activateDevMode();
   });
 
   const user = getUser();

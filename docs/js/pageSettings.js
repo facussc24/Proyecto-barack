@@ -17,4 +17,24 @@ export function applyUserSettings() {
   }
 }
 
-document.addEventListener('DOMContentLoaded', applyUserSettings);
+export function showDevBanner() {
+  if (typeof window.mostrarMensaje === 'function') {
+    window.mostrarMensaje('Modo Dev activo', 'warning');
+  }
+}
+
+export function activateDevMode() {
+  localStorage.setItem('devMode', 'true');
+  showDevBanner();
+}
+
+export function checkDevBanner() {
+  if (localStorage.getItem('devMode') === 'true') {
+    showDevBanner();
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  applyUserSettings();
+  checkDevBanner();
+});
