@@ -36,10 +36,10 @@
   --maestro-row-alt: #1a1a1a;
 }
 
-/* mantener la hero de la página de inicio con sus colores originales */
+/* ajustar colores en modo oscuro para mejor contraste en la página de inicio */
 .home.dark-mode {
-  --color-primary: #0d1b3d;
-  --color-accent: #0066cc;
+  --color-primary: #1e88e5;
+  --color-accent: #42a5f5;
 }
 
 /* barra de navegación en modo oscuro */
