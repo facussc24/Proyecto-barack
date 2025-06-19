@@ -144,11 +144,25 @@
       </div>
     </form>
   </dialog>
+  <div id="fileWarning" class="file-warning" style="display:none">
+    Para utilizar la aplicación abre el archivo en un navegador moderno.
+  </div>
+  <script>
+    if (location.protocol === 'file:') {
+      document.getElementById('fileWarning').style.display = 'block';
+    }
+  </script>
+  <noscript>
+    <p class="noscript-warning">
+      Esta página necesita JavaScript para funcionar. Si la estás viendo desde
+      GitHub, descárgala y ábrela localmente con un navegador.
+    </p>
+  </noscript>
   <script src="lib/dexie.min.js" defer></script>
   <script src="lib/fuse.min.js" defer></script>
   <script src="./socket.io/socket.io.js" defer></script>
   <script type="module" src="js/authGuard.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js" defer></script>
+  <script src="lib/xlsx.full.noeval.js" defer></script>
   <script type="module" src="js/dataService.js" defer></script>
   <script type="module" src="js/views/sinoptico.js" defer></script>
   <script type="module" src="js/ui/renderer.js" defer></script>
