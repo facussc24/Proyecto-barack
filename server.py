@@ -32,6 +32,7 @@ app = Flask(__name__, static_folder="docs", static_url_path="")
 from flask_socketio import SocketIO
 
 socketio = SocketIO(app, async_mode="eventlet")
+clients = {}
 CORS(app)
 
 
@@ -91,6 +92,27 @@ def data():
 @app.route("/api/history", methods=["GET"])
 def get_history():
     return jsonify(history)
+
+
+@app.route("/api/server-info", methods=["GET"])
+def server_info():
+    info = {
+        "server_time": datetime.utcnow().isoformat() + "Z",
+        "connected_clients": len(clients),
+        "history_entries": len(history),
+        "data_keys": list(memory.keys()),
+    }
+    return jsonify(info)
+
+
+@socketio.on("connect")
+def handle_connect():
+    clients[request.sid] = request.remote_addr
+
+
+@socketio.on("disconnect")
+def handle_disconnect():
+    clients.pop(request.sid, None)
 
 
 if __name__ == "__main__":
