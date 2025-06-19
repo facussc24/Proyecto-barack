@@ -167,7 +167,7 @@ h1 {
 }
 
 .card {
-  background: var(--color-light);
+  background: var(--color-bg);
   color: var(--color-text);
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -840,7 +840,7 @@ body, html {
   position: absolute;
   top: 100%;
   left: 0;
-  background: var(--color-light);
+  background: var(--color-bg);
   color: var(--color-text);
   padding: 6px 0;
   border-radius: 8px;
@@ -856,7 +856,8 @@ body, html {
   white-space: nowrap;
 }
 .dropdown-menu a:hover {
-  background: var(--color-bg);
+  background: var(--color-primary);
+  color: var(--color-light);
 }
 .dropdown:hover .dropdown-menu {
   display: block;
@@ -2054,11 +2055,13 @@ tr:not(.pending) td:first-child::before {
   text-decoration: none;
   padding: .75rem 1rem;
   display: block;
+  border-bottom: 3px solid transparent;
+  box-sizing: border-box;
 }
 .nav-item.active a,
 .nav-item a:hover {
   color: #fff;
-  border-bottom: 3px solid #08f;
+  border-bottom-color: #08f;
 }
 .spacer { flex: 1; }
 .theme-toggle {
@@ -2074,8 +2077,12 @@ tr:not(.pending) td:first-child::before {
 .user-menu .dropdown {
   display: none;
   position: absolute; right: 0; top: 110%;
-  background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  border-radius: .5rem; list-style: none; padding: .5rem 0;
+  background: var(--color-bg);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  border-radius: .5rem;
+  list-style: none;
+  padding: .5rem 0;
+  color: var(--color-text);
 }
 .user-menu.open .dropdown { display: block; }
 .user-menu .dropdown li button {
@@ -2083,6 +2090,7 @@ tr:not(.pending) td:first-child::before {
   padding: .5rem 1.5rem; text-align: left; cursor: pointer;
 }
 .user-menu .dropdown li button:hover {
-  background: #f0f0f0;
+  background: var(--color-primary);
+  color: var(--color-light);
 }
 

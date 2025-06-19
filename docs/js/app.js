@@ -35,6 +35,7 @@ function setupDarkMode() {
   const apply = state => {
     document.body.classList.toggle('dark', state);
     document.documentElement.classList.toggle('dark', state);
+    btn.textContent = state ? '☀️' : '🌙';
   };
   const stored = localStorage.getItem('darkMode');
   apply(stored === 'true');
