@@ -112,7 +112,7 @@ Luego inicia el servidor indicando las rutas en `SSL_CERT` y `SSL_KEY`:
 SSL_CERT=cert.pem SSL_KEY=key.pem python server.py
 ```
 
-Si tienes Docker instalado puedes iniciar todo con Docker Compose. La primera vez construye la imagen definida en `Dockerfile`:
+Si tienes Docker instalado puedes iniciar todo con Docker Compose. La primera vez construye la imagen definida en `backend/Dockerfile`:
 
 ```bash
 docker-compose build
@@ -124,7 +124,8 @@ Luego levanta los servicios:
 docker-compose up
 ```
 
-Estos contenedores sirven la API y Nginx para la carpeta `docs`. Los datos se guardan en `./data` gracias al volumen compartido.
+Estos contenedores exponen la API en `http://localhost:5000` y Nginx para la carpeta `docs` en `http://localhost:8080`.
+Los datos se guardan en `./data/db.sqlite` gracias al volumen compartido.
 
 GitHub Pages solo aloja archivos estáticos y no puede ejecutar este servidor.
 Cuando uses varias PC debes indicar la URL del servidor. Puedes hacerlo con:
