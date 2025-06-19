@@ -815,7 +815,7 @@ body, html {
   width: 100%;
   background-color: rgba(13, 27, 61, 0.9);
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 20px;
   padding: 10px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.2);
@@ -867,7 +867,8 @@ body, html {
   color: var(--color-light);
   font-size: 1rem;
   cursor: pointer;
-  margin-left: 10px;
+  margin-left: auto;
+  margin-right: 10px;
 }
 
 .main-nav .logout-link {
@@ -2054,6 +2055,8 @@ tr:not(.pending) td:first-child::before {
   text-decoration: none;
   padding: .75rem 1rem;
   display: block;
+  border-bottom: 3px solid transparent;
+  box-sizing: border-box;
 }
 .nav-item.active a,
 .nav-item a:hover {
@@ -2067,6 +2070,7 @@ tr:not(.pending) td:first-child::before {
 }
 .user-menu {
   position: relative;
+  margin-right: 10px;
 }
 .user-menu .avatar {
   width: 32px; height: 32px; border-radius: 50%; cursor: pointer;
