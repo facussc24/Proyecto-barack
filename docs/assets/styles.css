@@ -86,7 +86,7 @@ body.home {
 }
 
 body.sinoptico-page {
-  padding-top: 80px;
+  padding-top: 100px;
 }
 h1 {
   text-align: center;
@@ -214,6 +214,9 @@ h1 {
   justify-content: space-between;
   align-items: center;
   gap: 12px;
+}
+body.sinoptico-page .filtro-contenedor {
+  margin-top: 20px;
 }
 .filtros-texto {
   display: flex;
@@ -886,7 +889,7 @@ body, html {
 }
 
 body.sinoptico-page .back-btn {
-  top: 80px;
+  top: 90px;
   padding: 6px 12px;
   border-radius: 6px;
 }
