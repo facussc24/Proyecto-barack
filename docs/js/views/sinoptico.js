@@ -67,6 +67,8 @@ export async function render(container) {
     menu.style.display = 'none';
     showSpinner();
     try {
+      // Interception point: developers can set localStorage.setItem('useMock','true')
+      // to skip the network call and provide local data when running offline.
       const resp = await fetch(`/api/sinoptico/export?format=${fmt}`);
       if (!resp.ok) throw new Error('fail');
       const blob = await resp.blob();
