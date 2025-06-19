@@ -12,16 +12,16 @@
   </script>
 </head>
 <body>
-  <div class="login-container">
+  <main class="login-container">
     <h1 class="login-title">Acceso</h1>
-    <div class="login-form">
+    <section class="login-form">
       <button type="button" id="adminBtn">Ingresar como administrador</button>
       <button type="button" id="guestBtn">Ingresar como invitado</button>
-    </div>
-  </div>
-  <div id="fileWarning" class="file-warning" style="display:none">
+    </section>
+  </main>
+  <section id="fileWarning" class="file-warning" style="display:none">
     Para utilizar la aplicación abre el archivo en un navegador moderno.
-  </div>
+  </section>
   <script>
     if (location.protocol === 'file:') {
       document.getElementById('fileWarning').style.display = 'block';

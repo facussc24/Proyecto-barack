@@ -12,12 +12,12 @@
   </script>
 </head>
 <body>
-  <div id="nav-placeholder"></div>
+  <nav id="nav-placeholder"></nav>
   <header class="editor-header">
     <h1 class="editor-title">Base de Datos</h1>
   </header>
-  <div class="editor-menu">
-    <div id="dbFilters">
+  <section class="editor-menu">
+    <section id="dbFilters">
       <label for="dbTipoFilter">Mostrar:</label>
       <select id="dbTipoFilter">
         <option value="">Todos</option>
@@ -27,9 +27,9 @@
         <option value="Insumo">Insumos</option>
         <option value="Desactivado">Desactivados</option>
       </select>
-    </div>
-  </div>
-  <div id="dbTables" class="tabla-contenedor">
+    </section>
+  </section>
+  <section id="dbTables" class="tabla-contenedor">
     <details class="category-section" id="clientesSection">
       <summary>Clientes</summary>
       <table class="db-table">
@@ -105,7 +105,7 @@
         <tbody></tbody>
       </table>
     </details>
-  </div>
+  </section>
   <script src="lib/dexie.min.js" defer></script>
   <script src="./socket.io/socket.io.js" defer></script>
   <script type="module" src="js/authGuard.js"></script>
