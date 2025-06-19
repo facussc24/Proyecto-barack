@@ -903,7 +903,8 @@ body.amfe-page:not(.dark-mode) .logo {
 
 .menu-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  /* Ensure items wrap nicely on small screens */
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 15px;
   margin-bottom: 1.5rem;
 }
