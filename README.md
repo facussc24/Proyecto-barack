@@ -128,8 +128,10 @@ verifica lo siguiente:
    a **IndexedDB**.
 2. Revisa la consola de desarrollo en busca de errores de permisos o bloqueos.
 
-Si al abrir `docs/maestro.html` directamente desde GitHub ves una pantalla en blanco, es porque la cabecera *Content‑Security‑Policy* de GitHub impide ejecutar los scripts. Sirve la carpeta `docs` con `python -m http.server` o habilita GitHub Pages para que el Listado Maestro funcione correctamente.
-Lo mismo sucede con `docs/sinoptico-editor.html`; al servir la carpeta `docs` con `python -m http.server` o habilitar GitHub Pages se soluciona.
+Si al abrir `docs/maestro.html` directamente desde GitHub ves una pantalla en
+blanco, es porque la cabecera *Content‑Security‑Policy* de GitHub impide ejecutar
+los scripts. Sirve la carpeta `docs` con `python -m http.server` o habilita
+GitHub Pages para que el Listado Maestro funcione correctamente.
 
 Tras corregir cualquier problema relacionado con el almacenamiento, vuelve a
 intentar la edición.
