@@ -184,7 +184,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     );
     await persist(product, [], []);
     if (window.mostrarMensaje) window.mostrarMensaje('Producto creado con éxito', 'success');
-    window.location.href = 'editar-sinoptico.html';
+    window.location.href = 'sinoptico-editor.html';
   });
 
   continueBtn?.addEventListener('click', () => {
@@ -311,6 +311,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     );
     await persist(product, subcomponents, insumos);
     if (window.mostrarMensaje) window.mostrarMensaje('Árbol creado con éxito', 'success');
-    window.location.href = 'editar-sinoptico.html';
+    window.location.href = 'sinoptico-editor.html';
   });
 });

@@ -8,7 +8,7 @@ export function render(container) {
     </section>
     <section class="home-menu">
       <div class="menu-grid">
-        <a href="editar-sinoptico.html" class="menu-item admin-only">Editor Sinóptico</a>
+        <a href="sinoptico-editor.html" class="menu-item no-guest">Editar Sinóptico</a>
         <a href="sinoptico.html" class="menu-item">Ver Sinóptico</a>
         <a href="#/amfe" class="menu-item">AMFE</a>
         <a href="maestro.html" class="menu-item">Listado Maestro</a>
