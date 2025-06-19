@@ -5,15 +5,7 @@ const API_BASE = window.location.hostname.includes('github.io')
   ? null
   : 'http://TU_IP:5000';
 
-// Toggle tema
-const btnTheme = document.querySelector('.theme-toggle');
-if (btnTheme) {
-  btnTheme.addEventListener('click', () => {
-    document.body.classList.toggle('dark');
-    btnTheme.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
-    localStorage.theme = document.body.classList.contains('dark') ? 'dark' : 'light';
-  });
-}
+// Dark mode toggle
 
 // Dropdown de usuario
 function setupUserMenu() {
@@ -30,7 +22,8 @@ setupUserMenu();
 document.addEventListener('navLoaded', setupUserMenu);
 
 function setupDarkMode() {
-  const btn = document.getElementById('toggleDarkMode');
+  const btn = document.getElementById('toggleDarkMode') ||
+              document.querySelector('.theme-toggle');
   if (!btn) return;
   const apply = state => {
     document.body.classList.toggle('dark', state);
@@ -46,4 +39,5 @@ function setupDarkMode() {
   });
 }
 
+setupDarkMode();
 document.addEventListener('navLoaded', setupDarkMode);
