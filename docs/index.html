@@ -13,7 +13,22 @@
   </script>
 </head>
 <body>
-  <nav id="nav-placeholder"></nav>
+  <nav class="navbar">
+    <ul class="nav-list">
+      <li class="nav-item active"><a href="index.html">Inicio</a></li>
+      <li class="nav-item"><a href="sinoptico.html">Sinóptico</a></li>
+      <li class="nav-item"><a href="amfe.html">AMFE</a></li>
+      <li class="nav-item"><a href="maestro.html">Listado Maestro</a></li>
+    </ul>
+    <div class="spacer"></div>
+    <button class="theme-toggle" aria-label="Toggle theme">🌙</button>
+    <div class="user-menu">
+      <img src="assets/icons/avatar.svg" class="avatar" alt="Usuario"/>
+      <ul class="dropdown">
+        <li><button onclick="logout()">Cerrar sesión</button></li>
+      </ul>
+    </div>
+  </nav>
   <section id="loading"></section>
   <section id="appMessage" role="alert" aria-live="polite"></section>
   <main id="app">Cargando…</main>
