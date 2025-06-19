@@ -20,8 +20,8 @@
   --page-brightness: 100%;
   --maestro-header-bg: #44546A;
   --maestro-row-alt: #F3F6F9;
-  --hero-start: #ffffff;
-  --hero-end: #f9f9f9;
+  --hero-start: var(--color-primary);
+  --hero-end: var(--color-accent);
 }
 
 .dark {
@@ -903,7 +903,7 @@ body.amfe-page:not(.dark) .logo {
 
 .hero h1 {
   font-size: clamp(2rem, 6vw, 4rem);
-  color: var(--color-primary);
+  color: var(--color-light);
   margin-bottom: 1rem;
 }
 .intro {
