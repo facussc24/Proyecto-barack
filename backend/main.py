@@ -7,7 +7,7 @@ from flask import Flask, request, jsonify, Response
 from flask_cors import CORS
 from flask_socketio import SocketIO
 
-DB_PATH = os.getenv("DATA_PATH", os.path.join("data", "db.sqlite"))
+DB_PATH = os.getenv("DB_PATH", os.path.join("data", "db.sqlite"))
 os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
 
 app = Flask(__name__)

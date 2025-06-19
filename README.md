@@ -77,6 +77,8 @@ Los respaldos se encuentran en la carpeta `data/backups/`. Si eliminas el reposi
 
 Si quieres guardar la base de datos en otra ubicación puedes definir la variable de entorno `DATA_DIR` antes de iniciar el servidor y apuntar a la carpeta deseada.
 
+El backend basado en SQLite (`backend/main.py`) lee la ruta del archivo desde `DB_PATH`. Si no se define, usará `data/db.sqlite`.
+
 Para iniciar el servicio ejecuta:
 
 ```bash
