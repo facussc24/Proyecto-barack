@@ -3,8 +3,16 @@
 
 export const DATA_CHANGED = 'DATA_CHANGED';
 const STORAGE_KEY = 'genericData';
+// Base URL for the backend API (without trailing slash or '/api')
+const API_BASE =
+  typeof globalThis !== 'undefined' && globalThis.API_BASE
+    ? globalThis.API_BASE
+    : typeof process !== 'undefined' && process.env
+      ? process.env.API_BASE || process.env.apiBase
+      : null;
 // URL of the backend API used to store and retrieve data
-const DEFAULT_API_URL = 'http://localhost:5000/api/data';
+const DEFAULT_API_URL =
+  API_BASE != null ? `${API_BASE.replace(/\/$/, '')}/api/data` : null;
 let API_URL = DEFAULT_API_URL;
 
 // Prefer value from localStorage
@@ -23,7 +31,7 @@ if (API_URL === DEFAULT_API_URL && typeof process !== 'undefined' && process.env
   if (envUrl) API_URL = envUrl;
 }
 
-const SOCKET_URL = API_URL.replace(/\/api\/data$/, '');
+const SOCKET_URL = API_URL ? API_URL.replace(/\/api\/data$/, '') : null;
 
 const docMap = {
   'Flujograma': 'flujograma',
@@ -108,6 +116,7 @@ function applyProductUpdate(row) {
 }
 
 async function persistCurrentState() {
+  if (!API_URL) return;
   try {
     const json = await exportJSON(true);
     await fetch(API_URL, {
@@ -149,9 +158,10 @@ const ready = new Promise((res) => {
 
 let socket;
 let sse;
-if (hasWindow && typeof io !== 'undefined') {
+if (hasWindow && SOCKET_URL && typeof io !== 'undefined') {
   socket = io(SOCKET_URL);
   socket.on('data_updated', async () => {
+    if (!API_URL) return;
     try {
       const resp = await fetch(API_URL);
       if (resp.ok) {
@@ -167,7 +177,7 @@ if (hasWindow && typeof io !== 'undefined') {
   });
 }
 
-if (hasWindow && typeof EventSource !== 'undefined') {
+if (hasWindow && SOCKET_URL && typeof EventSource !== 'undefined') {
   try {
     sse = new EventSource(SOCKET_URL + '/api/stream');
     sse.addEventListener('message', ev => {
@@ -403,7 +413,7 @@ async function remove(store = 'sinoptico', id) {
 
 async function exportJSON(preferLocal = false) {
   // Try to fetch the data from the server first unless we prefer local data
-  if (!preferLocal) {
+  if (!preferLocal && API_URL) {
     try {
       const resp = await fetch(API_URL);
       if (resp.ok) {
@@ -443,14 +453,16 @@ async function importJSON(json) {
   if (!data || typeof data !== 'object') return;
 
   // Attempt to persist the data on the server first
-  try {
-    await fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
-  } catch (e) {
-    console.error('Failed to send data to server', e);
+  if (API_URL) {
+    try {
+      await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+    } catch (e) {
+      console.error('Failed to send data to server', e);
+    }
   }
 
   if (db) {
