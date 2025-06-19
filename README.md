@@ -79,7 +79,13 @@ Si quieres guardar la base de datos en otra ubicación puedes definir la variabl
 
 El backend basado en SQLite (`backend/main.py`) lee la ruta del archivo desde `DB_PATH`. Si no se define, usará `data/db.sqlite`.
 
-Para iniciar el servicio ejecuta:
+Para iniciar solo este backend ejecuta:
+
+```bash
+python backend/main.py
+```
+
+Para levantar el servidor que también hospeda la carpeta `docs` ejecuta:
 
 ```bash
 pip install -r requirements.txt
@@ -105,6 +111,14 @@ Luego inicia el servidor indicando las rutas en `SSL_CERT` y `SSL_KEY`:
 ```bash
 SSL_CERT=cert.pem SSL_KEY=key.pem python server.py
 ```
+
+Si tienes Docker instalado puedes iniciar todo con:
+
+```bash
+docker-compose up
+```
+
+Este comando levanta el backend y un contenedor Nginx para la carpeta `docs`. Los datos se guardan en `./data` gracias al volumen compartido.
 
 GitHub Pages solo aloja archivos estáticos y no puede ejecutar este servidor.
 Cuando uses varias PC debes indicar la URL del servidor. Puedes hacerlo con:
