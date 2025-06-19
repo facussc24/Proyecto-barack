@@ -168,3 +168,31 @@ GitHub Pages para que el Listado Maestro funcione correctamente.
 
 Tras corregir cualquier problema relacionado con el almacenamiento, vuelve a
 intentar la edición.
+
+## Hospedaje local y GitHub Pages
+
+### Servir la carpeta `docs` con Python
+
+Para probar la interfaz sin depender de un servidor externo puedes iniciar un servidor HTTP simple:
+
+```bash
+cd docs
+python -m http.server
+```
+
+Luego abre `http://localhost:8000/` y navega normalmente.
+
+### Definir `API_URL` en `localStorage`
+
+Si la API se ejecuta en otra máquina guarda su URL con:
+
+```js
+localStorage.setItem('apiUrl', 'http://<IP>:5000/api/data');
+```
+
+La aplicación usará esa dirección al recargarse.
+
+### Publicar en GitHub Pages
+
+En la configuración del repositorio activa **GitHub Pages**. Puedes publicar desde la rama `gh-pages` o desde la carpeta `/docs` de `main`.
+Una vez habilitado podrás acceder a `https://<usuario>.github.io/<repositorio>/` para ver el sitio desplegado.
