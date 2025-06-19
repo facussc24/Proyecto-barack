@@ -49,15 +49,9 @@ export function render(container) {
           <span class="menu-text">Ajustes</span>
         </a>
       </div>
-      <div class="db-actions no-guest">
-        <button id="importBtn">Importar datos</button>
-        <input id="importFile" type="file" accept="application/json" hidden>
-      </div>
     </section>
   `;
 
-  const importBtn = container.querySelector('#importBtn');
-  const fileInput = container.querySelector('#importFile');
   const reviewCountEl = container.querySelector('#reviewCount');
   const count = parseInt(localStorage.getItem('reviewCount') || '0', 10);
   if (count > 0) {
@@ -66,31 +60,33 @@ export function render(container) {
     reviewCountEl.remove();
   }
 
-  importBtn.addEventListener('click', () => fileInput.click());
-  fileInput.addEventListener('change', async ev => {
-    const file = ev.target.files[0];
-    if (!file) return;
-    const text = await file.text();
-    await window.dataService.importJSON(text);
-    alert('Datos importados');
-    fileInput.value = '';
-  });
 
   const kpiGrid = container.querySelector('#kpiGrid');
   if (kpiGrid) loadKpis(kpiGrid);
 }
 
 async function loadKpis(el) {
-  if (!window.API_BASE) return;
   try {
-    const resp = await fetch(`${window.API_BASE}/api/server-info`);
-    if (!resp.ok) return;
-    const info = await resp.json();
+    let products = [];
+    let history = [];
+    if (window.API_BASE) {
+      const [prodRes, histRes] = await Promise.all([
+        fetch(`${window.API_BASE}/api/products`),
+        fetch(`${window.API_BASE}/api/history`),
+      ]);
+      if (prodRes.ok) products = await prodRes.json();
+      if (histRes.ok) history = await histRes.json();
+    } else {
+      products = window.mockProducts || [];
+      history = window.mockHistory || [];
+    }
+    const pending = products.filter(p => p.pending).length;
+    const completed = products.length - pending;
     const data = [
-      { icon: '📦', label: 'Productos', value: info.data_keys?.length || 0 },
-      { icon: '⏳', label: 'Pendientes', value: info.pending || 0 },
-      { icon: '✅', label: 'Completados', value: info.completed || 0 },
-      { icon: '📝', label: 'Cambios', value: info.history_entries || 0 },
+      { icon: '📦', label: 'Productos', value: products.length },
+      { icon: '⏳', label: 'Pendientes', value: pending },
+      { icon: '✅', label: 'Completados', value: completed },
+      { icon: '📝', label: 'Cambios', value: history.length },
     ];
     el.innerHTML = data
       .map(

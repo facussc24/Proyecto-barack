@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; connect-src *; img-src * data:; style-src * 'unsafe-inline';">
   <title>Iniciar sesión</title>
   <link rel="stylesheet" href="assets/styles.css">
   <script>
@@ -12,6 +13,7 @@
   </script>
 </head>
 <body>
+  <button class="back-btn" onclick="history.back()">← Volver</button>
   <main class="login-container">
     <h1 class="login-title">Acceso</h1>
     <section class="login-form">
