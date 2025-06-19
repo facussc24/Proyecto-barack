@@ -67,6 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
           `<td data-edit="Ancho" data-id="${item.ID}">${item.Ancho || ''}</td>` +
           `<td data-edit="Alto" data-id="${item.ID}">${item.Alto || ''}</td>` +
           `<td data-edit="Peso" data-id="${item.ID}">${item.Peso || ''}</td>` +
+          `<td><button class="view-img-btn" data-cod="${item.Código}">Ver</button></td>` +
           `<td>${actBtn}<button class="db-del" data-id="${item.ID}">🗑️</button></td>`;
       } else if (item.Tipo === 'Insumo') {
         tr.innerHTML =
@@ -77,6 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
           `<td data-edit="Material" data-id="${item.ID}">${item.Material || ''}</td>` +
           `<td data-edit="Observaciones" data-id="${item.ID}">${item.Observaciones || ''}</td>` +
           `<td data-edit="Sourcing" data-id="${item.ID}">${item.Sourcing || ''}</td>` +
+          `<td><button class="view-img-btn" data-cod="${item.Código}">Ver</button></td>` +
           `<td>${actBtn}<button class="db-del" data-id="${item.ID}">🗑️</button></td>`;
       } else {
         // Subproducto o cualquier otro
@@ -118,6 +120,11 @@ document.addEventListener('DOMContentLoaded', () => {
           await updateNode(id, { Desactivado: false });
           await load();
         }
+      } else if (btn.classList.contains('view-img-btn')) {
+        const code = btn.dataset.cod || '';
+        const sanitized = code.replace(/[^a-z0-9]/gi, '').toLowerCase();
+        const src = sanitized ? `imagenes_sinoptico/${sanitized}.jpg` : '';
+        if (window.showImageModal) window.showImageModal(src);
       }
       return;
     }
