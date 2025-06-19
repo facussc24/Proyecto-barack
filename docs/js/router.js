@@ -2,11 +2,13 @@ import { render as renderHome } from './views/home.js';
 import { render as renderSinoptico } from './views/sinoptico.js';
 import { render as renderAmfe } from './views/amfe.js';
 import { render as renderSettings } from './views/settings.js';
+import { render as renderMaestro } from './views/maestro.js';
 
 const routes = {
   '#/home': renderHome,
   '#/sinoptico': renderSinoptico,
   '#/amfe': renderAmfe,
+  '#/maestro': renderMaestro,
   '#/settings': renderSettings,
 };
 
@@ -14,6 +16,7 @@ const bodyClasses = {
   '#/home': 'home',
   '#/sinoptico': 'sinoptico-page',
   '#/amfe': 'amfe-page',
+  '#/maestro': 'maestro-page',
   '#/settings': 'settings-page',
 };
 
@@ -27,6 +30,7 @@ export function router() {
     'home',
     'sinoptico-page',
     'amfe-page',
+    'maestro-page',
     'settings-page'
   );
   const cls = bodyClasses[hash];
