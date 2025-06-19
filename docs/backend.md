@@ -53,7 +53,8 @@ If the API server is unreachable, the frontend keeps working thanks to IndexedDB
 ### Docker Compose
 
 1. Ensure Docker and Docker Compose are installed.
-2. Run `docker-compose up` from the project root.
-3. Nginx will serve the `docs/` folder on port 8080 and the API from `backend/main.py` on port 8000.
-4. Point the frontend to `http://<host>:8000/api` as needed.
+2. Build the image the first time with `docker-compose build`.
+3. Run `docker-compose up` from the project root.
+4. Nginx will serve the `docs/` folder on port 8080 and the API from `backend/main.py` on port 8000.
+5. Point the frontend to `http://<host>:8000/api` as needed.
 
