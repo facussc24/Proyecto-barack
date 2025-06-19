@@ -84,6 +84,10 @@ body.fade-out {
 body.home {
   padding-top: 0;
 }
+
+body.sinoptico-page {
+  padding-top: 80px;
+}
 h1 {
   text-align: center;
   margin: 20px 0;
@@ -228,6 +232,19 @@ h1 {
   border: 1px solid #bbb;
   border-radius: 4px;
   width: 200px;
+  box-sizing: border-box;
+}
+
+body.sinoptico-page .filtros-texto select,
+body.sinoptico-page .filtros-texto input[type="text"] {
+  height: 34px;
+}
+
+body.sinoptico-page .filtros-texto select {
+  width: auto;
+  min-width: 140px;
+  padding: 6px 8px;
+  box-sizing: border-box;
 }
 .filtro-opciones {
   display: flex;
@@ -866,6 +883,12 @@ body, html {
 .dark .back-btn {
   background: rgba(0, 0, 0, 0.5);
   color: var(--color-light);
+}
+
+body.sinoptico-page .back-btn {
+  top: 80px;
+  padding: 6px 12px;
+  border-radius: 6px;
 }
 
 header {
