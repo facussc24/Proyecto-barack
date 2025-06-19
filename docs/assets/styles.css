@@ -138,6 +138,16 @@ h1 {
   gap: 8px;
 }
 
+.dev-info {
+  margin: 20px;
+  padding: 10px;
+  background-color: var(--color-light);
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
 /* ==============================
    BLOQUE: Mostrar/Ocultar Columnas
    ============================== */

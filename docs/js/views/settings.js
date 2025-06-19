@@ -1,8 +1,9 @@
 import { getAll, ready } from '../dataService.js';
+import { getUser } from '../session.js';
 
 export async function render(container) {
   container.innerHTML = `
-    <h1>Ajustes de la aplicación</h1>
+    <h1>Modo Desarrollador</h1>
     <section class="dev-options">
       <label>
         Brillo de la página:
@@ -17,6 +18,13 @@ export async function render(container) {
         <input type="checkbox" id="toggleGridOverlay">
         Mostrar cuadrícula
       </label>
+    </section>
+    <section class="dev-info">
+      <h2>Información del servidor</h2>
+      <p>Usuario actual: <span id="devUser"></span></p>
+      <p>Hora del servidor: <span id="devTime">-</span></p>
+      <p>Usuarios conectados: <span id="devClients">-</span></p>
+      <p>Entradas historial: <span id="devHistory">-</span></p>
     </section>`;
 
   await ready;
@@ -29,6 +37,10 @@ export async function render(container) {
   const valueLabel = container.querySelector('#brightnessValue');
   const versionChk = container.querySelector('#toggleVersionOverlay');
   const gridChk = container.querySelector('#toggleGridOverlay');
+  const userSpan = container.querySelector('#devUser');
+  const timeSpan = container.querySelector('#devTime');
+  const clientsSpan = container.querySelector('#devClients');
+  const histSpan = container.querySelector('#devHistory');
 
   const storedBrightness = localStorage.getItem('pageBrightness') || '100';
   range.value = storedBrightness;
@@ -63,5 +75,26 @@ export async function render(container) {
     document.body.classList.toggle('grid-overlay', val);
     localStorage.setItem('showGrid', val);
   });
+
+  const user = getUser();
+  if (user && userSpan) {
+    userSpan.textContent = `${user.name} (${user.role})`;
+  }
+
+  async function refreshInfo() {
+    try {
+      const resp = await fetch('/api/server-info');
+      if (!resp.ok) return;
+      const info = await resp.json();
+      if (timeSpan) timeSpan.textContent = new Date(info.server_time).toLocaleString();
+      if (clientsSpan) clientsSpan.textContent = info.connected_clients;
+      if (histSpan) histSpan.textContent = info.history_entries;
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  refreshInfo();
+  setInterval(refreshInfo, 5000);
 
 }
