@@ -1,7 +1,9 @@
 import { getAll, replaceAll, ready } from './dataService.js';
 import { isAdmin } from './session.js';
 
-const { Tree, TreeNode } = window['react-organizational-chart'];
+// Library exposes a global named `reactOrganizationalChart`.
+// Using the wrong name prevents the tree from rendering.
+const { Tree, TreeNode } = window.reactOrganizationalChart || {};
 const { useState, useEffect } = React;
 
 async function fetchSinoptico() {
