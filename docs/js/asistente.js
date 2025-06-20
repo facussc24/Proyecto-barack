@@ -31,8 +31,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   const finishBtn = document.getElementById('finishBtn');
   const productPreview = document.getElementById('productPreview');
   const treeContainer = document.getElementById('treeContainer');
-  const treeHolder2 = document.getElementById('treeHolder2');
-  const treeHolder4 = document.getElementById('treeHolder4');
   const insumoDesc = document.getElementById('insumoDesc');
   const insumoCode = document.getElementById('insumoCode');
   const insumoUnidad = document.getElementById('insumoUnidad');
@@ -64,6 +62,29 @@ document.addEventListener('DOMContentLoaded', async () => {
   domMap.set('root', subList);
   const liMap = new Map();
   let productData = null;
+  const breadcrumbLinks = document.querySelectorAll('#breadcrumb a');
+
+  function activateStep(n) {
+    const stepsArr = [step1, step2, step3, step4];
+    stepsArr.forEach((st, idx) => {
+      if (st) st.classList.toggle('active', idx === n - 1);
+    });
+    steps.forEach((s, idx) => {
+      s.classList.toggle('active', idx === n - 1);
+    });
+    breadcrumbLinks.forEach((b, idx) => {
+      b.classList.toggle('active', idx === n - 1);
+    });
+    if (progressBar) progressBar.style.width = `${(n - 1) * 25}%`;
+  }
+
+  breadcrumbLinks.forEach(link => {
+    link.addEventListener('click', evt => {
+      evt.preventDefault();
+      const stepNum = parseInt(link.dataset.step, 10);
+      if (!isNaN(stepNum)) activateStep(stepNum);
+    });
+  });
 
   function updateParentOptions() {
     if (!insumoParent) return;
@@ -231,11 +252,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       alto: productAlto.value.trim(),
       peso: productPeso.value.trim()
     };
-    step1.classList.remove('active');
-    step2.classList.add('active');
-    steps.forEach(s => s.classList.remove('active'));
-    steps[1].classList.add('active');
-    if (progressBar) progressBar.style.width = '25%';
+    activateStep(2);
   if (productPreview) {
       const info = code ? `${desc} (${code})` : desc;
       productPreview.textContent = `Producto: ${info}`;
@@ -374,51 +391,23 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   gotoStep3?.addEventListener('click', () => {
-    step2.classList.remove('active');
-    step3.classList.add('active');
-    steps.forEach(s => s.classList.remove('active'));
-    steps[2].classList.add('active');
-    if (progressBar) progressBar.style.width = '50%';
-    if (treeContainer && treeHolder2) treeHolder2.appendChild(treeContainer);
+    activateStep(3);
   });
 
   gotoStep4?.addEventListener('click', () => {
-    step3.classList.remove('active');
-    step4.classList.add('active');
-    steps.forEach(s => s.classList.remove('active'));
-    steps[3].classList.add('active');
-    if (progressBar) progressBar.style.width = '75%';
-    if (treeContainer && treeHolder4) treeHolder4.appendChild(treeContainer);
+    activateStep(4);
   });
 
   backTo1?.addEventListener('click', () => {
-    step2.classList.remove('active');
-    step1.classList.add('active');
-    steps.forEach(s => s.classList.remove('active'));
-    steps[0].classList.add('active');
-    if (progressBar) progressBar.style.width = '0%';
+    activateStep(1);
   });
 
   backTo2?.addEventListener('click', () => {
-    step3.classList.remove('active');
-    step2.classList.add('active');
-    steps.forEach(s => s.classList.remove('active'));
-    steps[1].classList.add('active');
-    if (progressBar) progressBar.style.width = '25%';
-    if (treeContainer && step2.contains(treeContainer) === false) {
-      step2.appendChild(treeContainer);
-    }
+    activateStep(2);
   });
 
   backTo3?.addEventListener('click', () => {
-    step4.classList.remove('active');
-    step3.classList.add('active');
-    steps.forEach(s => s.classList.remove('active'));
-    steps[2].classList.add('active');
-    if (progressBar) progressBar.style.width = '50%';
-    if (treeContainer && treeHolder2.contains(treeContainer) === false) {
-      treeHolder2.appendChild(treeContainer);
-    }
+    activateStep(3);
   });
 
   finishBtn?.addEventListener('click', async () => {
@@ -433,9 +422,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       productData.peso
     );
     await persist(product, subcomponents, insumos);
-    if (progressBar) progressBar.style.width = '100%';
-    steps.forEach(s => s.classList.remove('active'));
-    steps[3].classList.add('active');
+    activateStep(4);
     if (window.mostrarMensaje) window.mostrarMensaje('Árbol creado con éxito', 'success');
     window.location.href = 'sinoptico-editor.html';
   });
