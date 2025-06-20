@@ -182,13 +182,6 @@ GitHub Pages para que el Listado Maestro funcione correctamente.
 Tras corregir cualquier problema relacionado con el almacenamiento, vuelve a
 intentar la edición.
 
-Si la consola muestra un error similar a `React is not defined` al cargar
-`docs/arbol.html`, es probable que hayas guardado una versión antigua en la
-caché del navegador. Actualiza el repositorio a la última versión (por ejemplo
-`v389`) y recarga la página con **Ctrl+F5** o equivalente para limpiar la caché.
-El árbol de producto ya no depende de React y debería funcionar sin librerías
-externas.
-
 ## Hospedaje local y GitHub Pages
 
 ### Servir la carpeta `docs` con Python
