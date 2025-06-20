@@ -2325,3 +2325,32 @@ tr:not(.pending) td:first-child::before {
   background: #f0f0f0;
 }
 
+
+/* ===== Interactive Table ===== */
+#dbTable {
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  padding: 8px;
+}
+#dbTable .tabulator-header {
+  background-color: #001f3f;
+  color: #fff;
+}
+#dbTable .tabulator-row:hover {
+  background-color: #e9ecef;
+}
+#dbTable .tabulator-cell {
+  padding: 8px;
+}
+#dbTable button {
+  background-color: var(--color-accent);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 2px 6px;
+  margin: 0 2px;
+}
+#dbTable button:hover {
+  background-color: var(--color-accent-hover);
+}
