@@ -1454,10 +1454,6 @@ select {
   background-color: var(--color-primary-hover);
 }
 
-.form-actions {
-  display: flex;
-  gap: 8px;
-}
 
 .editor-menu {
   width: 95%;
@@ -1859,7 +1855,7 @@ select {
 .step-indicator .step { flex:1; text-align:center; color:#777; }
 .step-indicator .step.active { color:var(--color-primary); font-weight:bold; }
 .client-info { text-align:center; margin-bottom:10px; font-weight:bold; }
-.wizard-step { display:none; }
+.wizard-step { display:none; flex-direction: column; }
 .wizard-step.active { display:flex; }
 .wizard-step > button {
   padding: 6px 12px;
@@ -1872,6 +1868,43 @@ select {
 }
 .wizard-step > button:hover {
   background-color: var(--color-primary-hover);
+}
+
+.wizard-layout {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.wizard-left {
+  flex-basis: 60%;
+}
+
+.wizard-right {
+  flex-basis: 40%;
+  position: sticky;
+  top: 20px;
+}
+
+.breadcrumb {
+  margin-bottom: 10px;
+}
+
+.breadcrumb a {
+  text-decoration: none;
+  margin-right: 4px;
+  color: var(--color-text);
+}
+
+.breadcrumb a.active {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.form-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
 }
 
 .builder-card { background:linear-gradient(135deg,#ffffff,#f0f4ff); padding:12px; border-radius:8px; box-shadow:0 2px 4px rgba(0,0,0,0.1); margin:10px 0; position:relative; overflow-x:auto; }

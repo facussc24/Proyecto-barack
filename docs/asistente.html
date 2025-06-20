@@ -20,15 +20,23 @@
   </nav>
   <div id="loading"></div>
   <div id="appMessage" role="alert" aria-live="polite"></div>
-  <div class="wizard">
-    <div class="progress"><div id="progressBar"></div></div>
-    <div class="step-indicator">
-      <span class="step active">1</span>
-      <span class="step">2</span>
-      <span class="step">3</span>
-      <span class="step">4</span>
-    </div>
-    <div id="step1" class="wizard-step active node-form">
+  <div class="wizard-layout">
+    <div class="wizard-left">
+      <nav id="breadcrumb" class="breadcrumb">
+        <a href="#" data-step="1" class="active">Paso 1</a> ›
+        <a href="#" data-step="2">Paso 2</a> ›
+        <a href="#" data-step="3">Paso 3</a> ›
+        <a href="#" data-step="4">Paso 4</a>
+      </nav>
+      <div class="wizard">
+        <div class="progress"><div id="progressBar"></div></div>
+        <div class="step-indicator">
+          <span class="step active">1</span>
+          <span class="step">2</span>
+          <span class="step">3</span>
+          <span class="step">4</span>
+        </div>
+        <div id="step1" class="wizard-step active node-form">
       <h2>Datos Generales</h2>
       <label for="productCliente">Cliente:</label>
       <select id="productCliente"></select>
@@ -64,10 +72,6 @@
         <button id="backTo1" type="button">Atrás</button>
         <button id="gotoStep3" type="button">Siguiente</button>
       </div>
-      <div id="treeContainer" class="tree-preview flow-diagram">
-        <span id="productPreview" class="tree-node product-node"></span>
-        <ul id="subList" class="tree-list"></ul>
-      </div>
     </div>
     <div id="step3" class="wizard-step node-form">
       <h2>Agregar Insumos</h2>
@@ -100,7 +104,6 @@
         <button id="backTo2" type="button">Atrás</button>
         <button id="gotoStep4" type="button">Siguiente</button>
       </div>
-      <div id="treeHolder2"></div>
     </div>
     <div id="step4" class="wizard-step node-form">
       <h2>Vista Previa</h2>
@@ -108,9 +111,16 @@
         <button id="backTo3" type="button">Atrás</button>
         <button id="finishBtn" type="button">Guardar Árbol</button>
       </div>
-      <div id="treeHolder4"></div>
     </div>
-  </div>
+      </div> <!-- wizard -->
+    </div> <!-- wizard-left -->
+    <aside class="wizard-right">
+      <div id="treeContainer" class="tree-preview flow-diagram">
+        <span id="productPreview" class="tree-node product-node"></span>
+        <ul id="subList" class="tree-list"></ul>
+      </div>
+    </aside>
+  </div> <!-- wizard-layout -->
   <script src="lib/dexie.min.js" defer></script>
   <script src="./socket.io/socket.io.js" defer></script>
   <script type="module" src="js/authGuard.js"></script>
