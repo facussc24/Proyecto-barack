@@ -1569,7 +1569,8 @@ select {
 
 .tree-list ul {
   border-left: 1px dashed #ccc;
-  margin-left: 12px;
+  margin-left: 16px;
+  padding-left: 12px;
 }
 
 .tree-node {
@@ -1581,6 +1582,7 @@ select {
   border-radius: 4px;
   background-color: var(--color-light);
   white-space: nowrap;
+  font-size: 0.9rem;
 }
 .tree-list li.collapsed > ul {
   display: none;
@@ -1650,6 +1652,7 @@ select {
 
 #productPreview {
   position: relative;
+  margin-bottom: 8px;
 }
 
 #productPreview.has-children::after,
@@ -1704,7 +1707,7 @@ select {
 }
 
 .flow-diagram .tree-list ul {
-  margin-left: 40px;
+  margin-left: 20px;
   position: relative;
 }
 
@@ -1855,7 +1858,15 @@ select {
 .step-indicator .step { flex:1; text-align:center; color:#777; }
 .step-indicator .step.active { color:var(--color-primary); font-weight:bold; }
 .client-info { text-align:center; margin-bottom:10px; font-weight:bold; }
-.wizard-step { display:none; flex-direction: column; }
+.wizard-step {
+  display: none;
+  flex-direction: column;
+  background: var(--color-light);
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  margin-bottom: 16px;
+}
 .wizard-step.active { display:flex; }
 .wizard-step > button {
   padding: 6px 12px;
@@ -1872,28 +1883,34 @@ select {
 
 .wizard-layout {
   display: flex;
-  gap: 20px;
+  gap: 24px;
   align-items: flex-start;
 }
 
 .wizard-left {
-  flex-basis: 60%;
+  flex-basis: 65%;
+  padding: 12px;
 }
 
 .wizard-right {
-  flex-basis: 40%;
+  flex-basis: 35%;
   position: sticky;
   top: 20px;
+  padding: 12px;
+  background: var(--color-light);
+  border: 1px solid #ccc;
+  border-radius: 8px;
 }
 
 .breadcrumb {
-  margin-bottom: 10px;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
 }
 
 .breadcrumb a {
   text-decoration: none;
   margin-right: 4px;
-  color: var(--color-text);
+  color: var(--color-primary);
 }
 
 .breadcrumb a.active {
@@ -1905,6 +1922,7 @@ select {
   display: flex;
   gap: 8px;
   justify-content: flex-end;
+  margin-top: 12px;
 }
 
 .builder-card { background:linear-gradient(135deg,#ffffff,#f0f4ff); padding:12px; border-radius:8px; box-shadow:0 2px 4px rgba(0,0,0,0.1); margin:10px 0; position:relative; overflow-x:auto; }
