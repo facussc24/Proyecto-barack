@@ -29,7 +29,8 @@ export function activateDevMode() {
 }
 
 export function checkDevBanner() {
-  if (localStorage.getItem('devMode') === 'true') {
+  const inSettings = document.body.classList.contains('settings-page');
+  if (inSettings && localStorage.getItem('devMode') === 'true') {
     showDevBanner();
   }
 }
