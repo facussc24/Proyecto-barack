@@ -1,4 +1,5 @@
 import { getAll, addNode, ready } from './dataService.js';
+import { animateInsert, animateRemove } from './ui/animations.js';
 
 function getClienteNombre(clientes, id) {
   const c = clientes.find(x => String(x.ID) === String(id));
@@ -84,9 +85,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       insumoParent?.querySelector(`option[value='${rid}']`)?.remove();
       levelMap.delete(rid);
       const li = liMap.get(rid);
-      li?.remove();
-      liMap.delete(rid);
-      domMap.delete(rid);
+      animateRemove(li, () => {
+        li?.remove();
+        liMap.delete(rid);
+        domMap.delete(rid);
+      });
     }
     updateParentOptions();
   }
@@ -94,8 +97,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   function removeInsumo(id) {
     insumos = insumos.filter(i => i.id !== id);
     const li = liMap.get(id);
-    li?.remove();
-    liMap.delete(id);
+    animateRemove(li, () => {
+      li?.remove();
+      liMap.delete(id);
+    });
   }
 
   function buildProduct(desc, code, clienteId, largo, ancho, alto, peso) {
@@ -241,6 +246,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const childUl = document.createElement('ul');
     li.appendChild(childUl);
     parentList.appendChild(li);
+    animateInsert(li);
     domMap.set(id, childUl);
     liMap.set(id, li);
 
@@ -288,6 +294,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     node.appendChild(delBtn);
     li.appendChild(node);
     parentList.appendChild(li);
+    animateInsert(li);
     liMap.set(id, li);
 
     insumoDesc.value = '';

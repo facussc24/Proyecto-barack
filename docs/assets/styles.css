@@ -1553,6 +1553,16 @@ select {
   margin: 20px auto;
   width: fit-content;
 }
+.tree-preview.flow-diagram {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: var(--color-light);
+}
+.dark .tree-preview.flow-diagram {
+  background: #333;
+  border-color: #555;
+}
 
 .tree-list,
 .tree-list ul {
