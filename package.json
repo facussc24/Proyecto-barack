@@ -1,7 +1,7 @@
 {
   "name": "proyecto-barack",
-  "version": "388",
-  "description": "Versión actual: **388**",
+  "version": "389",
+  "description": "Versión actual: **389**",
   "main": "index.js",
   "directories": {
     "lib": "lib"
@@ -10,8 +10,9 @@
   "author": "",
   "license": "ISC",
   "type": "module",
-  "dependencies": {},
-  "devDependencies": {},
+  "dependencies": {
+    "jsdom": "^22.1.0"
+  },
   "pkg": {
     "assets": [
       "index.html",
