@@ -1,8 +1,10 @@
 'use strict';
 import { getAll, updateNode, deleteNode, ready } from './dataService.js';
+import { animateInsert } from './ui/animations.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-  const tipoFilter = document.getElementById('dbTipoFilter');
+  const tabButtons = document.querySelectorAll('.db-tabs button');
+  let activeType = '';
   const clientesBody = document.querySelector('#clientesSection tbody');
   const productosBody = document.querySelector('#productosSection tbody');
   const subproductosBody = document.querySelector('#subproductosSection tbody');
@@ -15,11 +17,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const desactivadosSection = document.getElementById('desactivadosSection');
   const tableContainer = document.getElementById('dbTables');
 
+  tabButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeType = btn.dataset.type || '';
+      load();
+    });
+  });
+
   async function load() {
     await ready;
     const data = await getAll('sinoptico');
-    const clientes = data.filter(d => d.Tipo === 'Cliente');
-
     clientesBody.innerHTML = '';
     productosBody.innerHTML = '';
     subproductosBody.innerHTML = '';
@@ -35,12 +44,12 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     Object.values(sections).forEach(s => (s.style.display = ''));
     let items = data.slice();
-    if (tipoFilter.value && tipoFilter.value !== 'Desactivado') {
-      items = items.filter(i => i.Tipo === tipoFilter.value && !i.Desactivado);
+    if (activeType && activeType !== 'Desactivado') {
+      items = items.filter(i => i.Tipo === activeType && !i.Desactivado);
       Object.keys(sections).forEach(k => {
-        sections[k].style.display = k === tipoFilter.value ? '' : 'none';
+        sections[k].style.display = k === activeType ? '' : 'none';
       });
-    } else if (tipoFilter.value === 'Desactivado') {
+    } else if (activeType === 'Desactivado') {
       items = items.filter(i => i.Desactivado);
       Object.keys(sections).forEach(k => {
         sections[k].style.display = k === 'Desactivado' ? '' : 'none';
@@ -96,10 +105,10 @@ document.addEventListener('DOMContentLoaded', () => {
         else target = subproductosBody;
       }
       target.appendChild(tr);
+      animateInsert(tr);
     });
   }
 
-  tipoFilter.addEventListener('change', load);
 
   tableContainer.addEventListener('click', async ev => {
     const btn = ev.target.closest('button');
