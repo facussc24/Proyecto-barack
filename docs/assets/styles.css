@@ -1797,7 +1797,7 @@ select {
 .wizard .progress #progressBar { height:100%; width:0; background:linear-gradient(90deg,#4b6cb7,#182848); transition:width 0.3s; }
 .client-info { text-align:center; margin-bottom:10px; font-weight:bold; }
 .wizard-step { display:none; }
-.wizard-step.active { display:block; }
+.wizard-step.active { display:flex; }
 .wizard-step > button {
   padding: 6px 12px;
   background-color: var(--color-primary);
