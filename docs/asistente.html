@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crear árbol de producto</title>
+  <link rel="stylesheet" href="assets/styles.css">
+  <script>
+    if (localStorage.getItem('darkMode') === 'true') {
+      document.documentElement.classList.add('dark-mode');
+    }
+  </script>
+</head>
+<body>
+  <nav class="main-nav">
+    <a href="index.html">Inicio</a>
+    <a href="sinoptico-editor.html" class="no-guest">Editor Sinóptico</a>
+    <button id="toggleDarkMode" type="button">🌙</button>
+    <button type="button" class="logout-link">Salir</button>
+  </nav>
+  <div id="loading"></div>
+  <div id="appMessage" role="alert" aria-live="polite"></div>
+  <div class="wizard">
+    <div class="progress"><div id="progressBar"></div></div>
+    <div class="step-indicator">
+      <span class="step active">1</span>
+      <span class="step">2</span>
+      <span class="step">3</span>
+      <span class="step">4</span>
+    </div>
+    <div id="step1" class="wizard-step active node-form">
+      <h2>Datos Generales</h2>
+      <label for="productCliente">Cliente:</label>
+      <select id="productCliente"></select>
+      <label for="productDesc">Descripción:</label>
+      <input id="productDesc" type="text" required placeholder="Descripción del producto">
+      <label for="productCode">Código:</label>
+      <input id="productCode" type="text" placeholder="Código (opcional)">
+      <label for="productLargo">Largo (mm):</label>
+      <input id="productLargo" type="number" step="any" placeholder="Largo">
+      <label for="productAncho">Ancho (mm):</label>
+      <input id="productAncho" type="number" step="any" placeholder="Ancho">
+      <label for="productAlto">Alto (mm):</label>
+      <input id="productAlto" type="number" step="any" placeholder="Alto">
+      <label for="productPeso">Peso (kg):</label>
+      <input id="productPeso" type="number" step="any" placeholder="Peso">
+      <div class="form-actions">
+        <button id="continueBtn" type="button">Siguiente</button>
+      </div>
+    </div>
+    <div id="step2" class="wizard-step node-form">
+      <h2>Crear Subcomponentes</h2>
+      <fieldset class="sub-section">
+        <legend>Nuevo subcomponente</legend>
+        <label for="subDesc">Descripción:</label>
+        <input id="subDesc" type="text" placeholder="Descripción del subcomponente">
+        <label for="subCode">Código:</label>
+        <input id="subCode" type="text" placeholder="Código (opcional)">
+        <label for="subParent">Depende de:</label>
+        <select id="subParent"></select>
+        <button id="addSubBtn" type="button">Agregar subcomponente</button>
+      </fieldset>
+      <div class="form-actions">
+        <button id="backTo1" type="button">Atrás</button>
+        <button id="gotoStep3" type="button">Siguiente</button>
+      </div>
+      <div id="treeContainer" class="tree-preview flow-diagram">
+        <span id="productPreview" class="tree-node product-node"></span>
+        <ul id="subList" class="tree-list"></ul>
+      </div>
+    </div>
+    <div id="step3" class="wizard-step node-form">
+      <h2>Agregar Insumos</h2>
+      <fieldset class="sub-section">
+        <legend>Nuevo insumo</legend>
+        <label for="insumoDesc">Descripción:</label>
+        <input id="insumoDesc" type="text" placeholder="Descripción del insumo">
+        <label for="insumoCode">Código:</label>
+        <input id="insumoCode" type="text" placeholder="Código (opcional)">
+        <label for="insumoUnidad">Unidad:</label>
+        <input id="insumoUnidad" type="text" placeholder="Unidad">
+        <label for="insumoProveedor">Proveedor:</label>
+        <input id="insumoProveedor" type="text" placeholder="Proveedor">
+        <label for="insumoMaterial">Material:</label>
+        <input id="insumoMaterial" type="text" placeholder="Material">
+        <label for="insumoOrigen">Origen:</label>
+        <select id="insumoOrigen">
+          <option value="Local">Local</option>
+          <option value="Interno">Interno</option>
+          <option value="Importado">Importado</option>
+          <option value="Consignado">Consignado</option>
+        </select>
+        <label for="insumoObs">Observaciones:</label>
+        <input id="insumoObs" type="text" placeholder="Observaciones">
+        <label for="insumoParent">Asociado a:</label>
+        <select id="insumoParent"></select>
+        <button id="addInsumoBtn" type="button">Agregar insumo</button>
+      </fieldset>
+      <div class="form-actions">
+        <button id="backTo2" type="button">Atrás</button>
+        <button id="gotoStep4" type="button">Siguiente</button>
+      </div>
+      <div id="treeHolder2"></div>
+    </div>
+    <div id="step4" class="wizard-step node-form">
+      <h2>Vista Previa</h2>
+      <div class="form-actions">
+        <button id="backTo3" type="button">Atrás</button>
+        <button id="finishBtn" type="button">Guardar Árbol</button>
+      </div>
+      <div id="treeHolder4"></div>
+    </div>
+  </div>
+  <script src="lib/dexie.min.js" defer></script>
+  <script src="./socket.io/socket.io.js" defer></script>
+  <script type="module" src="js/authGuard.js"></script>
+  <script type="module" src="js/dataService.js" defer></script>
+  <script type="module" src="js/asistente.js" defer></script>
+  <script type="module" src="js/ui/animations.js" defer></script>
+  <script type="module" src="js/darkMode.js" defer></script>
+  <script type="module" src="js/pageSettings.js" defer></script>
+  <script type="module" src="js/hideLoading.js" defer></script>
+  <script type="module" src="js/version.js" defer></script>
+</body>
+</html>
