@@ -245,10 +245,19 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   document.getElementById('btnRefrescar')?.addEventListener('click', loadData);
 
+  const exportBtn = document.getElementById('exportBtn');
+  const exportMenu = document.querySelector('.export-menu');
+  exportBtn?.addEventListener('click', () => {
+    if (exportMenu) {
+      exportMenu.style.display = exportMenu.style.display === 'block' ? 'none' : 'block';
+    }
+  });
+
   /* ==================================================
      4) Exportar a Excel
   ==================================================*/
   document.getElementById('btnExcel')?.addEventListener('click', () => {
+    if (exportMenu) exportMenu.style.display = 'none';
     if (typeof XLSX==='undefined') return mostrarMensaje('Excel deshabilitado','warning');
     const datos=[...document.querySelectorAll('#sinoptico thead th')].filter(th=>th.style.display!=='none').map(th=>th.textContent);
     const filas=[];
@@ -259,6 +268,26 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     const wb=XLSX.utils.book_new(); const ws=XLSX.utils.aoa_to_sheet([datos,...filas]);
     XLSX.utils.book_append_sheet(wb,ws,'Sinoptico'); XLSX.writeFile(wb,'sinoptico.xlsx');
+  });
+
+  document.getElementById('btnPdf')?.addEventListener('click', async () => {
+    if (exportMenu) exportMenu.style.display = 'none';
+    try {
+      const resp = await fetch('/api/sinoptico/export?format=pdf');
+      if (!resp.ok) throw new Error('fail');
+      const blob = await resp.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'sinoptico.pdf';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      mostrarMensaje('Exportación completa', 'success');
+    } catch {
+      mostrarMensaje('Error al exportar');
+    }
   });
 
   /* ==================================================
