@@ -820,8 +820,9 @@ body, html {
   background-color: rgba(13, 27, 61, 0.9);
   display: flex;
   justify-content: flex-start;
+  align-items: center;
   gap: 20px;
-  padding: 10px;
+  padding: 5px 10px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.2);
   z-index: 1000;
 }
@@ -885,6 +886,12 @@ body, html {
 }
 .dropdown.open .dropdown-menu,
 .nav-item.dropdown.open .dropdown-menu {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+.nav-item.dropdown:hover > .dropdown-menu,
+.dropdown:hover > .dropdown-menu {
   display: block;
   opacity: 1;
   transform: translateY(0);
@@ -2110,10 +2117,12 @@ tr:not(.pending) td:first-child::before {
 .user-menu {
   position: relative;
   margin-right: 20px;
+  display: flex;
+  align-items: center;
 }
 .user-menu .avatar {
   width: 32px; height: 32px; border-radius: 50%; cursor: pointer;
-  color: var(--color-light);
+  color: #fff;
 }
 .user-menu .dropdown {
   display: none;
