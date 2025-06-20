@@ -126,6 +126,8 @@ def export_module(module):
         rows = [memory]
     elif module == "history":
         rows = history
+    elif module == "sinoptico":
+        rows = memory.get("sinoptico", [])
     else:
         return jsonify({"error": "not found"}), 404
 

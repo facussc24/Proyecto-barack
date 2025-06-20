@@ -75,6 +75,10 @@ El servidor debe ejecutarse en un único equipo o servidor accesible por la red 
 El archivo activo se guarda en `data/latest.json` y cada día se crea una copia automática en `data/backups/AAAA-MM-DD.json`. Los respaldos con más de seis meses se eliminan al iniciar el servidor.
 Los respaldos se encuentran en la carpeta `data/backups/`. Si eliminas el repositorio también se borrará esta carpeta a menos que la conserves aparte.
 
+El servidor también expone `GET /api/sinoptico/export` para descargar la tabla
+de Sinóptico en Excel o PDF. Usa el parámetro `format=excel` o `format=pdf`
+según prefieras.
+
 Si quieres guardar la base de datos en otra ubicación puedes definir la variable de entorno `DATA_DIR` antes de iniciar el servidor y apuntar a la carpeta deseada.
 
 El backend basado en SQLite (`backend/main.py`) lee la ruta del archivo desde `DB_PATH`. Si no se define, usará `data/db.sqlite`.
