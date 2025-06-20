@@ -66,6 +66,11 @@ def cleanup_backups():
 @app.route("/", defaults={"path": "index.html"})
 @app.route("/<path:path>")
 def static_proxy(path):
+    file_path = os.path.join(app.static_folder, path)
+    if not os.path.splitext(path)[1] and not os.path.exists(file_path):
+        alt = file_path + ".html"
+        if os.path.exists(alt):
+            path += ".html"
     return send_from_directory(app.static_folder, path)
 
 
