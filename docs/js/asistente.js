@@ -30,6 +30,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const subList = document.getElementById('subList');
   const finishBtn = document.getElementById('finishBtn');
   const productPreview = document.getElementById('productPreview');
+  const clientPreview = document.getElementById('clientPreview');
   const treeContainer = document.getElementById('treeContainer');
   const insumoDesc = document.getElementById('insumoDesc');
   const insumoCode = document.getElementById('insumoCode');
@@ -52,7 +53,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     clienteSel.innerHTML = clientes
       .map(c => `<option value="${c.ID}">${c.Descripción}</option>`)
       .join('');
+    clienteSel.addEventListener('change', updateClientPreview);
   }
+
+  updateClientPreview();
 
   let subcomponents = [];
   let insumos = [];
@@ -96,6 +100,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       opt.textContent = `${'\u2014 '.repeat(level)}${sub.desc}`;
       insumoParent.appendChild(opt);
     }
+  }
+
+  function updateClientPreview() {
+    if (!clientPreview) return;
+    const name = getClienteNombre(clientes, clienteSel.value);
+    clientPreview.textContent = name ? `Cliente: ${name}` : '';
   }
 
   function removeSubcomponent(id) {
@@ -253,6 +263,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       peso: productPeso.value.trim()
     };
     activateStep(2);
+    updateClientPreview();
   if (productPreview) {
       const info = code ? `${desc} (${code})` : desc;
       productPreview.textContent = `Producto: ${info}`;
