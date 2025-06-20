@@ -212,7 +212,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     step2.classList.add('active');
     if (progressBar) progressBar.style.width = '50%';
     if (productPreview) {
-      productPreview.textContent = code ? `${desc} (${code})` : desc;
+      const info = code ? `${desc} (${code})` : desc;
+      productPreview.textContent = `Producto: ${info}`;
     }
     if (subParent) {
       subParent.innerHTML = '<option value="root">(Producto principal)</option>';
