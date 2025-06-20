@@ -234,6 +234,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     levelMap.set(id, level);
 
     const parentList = domMap.get(parent) || subList;
+    const parentLi = liMap.get(parent);
+    if (parentLi) {
+      parentLi.classList.add('has-children');
+    } else if (parent === 'root' && productPreview) {
+      productPreview.classList.add('has-children');
+    }
     const li = document.createElement('li');
     li.dataset.id = id;
     const node = document.createElement('span');
@@ -284,6 +290,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     const parentList = domMap.get(parent) || subList;
+    const parentLi = liMap.get(parent);
+    if (parentLi) {
+      parentLi.classList.add('has-children');
+    } else if (parent === 'root' && productPreview) {
+      productPreview.classList.add('has-children');
+    }
     const li = document.createElement('li');
     li.dataset.id = id;
     const node = document.createElement('span');

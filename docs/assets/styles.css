@@ -1628,6 +1628,39 @@ select {
   background-color: #fff7e0;
 }
 
+#productPreview {
+  position: relative;
+}
+
+#productPreview.has-children::after,
+#productPreview.has-children::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -14px;
+}
+
+#productPreview.has-children::after {
+  height: 14px;
+  border-left: 2px solid #ccc;
+  transform: translateX(-50%);
+}
+
+#productPreview.has-children::before {
+  border-width: 6px 4px 0 4px;
+  border-style: solid;
+  border-color: #ccc transparent transparent transparent;
+  transform: translate(-50%, 100%);
+}
+
+.dark #productPreview.has-children::after {
+  border-left-color: #555;
+}
+
+.dark #productPreview.has-children::before {
+  border-color: #555 transparent transparent transparent;
+}
+
 .sub-section {
   border: 1px solid #bbb;
   border-radius: 4px;
@@ -1672,46 +1705,49 @@ select {
   color: var(--color-text);
 }
 
-.flow-diagram li > .tree-node::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 100%;
-  width: 14px;
-  border-top: 2px solid #ccc;
-}
-.dark .flow-diagram li > .tree-node::after {
-  border-top-color: #555;
-}
+.flow-diagram li > .tree-node::after,
 .flow-diagram li > .tree-node::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: calc(100% + 14px);
-  border-width: 4px 0 4px 6px;
-  border-style: solid;
-  border-color: transparent transparent transparent #ccc;
-  transform: translateY(-50%);
-}
-.dark .flow-diagram li > .tree-node::before {
-  border-color: transparent transparent transparent #555;
-}
-
-.flow-diagram li:last-child > .tree-node::after,
-.flow-diagram li:last-child > .tree-node::before {
   display: none;
 }
 
-.flow-diagram li > ul::before {
+.flow-diagram li.has-children > .tree-node::after {
   content: '';
   position: absolute;
-  top: 50%;
-  left: -20px;
-  width: 20px;
-  border-top: 2px solid #ccc;
+  left: 50%;
+  bottom: -14px;
+  height: 14px;
+  border-left: 2px solid #ccc;
+  transform: translateX(-50%);
 }
-.dark .flow-diagram li > ul::before {
-  border-top-color: #555;
+.dark .flow-diagram li.has-children > .tree-node::after {
+  border-left-color: #555;
+}
+.flow-diagram li.has-children > .tree-node::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -14px;
+  border-width: 6px 4px 0 4px;
+  border-style: solid;
+  border-color: #ccc transparent transparent transparent;
+  transform: translate(-50%, 100%);
+}
+.dark .flow-diagram li.has-children > .tree-node::before {
+  border-color: #555 transparent transparent transparent;
+}
+
+
+.flow-diagram li.has-children > ul::before {
+  content: '';
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  height: 14px;
+  border-left: 2px solid #ccc;
+  transform: translateX(-50%);
+}
+.dark .flow-diagram li.has-children > ul::before {
+  border-left-color: #555;
 }
 
 @keyframes fadeIn {
