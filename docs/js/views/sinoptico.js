@@ -7,10 +7,12 @@ export async function render(container) {
       <button id="sin-edit">Editar</button>
       <a id="linkCrear" href="asistente.html">Crear</a>
       <a id="linkBaseDatos" href="database.html">Base de Datos</a>
-      <button id="sin-export">Exportar...</button>
-      <div class="export-menu">
-        <button data-fmt="excel">Excel</button> |
-        <button data-fmt="pdf">PDF</button>
+      <div class="export-group">
+        <button id="sin-export">⬇ Export</button>
+        <div class="export-menu">
+          <button data-fmt="excel" class="btn-excel">Excel</button>
+          <button data-fmt="pdf" class="btn-pdf">PDF</button>
+        </div>
       </div>
     </div>
     <table id="sinoptico">

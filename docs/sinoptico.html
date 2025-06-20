@@ -40,7 +40,13 @@
       <label><input type="checkbox" id="chkMostrarNivel1" checked> Nivel 1</label>
       <label><input type="checkbox" id="chkMostrarNivel2" checked> Nivel 2</label>
       <label><input type="checkbox" id="chkMostrarNivel3" checked> Nivel 3</label>
-      <button id="btnExcel" class="no-guest" aria-label="Exportar a Excel" title="Exportar a Excel">Exportar Excel</button>
+      <div class="export-group">
+        <button id="exportBtn" class="no-guest">⬇ Export</button>
+        <div class="export-menu">
+          <button data-fmt="excel" id="btnExcel" class="btn-excel">Excel</button>
+          <button data-fmt="pdf" id="btnPdf" class="btn-pdf">PDF</button>
+        </div>
+      </div>
     </section>
   </section>
   <section class="tabla-contenedor">
