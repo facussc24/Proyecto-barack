@@ -594,18 +594,30 @@ tr[data-level] td:first-child {
   background-color: var(--maestro-row-alt);
 }
 
+
 .category-section {
   margin-bottom: 20px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .category-section summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   font-weight: bold;
   background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
   color: #fff;
-  padding: 8px;
-  border-radius: 4px;
+  padding: 8px 12px;
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.category-section summary::after {
+  content: '▼';
+  transition: transform 0.3s ease;
+}
+.category-section[open] summary::after {
+  transform: rotate(-180deg);
 }
 .dark .category-section summary {
   background: linear-gradient(90deg, var(--color-primary-hover), var(--color-accent-hover));
@@ -619,6 +631,7 @@ tr[data-level] td:first-child {
   border-radius: 6px;
   overflow: hidden;
   box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  animation: fadeIn 0.3s ease-in-out;
 }
 .category-section th,
 .category-section td {
@@ -2144,6 +2157,27 @@ tr:not(.pending) td:first-child::before {
 }
 
 .maestro-tabs button.active {
+  background: var(--color-accent);
+  color: #fff;
+}
+
+/* ===== Base de Datos tabs ===== */
+.db-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.db-tabs button {
+  padding: 6px 12px;
+  border: none;
+  background: var(--color-light);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.db-tabs button.active {
   background: var(--color-accent);
   color: #fff;
 }

@@ -19,16 +19,13 @@
     <h1 class="editor-title">Base de Datos</h1>
   </header>
   <section class="editor-menu">
-    <section id="dbFilters">
-      <label for="dbTipoFilter">Mostrar:</label>
-      <select id="dbTipoFilter">
-        <option value="">Todos</option>
-        <option value="Cliente">Clientes</option>
-        <option value="Producto">Productos</option>
-        <option value="Subproducto">Subproductos</option>
-        <option value="Insumo">Insumos</option>
-        <option value="Desactivado">Desactivados</option>
-      </select>
+    <section class="db-tabs">
+      <button data-type="" class="active">Todos</button>
+      <button data-type="Cliente">Clientes</button>
+      <button data-type="Producto">Productos</button>
+      <button data-type="Subproducto">Subproductos</button>
+      <button data-type="Insumo">Insumos</button>
+      <button data-type="Desactivado">Desactivados</button>
     </section>
   </section>
   <section id="dbTables" class="tabla-contenedor">
