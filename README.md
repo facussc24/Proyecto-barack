@@ -1,6 +1,6 @@
 # Proyecto Barack
 
-Versión actual: **393**
+Versión actual: **394**
 
 Esta es una pequeña SPA (Single Page Application) escrita en HTML, CSS y JavaScript.
 Incluye un módulo llamado *Sinóptico* para gestionar jerarquías de productos.
@@ -59,7 +59,7 @@ await dataService.importJSON(json); // Restaura la copia
 
 Si ya conoces estas páginas, puedes trabajar solo con `docs/sinoptico-editor.html` y consultar los datos desde `docs/sinoptico.html`. La SPA (`index.html`) queda como opción adicional.
 
-### Crear un nuevo producto con `docs/arbol.html`
+### Crear un nuevo producto con `docs/asistente.html`
 
 - Selecciona el cliente, la descripción y el código del producto.
 - Verás una vista previa del nodo seguido de sus subcomponentes e insumos.

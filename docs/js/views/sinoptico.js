@@ -5,7 +5,7 @@ export async function render(container) {
   container.innerHTML = `
     <div class="toolbar">
       <button id="sin-edit">Editar</button>
-      <a id="linkCrear" href="arbol.html">Crear</a>
+      <a id="linkCrear" href="asistente.html">Crear</a>
       <a id="linkBaseDatos" href="database.html">Base de Datos</a>
       <button id="sin-export">Exportar...</button>
       <div class="export-menu">

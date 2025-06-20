@@ -1,7 +1,7 @@
 {
   "name": "proyecto-barack",
-  "version": "393",
-  "description": "Versión actual: **393**",
+  "version": "394",
+  "description": "Versión actual: **394**",
   "main": "index.js",
   "directories": {
     "lib": "lib"
@@ -20,7 +20,7 @@
       "database.html",
       "sinoptico.html",
       "sinoptico-editor.html",
-      "arbol.html",
+      "asistente.html",
       "assets/**/*",
       "images/**/*",
       "js/**/*",
