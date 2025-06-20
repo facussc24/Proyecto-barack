@@ -839,6 +839,11 @@ body, html {
 .nav-item {
   position: relative;
 }
+
+/* ensure standalone dropdowns position child menu correctly */
+.dropdown {
+  position: relative;
+}
 .dropdown-menu {
   display: none;
   position: absolute;
