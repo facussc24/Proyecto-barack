@@ -1,19 +1,10 @@
 import { getAll, replaceAll, ready } from './dataService.js';
 import { isAdmin } from './session.js';
 
-// Library exposes a global named `reactOrganizationalChart`.
-// Using the wrong name prevents the tree from rendering.
-const { Tree, TreeNode } = window.reactOrganizationalChart || {};
-const { useState, useEffect } = React;
-
-async function fetchSinoptico() {
-  await ready;
-  return await getAll('sinoptico');
-}
-
-async function saveSinoptico(data) {
-  await replaceAll(data);
-}
+let tree = [];
+let selected = null;
+let admin = false;
+let sidePanel;
 
 function buildTree(arr) {
   const map = {};
@@ -32,127 +23,163 @@ function flatten(nodes) {
   function visit(n, parentId) {
     const { children, ...rest } = n;
     result.push({ ...rest, ParentID: parentId });
-    if (children) children.forEach(ch => visit(ch, n.ID));
+    (n.children || []).forEach(ch => visit(ch, n.ID));
   }
   nodes.forEach(n => visit(n, n.ParentID || ''));
   return result;
 }
 
-function NodeLabel({ node, onView, onAdd, admin }) {
-  return React.createElement('div', { className: 'node-label' },
-    React.createElement('div', null, node.Descripción + (node.Código ? ` (${node.Código})` : '')),
-    React.createElement('div', { className: 'node-actions' },
-      React.createElement('button', { onClick: onView }, 'Ver'),
-      admin && React.createElement('button', { onClick: onAdd }, 'Añadir subcomponente')
-    )
-  );
+function createNodeElement(node) {
+  const li = document.createElement('li');
+  const label = document.createElement('div');
+  label.className = 'tree-node';
+  label.textContent = node.Descripción + (node.Código ? ` (${node.Código})` : '');
+
+  const viewBtn = document.createElement('button');
+  viewBtn.textContent = 'Ver';
+  viewBtn.addEventListener('click', () => selectNode(node));
+  label.appendChild(viewBtn);
+
+  if (admin) {
+    const addBtn = document.createElement('button');
+    addBtn.textContent = 'Añadir subcomponente';
+    addBtn.addEventListener('click', () => addChild(node));
+    label.appendChild(addBtn);
+  }
+
+  li.appendChild(label);
+  if (node.children && node.children.length) {
+    const ul = document.createElement('ul');
+    node.children.forEach(ch => ul.appendChild(createNodeElement(ch)));
+    li.appendChild(ul);
+  }
+  return li;
 }
 
-function RenderNode({ node, admin, onSelect, onAdd }) {
-  return React.createElement(TreeNode, { label: React.createElement(NodeLabel, {
-      node,
-      onView: () => onSelect(node),
-      onAdd: () => onAdd(node),
-      admin
-    }) },
-    node.children && node.children.map(ch =>
-      React.createElement(RenderNode, { key: ch.ID, node: ch, admin, onSelect, onAdd })
-    )
-  );
+function render() {
+  const rootEl = document.getElementById('root');
+  rootEl.innerHTML = '';
+
+  if (!tree.length && admin) {
+    const btn = document.createElement('button');
+    btn.id = 'createRoot';
+    btn.textContent = 'Crear producto';
+    btn.addEventListener('click', addRoot);
+    rootEl.appendChild(btn);
+    return;
+  }
+
+  const ul = document.createElement('ul');
+  ul.className = 'tree-list flow-diagram';
+  tree.forEach(n => ul.appendChild(createNodeElement(n)));
+  rootEl.appendChild(ul);
+
+  if (admin && tree.length) {
+    const saveBtn = document.createElement('button');
+    saveBtn.id = 'saveTree';
+    saveBtn.textContent = 'Guardar árbol';
+    saveBtn.addEventListener('click', saveTree);
+    rootEl.appendChild(saveBtn);
+  }
 }
 
-function SidePanel({ node, onChange, onClose }) {
-  if (!node) return null;
-  const update = (field) => (e) => onChange(field, e.target.value);
-  return React.createElement('div', { className: 'side-panel' },
-    React.createElement('h2', null, 'Editar nodo'),
-    React.createElement('label', null, 'Cliente:',
-      React.createElement('input', { value: node.Cliente || '', onChange: update('Cliente') })
-    ),
-    React.createElement('label', null, 'Descripción:',
-      React.createElement('input', { value: node.Descripción || '', onChange: update('Descripción') })
-    ),
-    React.createElement('label', null, 'Código:',
-      React.createElement('input', { value: node.Código || '', onChange: update('Código') })
-    ),
-    React.createElement('label', null, 'Largo (mm):',
-      React.createElement('input', { type: 'number', value: node.Largo || '', onChange: update('Largo') })
-    ),
-    React.createElement('label', null, 'Ancho (mm):',
-      React.createElement('input', { type: 'number', value: node.Ancho || '', onChange: update('Ancho') })
-    ),
-    React.createElement('label', null, 'Alto (mm):',
-      React.createElement('input', { type: 'number', value: node.Alto || '', onChange: update('Alto') })
-    ),
-    React.createElement('label', null, 'Peso (kg):',
-      React.createElement('input', { type: 'number', value: node.Peso || '', onChange: update('Peso') })
-    ),
-    React.createElement('button', { onClick: onClose }, 'Cerrar')
-  );
+function selectNode(node) {
+  selected = node;
+  showSidePanel();
 }
 
-function App() {
-  const [tree, setTree] = useState([]);
-  const [selected, setSelected] = useState(null);
-  const admin = isAdmin();
+function addRoot() {
+  const id = Date.now().toString();
+  const root = {
+    ID: id,
+    ParentID: '',
+    Tipo: 'Producto',
+    Descripción: 'Nuevo producto',
+    Código: '',
+    Largo: '',
+    Ancho: '',
+    Alto: '',
+    Peso: '',
+    children: []
+  };
+  tree = [root];
+  selectNode(root);
+  render();
+}
 
-  useEffect(() => {
-    fetchSinoptico().then(data => setTree(buildTree(data)));
-  }, []);
+function addChild(parent) {
+  const id = Date.now().toString();
+  const child = { ID: id, ParentID: parent.ID, Tipo: 'Subcomponente', Descripción: 'Nuevo', Código: '', Largo: '', Ancho: '', Alto: '', Peso: '', children: [] };
+  parent.children.push(child);
+  render();
+  selectNode(child);
+}
 
-  const addRoot = () => {
-    const id = Date.now().toString();
-    const root = {
-      ID: id,
-      ParentID: '',
-      Tipo: 'Producto',
-      Descripción: 'Nuevo producto',
-      Código: '',
-      Largo: '',
-      Ancho: '',
-      Alto: '',
-      Peso: '',
-      children: []
+function updateNode(field, value) {
+  if (!selected) return;
+  selected[field] = value;
+}
+
+function showSidePanel() {
+  if (!sidePanel) createSidePanel();
+  sidePanel.style.display = selected ? 'block' : 'none';
+  if (!selected) return;
+  sidePanel.querySelector('#inpCliente').value = selected.Cliente || '';
+  sidePanel.querySelector('#inpDesc').value = selected.Descripción || '';
+  sidePanel.querySelector('#inpCodigo').value = selected.Código || '';
+  sidePanel.querySelector('#inpLargo').value = selected.Largo || '';
+  sidePanel.querySelector('#inpAncho').value = selected.Ancho || '';
+  sidePanel.querySelector('#inpAlto').value = selected.Alto || '';
+  sidePanel.querySelector('#inpPeso').value = selected.Peso || '';
+}
+
+function createSidePanel() {
+  sidePanel = document.createElement('div');
+  sidePanel.className = 'side-panel';
+  sidePanel.innerHTML = `
+    <h2>Editar nodo</h2>
+    <label>Cliente:<input id="inpCliente"></label>
+    <label>Descripción:<input id="inpDesc"></label>
+    <label>Código:<input id="inpCodigo"></label>
+    <label>Largo (mm):<input id="inpLargo" type="number"></label>
+    <label>Ancho (mm):<input id="inpAncho" type="number"></label>
+    <label>Alto (mm):<input id="inpAlto" type="number"></label>
+    <label>Peso (kg):<input id="inpPeso" type="number"></label>
+    <button id="btnClose">Cerrar</button>
+  `;
+  sidePanel.style.display = 'none';
+  sidePanel.addEventListener('input', ev => {
+    const id = ev.target.id;
+    if (!id) return;
+    const map = {
+      inpCliente: 'Cliente',
+      inpDesc: 'Descripción',
+      inpCodigo: 'Código',
+      inpLargo: 'Largo',
+      inpAncho: 'Ancho',
+      inpAlto: 'Alto',
+      inpPeso: 'Peso'
     };
-    setTree([root]);
-    setSelected(root);
-  };
-
-  const addChild = (parent) => {
-    const id = Date.now().toString();
-    const child = { ID: id, ParentID: parent.ID, Tipo: 'Subcomponente', Descripción: 'Nuevo', Código: '', Largo: '', Ancho: '', Alto: '', Peso: '', children: [] };
-    parent.children.push(child);
-    setTree([...tree]);
-    setSelected(child);
-  };
-
-  const updateNode = (field, value) => {
-    if (!selected) return;
-    selected[field] = value;
-    setSelected({ ...selected });
-    setTree([...tree]);
-  };
-
-  const closePanel = () => setSelected(null);
-
-  const handleSave = async () => {
-    const flat = flatten(tree);
-    await saveSinoptico(flat);
-    if (window.mostrarMensaje) window.mostrarMensaje('Árbol guardado', 'success');
-  };
-
-  return React.createElement('div', { className: 'tree-app' },
-    tree.length === 0 && admin &&
-      React.createElement('button', { id: 'createRoot', onClick: addRoot }, 'Crear producto'),
-    tree.length > 0 &&
-      React.createElement('div', { className: 'tree-container' },
-        React.createElement(Tree, { lineWidth: '2px', lineColor: '#888', lineBorderRadius: '10px' },
-          tree.map(n => React.createElement(RenderNode, { key: n.ID, node: n, admin, onSelect: setSelected, onAdd: addChild }))
-        )
-      ),
-    admin && tree.length > 0 && React.createElement('button', { id: 'saveTree', onClick: handleSave }, 'Guardar árbol'),
-    React.createElement(SidePanel, { node: selected, onChange: updateNode, onClose: closePanel })
-  );
+    if (map[id]) updateNode(map[id], ev.target.value);
+  });
+  sidePanel.querySelector('#btnClose').addEventListener('click', () => {
+    selected = null;
+    sidePanel.style.display = 'none';
+  });
+  document.body.appendChild(sidePanel);
 }
 
-ReactDOM.render(React.createElement(App), document.getElementById('root'));
+async function saveTree() {
+  const flat = flatten(tree);
+  await replaceAll(flat);
+  window.mostrarMensaje?.('Árbol guardado', 'success');
+}
+
+async function init() {
+  await ready;
+  admin = isAdmin();
+  tree = buildTree(await getAll('sinoptico'));
+  render();
+}
+
+document.addEventListener('DOMContentLoaded', init);
