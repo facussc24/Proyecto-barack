@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const confirmBtn = document.getElementById('confirmBtn');
   const step1 = document.getElementById('step1');
   const step2 = document.getElementById('step2');
+  const progressBar = document.getElementById('progressBar');
 
   const subDesc = document.getElementById('subDesc');
   const subCode = document.getElementById('subCode');
@@ -188,6 +189,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       productPeso.value.trim()
     );
     await persist(product, [], []);
+    if (progressBar) progressBar.style.width = '100%';
     if (window.mostrarMensaje) window.mostrarMensaje('Producto creado con éxito', 'success');
     window.location.href = 'sinoptico-editor.html';
   });
@@ -206,8 +208,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       alto: productAlto.value.trim(),
       peso: productPeso.value.trim()
     };
-    step1.style.display = 'none';
-    step2.style.display = 'flex';
+    step1.classList.remove('active');
+    step2.classList.add('active');
+    if (progressBar) progressBar.style.width = '50%';
     if (productPreview) {
       productPreview.textContent = code ? `${desc} (${code})` : desc;
     }
@@ -317,6 +320,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       productData.peso
     );
     await persist(product, subcomponents, insumos);
+    if (progressBar) progressBar.style.width = '100%';
     if (window.mostrarMensaje) window.mostrarMensaje('Árbol creado con éxito', 'success');
     window.location.href = 'sinoptico-editor.html';
   });

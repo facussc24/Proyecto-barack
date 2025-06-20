@@ -20,7 +20,9 @@
   </nav>
   <div id="loading"></div>
   <div id="appMessage" role="alert" aria-live="polite"></div>
-  <div id="step1" class="node-form">
+  <div class="wizard">
+    <div class="progress"><div id="progressBar"></div></div>
+    <div id="step1" class="wizard-step active node-form">
     <h2>Nuevo Producto</h2>
     <label for="productCliente">Cliente:</label>
     <select id="productCliente"></select>
@@ -40,8 +42,8 @@
       <button id="confirmBtn" type="button">Crear sin subcomponentes</button>
       <button id="continueBtn" type="button">Continuar</button>
     </div>
-  </div>
-  <div id="step2" class="node-form" style="display:none">
+    </div>
+    <div id="step2" class="wizard-step node-form">
     <h2>Subcomponentes e Insumos</h2>
     <div class="tree-preview flow-diagram">
       <span id="productPreview" class="tree-node product-node"></span>
@@ -84,6 +86,7 @@
     </fieldset>
     <div class="form-actions">
       <button id="finishBtn" type="button">Finalizar</button>
+    </div>
     </div>
   </div>
   <script src="lib/dexie.min.js" defer></script>
