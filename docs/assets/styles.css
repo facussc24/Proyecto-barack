@@ -1522,6 +1522,32 @@ select {
   transform: scale(1.05);
 }
 
+/* ========= Product Tree App ========= */
+.tree-app {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  align-items: flex-start;
+}
+
+.tree-container {
+  flex: 1;
+  overflow: auto;
+}
+
+.side-panel {
+  width: 260px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  background: var(--color-light, #fff);
+}
+.dark .side-panel {
+  background: #333;
+  color: var(--color-light, #eee);
+}
+
+
 /* ========= Tree preview ========= */
 .tree-preview {
   margin: 20px auto;

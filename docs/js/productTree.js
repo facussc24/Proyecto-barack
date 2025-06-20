@@ -98,6 +98,24 @@ function App() {
     fetchSinoptico().then(data => setTree(buildTree(data)));
   }, []);
 
+  const addRoot = () => {
+    const id = Date.now().toString();
+    const root = {
+      ID: id,
+      ParentID: '',
+      Tipo: 'Producto',
+      Descripción: 'Nuevo producto',
+      Código: '',
+      Largo: '',
+      Ancho: '',
+      Alto: '',
+      Peso: '',
+      children: []
+    };
+    setTree([root]);
+    setSelected(root);
+  };
+
   const addChild = (parent) => {
     const id = Date.now().toString();
     const child = { ID: id, ParentID: parent.ID, Tipo: 'Subcomponente', Descripción: 'Nuevo', Código: '', Largo: '', Ancho: '', Alto: '', Peso: '', children: [] };
@@ -122,12 +140,15 @@ function App() {
   };
 
   return React.createElement('div', { className: 'tree-app' },
-    React.createElement('div', { className: 'tree-container' },
-      React.createElement(Tree, { lineWidth: '2px', lineColor: '#888', lineBorderRadius: '10px' },
-        tree.map(n => React.createElement(RenderNode, { key: n.ID, node: n, admin, onSelect: setSelected, onAdd: addChild }))
-      )
-    ),
-    admin && React.createElement('button', { id: 'saveTree', onClick: handleSave }, 'Guardar árbol'),
+    tree.length === 0 && admin &&
+      React.createElement('button', { id: 'createRoot', onClick: addRoot }, 'Crear producto'),
+    tree.length > 0 &&
+      React.createElement('div', { className: 'tree-container' },
+        React.createElement(Tree, { lineWidth: '2px', lineColor: '#888', lineBorderRadius: '10px' },
+          tree.map(n => React.createElement(RenderNode, { key: n.ID, node: n, admin, onSelect: setSelected, onAdd: addChild }))
+        )
+      ),
+    admin && tree.length > 0 && React.createElement('button', { id: 'saveTree', onClick: handleSave }, 'Guardar árbol'),
     React.createElement(SidePanel, { node: selected, onChange: updateNode, onClose: closePanel })
   );
 }
