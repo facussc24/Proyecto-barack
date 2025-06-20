@@ -245,19 +245,13 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   document.getElementById('btnRefrescar')?.addEventListener('click', loadData);
 
-  const exportBtn = document.getElementById('exportBtn');
-  const exportMenu = document.querySelector('.export-menu');
-  exportBtn?.addEventListener('click', () => {
-    if (exportMenu) {
-      exportMenu.style.display = exportMenu.style.display === 'block' ? 'none' : 'block';
-    }
-  });
+  const excelBtn = document.getElementById('btnExcel');
+  const pdfBtn = document.getElementById('btnPdf');
 
   /* ==================================================
      4) Exportar a Excel
   ==================================================*/
-  document.getElementById('btnExcel')?.addEventListener('click', () => {
-    if (exportMenu) exportMenu.style.display = 'none';
+  excelBtn?.addEventListener('click', () => {
     if (typeof XLSX==='undefined') return mostrarMensaje('Excel deshabilitado','warning');
     const datos=[...document.querySelectorAll('#sinoptico thead th')].filter(th=>th.style.display!=='none').map(th=>th.textContent);
     const filas=[];
@@ -270,8 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
     XLSX.utils.book_append_sheet(wb,ws,'Sinoptico'); XLSX.writeFile(wb,'sinoptico.xlsx');
   });
 
-  document.getElementById('btnPdf')?.addEventListener('click', async () => {
-    if (exportMenu) exportMenu.style.display = 'none';
+  pdfBtn?.addEventListener('click', async () => {
     try {
       const resp = await fetch('/api/sinoptico/export?format=pdf');
       if (!resp.ok) throw new Error('fail');
@@ -286,7 +279,16 @@ document.addEventListener('DOMContentLoaded', () => {
       URL.revokeObjectURL(url);
       mostrarMensaje('Exportación completa', 'success');
     } catch {
-      mostrarMensaje('Error al exportar');
+      try {
+        const { jsPDF } = window.jspdf || {};
+        if (!jsPDF || !jsPDF.API.autoTable) throw new Error('fallback');
+        const doc = new jsPDF();
+        doc.autoTable({ html: '#sinoptico' });
+        doc.save('sinoptico.pdf');
+        mostrarMensaje('Exportación completa', 'success');
+      } catch {
+        mostrarMensaje('Error al exportar');
+      }
     }
   });
 

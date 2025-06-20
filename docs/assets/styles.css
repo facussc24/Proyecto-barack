@@ -2134,6 +2134,12 @@ tr:not(.pending) td:first-child::before {
 .btn-excel { background: #1b6e1b; }
 .btn-pdf { background: #c0392b; }
 
+/* export button group */
+.export-group {
+  display: inline-flex;
+  gap: 6px;
+}
+
 /* ===== Maestro professional listing ===== */
 .maestro-page {
   background: var(--color-light);

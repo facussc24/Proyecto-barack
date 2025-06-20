@@ -5,11 +5,8 @@ export async function render(container) {
     <div class="top-actions">
       <button id="printBtn">🖨 Print</button>
       <div class="export-group">
-        <button id="exportBtn">⬇ Export</button>
-        <div class="export-menu">
-          <button data-fmt="excel" class="btn-excel">Excel</button>
-          <button data-fmt="pdf" class="btn-pdf">PDF</button>
-        </div>
+        <button data-fmt="excel" id="btnExcel" class="btn-excel">Excel</button>
+        <button data-fmt="pdf" id="btnPdf" class="btn-pdf">PDF</button>
       </div>
       <button id="newClientBtn">+ Crear Cliente</button>
     </div>
@@ -72,8 +69,8 @@ export async function render(container) {
   const pageSizeSelect = container.querySelector('#pageSize');
   const prevBtn = container.querySelector('#prevPage');
   const nextBtn = container.querySelector('#nextPage');
-  const exportBtn = container.querySelector('#exportBtn');
-  const exportMenu = container.querySelector('.export-menu');
+  const excelBtn = container.querySelector('#btnExcel');
+  const pdfBtn = container.querySelector('#btnPdf');
 
   let currentPage = 1;
   let pageSize = parseInt(pageSizeSelect.value, 10);
@@ -152,47 +149,41 @@ export async function render(container) {
     renderRows();
   });
 
-  exportBtn.addEventListener('click', () => {
-    exportMenu.style.display = exportMenu.style.display === 'block' ? 'none' : 'block';
-  });
-
-  exportMenu.addEventListener('click', async ev => {
-    const btn = ev.target.closest('button[data-fmt]');
-    if (!btn) return;
-    const fmt = btn.getAttribute('data-fmt');
-    exportMenu.style.display = 'none';
+  async function exportServer(fmt) {
     showSpinner();
     try {
-      if (typeof API_BASE === 'string' && API_BASE) {
-        const resp = await fetch(`${API_BASE}/api/maestro/export?format=${fmt}`);
-        if (!resp.ok) throw new Error('fail');
-        const blob = await resp.blob();
-        const url = URL.createObjectURL(blob);
-        const ext = fmt === 'excel' ? 'xlsx' : 'pdf';
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `maestro.${ext}`;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(url);
-      } else {
-        const data = localStorage.getItem(`maestro-${fmt}`) || 'Mock data';
-        const blob = new Blob([data], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
-        const ext = fmt === 'excel' ? 'xlsx' : 'pdf';
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `maestro.${ext}`;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(url);
-      }
-    } catch {
-      console.error('Error exporting');
+      const resp = await fetch(`/api/maestro/export?format=${fmt}`);
+      if (!resp.ok) throw new Error('fail');
+      const blob = await resp.blob();
+      const url = URL.createObjectURL(blob);
+      const ext = fmt === 'excel' ? 'xlsx' : 'pdf';
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `maestro.${ext}`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
     } finally {
       hideSpinner();
+    }
+  }
+
+  excelBtn.addEventListener('click', () => exportServer('excel').catch(() => {}));
+
+  pdfBtn.addEventListener('click', async () => {
+    try {
+      await exportServer('pdf');
+    } catch {
+      try {
+        const { jsPDF } = window.jspdf || {};
+        if (!jsPDF || !jsPDF.API.autoTable) throw new Error('fallback');
+        const doc = new jsPDF();
+        doc.autoTable({ html: '#maestroTable' });
+        doc.save('maestro.pdf');
+      } catch {
+        console.error('Error exporting');
+      }
     }
   });
 
