@@ -8,11 +8,8 @@ export async function render(container) {
       <a id="linkCrear" href="asistente.html">Crear</a>
       <a id="linkBaseDatos" href="database.html">Base de Datos</a>
       <div class="export-group">
-        <button id="sin-export">⬇ Export</button>
-        <div class="export-menu">
-          <button data-fmt="excel" class="btn-excel">Excel</button>
-          <button data-fmt="pdf" class="btn-pdf">PDF</button>
-        </div>
+        <button data-fmt="excel" id="btnExcel" class="btn-excel">Excel</button>
+        <button data-fmt="pdf" id="btnPdf" class="btn-pdf">PDF</button>
       </div>
     </div>
     <table id="sinoptico">
@@ -36,8 +33,8 @@ export async function render(container) {
     window.renderSinoptico(data);
   }
 
-  const exportBtn = container.querySelector('#sin-export');
-  const menu = container.querySelector('.export-menu');
+  const excelBtn = container.querySelector('#btnExcel');
+  const pdfBtn = container.querySelector('#btnPdf');
 
   function showSpinner() {
     const el = document.getElementById('loading');
@@ -54,19 +51,12 @@ export async function render(container) {
       const resp = await fetch('/health');
       if (!resp.ok) throw new Error();
     } catch {
-      exportBtn.disabled = true;
+      excelBtn.disabled = true;
+      pdfBtn.disabled = true;
     }
   }
 
-  exportBtn?.addEventListener('click', () => {
-    if (menu) menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-  });
-
-  menu?.addEventListener('click', async ev => {
-    const btn = ev.target.closest('button[data-fmt]');
-    if (!btn) return;
-    const fmt = btn.getAttribute('data-fmt');
-    menu.style.display = 'none';
+  async function exportServer(fmt) {
     showSpinner();
     try {
       // Interception point: developers can set localStorage.setItem('useMock','true')
@@ -85,9 +75,30 @@ export async function render(container) {
       URL.revokeObjectURL(url);
       if (window.mostrarMensaje) window.mostrarMensaje('Exportación completa', 'success');
     } catch (e) {
-      if (window.mostrarMensaje) window.mostrarMensaje('Error al exportar');
+      throw e;
     } finally {
       hideSpinner();
+    }
+  }
+
+  excelBtn?.addEventListener('click', () => exportServer('excel').catch(() => {
+    if (window.mostrarMensaje) window.mostrarMensaje('Error al exportar');
+  }));
+
+  pdfBtn?.addEventListener('click', async () => {
+    try {
+      await exportServer('pdf');
+    } catch {
+      try {
+        const { jsPDF } = window.jspdf || {};
+        if (!jsPDF || !jsPDF.API.autoTable) throw new Error('fallback');
+        const doc = new jsPDF();
+        doc.autoTable({ html: '#sinoptico' });
+        doc.save('sinoptico.pdf');
+        if (window.mostrarMensaje) window.mostrarMensaje('Exportación completa', 'success');
+      } catch {
+        if (window.mostrarMensaje) window.mostrarMensaje('Error al exportar');
+      }
     }
   });
 

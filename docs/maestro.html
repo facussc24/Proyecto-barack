@@ -20,11 +20,8 @@
     <div class="top-actions">
       <button id="printBtn">🖨 Print</button>
       <div class="export-group">
-        <button id="exportBtn">⬇ Export</button>
-        <div class="export-menu">
-          <button data-fmt="excel" class="btn-excel">Excel</button>
-          <button data-fmt="pdf" class="btn-pdf">PDF</button>
-        </div>
+        <button data-fmt="excel" id="btnExcel" class="btn-excel">Excel</button>
+        <button data-fmt="pdf" id="btnPdf" class="btn-pdf">PDF</button>
       </div>
       <button id="newClientBtn">+ Crear Cliente</button>
     </div>
@@ -101,6 +98,8 @@
   <script type="module" src="js/nav.js" defer></script>
   <script type="module" src="js/dataService.js" defer></script>
   <script src="lib/xlsx.full.noeval.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js" defer></script>
   <script type="module" src="js/maestro.js" defer></script>
   <script type="module" src="js/ui/animations.js" defer></script>
   <script type="module" src="js/backButton.js" defer></script>
