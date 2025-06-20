@@ -1621,7 +1621,7 @@ select {
 .product-node {
   font-weight: bold;
   background-color: var(--color-accent);
-  color: var(--color-light);
+  color: var(--color-text);
 }
 
 .insumo-node {
