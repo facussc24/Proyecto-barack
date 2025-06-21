@@ -2240,6 +2240,7 @@ tr:not(.pending) td:first-child::before {
 }
 .btn-excel { background: #1b6e1b; }
 .btn-pdf { background: #c0392b; }
+.btn-json { background: #34495e; color: #fff; }
 
 /* export button group */
 .export-group {

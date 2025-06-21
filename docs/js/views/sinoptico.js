@@ -1,4 +1,4 @@
-import { getAll } from '../dataService.js';
+import { getAll, exportJSON, importJSON } from '../dataService.js';
 import { createSinopticoEditor } from '../editors/sinopticoEditor.js';
 import { isAdmin } from '../session.js';
 
@@ -12,6 +12,9 @@ export async function render(container) {
       <div class="export-group">
         <button data-fmt="excel" id="btnExcel" class="btn-excel">Excel</button>
         <button data-fmt="pdf" id="btnPdf" class="btn-pdf">PDF</button>
+        <button id="btnExportJson" class="btn-json">JSON</button>
+        <button id="btnImportJson" class="btn-json admin-only">Importar</button>
+        <input id="jsonFileInput" type="file" accept="application/json" hidden />
       </div>
     </div>
     <table id="sinoptico">
@@ -37,6 +40,9 @@ export async function render(container) {
 
   const excelBtn = container.querySelector('#btnExcel');
   const pdfBtn = container.querySelector('#btnPdf');
+  const exportJsonBtn = container.querySelector('#btnExportJson');
+  const importJsonBtn = container.querySelector('#btnImportJson');
+  const fileInput = container.querySelector('#jsonFileInput');
 
   function showSpinner() {
     const el = document.getElementById('loading');
@@ -101,6 +107,42 @@ export async function render(container) {
       } catch {
         if (window.mostrarMensaje) window.mostrarMensaje('Error al exportar');
       }
+    }
+  });
+
+  exportJsonBtn?.addEventListener('click', async () => {
+    try {
+      const json = await exportJSON();
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'sinoptico.json';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      if (window.mostrarMensaje) window.mostrarMensaje('Exportación completa', 'success');
+    } catch {
+      if (window.mostrarMensaje) window.mostrarMensaje('Error al exportar');
+    }
+  });
+
+  importJsonBtn?.addEventListener('click', () => fileInput?.click());
+
+  fileInput?.addEventListener('change', async () => {
+    const file = fileInput.files[0];
+    if (!file) return;
+    try {
+      const text = await file.text();
+      await importJSON(text);
+      if (window.mostrarMensaje) window.mostrarMensaje('Importación completa', 'success');
+      document.dispatchEvent(new Event('sinoptico-mode'));
+    } catch (e) {
+      console.error(e);
+      if (window.mostrarMensaje) window.mostrarMensaje('Error al importar');
+    } finally {
+      fileInput.value = '';
     }
   });
 

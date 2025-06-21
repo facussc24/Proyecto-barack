@@ -107,16 +107,6 @@ function loadModules(el) {
       ],
     },
     {
-      main: 'maestro_editor.html',
-      icon: '✏️',
-      text: 'Editar Maestro',
-      actions: [
-        { label: 'Editar maestro', href: 'maestro_editor.html' },
-        { label: 'Ver maestro', href: 'maestro.html' },
-      ],
-      class: 'no-guest',
-    },
-    {
       main: 'database.html',
       icon: '🗄️',
       text: 'Sinóptico de Base de Datos',
