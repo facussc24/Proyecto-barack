@@ -71,7 +71,9 @@ Este proyecto incluye un pequeño servidor Flask (`server.py`) para almacenar la
 A partir de esta versión el mismo script también sirve la interfaz web desde la carpeta `docs`, de modo que todas las páginas quedan disponibles en `http://<IP>:5000/` (por ejemplo, `http://192.168.1.154:5000/`).
 El servidor debe ejecutarse en un único equipo o servidor accesible por la red para que todos los usuarios compartan la misma información.
 
-El archivo activo se guarda en `data/latest.json` y cada día se crea una copia automática en `data/backups/AAAA-MM-DD.json`. Los respaldos con más de seis meses se eliminan al iniciar el servidor.
+El archivo activo se guarda en `data/latest.json`.
+Puedes generar copias manualmente con `POST /api/backups` o desde la página **Modo Dev**.
+Por defecto se programa una copia diaria en `data/backups/AAAA-MM-DD.json`. Si prefieres desactivar esta tarea define `DISABLE_AUTOBACKUP=1` antes de iniciar el servidor.
 Los respaldos se encuentran en la carpeta `data/backups/`. Si eliminas el repositorio también se borrará esta carpeta a menos que la conserves aparte.
 
 El servidor también expone `GET /api/sinoptico/export` para descargar la tabla
@@ -147,6 +149,9 @@ La API expone rutas REST en `/api/<tabla>` para todas las entidades. Por ejemplo
 - `POST /api/insumos` – crea un insumo
 - `PATCH /api/productos_db/<id>` – actualiza un producto
 - `DELETE /api/productos_db/<id>` – elimina un producto
+- `GET /api/backups` – lista de respaldos
+- `POST /api/backups` – crea un respaldo manual
+- `POST /api/restore` – restaura la base de datos desde un archivo
 
 Puedes probar estas rutas con `curl`:
 

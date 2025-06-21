@@ -52,6 +52,15 @@ def backup_latest():
         shutil.copy2(DATA_FILE, dest)
 
 
+def manual_backup():
+    if os.path.exists(DATA_FILE):
+        ts = datetime.utcnow().strftime("%Y-%m-%d_%H-%M-%S")
+        dest = os.path.join(BACKUP_DIR, f"{ts}.json")
+        shutil.copy2(DATA_FILE, dest)
+        return os.path.basename(dest)
+    return None
+
+
 def cleanup_backups():
     cutoff = datetime.utcnow() - timedelta(days=180)
     for path in glob.glob(os.path.join(BACKUP_DIR, "*.json")):
@@ -115,6 +124,7 @@ def server_info():
         "connected_clients": len(clients),
         "history_entries": len(history),
         "data_keys": list(memory.keys()),
+        "backup_count": len(glob.glob(os.path.join(BACKUP_DIR, "*.json"))),
     }
     return jsonify(info)
 
@@ -181,11 +191,57 @@ def handle_disconnect():
     clients.pop(request.sid, None)
 
 
+@app.get("/api/backups")
+def list_backups():
+    files = sorted(
+        os.path.basename(f) for f in glob.glob(os.path.join(BACKUP_DIR, "*.json"))
+    )
+    return jsonify(files)
+
+
+@app.post("/api/backups")
+def create_backup_route():
+    name = manual_backup()
+    return jsonify({"created": name})
+
+
+@app.post("/api/restore")
+def restore_backup():
+    global memory, history
+    data = request.get_json(force=True, silent=True) or {}
+    name = data.get("name")
+    if not name:
+        return jsonify({"error": "missing name"}), 400
+    path = os.path.join(BACKUP_DIR, name)
+    if not os.path.exists(path):
+        return jsonify({"error": "not found"}), 404
+    with open(path, "r", encoding="utf-8") as f:
+        new_data = json.load(f)
+
+    with write_lock:
+        memory = new_data
+        with open(DATA_FILE, "w", encoding="utf-8") as out:
+            json.dump(memory, out, ensure_ascii=False, indent=2)
+        entry = {
+            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "ip": request.remote_addr,
+            "host": request.headers.get("X-Host") or request.host,
+            "restore": name,
+        }
+        history.append(entry)
+        with open(HISTORY_FILE, "w", encoding="utf-8") as f:
+            json.dump(history, f, ensure_ascii=False, indent=2)
+
+    socketio.emit("data_updated")
+    return jsonify({"status": "ok"})
+
+
 if __name__ == "__main__":
     cleanup_backups()
-    scheduler = BackgroundScheduler(daemon=True)
-    scheduler.add_job(backup_latest, "interval", days=1)
-    scheduler.start()
+    if os.getenv("DISABLE_AUTOBACKUP") != "1":
+        scheduler = BackgroundScheduler(daemon=True)
+        scheduler.add_job(backup_latest, "interval", days=1)
+        scheduler.start()
 
     # Usa socketio.run para incluir WebSocket y hot-reload
     run_args = {"host": "0.0.0.0", "port": 5000, "debug": True}
