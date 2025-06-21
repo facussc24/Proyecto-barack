@@ -11,6 +11,7 @@ function showToast(msg) {
 
 let table;
 let allData = [];
+// Current dataset filter name. Empty string = show all
 let currentFilter = '';
 const skeleton = document.getElementById('tableSkeleton');
 const searchSpinner = document.getElementById('searchSpinner');
@@ -122,12 +123,27 @@ function applyFilter() {
   table.replaceData(rows);
 }
 
+/**
+ * Change which dataset is displayed in the table.
+ * This updates the internal filter and re-applies it.
+ * @param {string} filter Dataset key, e.g. 'Cliente' or 'Producto'.
+ */
+export function setDataset(filter) {
+  currentFilter = filter || '';
+  applyFilter();
+}
+
 function setupFilterButtons() {
   const select = document.getElementById('datasetSelect');
   if (!select) return;
   select.addEventListener('change', () => {
-    currentFilter = select.value || '';
-    applyFilter();
+    setDataset(select.value || '');
+  });
+}
+
+function setupSidebarButtons() {
+  document.querySelectorAll('[data-dataset]').forEach(btn => {
+    btn.addEventListener('click', () => setDataset(btn.dataset.dataset || ''));
   });
 }
 
@@ -233,9 +249,14 @@ function initTable() {
 export function initInteractiveTable() {
   initTable();
   setupFilterButtons();
+  setupSidebarButtons();
   setupSearch();
   setupActions();
   loadData();
 }
 
 document.addEventListener('DOMContentLoaded', initInteractiveTable);
+
+if (typeof window !== 'undefined') {
+  window.setDataset = setDataset;
+}
