@@ -1,10 +1,12 @@
 import { getAll } from '../dataService.js';
 import { createSinopticoEditor } from '../editors/sinopticoEditor.js';
+import { isAdmin } from '../session.js';
 
 export async function render(container) {
+  const editBtnHtml = isAdmin() ? '<button id="sin-edit">Editar</button>' : '';
   container.innerHTML = `
     <div class="toolbar">
-      <button id="sin-edit">Editar</button>
+      ${editBtnHtml}
       <a id="linkCrear" href="asistente.html">Crear</a>
       <a id="linkBaseDatos" href="database.html">Base de Datos</a>
       <div class="export-group">
@@ -105,9 +107,8 @@ export async function render(container) {
   checkHealth();
 
 
-  container.querySelector('#sin-edit').addEventListener('click', () => {
-    const curr = sessionStorage.getItem('sinopticoEdit') === 'true';
-    sessionStorage.setItem('sinopticoEdit', (!curr).toString());
+  container.querySelector('#sin-edit')?.addEventListener('click', () => {
+    sessionStorage.setItem('sinopticoEdit', 'true');
     document.dispatchEvent(new Event('sinoptico-mode'));
   });
 

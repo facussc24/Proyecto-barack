@@ -435,6 +435,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     await persist(product, subcomponents, insumos);
     activateStep(4);
     if (window.mostrarMensaje) window.mostrarMensaje('Árbol creado con éxito', 'success');
-    window.location.href = 'sinoptico-editor.html';
+    window.location.href = 'sinoptico.html';
   });
 });

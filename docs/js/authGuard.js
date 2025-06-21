@@ -1,13 +1,14 @@
 import { logout, isAdmin, isGuest } from './session.js';
 
 // guests shouldn't access certain pages directly
-const guestOnlyPages = ['sinoptico-editor.html', 'database.html', 'asistente.html', 'history.html'];
+const guestOnlyPages = ['database.html', 'asistente.html', 'history.html'];
 if (isGuest() && guestOnlyPages.some(p => location.pathname.endsWith(p))) {
   location.href = 'sinoptico.html';
 }
 
 function applyRoleRules() {
   if (isGuest()) {
+    sessionStorage.setItem('sinopticoEdit', 'false');
     document.querySelectorAll('.no-guest').forEach(el => el.style.display = 'none');
   }
   if (!isAdmin()) {
