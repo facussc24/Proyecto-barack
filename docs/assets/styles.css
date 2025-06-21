@@ -22,6 +22,8 @@
   --maestro-row-alt: #F3F6F9;
   --hero-start: var(--color-primary);
   --hero-end: var(--color-accent);
+  --anim-duration: 0.3s;
+  --anim-ease: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .dark {
@@ -1506,6 +1508,15 @@ select {
   transform: scale(1.05);
 }
 
+.search-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.search-wrapper .spinner {
+  margin-left: -24px;
+}
+
 /* Admin menu buttons */
 .admin-menu {
   width: 80%;
@@ -1987,7 +1998,7 @@ select {
   background-color: var(--color-accent-hover);
 }
 
-dialog.modal{border:none;border-radius:8px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.3);position:relative;}dialog.modal form{display:flex;flex-direction:column;gap:8px;}
+dialog.modal{border:none;border-radius:8px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.3);position:relative;opacity:0;transform:scale(.9);transition:opacity var(--anim-duration) var(--anim-ease),transform var(--anim-duration) var(--anim-ease);}dialog.modal[open]{opacity:1;transform:scale(1);}dialog.modal.closing{opacity:0;transform:scale(.9);}dialog.modal form{display:flex;flex-direction:column;gap:8px;}
 .close-dialog{position:absolute;top:8px;right:8px;background:none;border:none;font-size:1.2rem;cursor:pointer;}
 .db-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:0.9rem;}
 .db-table th,.db-table td{border:1px solid #ccc;padding:6px 8px;}
@@ -2337,13 +2348,30 @@ tr:not(.pending) td:first-child::before {
   background-color: #f8f9fa;
   border-radius: 6px;
   padding: 8px;
+  transition: transform var(--anim-duration) var(--anim-ease),
+    opacity var(--anim-duration) var(--anim-ease);
+}
+#dbTable.slide-from-left {
+  transform: translateX(-50px);
+  opacity: 0;
+}
+#dbTable.slide-from-right {
+  transform: translateX(50px);
+  opacity: 0;
 }
 #dbTable .tabulator-header {
   background-color: #001f3f;
   color: #fff;
 }
+#dbTable .tabulator-row {
+  transition: background var(--anim-duration) var(--anim-ease),
+    box-shadow var(--anim-duration) var(--anim-ease);
+}
 #dbTable .tabulator-row:hover {
   background-color: #e9ecef;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 1;
 }
 #dbTable .tabulator-cell {
   padding: 8px;
@@ -2356,9 +2384,14 @@ tr:not(.pending) td:first-child::before {
   cursor: pointer;
   padding: 2px 6px;
   margin: 0 2px;
+  transition: background var(--anim-duration) var(--anim-ease),
+    transform var(--anim-duration) var(--anim-ease);
 }
 #dbTable button:hover {
   background-color: var(--color-accent-hover);
+}
+#dbTable button:active {
+  transform: scale(0.95);
 }
 
 /* ==============================
@@ -2380,4 +2413,97 @@ tr:not(.pending) td:first-child::before {
 .detail-modal dt {
   font-weight: bold;
   white-space: nowrap;
+}
+
+/* ======= Micro interactions ======= */
+[data-tooltip] {
+  position: relative;
+}
+[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+  font-size: 0.75rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--anim-duration) var(--anim-ease);
+  z-index: 10;
+}
+[data-tooltip]:hover::after {
+  opacity: 1;
+}
+
+.badge {
+  display: inline-block;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+}
+.badge.inactive {
+  background: var(--color-danger);
+  color: #fff;
+  animation: breathe 2s ease-in-out infinite;
+}
+@keyframes breathe {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #333;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 4px;
+  opacity: 0;
+  animation: fadeIn var(--anim-duration) forwards,
+    fadeOut var(--anim-duration) 2.5s forwards;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #eee 25%, #ddd 37%, #eee 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.2s infinite;
+}
+.skeleton-table-row {
+  height: 24px;
+  margin: 4px 0;
+  border-radius: 4px;
+}
+#tableSkeleton {
+  padding: 8px;
+}
+@keyframes shimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--color-accent);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  display: none;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.fade-img {
+  opacity: 0;
+  transition: opacity var(--anim-duration) var(--anim-ease);
+}
+.fade-img.loaded {
+  opacity: 1;
 }
