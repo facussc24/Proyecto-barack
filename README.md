@@ -76,6 +76,8 @@ Puedes generar copias manualmente con `POST /api/backups` o desde la página **M
 Por defecto se programa una copia diaria en `data/backups/AAAA-MM-DD.json`. Si prefieres desactivar esta tarea define `DISABLE_AUTOBACKUP=1` antes de iniciar el servidor.
 Los respaldos se encuentran en la carpeta `data/backups/`. Si eliminas el repositorio también se borrará esta carpeta a menos que la conserves aparte.
 
+Para revisar visualmente el contenido actual de la base de datos se incluye la página `docs/dbviewer.html`. Ábrela con el servidor en marcha para ver los datos en formato JSON.
+
 El servidor también expone `GET /api/sinoptico/export` para descargar la tabla
 de Sinóptico en Excel o PDF. Usa el parámetro `format=excel` o `format=pdf`
 según prefieras.
