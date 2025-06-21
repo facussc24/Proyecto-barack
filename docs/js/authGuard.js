@@ -1,7 +1,7 @@
 import { logout, isAdmin, isGuest } from './session.js';
 
 // guests shouldn't access certain pages directly
-const guestOnlyPages = ['registros.html', 'records.html', 'asistente.html', 'history.html'];
+const guestOnlyPages = ['records.html', 'asistente.html', 'history.html'];
 if (isGuest() && guestOnlyPages.some(p => location.pathname.endsWith(p))) {
   location.href = 'sinoptico.html';
 }
@@ -22,8 +22,11 @@ function applyRoleRules() {
   }
   document.querySelectorAll('.logout-link').forEach(btn => {
     btn.addEventListener('click', () => {
-      logout();
-      location.href = 'login.html';
+      document.body.classList.add('fade-out');
+      setTimeout(() => {
+        logout();
+        location.href = 'login.html';
+      }, 100);
     });
   });
 }
