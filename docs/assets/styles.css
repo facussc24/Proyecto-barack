@@ -1520,12 +1520,23 @@ select {
 /* Dataset selector on database page */
 .dataset-select {
   margin-left: auto;
-  padding: 6px 8px;
-  border: 1px solid #bbb;
-  border-radius: 4px;
-  background: var(--color-light);
-  color: var(--color-text);
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
   min-width: 180px;
+  background: linear-gradient(135deg, var(--color-accent), var(--color-primary));
+  color: var(--color-light);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.dataset-select:hover {
+  transform: scale(1.05);
+}
+
+.dark .dataset-select {
+  color: var(--color-light);
 }
 
 /* Admin menu buttons */
@@ -2011,9 +2022,21 @@ select {
 
 dialog.modal{border:none;border-radius:8px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.3);position:relative;opacity:0;transform:scale(.9);transition:opacity var(--anim-duration) var(--anim-ease),transform var(--anim-duration) var(--anim-ease);}dialog.modal[open]{opacity:1;transform:scale(1);}dialog.modal.closing{opacity:0;transform:scale(.9);}dialog.modal form{display:flex;flex-direction:column;gap:8px;}
 .close-dialog{position:absolute;top:8px;right:8px;background:none;border:none;font-size:1.2rem;cursor:pointer;}
-.db-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:0.9rem;}
-.db-table th,.db-table td{border:1px solid #ccc;padding:6px 8px;}
-.db-table tbody tr:nth-child(even){background-color:#f7f7f7;}
+.db-table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:10px;
+  font-size:0.9rem;
+  font-family:var(--font-base);
+}
+.db-table th,
+.db-table td{
+  border:1px solid #ccc;
+  padding:8px 12px;
+}
+.db-table tbody tr:nth-child(even){
+  background-color:var(--maestro-row-alt);
+}
 .db-table button{background-color:var(--color-accent);color:var(--color-light);border:none;border-radius:4px;cursor:pointer;padding:2px 6px;}
 .db-table button:hover{background-color:var(--color-accent-hover);}
 .view-img-btn{background:#fff;border:1px solid #ccc;border-radius:4px;padding:2px 6px;cursor:pointer;color:var(--color-text);} 
