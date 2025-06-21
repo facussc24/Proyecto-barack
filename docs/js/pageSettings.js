@@ -1,3 +1,4 @@
+import { isGuest } from './session.js';
 // Apply saved UI preferences like brightness and version overlay
 export function applyUserSettings() {
   const brightness = localStorage.getItem('pageBrightness') || '100';
@@ -11,7 +12,7 @@ export function applyUserSettings() {
   document.body.classList.toggle('grid-overlay', grid);
 
   const edit = localStorage.getItem('defaultEditMode') === 'true';
-  if (edit) {
+  if (edit && !isGuest()) {
     sessionStorage.setItem('sinopticoEdit', 'true');
     document.dispatchEvent(new Event('sinoptico-mode'));
   }

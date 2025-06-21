@@ -80,8 +80,11 @@
   <script type="module" src="js/hideLoading.js" defer></script>
   <script type="module" src="js/newClientDialog.js" defer></script>
   <script type="module" src="js/version.js" defer></script>
-  <script>
-    sessionStorage.setItem('sinopticoEdit', 'false');
+  <script type="module">
+    import { isGuest } from './js/session.js';
+    if (isGuest()) {
+      sessionStorage.setItem('sinopticoEdit', 'false');
+    }
   </script>
 </body>
 </html>

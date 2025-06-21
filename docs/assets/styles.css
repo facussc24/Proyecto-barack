@@ -2586,3 +2586,15 @@ tr:not(.pending) td:first-child::before {
 .fade-img.loaded {
   opacity: 1;
 }
+
+/* Hide editing controls for guest users */
+.guest #sin-edit,
+.guest #btnMenuCrear,
+.guest #btnNuevoCliente,
+.guest #btnNuevoProducto,
+.guest #btnNuevoSub,
+.guest #btnNuevoInsumo,
+.guest .delete-row,
+.guest .toggle-status {
+  display: none !important;
+}
