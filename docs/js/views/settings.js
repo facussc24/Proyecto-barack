@@ -1,11 +1,16 @@
 import { getAll, ready } from '../dataService.js';
 import { getUser } from '../session.js';
-import { activateDevMode } from '../pageSettings.js';
+import { activateDevMode, deactivateDevMode } from '../pageSettings.js';
+import { animateInsert } from '../ui/animations.js';
 
 export async function render(container) {
   container.innerHTML = `
-    <h1>Modo Desarrollador</h1>
+    <h1>Modo Dev</h1>
     <section class="dev-options">
+      <label>
+        <input type="checkbox" id="toggleDevMode">
+        Activar Modo Dev
+      </label>
       <label>
         Brillo de la página:
         <input id="brightnessRange" type="range" min="50" max="150" step="10">
@@ -34,7 +39,7 @@ export async function render(container) {
       <button id="restoreBackup" type="button">Restaurar</button>
     </section>`;
 
-  activateDevMode();
+  animateInsert(container);
 
   await ready;
   const data = await getAll('sinoptico');
@@ -44,6 +49,7 @@ export async function render(container) {
 
   const range = container.querySelector('#brightnessRange');
   const valueLabel = container.querySelector('#brightnessValue');
+  const devChk = container.querySelector('#toggleDevMode');
   const versionChk = container.querySelector('#toggleVersionOverlay');
   const gridChk = container.querySelector('#toggleGridOverlay');
   const userSpan = container.querySelector('#devUser');
@@ -57,6 +63,17 @@ export async function render(container) {
   const storedBrightness = localStorage.getItem('pageBrightness') || '100';
   range.value = storedBrightness;
   valueLabel.textContent = storedBrightness + '%';
+
+  const devActive = localStorage.getItem('devMode') === 'true';
+  if (devChk) devChk.checked = devActive;
+
+  devChk?.addEventListener('change', ev => {
+    if (ev.target.checked) {
+      activateDevMode();
+    } else {
+      deactivateDevMode();
+    }
+  });
 
   range.addEventListener('input', ev => {
     const val = ev.target.value;

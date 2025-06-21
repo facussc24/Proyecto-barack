@@ -133,7 +133,7 @@ function loadModules(el) {
     {
       main: '#/settings',
       icon: '⚙️',
-      text: 'Ajustes',
+      text: 'Modo Dev',
       actions: [],
       class: 'no-guest',
     },
