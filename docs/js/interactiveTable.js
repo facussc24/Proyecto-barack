@@ -44,12 +44,6 @@ const columnSets = {
     { title: 'Imagen', field: 'imagen_path', formatter: cell => getImageHTML(cell.getValue()), hozAlign: 'center', headerSort: false },
     { title: 'Acciones', formatter: actionsFormatter, hozAlign: 'center', headerSort: false },
   ],
-  ProductoSub: [
-    { title: 'Descripción', field: 'Descripción', headerSort: true },
-    { title: 'Código', field: 'Código', headerSort: true },
-    { title: 'Imagen', field: 'imagen_path', formatter: cell => getImageHTML(cell.getValue()), hozAlign: 'center', headerSort: false },
-    { title: 'Acciones', formatter: actionsFormatter, hozAlign: 'center', headerSort: false },
-  ],
   Subproducto: [
     { title: 'Descripción', field: 'Descripción', headerSort: true },
     { title: 'Código', field: 'Código', headerSort: true },
@@ -70,6 +64,9 @@ const columnSets = {
   ],
 };
 
+// Reuse the product columns for the combined Product + Subproduct view
+columnSets.ProductoSub = columnSets.Producto;
+
 const detailFields = {
   Cliente: ['Descripción', 'Código'],
   Producto: ['Descripción', 'Código', 'Largo', 'Ancho', 'Alto', 'Peso', 'imagen_path'],
@@ -77,6 +74,9 @@ const detailFields = {
   Insumo: ['Descripción', 'Código', 'Unidad', 'Proveedor', 'Material', 'Origen', 'Observaciones', 'imagen_path'],
   Desactivado: ['Tipo', 'Descripción', 'Código'],
 };
+
+// The combined dataset shares the same detail fields as Producto
+detailFields.ProductoSub = detailFields.Producto;
 
 function getImageHTML(path) {
   const safe = String(path || '').replace(/\.\.\/|[^\w.\-/]/g, '');
@@ -109,7 +109,7 @@ function applyFilter() {
   if (currentFilter === 'Desactivado') {
     rows = rows.filter(r => r.Desactivado);
   } else if (currentFilter === 'ProductoSub') {
-    rows = rows.filter(r => (r.Tipo === 'Producto' || r.Tipo === 'Subproducto') && !r.Desactivado);
+    rows = rows.filter(r => ['Producto', 'Subproducto'].includes(r.Tipo));
   } else if (currentFilter) {
     rows = rows.filter(r => r.Tipo === currentFilter && !r.Desactivado);
   }
