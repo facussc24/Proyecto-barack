@@ -160,6 +160,9 @@ function setupSidebar() {
     document.body.classList.toggle('sidebar-open');
   });
   overlay && overlay.addEventListener('click', close);
+  document.addEventListener('keydown', ev => {
+    if (ev.key === 'Escape') close();
+  });
   sidebar.addEventListener('click', ev => {
     const btn = ev.target.closest('button[data-filter]');
     if (!btn) return;
