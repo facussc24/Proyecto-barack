@@ -15,7 +15,22 @@
 <body>
   <nav id="nav-placeholder"></nav>
   <button class="back-btn" onclick="goBack()">← Volver</button>
-  <h1>Historial reciente</h1>
+  <h1>Historial y Backups</h1>
+
+  <section class="backup-tools">
+    <button id="createBackup" type="button">Crear backup</button>
+    <select id="backupList"></select>
+    <button id="restoreBackup" type="button">Restaurar</button>
+  </section>
+
+  <div class="advanced-filters">
+    <input type="text" id="pageFilter" placeholder="Página">
+    <input type="text" id="userFilter" placeholder="Usuario">
+    <input type="date" id="startDate">
+    <input type="date" id="endDate">
+    <button id="applyFilters" type="button">Filtrar</button>
+  </div>
+
   <section class="tabla-contenedor">
     <table id="historyTable">
       <thead>
