@@ -114,7 +114,22 @@ def data():
 
 @app.route("/api/history", methods=["GET"])
 def get_history():
-    return jsonify(history)
+    page = request.args.get("page")
+    user = request.args.get("user")
+    from_ts = request.args.get("from")
+    to_ts = request.args.get("to")
+
+    result = history
+    if page:
+        result = [h for h in result if page in str(h.get("host", ""))]
+    if user:
+        result = [h for h in result if user in str(h.get("user", ""))]
+    if from_ts:
+        result = [h for h in result if h.get("timestamp", "") >= from_ts]
+    if to_ts:
+        result = [h for h in result if h.get("timestamp", "") <= to_ts]
+
+    return jsonify(result)
 
 
 @app.route("/api/server-info", methods=["GET"])
