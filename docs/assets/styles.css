@@ -899,6 +899,9 @@ body, html {
 .dropdown-menu button:hover {
   background: rgba(255,255,255,0.1);
 }
+.dropdown.open {
+  z-index: 1200;
+}
 .dropdown.open .dropdown-menu,
 .nav-item.dropdown.open .dropdown-menu {
   display: block;
