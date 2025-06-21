@@ -1,7 +1,7 @@
 {
   "name": "proyecto-barack",
-  "version": "400",
-  "description": "Versión actual: **400**",
+  "version": "401",
+  "description": "Versión actual: **401**",
   "main": "index.js",
   "directories": {
     "lib": "lib"
@@ -17,7 +17,7 @@
     "assets": [
       "index.html",
       "login.html",
-      "database.html",
+      "registros.html",
       "sinoptico.html",
       "asistente.html",
       "assets/**/*",

@@ -1,7 +1,7 @@
 import { logout, isAdmin, isGuest } from './session.js';
 
 // guests shouldn't access certain pages directly
-const guestOnlyPages = ['database.html', 'asistente.html', 'history.html'];
+const guestOnlyPages = ['registros.html', 'asistente.html', 'history.html'];
 if (isGuest() && guestOnlyPages.some(p => location.pathname.endsWith(p))) {
   location.href = 'sinoptico.html';
 }

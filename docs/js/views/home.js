@@ -117,9 +117,9 @@ function loadModules(el) {
       class: 'no-guest',
     },
     {
-      main: 'database.html',
+      main: 'registros.html',
       icon: '🗄️',
-      text: 'Sinóptico de Base de Datos',
+      text: 'Sinóptico de Registros',
       actions: [],
       class: 'no-guest',
     },

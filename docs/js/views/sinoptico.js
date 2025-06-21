@@ -8,7 +8,7 @@ export async function render(container) {
     <div class="toolbar">
       ${editBtnHtml}
       <a id="linkCrear" href="asistente.html">Crear</a>
-      <a id="linkBaseDatos" href="database.html">Base de Datos</a>
+      <a id="linkRegistros" href="registros.html">Registros</a>
       <div class="export-group">
         <button data-fmt="excel" id="btnExcel" class="btn-excel">Excel</button>
         <button data-fmt="pdf" id="btnPdf" class="btn-pdf">PDF</button>
