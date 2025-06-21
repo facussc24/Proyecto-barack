@@ -2360,3 +2360,24 @@ tr:not(.pending) td:first-child::before {
 #dbTable button:hover {
   background-color: var(--color-accent-hover);
 }
+
+/* ==============================
+   Detail modal for base de datos
+   ============================== */
+.detail-modal::backdrop {
+  background: rgba(0, 0, 0, 0.4);
+}
+.detail-modal {
+  width: clamp(300px, 90%, 400px);
+  max-height: 90vh;
+  overflow: auto;
+}
+.detail-modal dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 6px 12px;
+}
+.detail-modal dt {
+  font-weight: bold;
+  white-space: nowrap;
+}
