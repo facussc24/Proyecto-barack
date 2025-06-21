@@ -939,7 +939,7 @@ body, html {
 
 .back-btn {
   position: fixed;
-  top: 70px;
+  top: 80px;
   left: 10px;
   background: linear-gradient(135deg, var(--color-accent), var(--color-primary));
   border: none;
@@ -961,7 +961,7 @@ body, html {
 }
 
 body.sinoptico-page .back-btn {
-  top: 90px;
+  top: 100px;
 }
 
 header {
@@ -1545,7 +1545,7 @@ select {
 /* Collapsible sidebar for dataset selection */
 .sidebar-toggle {
   position: fixed;
-  top: 70px;
+  top: 80px;
   left: 50px;
   background: linear-gradient(135deg, var(--color-accent), var(--color-primary));
   border: none;
@@ -2458,6 +2458,13 @@ tr:not(.pending) td:first-child::before {
 }
 #dbTable .tabulator-cell {
   padding: 8px;
+  color: var(--color-text);
+}
+#dbTable .tabulator-row:nth-child(even) {
+  background-color: #f7f7f7;
+}
+.dark #dbTable .tabulator-row:nth-child(even) {
+  background-color: #222;
 }
 #dbTable button {
   background-color: var(--color-accent);
