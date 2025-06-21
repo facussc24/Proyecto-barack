@@ -170,11 +170,11 @@ function setupSidebar() {
   if (!sidebar || !toggle) return;
   const close = () => {
     document.body.classList.remove('sidebar-open');
-    toggle.textContent = '▶';
+    toggle.setAttribute('aria-label', 'Abrir filtros');
   };
   const open = () => {
     document.body.classList.add('sidebar-open');
-    toggle.textContent = '◀';
+    toggle.setAttribute('aria-label', 'Cerrar filtros');
   };
   toggle.addEventListener('click', () => {
     if (document.body.classList.contains('sidebar-open')) {
