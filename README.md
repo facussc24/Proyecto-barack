@@ -35,7 +35,7 @@ El script actualiza `package.json`, `package-lock.json`, `README.md` y
 5. La página `history.html` está reservada para administradores.
    Los invitados son redirigidos automáticamente al abrirla.
 
-Hay tres puntos de entrada al Sinóptico: la página standalone `docs/sinoptico.html`, la vista SPA accesible desde `index.html` y el `docs/sinoptico-editor.html` para modificaciones.
+Hay dos puntos de entrada al Sinóptico: la página standalone `docs/sinoptico.html` y la vista SPA accesible desde `index.html`.
 Por defecto se usa **Dexie/IndexedDB** para el almacenamiento local, pero `js/dataService.js` puede sincronizar los datos con un servidor.
 
 ### Exportar e importar datos
@@ -57,7 +57,6 @@ await dataService.importJSON(json); // Restaura la copia
 ```
 
 
-Si ya conoces estas páginas, puedes trabajar solo con `docs/sinoptico-editor.html` y consultar los datos desde `docs/sinoptico.html`. La SPA (`index.html`) queda como opción adicional.
 
 ### Crear un nuevo producto con `docs/asistente.html`
 

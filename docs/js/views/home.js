@@ -81,22 +81,11 @@ async function loadKpis(el) {
 function loadModules(el) {
   const modules = [
     {
-      main: 'sinoptico-editor.html',
-      icon: '📝',
-      text: 'Editar Sinóptico',
-      actions: [
-        { label: 'Editar Sinóptico', href: 'sinoptico-editor.html' },
-        { label: 'Ver Sinóptico', href: 'sinoptico.html' },
-      ],
-      class: 'no-guest',
-    },
-    {
       main: 'sinoptico.html',
       icon: '📄',
       text: 'Ver Sinóptico',
       actions: [
         { label: 'Ver Sinóptico', href: 'sinoptico.html' },
-        { label: 'Editar Sinóptico', href: 'sinoptico-editor.html' },
       ],
     },
     {
