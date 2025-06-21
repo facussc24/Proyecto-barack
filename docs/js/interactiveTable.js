@@ -168,9 +168,20 @@ function setupSidebar() {
   const sidebar = document.getElementById('datasetSidebar');
   const overlay = document.getElementById('sidebarOverlay');
   if (!sidebar || !toggle) return;
-  const close = () => document.body.classList.remove('sidebar-open');
+  const close = () => {
+    document.body.classList.remove('sidebar-open');
+    toggle.textContent = '▶';
+  };
+  const open = () => {
+    document.body.classList.add('sidebar-open');
+    toggle.textContent = '◀';
+  };
   toggle.addEventListener('click', () => {
-    document.body.classList.toggle('sidebar-open');
+    if (document.body.classList.contains('sidebar-open')) {
+      close();
+    } else {
+      open();
+    }
   });
   overlay && overlay.addEventListener('click', close);
   document.addEventListener('keydown', ev => {
