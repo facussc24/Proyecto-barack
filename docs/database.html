@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; connect-src *; img-src * data:; style-src * 'unsafe-inline';">
-  <title>Base de Datos</title>
+  <title>Sinóptico de Base de Datos</title>
   <link rel="stylesheet" href="assets/styles.css">
   <link rel="stylesheet" href="lib/tabulator/tabulator.min.css">
   <script>
@@ -17,7 +17,7 @@
   <nav id="nav-placeholder"></nav>
   <button class="back-btn" onclick="goBack()">← Volver</button>
   <header class="editor-header">
-    <h1 class="editor-title">Base de Datos</h1>
+    <h1 class="editor-title">Sinóptico de Base de Datos</h1>
   </header>
   <section class="editor-menu">
     <section class="db-tabs">
@@ -29,9 +29,11 @@
       <button data-type="Desactivado">Desactivados</button>
     </section>
     <input id="globalSearch" type="search" placeholder="Buscar...">
+    <button id="addRowBtn" type="button">Añadir</button>
   </section>
   <div id="dbTable" class="tabla-contenedor"></div>
   <dialog id="detailDialog" class="modal detail-modal"></dialog>
+  <dialog id="addEditDialog" class="modal"></dialog>
   <script src="lib/dexie.min.js" defer></script>
   <script src="lib/tabulator/tabulator.min.js" defer></script>
   <script src="./socket.io/socket.io.js" defer></script>
