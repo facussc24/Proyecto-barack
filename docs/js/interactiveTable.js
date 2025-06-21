@@ -44,6 +44,12 @@ const columnSets = {
     { title: 'Imagen', field: 'imagen_path', formatter: cell => getImageHTML(cell.getValue()), hozAlign: 'center', headerSort: false },
     { title: 'Acciones', formatter: actionsFormatter, hozAlign: 'center', headerSort: false },
   ],
+  ProductoSub: [
+    { title: 'Descripción', field: 'Descripción', headerSort: true },
+    { title: 'Código', field: 'Código', headerSort: true },
+    { title: 'Imagen', field: 'imagen_path', formatter: cell => getImageHTML(cell.getValue()), hozAlign: 'center', headerSort: false },
+    { title: 'Acciones', formatter: actionsFormatter, hozAlign: 'center', headerSort: false },
+  ],
   Subproducto: [
     { title: 'Descripción', field: 'Descripción', headerSort: true },
     { title: 'Código', field: 'Código', headerSort: true },
@@ -102,6 +108,8 @@ function applyFilter() {
   let rows = allData.slice();
   if (currentFilter === 'Desactivado') {
     rows = rows.filter(r => r.Desactivado);
+  } else if (currentFilter === 'ProductoSub') {
+    rows = rows.filter(r => (r.Tipo === 'Producto' || r.Tipo === 'Subproducto') && !r.Desactivado);
   } else if (currentFilter) {
     rows = rows.filter(r => r.Tipo === currentFilter && !r.Desactivado);
   }
@@ -115,14 +123,11 @@ function applyFilter() {
 }
 
 function setupFilterButtons() {
-  const btns = document.querySelectorAll('.db-tabs button');
-  btns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      btns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      currentFilter = btn.dataset.type || '';
-      applyFilter();
-    });
+  const select = document.getElementById('datasetSelect');
+  if (!select) return;
+  select.addEventListener('change', () => {
+    currentFilter = select.value || '';
+    applyFilter();
   });
 }
 
