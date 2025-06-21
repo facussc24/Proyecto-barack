@@ -18,11 +18,10 @@
   <button id="sidebarToggle" class="sidebar-toggle" type="button">☰</button>
   <div id="sidebarOverlay" class="sidebar-overlay"></div>
   <aside id="datasetSidebar" class="dataset-sidebar">
-    <button data-filter="">Todos</button>
+    <button data-filter="" class="active">Todos</button>
     <button data-filter="Cliente">Clientes</button>
     <button data-filter="Producto">Productos</button>
     <button data-filter="Subproducto">Subproductos</button>
-    <button data-filter="ProductoSub">Productos + Subproductos</button>
     <button data-filter="Insumo">Insumos</button>
     <button data-filter="Desactivado">Desactivados</button>
   </aside>
@@ -41,9 +40,13 @@
         <a id="linkArbol" href="asistente.html">Árbol de producto</a>
       </div>
     </div>
-    <div class="search-wrapper">
+  <div class="search-wrapper">
       <input id="globalSearch" type="search" placeholder="Buscar...">
       <span id="searchSpinner" class="spinner"></span>
+    </div>
+    <div class="export-group">
+      <button data-fmt="excel" id="btnExcel" class="btn-excel">Excel</button>
+      <button data-fmt="pdf" id="btnPdf" class="btn-pdf">PDF</button>
     </div>
   </section>
   <div id="dbTable" class="tabla-contenedor"></div>

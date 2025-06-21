@@ -11,8 +11,8 @@ function showToast(msg) {
 
 let table;
 let allData = [];
-// Current dataset selected by the user. Empty string means "all".
-let currentFilter = '';
+// Active dataset filters. Empty array means "all".
+let selectedFilters = [];
 const skeleton = document.getElementById('tableSkeleton');
 const searchSpinner = document.getElementById('searchSpinner');
 
@@ -115,19 +115,26 @@ async function loadData() {
 
 function applyFilter() {
   let rows = allData.slice();
-  if (currentFilter === 'Desactivado') {
-    rows = rows.filter(r => r.Desactivado);
-  } else if (currentFilter === 'ProductoSub') {
-    rows = rows.filter(r => ['Producto', 'Subproducto'].includes(r.Tipo));
-  } else if (currentFilter) {
-    rows = rows.filter(r => r.Tipo === currentFilter && !r.Desactivado);
+  if (selectedFilters.length > 0) {
+    rows = rows.filter(r => {
+      if (selectedFilters.includes('Desactivado')) {
+        if (!r.Desactivado) return false;
+        const others = selectedFilters.filter(f => f !== 'Desactivado');
+        return others.length ? others.includes(r.Tipo) : true;
+      }
+      return !r.Desactivado && selectedFilters.includes(r.Tipo);
+    });
   }
   const tableEl = document.getElementById('dbTable');
   tableEl.classList.add('slide-from-right');
   requestAnimationFrame(() => {
     tableEl.classList.remove('slide-from-right', 'slide-from-left');
   });
-  table.setColumns(columnSets[currentFilter || ''] || columnSets['']);
+  let cols = columnSets[''];
+  if (selectedFilters.length === 1) {
+    cols = columnSets[selectedFilters[0]] || columnSets[''];
+  }
+  table.setColumns(cols);
   table.replaceData(rows);
 }
 
@@ -137,7 +144,13 @@ function applyFilter() {
  * @param {string} filter dataset name or empty string for all
  */
 export function setDataset(filter) {
-  currentFilter = filter || '';
+  selectedFilters = filter ? [filter] : [];
+  const sidebar = document.getElementById('datasetSidebar');
+  if (sidebar) {
+    sidebar.querySelectorAll('button[data-filter]').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.filter === filter);
+    });
+  }
   applyFilter();
 }
 
@@ -166,8 +179,22 @@ function setupSidebar() {
   sidebar.addEventListener('click', ev => {
     const btn = ev.target.closest('button[data-filter]');
     if (!btn) return;
-    setDataset(btn.dataset.filter || '');
-    close();
+    const filter = btn.dataset.filter || '';
+    if (!filter) {
+      selectedFilters = [];
+      sidebar.querySelectorAll('button[data-filter]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      close();
+    } else {
+      btn.classList.toggle('active');
+      if (btn.classList.contains('active')) {
+        selectedFilters.push(filter);
+        sidebar.querySelector('button[data-filter=""]')?.classList.remove('active');
+      } else {
+        selectedFilters = selectedFilters.filter(f => f !== filter);
+      }
+    }
+    applyFilter();
   });
 }
 
@@ -231,6 +258,27 @@ function setupActions() {
   });
 }
 
+function setupExport() {
+  const excelBtn = document.getElementById('btnExcel');
+  const pdfBtn = document.getElementById('btnPdf');
+  async function exportServer(fmt) {
+    const resp = await fetch(`/api/sinoptico/export?format=${fmt}`);
+    if (!resp.ok) throw new Error('fail');
+    const blob = await resp.blob();
+    const url = URL.createObjectURL(blob);
+    const ext = fmt === 'excel' ? 'xlsx' : 'pdf';
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `sinoptico.${ext}`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+  excelBtn?.addEventListener('click', () => exportServer('excel').catch(() => {}));
+  pdfBtn?.addEventListener('click', () => exportServer('pdf').catch(() => {}));
+}
+
 
 function openDetail(data) {
   const dialog = document.getElementById('detailDialog');
@@ -287,6 +335,7 @@ export function initInteractiveTable() {
   setupSidebarButtons();
   setupSearch();
   setupActions();
+  setupExport();
   loadData();
 }
 
