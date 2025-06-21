@@ -91,7 +91,8 @@ function getImageHTML(path) {
   const safe = String(path || '').replace(/\.\.\/|[^\w.\-/]/g, '');
   if (!safe) return '';
   const src = `imagenes_sinoptico/${safe}`;
-  return `<img src="${src}" alt="imagen" loading="lazy" class="fade-img" style="max-width:60px;" onload="this.classList.add('loaded')">`;
+  const alt = safe.split('/').pop().replace(/\.[^.]+$/, '');
+  return `<img src="${src}" alt="${alt}" loading="lazy" class="fade-img" style="max-width:60px;" onload="this.classList.add('loaded')">`;
 }
 
 function actionsFormatter(cell) {
