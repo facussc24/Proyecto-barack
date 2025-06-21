@@ -1577,7 +1577,7 @@ select {
 .sidebar-toggle {
   position: fixed;
   top: 80px;
-  left: 50px;
+  left: 70px;
   background: linear-gradient(135deg, var(--color-accent), var(--color-primary));
   border: none;
   border-radius: 6px;
@@ -1588,7 +1588,7 @@ select {
 }
 
 body.sidebar-open .sidebar-toggle {
-  left: 210px;
+  left: 270px;
 }
 
 .dataset-sidebar {
@@ -1618,6 +1618,10 @@ body.sidebar-open .sidebar-toggle {
 
 .dataset-sidebar button:hover {
   background: rgba(255, 255, 255, 0.1);
+}
+
+.dataset-sidebar button.active {
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .sidebar-overlay {
