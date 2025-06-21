@@ -28,10 +28,14 @@
       <button data-type="Insumo">Insumos</button>
       <button data-type="Desactivado">Desactivados</button>
     </section>
-    <input id="globalSearch" type="search" placeholder="Buscar...">
+    <div class="search-wrapper">
+      <input id="globalSearch" type="search" placeholder="Buscar...">
+      <span id="searchSpinner" class="spinner"></span>
+    </div>
     <button id="addRowBtn" type="button">Añadir</button>
   </section>
   <div id="dbTable" class="tabla-contenedor"></div>
+  <div id="tableSkeleton" class="skeleton-table" hidden></div>
   <dialog id="detailDialog" class="modal detail-modal"></dialog>
   <dialog id="addEditDialog" class="modal"></dialog>
   <script src="lib/dexie.min.js" defer></script>

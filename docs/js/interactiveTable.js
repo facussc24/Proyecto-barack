@@ -1,9 +1,30 @@
 'use strict';
 import { getAll, addNode, updateNode, deleteNode, ready } from './dataService.js';
 
+function showToast(msg) {
+  const div = document.createElement('div');
+  div.className = 'toast';
+  div.textContent = msg;
+  document.body.appendChild(div);
+  setTimeout(() => div.remove(), 3000);
+}
+
 let table;
 let allData = [];
 let currentFilter = '';
+const skeleton = document.getElementById('tableSkeleton');
+const searchSpinner = document.getElementById('searchSpinner');
+
+if (skeleton) {
+  skeleton.innerHTML = Array.from({ length: 8 })
+    .map(() => '<div class="skeleton skeleton-table-row"></div>')
+    .join('');
+}
+
+function closeModal(dialog) {
+  dialog.classList.add('closing');
+  dialog.addEventListener('transitionend', () => dialog.close(), { once: true });
+}
 
 const columnSets = {
   '': [
@@ -55,23 +76,27 @@ function getImageHTML(path) {
   const safe = String(path || '').replace(/\.\.\/|[^\w.\-/]/g, '');
   if (!safe) return '';
   const src = `imagenes_sinoptico/${safe}`;
-  return `<img src="${src}" alt="imagen" style="max-width:60px;">`;
+  return `<img src="${src}" alt="imagen" loading="lazy" class="fade-img" style="max-width:60px;" onload="this.classList.add('loaded')">`;
 }
 
 function actionsFormatter(cell) {
   const data = cell.getRow().getData();
   const toggleTitle = data.Desactivado ? 'Reactivar' : 'Desactivar';
   const toggleIcon = data.Desactivado ? '✅' : '🚫';
+  const badge = data.Desactivado ? '<span class="badge inactive" data-tooltip="Inactivo">Inactivo</span>' : '';
   return `
-    <button class="edit-row" data-id="${data.ID}" title="Editar">✏️</button>
-    <button class="toggle-status" data-id="${data.ID}" title="${toggleTitle}">${toggleIcon}</button>
-    <button class="delete-row" data-id="${data.ID}" title="Eliminar">🗑️</button>`;
+    ${badge}
+    <button class="edit-row" data-id="${data.ID}" data-tooltip="Editar">✏️</button>
+    <button class="toggle-status" data-id="${data.ID}" data-tooltip="${toggleTitle}">${toggleIcon}</button>
+    <button class="delete-row" data-id="${data.ID}" data-tooltip="Eliminar">🗑️</button>`;
 }
 
 async function loadData() {
+  skeleton.hidden = false;
   await ready;
   allData = await getAll('sinoptico');
   applyFilter();
+  skeleton.hidden = true;
 }
 
 function applyFilter() {
@@ -81,6 +106,11 @@ function applyFilter() {
   } else if (currentFilter) {
     rows = rows.filter(r => r.Tipo === currentFilter && !r.Desactivado);
   }
+  const tableEl = document.getElementById('dbTable');
+  tableEl.classList.add('slide-from-right');
+  requestAnimationFrame(() => {
+    tableEl.classList.remove('slide-from-right', 'slide-from-left');
+  });
   table.setColumns(columnSets[currentFilter || ''] || columnSets['']);
   table.replaceData(rows);
 }
@@ -100,13 +130,19 @@ function setupFilterButtons() {
 function setupSearch() {
   const input = document.getElementById('globalSearch');
   if (!input) return;
+  let t;
   input.addEventListener('input', () => {
-    const value = input.value.trim();
-    if (value) {
-      table.setFilter(customSearch, { term: value });
-    } else {
-      table.clearFilter(customSearch);
-    }
+    searchSpinner.style.display = 'inline-block';
+    clearTimeout(t);
+    t = setTimeout(() => {
+      const value = input.value.trim();
+      if (value) {
+        table.setFilter(customSearch, { term: value });
+      } else {
+        table.clearFilter(customSearch);
+      }
+      searchSpinner.style.display = 'none';
+    }, 300);
   });
 }
 
@@ -125,6 +161,7 @@ function setupActions() {
       if (confirm('¿Eliminar elemento?') && confirm('Esta acción no se puede deshacer. ¿Continuar?')) {
         await deleteNode(id);
         await loadData();
+        showToast('Eliminado');
       }
     } else if (btn.classList.contains('edit-row')) {
       const row = allData.find(r => r.ID === id);
@@ -137,6 +174,7 @@ function setupActions() {
       if (confirm(msg)) {
         await updateNode(id, { Desactivado: newState });
         await loadData();
+        showToast(newState ? 'Desactivado' : 'Reactivado');
       }
     }
   });
@@ -150,9 +188,10 @@ function setupAddButton() {
 function openForm(data = {}) {
   const dialog = document.getElementById('addEditDialog');
   if (!dialog) return;
+  dialog.classList.remove('closing');
   dialog.innerHTML = `<form method="dialog"><button type="button" class="close-dialog">✖</button><div class="fields"></div><div class="form-actions"><button type="submit">Guardar</button></div></form>`;
   const closeBtn = dialog.querySelector('.close-dialog');
-  closeBtn.addEventListener('click', () => dialog.close(), { once: true });
+  closeBtn.addEventListener('click', () => closeModal(dialog), { once: true });
   const form = dialog.querySelector('form');
   const container = dialog.querySelector('.fields');
   const fields = ['Tipo','Descripción','Código','Largo','Ancho','Alto','Peso','Unidad','Proveedor','Material','Origen','Observaciones','imagen_path'];
@@ -177,11 +216,13 @@ function openForm(data = {}) {
     });
     if (data.ID) {
       await updateNode(data.ID, obj);
+      showToast('Actualizado');
     } else {
       obj.ID = Date.now().toString();
       await addNode(obj);
+      showToast('Creado');
     }
-    dialog.close();
+    closeModal(dialog);
     await loadData();
   }, { once: true });
   dialog.showModal();
@@ -190,8 +231,9 @@ function openForm(data = {}) {
 function openDetail(data) {
   const dialog = document.getElementById('detailDialog');
   if (!dialog) return;
+  dialog.classList.remove('closing');
   dialog.innerHTML = '<button class="close-dialog">✖</button><div class="detail-content"></div>';
-  dialog.querySelector('.close-dialog').addEventListener('click', () => dialog.close(), { once: true });
+  dialog.querySelector('.close-dialog').addEventListener('click', () => closeModal(dialog), { once: true });
   const container = dialog.querySelector('.detail-content');
   const fields = detailFields[data.Tipo] || Object.keys(data);
   const dl = document.createElement('dl');
@@ -222,6 +264,15 @@ function initTable() {
   table.on('rowClick', (e, row) => {
     if (e.target.closest('button')) return;
     openDetail(row.getData());
+  });
+  table.on('scrollVertical', () => {
+    const max = table.getPageMax();
+    if (table.getPage() < max) {
+      const el = table.element; 
+      if (el.scrollHeight - el.scrollTop - el.clientHeight < 20) {
+        table.nextPage();
+      }
+    }
   });
 }
 
