@@ -26,6 +26,12 @@ export async function render(container) {
       <p>Hora del servidor: <span id="devTime">-</span></p>
       <p>Usuarios conectados: <span id="devClients">-</span></p>
       <p>Entradas historial: <span id="devHistory">-</span></p>
+    </section>
+    <section class="backup-tools">
+      <h2>Copias de seguridad</h2>
+      <button id="createBackup" type="button">Crear backup</button>
+      <select id="backupList"></select>
+      <button id="restoreBackup" type="button">Restaurar</button>
     </section>`;
 
   activateDevMode();
@@ -44,6 +50,9 @@ export async function render(container) {
   const timeSpan = container.querySelector('#devTime');
   const clientsSpan = container.querySelector('#devClients');
   const histSpan = container.querySelector('#devHistory');
+  const backupSel = container.querySelector('#backupList');
+  const createBtn = container.querySelector('#createBackup');
+  const restoreBtn = container.querySelector('#restoreBackup');
 
   const storedBrightness = localStorage.getItem('pageBrightness') || '100';
   range.value = storedBrightness;
@@ -85,6 +94,43 @@ export async function render(container) {
   if (user && userSpan) {
     userSpan.textContent = `${user.name} (${user.role})`;
   }
+
+  async function loadBackups() {
+    try {
+      const resp = await fetch('/api/backups');
+      if (!resp.ok) return;
+      const list = await resp.json();
+      if (backupSel) {
+        backupSel.innerHTML = list
+          .map((name) => `<option value="${name}">${name}</option>`) 
+          .join('');
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  if (createBtn) {
+    createBtn.addEventListener('click', async () => {
+      await fetch('/api/backups', { method: 'POST' });
+      loadBackups();
+    });
+  }
+
+  if (restoreBtn) {
+    restoreBtn.addEventListener('click', async () => {
+      const name = backupSel.value;
+      if (!name) return;
+      await fetch('/api/restore', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name }),
+      });
+      window.location.reload();
+    });
+  }
+
+  loadBackups();
 
   async function refreshInfo() {
     try {
