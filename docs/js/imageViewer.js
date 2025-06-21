@@ -13,7 +13,8 @@ export function showImageModal(src) {
   }
   const wrapper = dialog.querySelector('.img-wrapper');
   if (src) {
-    wrapper.innerHTML = `<img src="${src}" alt="imagen">`;
+    const alt = src.split('/').pop().replace(/\.[^.]+$/, '');
+    wrapper.innerHTML = `<img src="${src}" alt="${alt}">`;
     const img = wrapper.querySelector('img');
     img.addEventListener('error', () => {
       wrapper.innerHTML = '<p>Sin imagen</p>';
