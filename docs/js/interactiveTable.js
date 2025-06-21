@@ -124,10 +124,30 @@ function applyFilter() {
 
 function setupFilterButtons() {
   const select = document.getElementById('datasetSelect');
-  if (!select) return;
-  select.addEventListener('change', () => {
-    currentFilter = select.value || '';
+  if (select) {
+    select.addEventListener('change', () => {
+      currentFilter = select.value || '';
+      applyFilter();
+    });
+  }
+}
+
+function setupSidebar() {
+  const toggle = document.getElementById('sidebarToggle');
+  const sidebar = document.getElementById('datasetSidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  if (!sidebar || !toggle) return;
+  const close = () => document.body.classList.remove('sidebar-open');
+  toggle.addEventListener('click', () => {
+    document.body.classList.toggle('sidebar-open');
+  });
+  overlay && overlay.addEventListener('click', close);
+  sidebar.addEventListener('click', ev => {
+    const btn = ev.target.closest('button[data-filter]');
+    if (!btn) return;
+    currentFilter = btn.dataset.filter || '';
     applyFilter();
+    close();
   });
 }
 
@@ -233,6 +253,7 @@ function initTable() {
 export function initInteractiveTable() {
   initTable();
   setupFilterButtons();
+  setupSidebar();
   setupSearch();
   setupActions();
   loadData();

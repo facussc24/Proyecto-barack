@@ -15,6 +15,17 @@
 </head>
 <body>
   <nav id="nav-placeholder"></nav>
+  <button id="sidebarToggle" class="sidebar-toggle" type="button">☰</button>
+  <div id="sidebarOverlay" class="sidebar-overlay"></div>
+  <aside id="datasetSidebar" class="dataset-sidebar">
+    <button data-filter="">Todos</button>
+    <button data-filter="Cliente">Clientes</button>
+    <button data-filter="Producto">Productos</button>
+    <button data-filter="Subproducto">Subproductos</button>
+    <button data-filter="ProductoSub">Productos + Subproductos</button>
+    <button data-filter="Insumo">Insumos</button>
+    <button data-filter="Desactivado">Desactivados</button>
+  </aside>
   <button class="back-btn" onclick="goBack()">← Volver</button>
   <header class="editor-header">
     <h1 class="editor-title">Sinóptico de Base de Datos</h1>
@@ -34,15 +45,6 @@
       <input id="globalSearch" type="search" placeholder="Buscar...">
       <span id="searchSpinner" class="spinner"></span>
     </div>
-    <select id="datasetSelect" class="dataset-select">
-      <option value="">Todos</option>
-      <option value="Cliente">Clientes</option>
-      <option value="Producto">Productos</option>
-      <option value="Subproducto">Subproductos</option>
-      <option value="ProductoSub">Productos + Subproductos</option>
-      <option value="Insumo">Insumos</option>
-      <option value="Desactivado">Desactivados</option>
-    </select>
   </section>
   <div id="dbTable" class="tabla-contenedor"></div>
   <div id="tableSkeleton" class="skeleton-table" hidden></div>
