@@ -140,6 +140,30 @@ Cuando uses varias PC debes indicar la URL del servidor. Puedes hacerlo con:
 Si no se define ningún valor se usará `http://localhost:5000/api/data` por defecto.
 Para mas detalles consulta `docs/backend.md`.
 
+## API
+
+La API expone rutas REST en `/api/<tabla>` para todas las entidades. Por ejemplo:
+
+- `GET /api/clientes` – lista de clientes
+- `POST /api/insumos` – crea un insumo
+- `PATCH /api/productos_db/<id>` – actualiza un producto
+- `DELETE /api/productos_db/<id>` – elimina un producto
+
+Puedes probar estas rutas con `curl`:
+
+```bash
+curl http://localhost:5000/api/clientes
+curl -X POST -H "Content-Type: application/json" \
+  -d '{"codigo":"CL1","nombre":"Demo","updated_at":"2024-01-01"}' \
+  http://localhost:5000/api/clientes
+```
+
+Para cargar datos de ejemplo ejecuta:
+
+```bash
+npm run seed:demo
+```
+
 
 ### Pruebas sin conexión
 
@@ -168,6 +192,7 @@ etc.) para que puedan visualizarse desde la tabla.
 El código fuente se encuentra en la carpeta `js/` y las hojas de estilo en
 `assets/styles.css`. Para depurar o extender la funcionalidad del Sinóptico,
 revisa especialmente `js/ui/renderer.js`.
+El esquema relacional completo puede consultarse en `docs/er.svg`.
 
 ## Solución de problemas
 
