@@ -1,6 +1,6 @@
 import { getAll } from '../dataService.js';
 import { createSinopticoEditor } from '../editors/sinopticoEditor.js';
-import { isAdmin } from '../session.js';
+import { isAdmin, isGuest } from '../session.js';
 
 export async function render(container) {
   const editBtnHtml = isAdmin() ? '<button id="sin-edit">Editar</button>' : '';
@@ -108,8 +108,10 @@ export async function render(container) {
 
 
   container.querySelector('#sin-edit')?.addEventListener('click', () => {
-    sessionStorage.setItem('sinopticoEdit', 'true');
-    document.dispatchEvent(new Event('sinoptico-mode'));
+    if (!isGuest()) {
+      sessionStorage.setItem('sinopticoEdit', 'true');
+      document.dispatchEvent(new Event('sinoptico-mode'));
+    }
   });
 
 
