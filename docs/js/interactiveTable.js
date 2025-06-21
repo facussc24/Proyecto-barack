@@ -5,6 +5,51 @@ let table;
 let allData = [];
 let currentFilter = '';
 
+const columnSets = {
+  '': [
+    { title: 'Tipo', field: 'Tipo', headerSort: true },
+    { title: 'Descripción', field: 'Descripción', headerSort: true },
+    { title: 'Código', field: 'Código', headerSort: true },
+    { title: 'Acciones', formatter: actionsFormatter, hozAlign: 'center', headerSort: false },
+  ],
+  Cliente: [
+    { title: 'Descripción', field: 'Descripción', headerSort: true },
+    { title: 'Código', field: 'Código', headerSort: true },
+    { title: 'Acciones', formatter: actionsFormatter, hozAlign: 'center', headerSort: false },
+  ],
+  Producto: [
+    { title: 'Descripción', field: 'Descripción', headerSort: true },
+    { title: 'Código', field: 'Código', headerSort: true },
+    { title: 'Imagen', field: 'Código', formatter: cell => getImageHTML(cell.getValue()), hozAlign: 'center', headerSort: false },
+    { title: 'Acciones', formatter: actionsFormatter, hozAlign: 'center', headerSort: false },
+  ],
+  Subproducto: [
+    { title: 'Descripción', field: 'Descripción', headerSort: true },
+    { title: 'Código', field: 'Código', headerSort: true },
+    { title: 'Acciones', formatter: actionsFormatter, hozAlign: 'center', headerSort: false },
+  ],
+  Insumo: [
+    { title: 'Descripción', field: 'Descripción', headerSort: true },
+    { title: 'Código', field: 'Código', headerSort: true },
+    { title: 'Unidad', field: 'Unidad', headerSort: true },
+    { title: 'Acciones', formatter: actionsFormatter, hozAlign: 'center', headerSort: false },
+  ],
+  Desactivado: [
+    { title: 'Tipo', field: 'Tipo', headerSort: true },
+    { title: 'Descripción', field: 'Descripción', headerSort: true },
+    { title: 'Código', field: 'Código', headerSort: true },
+    { title: 'Acciones', formatter: actionsFormatter, hozAlign: 'center', headerSort: false },
+  ],
+};
+
+const detailFields = {
+  Cliente: ['Descripción', 'Código'],
+  Producto: ['Descripción', 'Código', 'Largo', 'Ancho', 'Alto', 'Peso', 'Imagen'],
+  Subproducto: ['Descripción', 'Código'],
+  Insumo: ['Descripción', 'Código', 'Unidad', 'Proveedor', 'Material', 'Origen', 'Observaciones', 'Imagen'],
+  Desactivado: ['Tipo', 'Descripción', 'Código'],
+};
+
 function getImageHTML(code) {
   const sanitized = String(code || '').replace(/[^a-z0-9]/gi, '').toLowerCase();
   if (!sanitized) return '';
@@ -34,6 +79,7 @@ function applyFilter() {
   } else if (currentFilter) {
     rows = rows.filter(r => r.Tipo === currentFilter && !r.Desactivado);
   }
+  table.setColumns(columnSets[currentFilter || ''] || columnSets['']);
   table.replaceData(rows);
 }
 
@@ -91,22 +137,41 @@ function setupActions() {
   });
 }
 
+function openDetail(data) {
+  const dialog = document.getElementById('detailDialog');
+  if (!dialog) return;
+  dialog.innerHTML = '<button class="close-dialog">✖</button><div class="detail-content"></div>';
+  dialog.querySelector('.close-dialog').addEventListener('click', () => dialog.close(), { once: true });
+  const container = dialog.querySelector('.detail-content');
+  const fields = detailFields[data.Tipo] || Object.keys(data);
+  const dl = document.createElement('dl');
+  fields.forEach(f => {
+    const dt = document.createElement('dt');
+    dt.textContent = f;
+    const dd = document.createElement('dd');
+    if (f === 'Imagen') {
+      dd.innerHTML = getImageHTML(data.Código);
+    } else {
+      dd.textContent = data[f] || '';
+    }
+    dl.appendChild(dt);
+    dl.appendChild(dd);
+  });
+  container.appendChild(dl);
+  dialog.showModal();
+}
+
 function initTable() {
   table = new Tabulator('#dbTable', {
     layout: 'fitColumns',
     pagination: 'local',
     paginationSize: 10,
     reactiveData: true,
-    columns: [
-      { title: 'Descripción', field: 'Descripción', headerSort: true },
-      { title: 'Código', field: 'Código', headerSort: true },
-      { title: 'Largo', field: 'Largo', sorter: 'number' },
-      { title: 'Ancho', field: 'Ancho', sorter: 'number' },
-      { title: 'Alto', field: 'Alto', sorter: 'number' },
-      { title: 'Peso', field: 'Peso', sorter: 'number' },
-      { title: 'Imagen', field: 'Código', formatter: cell => getImageHTML(cell.getValue()), hozAlign: 'center' },
-      { title: 'Acciones', formatter: actionsFormatter, hozAlign: 'center', headerSort: false },
-    ],
+    columns: columnSets[''],
+  });
+  table.on('rowClick', (e, row) => {
+    if (e.target.closest('button')) return;
+    openDetail(row.getData());
   });
 }
 
