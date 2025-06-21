@@ -1,5 +1,5 @@
 'use strict';
-import { getAll, updateNode, deleteNode, ready } from './dataService.js';
+import { getAll, addNode, updateNode, deleteNode, ready } from './dataService.js';
 
 let table;
 let allData = [];
@@ -20,7 +20,7 @@ const columnSets = {
   Producto: [
     { title: 'Descripción', field: 'Descripción', headerSort: true },
     { title: 'Código', field: 'Código', headerSort: true },
-    { title: 'Imagen', field: 'Código', formatter: cell => getImageHTML(cell.getValue()), hozAlign: 'center', headerSort: false },
+    { title: 'Imagen', field: 'imagen_path', formatter: cell => getImageHTML(cell.getValue()), hozAlign: 'center', headerSort: false },
     { title: 'Acciones', formatter: actionsFormatter, hozAlign: 'center', headerSort: false },
   ],
   Subproducto: [
@@ -32,6 +32,7 @@ const columnSets = {
     { title: 'Descripción', field: 'Descripción', headerSort: true },
     { title: 'Código', field: 'Código', headerSort: true },
     { title: 'Unidad', field: 'Unidad', headerSort: true },
+    { title: 'Imagen', field: 'imagen_path', formatter: cell => getImageHTML(cell.getValue()), hozAlign: 'center', headerSort: false },
     { title: 'Acciones', formatter: actionsFormatter, hozAlign: 'center', headerSort: false },
   ],
   Desactivado: [
@@ -44,17 +45,17 @@ const columnSets = {
 
 const detailFields = {
   Cliente: ['Descripción', 'Código'],
-  Producto: ['Descripción', 'Código', 'Largo', 'Ancho', 'Alto', 'Peso', 'Imagen'],
+  Producto: ['Descripción', 'Código', 'Largo', 'Ancho', 'Alto', 'Peso', 'imagen_path'],
   Subproducto: ['Descripción', 'Código'],
-  Insumo: ['Descripción', 'Código', 'Unidad', 'Proveedor', 'Material', 'Origen', 'Observaciones', 'Imagen'],
+  Insumo: ['Descripción', 'Código', 'Unidad', 'Proveedor', 'Material', 'Origen', 'Observaciones', 'imagen_path'],
   Desactivado: ['Tipo', 'Descripción', 'Código'],
 };
 
-function getImageHTML(code) {
-  const sanitized = String(code || '').replace(/[^a-z0-9]/gi, '').toLowerCase();
-  if (!sanitized) return '';
-  const src = `imagenes_sinoptico/${sanitized}.jpg`;
-  return `<img src="${src}" alt="${code}" style="max-width:60px;">`;
+function getImageHTML(path) {
+  const safe = String(path || '').replace(/\.\.\/|[^\w.\-/]/g, '');
+  if (!safe) return '';
+  const src = `imagenes_sinoptico/${safe}`;
+  return `<img src="${src}" alt="imagen" style="max-width:60px;">`;
 }
 
 function actionsFormatter(cell) {
@@ -62,6 +63,7 @@ function actionsFormatter(cell) {
   const toggleTitle = data.Desactivado ? 'Reactivar' : 'Desactivar';
   const toggleIcon = data.Desactivado ? '✅' : '🚫';
   return `
+    <button class="edit-row" data-id="${data.ID}" title="Editar">✏️</button>
     <button class="toggle-status" data-id="${data.ID}" title="${toggleTitle}">${toggleIcon}</button>
     <button class="delete-row" data-id="${data.ID}" title="Eliminar">🗑️</button>`;
 }
@@ -120,10 +122,13 @@ function setupActions() {
     if (!btn) return;
     const id = btn.dataset.id;
     if (btn.classList.contains('delete-row')) {
-      if (confirm('¿Eliminar elemento?')) {
+      if (confirm('¿Eliminar elemento?') && confirm('Esta acción no se puede deshacer. ¿Continuar?')) {
         await deleteNode(id);
         await loadData();
       }
+    } else if (btn.classList.contains('edit-row')) {
+      const row = allData.find(r => r.ID === id);
+      if (row) openForm(row);
     } else if (btn.classList.contains('toggle-status')) {
       const row = allData.find(r => r.ID === id);
       if (!row) return;
@@ -135,6 +140,51 @@ function setupActions() {
       }
     }
   });
+}
+
+function setupAddButton() {
+  const btn = document.getElementById('addRowBtn');
+  btn?.addEventListener('click', () => openForm());
+}
+
+function openForm(data = {}) {
+  const dialog = document.getElementById('addEditDialog');
+  if (!dialog) return;
+  dialog.innerHTML = `<form method="dialog"><button type="button" class="close-dialog">✖</button><div class="fields"></div><div class="form-actions"><button type="submit">Guardar</button></div></form>`;
+  const closeBtn = dialog.querySelector('.close-dialog');
+  closeBtn.addEventListener('click', () => dialog.close(), { once: true });
+  const form = dialog.querySelector('form');
+  const container = dialog.querySelector('.fields');
+  const fields = ['Tipo','Descripción','Código','Largo','Ancho','Alto','Peso','Unidad','Proveedor','Material','Origen','Observaciones','imagen_path'];
+  container.innerHTML = '';
+  fields.forEach(f => {
+    const label = document.createElement('label');
+    label.textContent = f;
+    const input = document.createElement('input');
+    input.name = f;
+    input.value = data[f] || '';
+    if (f === 'Tipo' || f === 'Descripción') input.required = true;
+    label.appendChild(input);
+    container.appendChild(label);
+  });
+  form.addEventListener('submit', async ev => {
+    ev.preventDefault();
+    const formData = new FormData(form);
+    const obj = {};
+    fields.forEach(f => {
+      const v = formData.get(f);
+      if (v !== null && v !== '') obj[f] = v;
+    });
+    if (data.ID) {
+      await updateNode(data.ID, obj);
+    } else {
+      obj.ID = Date.now().toString();
+      await addNode(obj);
+    }
+    dialog.close();
+    await loadData();
+  }, { once: true });
+  dialog.showModal();
 }
 
 function openDetail(data) {
@@ -149,8 +199,8 @@ function openDetail(data) {
     const dt = document.createElement('dt');
     dt.textContent = f;
     const dd = document.createElement('dd');
-    if (f === 'Imagen') {
-      dd.innerHTML = getImageHTML(data.Código);
+    if (f === 'imagen_path') {
+      dd.innerHTML = getImageHTML(data.imagen_path);
     } else {
       dd.textContent = data[f] || '';
     }
@@ -180,6 +230,7 @@ export function initInteractiveTable() {
   setupFilterButtons();
   setupSearch();
   setupActions();
+  setupAddButton();
   loadData();
 }
 

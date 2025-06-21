@@ -130,7 +130,7 @@ function loadModules(el) {
     {
       main: 'database.html',
       icon: '🗄️',
-      text: 'Base de Datos',
+      text: 'Sinóptico de Base de Datos',
       actions: [],
       class: 'no-guest',
     },
