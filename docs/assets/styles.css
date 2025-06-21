@@ -1556,6 +1556,10 @@ select {
   z-index: 1101;
 }
 
+body.sidebar-open .sidebar-toggle {
+  left: 210px;
+}
+
 .dataset-sidebar {
   position: fixed;
   top: 0;
