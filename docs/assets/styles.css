@@ -390,25 +390,25 @@ table#sinoptico tbody td {
    COLORES POR TIPO (JERARQUÍA)
    ============================== */
 .fila-cliente {
-  background-color: #cce6ff !important;
+  background-color: #e4f1ff !important;
 } /* Azul muy claro (Cliente) */
 .fila-pieza {
-  background-color: #b3daff !important;
+  background-color: #d8eaff !important;
 } /* Azul claro (Producto) */
 .fila-oper {
-  background-color: #e7f5ff !important;
+  background-color: #f5faff !important;
 } /* Azul claro (Insumo) */
 tr.fila-cliente td {
   padding-top: 20px;
 }
 .dark .fila-cliente {
-  background-color: #00284d !important;
+  background-color: #003d6b !important;
 }
 .dark .fila-pieza {
-  background-color: #00325f !important;
+  background-color: #004478 !important;
 }
 .dark .fila-oper {
-  background-color: #00477d !important;
+  background-color: #00588e !important;
 }
 /* ==============================
    SANGRÍA MÍNIMA PARA NIVEL 0 (CLIENTE)
@@ -1576,8 +1576,8 @@ select {
 /* Collapsible sidebar for dataset selection */
 .sidebar-toggle {
   position: fixed;
-  top: 80px;
-  left: 70px;
+  top: 120px;
+  left: 10px;
   background: linear-gradient(135deg, var(--color-accent), var(--color-primary));
   border: none;
   border-radius: 6px;
@@ -1585,10 +1585,13 @@ select {
   color: var(--color-light);
   cursor: pointer;
   z-index: 1101;
+  transition: left var(--anim-duration) var(--anim-ease),
+    transform var(--anim-duration) var(--anim-ease);
 }
 
 body.sidebar-open .sidebar-toggle {
-  left: 270px;
+  left: 180px;
+  transform: rotate(180deg);
 }
 
 .dataset-sidebar {
@@ -2157,10 +2160,10 @@ dialog.modal{border:none;border-radius:8px;padding:20px;box-shadow:0 2px 8px rgb
    SUBPRODUCT ITEM
    ============================== */
 .fila-subens {
-  background-color: #d0eaff !important;
+  background-color: #def0ff !important;
 } /* Azul muy claro (Subensamble) */
 .dark .fila-subens {
-  background-color: #003d73 !important;
+  background-color: #004f80 !important;
 }
 
 .version-info { position: fixed; bottom: 4px; right: 4px; font-size: 0.8rem; opacity: 0.6; }
@@ -2478,15 +2481,15 @@ tr:not(.pending) td:first-child::before {
   opacity: 0;
 }
 #dbTable .tabulator-header {
-  background-color: #001f3f;
-  color: #fff;
+  background-color: var(--color-primary);
+  color: var(--color-light);
 }
 #dbTable .tabulator-row {
   transition: background var(--anim-duration) var(--anim-ease),
     box-shadow var(--anim-duration) var(--anim-ease);
 }
 #dbTable .tabulator-row:hover {
-  background-color: #e9ecef;
+  background-color: #eef2f7;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   position: relative;
   z-index: 1;
@@ -2496,10 +2499,10 @@ tr:not(.pending) td:first-child::before {
   color: var(--color-text);
 }
 #dbTable .tabulator-row:nth-child(even) {
-  background-color: #f7f7f7;
+  background-color: #f1f5ff;
 }
 .dark #dbTable .tabulator-row:nth-child(even) {
-  background-color: #222;
+  background-color: #1b1b1b;
 }
 #dbTable button {
   background-color: var(--color-accent);
