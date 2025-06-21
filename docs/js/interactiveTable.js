@@ -11,6 +11,7 @@ function showToast(msg) {
 
 let table;
 let allData = [];
+// Current dataset selected by the user. Empty string means "all".
 let currentFilter = '';
 const skeleton = document.getElementById('tableSkeleton');
 const searchSpinner = document.getElementById('searchSpinner');
@@ -122,12 +123,21 @@ function applyFilter() {
   table.replaceData(rows);
 }
 
+/**
+ * Change the active dataset and refresh the table.
+ * Exported for other modules and legacy pages.
+ * @param {string} filter dataset name or empty string for all
+ */
+export function setDataset(filter) {
+  currentFilter = filter || '';
+  applyFilter();
+}
+
 function setupFilterButtons() {
   const select = document.getElementById('datasetSelect');
   if (select) {
     select.addEventListener('change', () => {
-      currentFilter = select.value || '';
-      applyFilter();
+      setDataset(select.value || '');
     });
   }
 }
@@ -145,10 +155,19 @@ function setupSidebar() {
   sidebar.addEventListener('click', ev => {
     const btn = ev.target.closest('button[data-filter]');
     if (!btn) return;
-    currentFilter = btn.dataset.filter || '';
-    applyFilter();
+    setDataset(btn.dataset.filter || '');
     close();
   });
+}
+
+// Bind buttons outside the sidebar that also change datasets
+function setupSidebarButtons() {
+  document.querySelectorAll('[data-dataset]')
+    .forEach(btn => {
+      btn.addEventListener('click', () => {
+        setDataset(btn.dataset.dataset || '');
+      });
+    });
 }
 
 function setupSearch() {
@@ -254,9 +273,16 @@ export function initInteractiveTable() {
   initTable();
   setupFilterButtons();
   setupSidebar();
+  setupSidebarButtons();
   setupSearch();
   setupActions();
   loadData();
 }
 
 document.addEventListener('DOMContentLoaded', initInteractiveTable);
+
+// Expose API for legacy pages that load this script without modules.
+// Allows external scripts to switch the active dataset via window.setDataset().
+if (typeof window !== 'undefined') {
+  window.setDataset = setDataset;
+}
