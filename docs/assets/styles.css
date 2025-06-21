@@ -1539,6 +1539,68 @@ select {
   color: var(--color-light);
 }
 
+/* Collapsible sidebar for dataset selection */
+.sidebar-toggle {
+  position: fixed;
+  top: 70px;
+  left: 50px;
+  background: linear-gradient(135deg, var(--color-accent), var(--color-primary));
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px;
+  color: var(--color-light);
+  cursor: pointer;
+  z-index: 1101;
+}
+
+.dataset-sidebar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: -220px;
+  width: 200px;
+  padding-top: 100px;
+  background: var(--color-primary);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: left var(--anim-duration) var(--anim-ease);
+  z-index: 1100;
+}
+
+.dataset-sidebar button {
+  margin: 0 10px;
+  padding: 10px;
+  color: var(--color-light);
+  background: none;
+  border: 1px solid var(--color-light);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.dataset-sidebar button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--anim-duration) var(--anim-ease);
+  z-index: 1099;
+}
+
+body.sidebar-open .dataset-sidebar {
+  left: 0;
+}
+
+body.sidebar-open .sidebar-overlay {
+  opacity: 1;
+  visibility: visible;
+}
+
 /* Admin menu buttons */
 .admin-menu {
   width: 80%;
