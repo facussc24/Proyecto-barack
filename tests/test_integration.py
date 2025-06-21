@@ -30,3 +30,17 @@ def test_product_activation_cycle():
     payload2 = {"updated_at": data["updated_at"], "version": data["version"], "descripcion": "Inactivo"}
     resp = client.patch('/api/productos_db/1', json=payload2)
     assert resp.status_code == 200
+
+
+def test_post_client_and_fetch_list():
+    client = main.app.test_client()
+    payload = {"codigo": "CNEW", "nombre": "Nuevo"}
+    resp = client.post('/api/clientes', json=payload)
+    assert resp.status_code == 200
+    data = resp.get_json()["data"]
+    assert data["codigo"] == "CNEW"
+
+    resp = client.get('/api/clientes')
+    assert resp.status_code == 200
+    items = resp.get_json()["data"]
+    assert any(item["codigo"] == "CNEW" for item in items)
