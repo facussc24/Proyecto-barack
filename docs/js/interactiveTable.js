@@ -1,5 +1,5 @@
 'use strict';
-import { getAll, addNode, updateNode, deleteNode, ready } from './dataService.js';
+import { getAll, updateNode, deleteNode, ready } from './dataService.js';
 
 function showToast(msg) {
   const div = document.createElement('div');
@@ -86,7 +86,6 @@ function actionsFormatter(cell) {
   const badge = data.Desactivado ? '<span class="badge inactive" data-tooltip="Inactivo">Inactivo</span>' : '';
   return `
     ${badge}
-    <button class="edit-row" data-id="${data.ID}" data-tooltip="Editar">✏️</button>
     <button class="toggle-status" data-id="${data.ID}" data-tooltip="${toggleTitle}">${toggleIcon}</button>
     <button class="delete-row" data-id="${data.ID}" data-tooltip="Eliminar">🗑️</button>`;
 }
@@ -163,9 +162,6 @@ function setupActions() {
         await loadData();
         showToast('Eliminado');
       }
-    } else if (btn.classList.contains('edit-row')) {
-      const row = allData.find(r => r.ID === id);
-      if (row) openForm(row);
     } else if (btn.classList.contains('toggle-status')) {
       const row = allData.find(r => r.ID === id);
       if (!row) return;
@@ -180,53 +176,6 @@ function setupActions() {
   });
 }
 
-function setupAddButton() {
-  const btn = document.getElementById('addRowBtn');
-  btn?.addEventListener('click', () => openForm());
-}
-
-function openForm(data = {}) {
-  const dialog = document.getElementById('addEditDialog');
-  if (!dialog) return;
-  dialog.classList.remove('closing');
-  dialog.innerHTML = `<form method="dialog"><button type="button" class="close-dialog">✖</button><div class="fields"></div><div class="form-actions"><button type="submit">Guardar</button></div></form>`;
-  const closeBtn = dialog.querySelector('.close-dialog');
-  closeBtn.addEventListener('click', () => closeModal(dialog), { once: true });
-  const form = dialog.querySelector('form');
-  const container = dialog.querySelector('.fields');
-  const fields = ['Tipo','Descripción','Código','Largo','Ancho','Alto','Peso','Unidad','Proveedor','Material','Origen','Observaciones','imagen_path'];
-  container.innerHTML = '';
-  fields.forEach(f => {
-    const label = document.createElement('label');
-    label.textContent = f;
-    const input = document.createElement('input');
-    input.name = f;
-    input.value = data[f] || '';
-    if (f === 'Tipo' || f === 'Descripción') input.required = true;
-    label.appendChild(input);
-    container.appendChild(label);
-  });
-  form.addEventListener('submit', async ev => {
-    ev.preventDefault();
-    const formData = new FormData(form);
-    const obj = {};
-    fields.forEach(f => {
-      const v = formData.get(f);
-      if (v !== null && v !== '') obj[f] = v;
-    });
-    if (data.ID) {
-      await updateNode(data.ID, obj);
-      showToast('Actualizado');
-    } else {
-      obj.ID = Date.now().toString();
-      await addNode(obj);
-      showToast('Creado');
-    }
-    closeModal(dialog);
-    await loadData();
-  }, { once: true });
-  dialog.showModal();
-}
 
 function openDetail(data) {
   const dialog = document.getElementById('detailDialog');
@@ -281,7 +230,6 @@ export function initInteractiveTable() {
   setupFilterButtons();
   setupSearch();
   setupActions();
-  setupAddButton();
   loadData();
 }
 
