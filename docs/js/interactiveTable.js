@@ -1,5 +1,11 @@
 'use strict';
-import { getAll, updateNode, deleteNode, ready } from './dataService.js';
+import {
+  getAll,
+  updateNode,
+  deleteNode,
+  ready,
+  subscribeToChanges,
+} from './dataService.js';
 
 function showToast(msg) {
   const div = document.createElement('div');
@@ -349,6 +355,7 @@ export function initInteractiveTable() {
   setupActions();
   setupExport();
   loadData();
+  subscribeToChanges(loadData);
 }
 
 document.addEventListener('DOMContentLoaded', initInteractiveTable);

@@ -1,4 +1,4 @@
-import { getAll, ready } from '../dataService.js';
+import { getAll, ready, subscribeToChanges } from '../dataService.js';
 
 export async function render(container) {
   container.innerHTML = `
@@ -74,6 +74,7 @@ export async function render(container) {
 
   let currentPage = 1;
   let pageSize = parseInt(pageSizeSelect.value, 10);
+  let rows = [];
 
   function showSpinner() {
     const el = container.querySelector('#loading');
@@ -85,11 +86,17 @@ export async function render(container) {
     if (el) el.style.display = 'none';
   }
 
-  showSpinner();
-  await ready;
-  let rows = await getAll('maestro');
-  if (!Array.isArray(rows)) rows = [];
-  hideSpinner();
+  async function load() {
+    showSpinner();
+    await ready;
+    rows = await getAll('maestro');
+    if (!Array.isArray(rows)) rows = [];
+    hideSpinner();
+    renderRows();
+  }
+
+  await load();
+  subscribeToChanges(load);
 
   function filterRows() {
     const term = search.value.trim().toLowerCase();

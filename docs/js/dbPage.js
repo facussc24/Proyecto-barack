@@ -1,5 +1,11 @@
 'use strict';
-import { getAll, updateNode, deleteNode, ready } from './dataService.js';
+import {
+  getAll,
+  updateNode,
+  deleteNode,
+  ready,
+  subscribeToChanges,
+} from './dataService.js';
 import { animateInsert } from './ui/animations.js';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -163,4 +169,5 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   load();
+  subscribeToChanges(load);
 });

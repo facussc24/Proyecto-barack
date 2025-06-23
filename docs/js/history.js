@@ -70,7 +70,6 @@ document.addEventListener('DOMContentLoaded', () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name })
     });
-    window.location.reload();
   });
 
   applyBtn?.addEventListener('click', loadHistory);

@@ -1,4 +1,4 @@
-import { getAll } from '../dataService.js';
+import { getAll, subscribeToChanges } from '../dataService.js';
 import { createSinopticoEditor } from '../editors/sinopticoEditor.js';
 import { isAdmin, isGuest } from '../session.js';
 
@@ -30,10 +30,15 @@ export async function render(container) {
     </table>
   `;
 
-  const data = await getAll('sinoptico');
-  if (typeof window.renderSinoptico === 'function') {
-    window.renderSinoptico(data);
+  async function load() {
+    const data = await getAll('sinoptico');
+    if (typeof window.renderSinoptico === 'function') {
+      window.renderSinoptico(data);
+    }
   }
+
+  await load();
+  subscribeToChanges(load);
 
   const excelBtn = container.querySelector('#btnExcel');
   const pdfBtn = container.querySelector('#btnPdf');
