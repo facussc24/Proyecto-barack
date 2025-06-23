@@ -165,6 +165,10 @@ curl -X POST -H "Content-Type: application/json" \
   http://192.168.1.233:5000/api/clientes
 ```
 
+También puedes ejecutar el script `tools/backup_restore_script.py` para
+probar la creación de clientes, generar un respaldo y restaurarlo mientras
+escuchas el evento `data_updated` por WebSocket.
+
 Para cargar datos de ejemplo ejecuta:
 
 ```bash
