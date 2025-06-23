@@ -122,17 +122,13 @@ SSL_CERT=cert.pem SSL_KEY=key.pem python server.py
 Si tienes Docker instalado puedes iniciar todo con Docker Compose. La primera vez construye la imagen definida en `backend/Dockerfile`:
 
 ```bash
-docker-compose build
+docker compose down
+docker compose build
+docker compose up -d
 ```
 
-Luego levanta los servicios:
-
-```bash
-docker-compose up
-```
-
-Estos contenedores exponen la API en `http://localhost:5000` y Nginx para la carpeta `docs` en `http://localhost:8080`.
-Los datos se guardan en `./data/db.sqlite` gracias al volumen compartido.
+Al finalizar la SPA quedará disponible en `http://192.168.1.154:8080` y la API en `http://192.168.1.154:5000/api/...`.
+Los datos se guardan en `./data/db.sqlite` y los respaldos en `./backups`.
 
 GitHub Pages solo aloja archivos estáticos y no puede ejecutar este servidor.
 Cuando uses varias PC debes indicar la URL del servidor. Puedes hacerlo con:
@@ -140,7 +136,7 @@ Cuando uses varias PC debes indicar la URL del servidor. Puedes hacerlo con:
 1. Guardar la dirección en `localStorage` usando `localStorage.setItem('apiUrl', 'http://<IP>:5000/api/data')` desde la consola del navegador.
 2. O bien establecer la variable de entorno `API_URL` antes de iniciar la aplicación.
 
-Si no se define ningún valor se usará `http://localhost:5000/api/data` por defecto.
+Si no se define ningún valor se usará `http://192.168.1.154:5000/api/data` por defecto.
 Para mas detalles consulta `docs/backend.md`.
 
 ## API
@@ -158,10 +154,10 @@ La API expone rutas REST en `/api/<tabla>` para todas las entidades. Por ejemplo
 Puedes probar estas rutas con `curl`:
 
 ```bash
-curl http://localhost:5000/api/clientes
+curl http://192.168.1.154:5000/api/clientes
 curl -X POST -H "Content-Type: application/json" \
   -d '{"codigo":"CL1","nombre":"Demo","updated_at":"2024-01-01"}' \
-  http://localhost:5000/api/clientes
+  http://192.168.1.154:5000/api/clientes
 ```
 
 Para cargar datos de ejemplo ejecuta:
