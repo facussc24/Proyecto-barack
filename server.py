@@ -36,7 +36,8 @@ else:
 app = Flask(__name__, static_folder="docs", static_url_path="")
 from flask_socketio import SocketIO
 
-allowed = ["http://192.168.1.154:8080", "http://192.168.1.154:5000"]
+# Permit requests from the development front-end and the local API consumer
+allowed = ["http://192.168.1.154:8080", "http://localhost:8080"]
 socketio = SocketIO(app, async_mode="eventlet", cors_allowed_origins=allowed)
 clients = {}
 CORS(app, resources={r"/api/*": {"origins": allowed}})
