@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const backupSel = document.getElementById('backupList');
   const createBtn = document.getElementById('createBackup');
   const restoreBtn = document.getElementById('restoreBackup');
+  const deleteBtn = document.getElementById('deleteBackup');
 
   async function loadHistory() {
     const params = new URLSearchParams();
@@ -70,6 +71,13 @@ document.addEventListener('DOMContentLoaded', () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name })
     });
+  });
+
+  deleteBtn?.addEventListener('click', async () => {
+    const name = backupSel.value;
+    if (!name) return;
+    await fetch(`/api/backups/${encodeURIComponent(name)}`, { method: 'DELETE' });
+    loadBackups();
   });
 
   applyBtn?.addEventListener('click', loadHistory);
