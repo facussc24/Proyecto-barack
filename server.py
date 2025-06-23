@@ -18,12 +18,14 @@ DATA_FILE = os.path.join(DATA_DIR, "latest.json")
 HISTORY_FILE = os.path.join(DATA_DIR, "history.json")
 BACKUP_DIR = os.getenv("BACKUP_DIR", "/app/backups")
 write_lock = Lock()
+data_cache = None
 
 os.makedirs(DATA_DIR, exist_ok=True)
 os.makedirs(BACKUP_DIR, exist_ok=True)
 if os.path.exists(DATA_FILE):
     with open(DATA_FILE, "r", encoding="utf-8") as f:
         memory = json.load(f)
+    data_cache = json.dumps(memory, ensure_ascii=False)
 else:
     memory = {}
 
@@ -90,9 +92,13 @@ def static_proxy(path):
 
 @app.route("/api/data", methods=["GET", "POST"])
 def data():
-    global memory, history
+    global memory, history, data_cache
     if request.method == "GET":
-        return jsonify(memory)
+        if data_cache is None:
+            data_cache = json.dumps(memory, ensure_ascii=False)
+        resp = app.response_class(data_cache, mimetype="application/json")
+        resp.headers["Cache-Control"] = "no-store"
+        return resp
 
     data = request.get_json(force=True, silent=True)
     if data is None:
@@ -100,6 +106,7 @@ def data():
 
     with write_lock:
         memory = data
+        data_cache = None  # clear cache since data has changed
         with open(DATA_FILE, "w", encoding="utf-8") as f:
             json.dump(memory, f, ensure_ascii=False, indent=2)
 
@@ -239,7 +246,7 @@ def delete_backup(name):
 
 @app.post("/api/restore")
 def restore_backup():
-    global memory, history
+    global memory, history, data_cache
     data = request.get_json(force=True, silent=True) or {}
     name = data.get("name")
     if not name:
@@ -253,8 +260,11 @@ def restore_backup():
 
     with write_lock:
         memory = new_data
+        data_cache = None  # clear cache so GET /api/data returns restored content
         with open(DATA_FILE, "w", encoding="utf-8") as out:
             json.dump(memory, out, ensure_ascii=False, indent=2)
+        with open(DATA_FILE, "r", encoding="utf-8") as out:
+            memory = json.load(out)
         entry = {
             "timestamp": datetime.utcnow().isoformat() + "Z",
             "ip": request.remote_addr,
