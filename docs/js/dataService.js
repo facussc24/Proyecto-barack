@@ -12,7 +12,7 @@ const API_BASE =
       : null;
 // URL of the backend API used to store and retrieve data
 const DEFAULT_API_URL =
-  API_BASE != null ? `${API_BASE.replace(/\/$/, '')}/api/data` : null;
+  API_BASE != null ? `${API_BASE.replace(/\/$/, '')}/api/data` : '/api/data';
 let API_URL = DEFAULT_API_URL;
 
 // Prefer value from localStorage

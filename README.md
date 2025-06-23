@@ -68,7 +68,7 @@ await dataService.importJSON(json); // Restaura la copia
 ## Sincronización de datos
 
 Este proyecto incluye un pequeño servidor Flask (`server.py`) para almacenar la base de datos en `data/latest.json`.
-A partir de esta versión el mismo script también sirve la interfaz web desde la carpeta `docs`, de modo que todas las páginas quedan disponibles en `http://<IP>:5000/` (por ejemplo, `http://192.168.1.154:5000/`).
+A partir de esta versión el mismo script también sirve la interfaz web desde la carpeta `docs`, de modo que todas las páginas quedan disponibles en `http://<IP>:5000/` (por ejemplo, `http://192.168.1.233:5000/`).
 El servidor debe ejecutarse en un único equipo o servidor accesible por la red para que todos los usuarios compartan la misma información.
 
 El archivo activo se guarda en `data/latest.json`.
@@ -127,8 +127,13 @@ docker compose build
 docker compose up -d
 ```
 
-Al finalizar la SPA quedará disponible en `http://192.168.1.154:8080` y la API en `http://192.168.1.154:5000/api/...`.
+Al finalizar la SPA quedará disponible en `http://192.168.1.233:8080` y la API en `http://192.168.1.233:5000/api/...`.
 Los datos se guardan en `./data/db.sqlite` y los respaldos en `./backups`.
+
+Si usas Windows y no puedes acceder desde otras máquinas, abre los puertos 5000 y 8080 en el firewall:
+
+1. Abre *Panel de control* → *Sistema y seguridad* → *Firewall de Windows Defender*.
+2. Selecciona *Configuración avanzada* y crea reglas de entrada para TCP en ambos puertos.
 
 GitHub Pages solo aloja archivos estáticos y no puede ejecutar este servidor.
 Cuando uses varias PC debes indicar la URL del servidor. Puedes hacerlo con:
@@ -136,7 +141,7 @@ Cuando uses varias PC debes indicar la URL del servidor. Puedes hacerlo con:
 1. Guardar la dirección en `localStorage` usando `localStorage.setItem('apiUrl', 'http://<IP>:5000/api/data')` desde la consola del navegador.
 2. O bien establecer la variable de entorno `API_URL` antes de iniciar la aplicación.
 
-Si no se define ningún valor se usará `http://192.168.1.154:5000/api/data` por defecto.
+Si no se define ningún valor se usará `http://192.168.1.233:5000/api/data` por defecto.
 Para mas detalles consulta `docs/backend.md`.
 
 ## API
@@ -154,10 +159,10 @@ La API expone rutas REST en `/api/<tabla>` para todas las entidades. Por ejemplo
 Puedes probar estas rutas con `curl`:
 
 ```bash
-curl http://192.168.1.154:5000/api/clientes
+curl http://192.168.1.233:5000/api/clientes
 curl -X POST -H "Content-Type: application/json" \
   -d '{"codigo":"CL1","nombre":"Demo","updated_at":"2024-01-01"}' \
-  http://192.168.1.154:5000/api/clientes
+  http://192.168.1.233:5000/api/clientes
 ```
 
 Para cargar datos de ejemplo ejecuta:

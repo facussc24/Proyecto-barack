@@ -37,7 +37,7 @@ app = Flask(__name__, static_folder="docs", static_url_path="")
 from flask_socketio import SocketIO
 
 # Permit requests from the development front-end and the local API consumer
-allowed = ["http://192.168.1.154:8080", "http://localhost:8080"]
+allowed = ["http://192.168.1.233:8080", "http://localhost:8080"]
 socketio = SocketIO(app, async_mode="eventlet", cors_allowed_origins=allowed)
 clients = {}
 CORS(app, resources={r"/api/*": {"origins": allowed}})
@@ -222,7 +222,10 @@ def list_backups():
 @app.post("/api/backups")
 def create_backup_route():
     path = manual_backup()
-    return jsonify({"path": path})
+    if not path:
+        return jsonify({"error": "no data"}), 404
+    name = os.path.basename(path)
+    return jsonify({"path": f"backups/{name}"})
 
 
 @app.post("/api/restore")
@@ -264,12 +267,4 @@ if __name__ == "__main__":
         scheduler.add_job(backup_latest, "interval", days=1)
         scheduler.start()
 
-    # Usa socketio.run para incluir WebSocket y hot-reload
-    run_args = {"host": "0.0.0.0", "port": 5000, "debug": True}
-    cert = os.getenv("SSL_CERT")
-    key = os.getenv("SSL_KEY")
-    if cert and key:
-        run_args["certfile"] = cert
-        run_args["keyfile"] = key
-
-    socketio.run(app, **run_args)
+    app.run(host="0.0.0.0", port=5000)
