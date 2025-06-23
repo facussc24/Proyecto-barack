@@ -228,6 +228,15 @@ def create_backup_route():
     return jsonify({"path": f"backups/{name}"})
 
 
+@app.delete("/api/backups/<name>")
+def delete_backup(name):
+    path = os.path.join(BACKUP_DIR, name)
+    if not os.path.exists(path):
+        return jsonify({"error": "not found"}), 404
+    os.remove(path)
+    return jsonify({"status": "deleted"})
+
+
 @app.post("/api/restore")
 def restore_backup():
     global memory, history

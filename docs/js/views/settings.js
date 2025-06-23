@@ -37,6 +37,7 @@ export async function render(container) {
       <button id="createBackup" type="button">Crear backup</button>
       <select id="backupList"></select>
       <button id="restoreBackup" type="button">Restaurar</button>
+      <button id="deleteBackup" type="button">Eliminar backup</button>
     </section>`;
 
   animateInsert(container);
@@ -65,6 +66,7 @@ export async function render(container) {
   const backupSel = container.querySelector('#backupList');
   const createBtn = container.querySelector('#createBackup');
   const restoreBtn = container.querySelector('#restoreBackup');
+  const deleteBtn = container.querySelector('#deleteBackup');
 
   const storedBrightness = localStorage.getItem('pageBrightness') || '100';
   range.value = storedBrightness;
@@ -149,6 +151,15 @@ export async function render(container) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name }),
       });
+    });
+  }
+
+  if (deleteBtn) {
+    deleteBtn.addEventListener('click', async () => {
+      const name = backupSel.value;
+      if (!name) return;
+      await fetch(`/api/backups/${encodeURIComponent(name)}`, { method: 'DELETE' });
+      loadBackups();
     });
   }
 
