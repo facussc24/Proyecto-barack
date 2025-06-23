@@ -245,3 +245,21 @@ La aplicación usará esa dirección al recargarse.
 
 En la configuración del repositorio activa **GitHub Pages**. Puedes publicar desde la rama `gh-pages` o desde la carpeta `/docs` de `main`.
 Una vez habilitado podrás acceder a `https://<usuario>.github.io/<repositorio>/` para ver el sitio desplegado.
+
+## Detalles de la base de datos
+
+El proyecto utiliza SQLite a través del módulo `sqlite3` en `backend/main.py`.
+La ruta del archivo se define con la variable de entorno `DB_PATH` (por defecto
+`data/db.sqlite`). Actualmente no se emplea un ORM ni un sistema de migraciones,
+por lo que cualquier cambio en el esquema debe aplicarse manualmente.
+
+El servidor `server.py` cuenta con una ruta `/api/backups` que vuelca el archivo
+`latest.json` a la carpeta `./backups` y programa un respaldo diario. La base de
+datos SQLite no posee un mecanismo similar; sería conveniente añadir un script
+que copie periódicamente `db.sqlite` a ese mismo directorio.
+
+### Próximos pasos sugeridos
+
+1. Integrar `Flask-Migrate`/`Alembic` para gestionar las migraciones del esquema.
+2. Evaluar migrar a PostgreSQL u otro motor en entornos productivos.
+3. Automatizar el respaldo del archivo SQLite en `./backups`.
