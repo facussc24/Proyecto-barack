@@ -1,4 +1,4 @@
-import { getAll, ready } from '../dataService.js';
+import { getAll, ready, subscribeToChanges } from '../dataService.js';
 import { getUser } from '../session.js';
 import { activateDevMode, deactivateDevMode } from '../pageSettings.js';
 import { animateInsert } from '../ui/animations.js';
@@ -41,11 +41,17 @@ export async function render(container) {
 
   animateInsert(container);
 
-  await ready;
-  const data = await getAll('sinoptico');
   const p = document.createElement('p');
-  p.textContent = `Registros en sinóptico: ${data.length}`;
   container.appendChild(p);
+
+  async function load() {
+    await ready;
+    const data = await getAll('sinoptico');
+    p.textContent = `Registros en sinóptico: ${data.length}`;
+  }
+
+  await load();
+  subscribeToChanges(load);
 
   const range = container.querySelector('#brightnessRange');
   const valueLabel = container.querySelector('#brightnessValue');
@@ -143,7 +149,6 @@ export async function render(container) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name }),
       });
-      window.location.reload();
     });
   }
 

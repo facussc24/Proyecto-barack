@@ -1,4 +1,4 @@
-import { getAll, ready } from '../dataService.js';
+import { getAll, ready, subscribeToChanges } from '../dataService.js';
 
 export async function render(container) {
   container.innerHTML = `
@@ -11,11 +11,16 @@ export async function render(container) {
     <div id="amfe"></div>
   `;
 
-  await ready;
-  const data = await getAll('amfe');
-  if (typeof window.renderAMFE === 'function') {
-    window.renderAMFE(data);
+  async function load() {
+    await ready;
+    const data = await getAll('amfe');
+    if (typeof window.renderAMFE === 'function') {
+      window.renderAMFE(data);
+    }
   }
+
+  await load();
+  subscribeToChanges(load);
 
   const exportBtn = container.querySelector('#amfe-export');
   const menu = container.querySelector('.export-menu');
