@@ -11,11 +11,12 @@ from io import BytesIO
 import xlsxwriter
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
+from zipfile import ZipFile, ZIP_DEFLATED
 
 DATA_DIR = os.getenv("DATA_DIR", "data")
 DATA_FILE = os.path.join(DATA_DIR, "latest.json")
 HISTORY_FILE = os.path.join(DATA_DIR, "history.json")
-BACKUP_DIR = os.path.join(DATA_DIR, "backups")
+BACKUP_DIR = os.getenv("BACKUP_DIR", "/app/backups")
 write_lock = Lock()
 
 os.makedirs(DATA_DIR, exist_ok=True)
@@ -35,9 +36,10 @@ else:
 app = Flask(__name__, static_folder="docs", static_url_path="")
 from flask_socketio import SocketIO
 
-socketio = SocketIO(app, async_mode="eventlet")
+allowed = ["http://192.168.1.154:8080", "http://192.168.1.154:5000"]
+socketio = SocketIO(app, async_mode="eventlet", cors_allowed_origins=allowed)
 clients = {}
-CORS(app)
+CORS(app, resources={r"/api/*": {"origins": allowed}})
 
 
 @app.get("/health")
@@ -48,24 +50,26 @@ def health():
 def backup_latest():
     if os.path.exists(DATA_FILE):
         today = datetime.utcnow().strftime("%Y-%m-%d")
-        dest = os.path.join(BACKUP_DIR, f"{today}.json")
-        shutil.copy2(DATA_FILE, dest)
+        dest = os.path.join(BACKUP_DIR, f"{today}.zip")
+        with ZipFile(dest, "w", compression=ZIP_DEFLATED) as zf:
+            zf.write(DATA_FILE, arcname="latest.json")
 
 
 def manual_backup():
     if os.path.exists(DATA_FILE):
         ts = datetime.utcnow().strftime("%Y-%m-%d_%H-%M-%S")
-        dest = os.path.join(BACKUP_DIR, f"{ts}.json")
-        shutil.copy2(DATA_FILE, dest)
-        return os.path.basename(dest)
+        dest = os.path.join(BACKUP_DIR, f"{ts}.zip")
+        with ZipFile(dest, "w", compression=ZIP_DEFLATED) as zf:
+            zf.write(DATA_FILE, arcname="latest.json")
+        return dest
     return None
 
 
 def cleanup_backups():
     cutoff = datetime.utcnow() - timedelta(days=180)
-    for path in glob.glob(os.path.join(BACKUP_DIR, "*.json")):
+    for path in glob.glob(os.path.join(BACKUP_DIR, "*.zip")):
         try:
-            date = datetime.strptime(os.path.basename(path)[:-5], "%Y-%m-%d")
+            date = datetime.strptime(os.path.basename(path)[:-4], "%Y-%m-%d")
         except ValueError:
             continue
         if date < cutoff:
@@ -139,7 +143,7 @@ def server_info():
         "connected_clients": len(clients),
         "history_entries": len(history),
         "data_keys": list(memory.keys()),
-        "backup_count": len(glob.glob(os.path.join(BACKUP_DIR, "*.json"))),
+        "backup_count": len(glob.glob(os.path.join(BACKUP_DIR, "*.zip"))),
     }
     return jsonify(info)
 
@@ -209,15 +213,15 @@ def handle_disconnect():
 @app.get("/api/backups")
 def list_backups():
     files = sorted(
-        os.path.basename(f) for f in glob.glob(os.path.join(BACKUP_DIR, "*.json"))
+        os.path.basename(f) for f in glob.glob(os.path.join(BACKUP_DIR, "*.zip"))
     )
     return jsonify(files)
 
 
 @app.post("/api/backups")
 def create_backup_route():
-    name = manual_backup()
-    return jsonify({"created": name})
+    path = manual_backup()
+    return jsonify({"path": path})
 
 
 @app.post("/api/restore")
@@ -230,8 +234,9 @@ def restore_backup():
     path = os.path.join(BACKUP_DIR, name)
     if not os.path.exists(path):
         return jsonify({"error": "not found"}), 404
-    with open(path, "r", encoding="utf-8") as f:
-        new_data = json.load(f)
+    with ZipFile(path) as zf:
+        with zf.open("latest.json") as f:
+            new_data = json.load(f)
 
     with write_lock:
         memory = new_data

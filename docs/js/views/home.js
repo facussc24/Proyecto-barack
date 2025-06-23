@@ -38,14 +38,14 @@ async function loadKpis(el) {
   try {
     let products = [];
     let history = [];
-    if (window.API_BASE) {
+    try {
       const [prodRes, histRes] = await Promise.all([
-        fetch(`${window.API_BASE}/api/products`),
-        fetch(`${window.API_BASE}/api/history`),
+        fetch('/api/products'),
+        fetch('/api/history'),
       ]);
       if (prodRes.ok) products = await prodRes.json();
       if (histRes.ok) history = await histRes.json();
-    } else {
+    } catch {
       products = window.mockProducts || [];
       history = window.mockHistory || [];
     }
