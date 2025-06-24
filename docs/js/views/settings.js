@@ -183,6 +183,23 @@ export async function render(container) {
 
   loadBackups();
 
+  function setupBackupUpdates() {
+    const sock =
+      (window.dataService &&
+        window.dataService.getSocket &&
+        window.dataService.getSocket()) ||
+      (typeof io !== 'undefined' ? io() : null);
+    if (sock && sock.on) {
+      sock.on('backups_updated', loadBackups);
+      return true;
+    }
+    return false;
+  }
+
+  if (!setupBackupUpdates()) {
+    setInterval(loadBackups, 15000);
+  }
+
   async function refreshInfo() {
     try {
       const resp = await fetch('/api/server-info');

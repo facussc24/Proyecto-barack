@@ -11,7 +11,7 @@ def test_manual_backup_metadata(tmp_path, monkeypatch):
     monkeypatch.setenv("DB_PATH", str(tmp_path / "data/db.sqlite"))
 
     data_dir = Path(os.environ["DATA_DIR"])
-    data_dir.mkdir(parents=True)
+    data_dir.mkdir(parents=True, exist_ok=True)
     with open(data_dir / "latest.json", "w") as f:
         json.dump({"a": 1}, f)
     with open(Path(os.environ["DB_PATH"]), "w") as f:
@@ -67,7 +67,7 @@ def test_backup_and_restore_assets(tmp_path, monkeypatch):
     (other_dir / "bar.png").write_text("img")
 
     data_dir = Path(os.environ["DATA_DIR"])
-    data_dir.mkdir(parents=True)
+    data_dir.mkdir(parents=True, exist_ok=True)
     with open(data_dir / "latest.json", "w") as f:
         json.dump({"a": 1}, f)
     with open(Path(os.environ["DB_PATH"]), "w") as f:
@@ -94,3 +94,28 @@ def test_backup_and_restore_assets(tmp_path, monkeypatch):
     assert resp.status_code == 200
     assert (img_dir / "foo.jpg").exists()
     assert (other_dir / "bar.png").exists()
+
+
+def test_backup_events(tmp_path, monkeypatch):
+    server = _load_server(monkeypatch, tmp_path)
+    data_dir = Path(os.environ["DATA_DIR"])
+    data_dir.mkdir(parents=True, exist_ok=True)
+    (data_dir / "latest.json").write_text("{}")
+
+    events = []
+
+    def fake_emit(event, *args, **kwargs):
+        events.append(event)
+
+    server.socketio.emit = fake_emit
+
+    client = server.app.test_client()
+    resp = client.post("/api/backups", json={"description": "x"})
+    assert resp.status_code == 200
+    assert "backups_updated" in events
+
+    name = resp.get_json()["path"].split("/")[-1]
+    events.clear()
+    resp = client.delete(f"/api/backups/{name}")
+    assert resp.status_code == 200
+    assert "backups_updated" in events

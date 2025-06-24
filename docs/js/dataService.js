@@ -185,6 +185,10 @@ async function syncNow() {
 
 let socket;
 let sse;
+
+export function getSocket() {
+  return socket;
+}
 if (hasWindow && SOCKET_URL && typeof io !== 'undefined') {
   socket = io(SOCKET_URL);
   socket.on('data_updated', async () => {
@@ -675,6 +679,7 @@ const api = {
   subscribeToChanges,
   subscribeSinopticoChanges,
   syncNow,
+  getSocket,
 };
 
 if (hasWindow) {
@@ -683,4 +688,4 @@ if (hasWindow) {
 
 export default api;
 
-export { getAll, add, update, remove, exportJSON, importJSON, ready, initialized, syncNow };
+export { getAll, add, update, remove, exportJSON, importJSON, ready, initialized, syncNow, getSocket };

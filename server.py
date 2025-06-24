@@ -96,6 +96,8 @@ def manual_backup(description=None):
     with open(METADATA_FILE, "w", encoding="utf-8") as f:
         json.dump(meta, f, ensure_ascii=False, indent=2)
 
+    socketio.emit("backups_updated")
+
     return dest
 
 
@@ -316,6 +318,7 @@ def delete_backup(name):
         if meta.pop(safe, None) is not None:
             with open(METADATA_FILE, "w", encoding="utf-8") as f:
                 json.dump(meta, f, ensure_ascii=False, indent=2)
+    socketio.emit("backups_updated")
     return jsonify({"status": "deleted"})
 
 
@@ -363,6 +366,7 @@ def restore_backup():
             json.dump(history, f, ensure_ascii=False, indent=2)
 
     socketio.emit("data_updated")
+    socketio.emit("backups_updated")
     return jsonify({"status": "ok"})
 
 
