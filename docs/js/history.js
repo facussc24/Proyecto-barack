@@ -9,6 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const applyBtn = document.getElementById('applyFilters');
   const backupSel = document.getElementById('backupList');
   const createBtn = document.getElementById('createBackup');
+  const descInput = document.getElementById('backupDesc');
+  const descLabel = document.getElementById('selectedDesc');
   const restoreBtn = document.getElementById('restoreBackup');
   const deleteBtn = document.getElementById('deleteBackup');
 
@@ -51,16 +53,29 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!resp.ok) return;
       const list = await resp.json();
       backupSel.innerHTML = list
-        .map(name => `<option value="${name}">${name}</option>`) 
+        .map(b => `<option value="${b.name}" data-desc="${b.description || ''}">${b.name}</option>`)
         .join('');
+      const opt = backupSel.selectedOptions[0];
+      if (descLabel) descLabel.textContent = opt ? opt.dataset.desc : '';
     } catch (e) {
       console.error(e);
     }
   }
 
   createBtn?.addEventListener('click', async () => {
-    await fetch('/api/backups', { method: 'POST' });
+    const description = descInput?.value || '';
+    await fetch('/api/backups', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ description })
+    });
+    if (descInput) descInput.value = '';
     loadBackups();
+  });
+
+  backupSel?.addEventListener('change', () => {
+    const opt = backupSel.selectedOptions[0];
+    if (descLabel) descLabel.textContent = opt ? opt.dataset.desc : '';
   });
 
   restoreBtn?.addEventListener('click', async () => {

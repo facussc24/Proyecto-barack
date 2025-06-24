@@ -17,6 +17,8 @@ DATA_DIR = os.getenv("DATA_DIR", "data")
 DATA_FILE = os.path.join(DATA_DIR, "latest.json")
 HISTORY_FILE = os.path.join(DATA_DIR, "history.json")
 BACKUP_DIR = os.getenv("BACKUP_DIR", "/app/backups")
+DB_PATH = os.getenv("DB_PATH", os.path.join("data", "db.sqlite"))
+METADATA_FILE = os.path.join(BACKUP_DIR, "metadata.json")
 write_lock = Lock()
 data_cache = None
 
@@ -36,6 +38,7 @@ else:
     history = []
 
 app = Flask(__name__, static_folder="docs", static_url_path="")
+IMAGES_DIR = os.path.join(app.static_folder, "imagenes_sinoptico")
 from flask_socketio import SocketIO
 
 # Permit requests from the development front-end and the local API consumer
@@ -58,14 +61,34 @@ def backup_latest():
             zf.write(DATA_FILE, arcname="latest.json")
 
 
-def manual_backup():
-    if os.path.exists(DATA_FILE):
-        ts = datetime.utcnow().strftime("%Y-%m-%d_%H-%M-%S")
-        dest = os.path.join(BACKUP_DIR, f"{ts}.zip")
-        with ZipFile(dest, "w", compression=ZIP_DEFLATED) as zf:
-            zf.write(DATA_FILE, arcname="latest.json")
-        return dest
-    return None
+def manual_backup(description=None):
+    if not os.path.exists(DATA_FILE):
+        return None
+
+    ts = datetime.utcnow().strftime("%Y-%m-%d_%H-%M-%S")
+    dest = os.path.join(BACKUP_DIR, f"{ts}.zip")
+    with ZipFile(dest, "w", compression=ZIP_DEFLATED) as zf:
+        zf.write(DATA_FILE, arcname="latest.json")
+        if os.path.exists(HISTORY_FILE):
+            zf.write(HISTORY_FILE, arcname="history.json")
+        if os.path.exists(DB_PATH):
+            zf.write(DB_PATH, arcname="db.sqlite")
+        if os.path.isdir(IMAGES_DIR):
+            for root_dir, _, files in os.walk(IMAGES_DIR):
+                for f in files:
+                    fp = os.path.join(root_dir, f)
+                    arc = os.path.relpath(fp, start=app.static_folder)
+                    zf.write(fp, arcname=arc)
+
+    meta = {}
+    if os.path.exists(METADATA_FILE):
+        with open(METADATA_FILE, "r", encoding="utf-8") as f:
+            meta = json.load(f)
+    meta[os.path.basename(dest)] = description or ""
+    with open(METADATA_FILE, "w", encoding="utf-8") as f:
+        json.dump(meta, f, ensure_ascii=False, indent=2)
+
+    return dest
 
 
 def cleanup_backups():
@@ -223,16 +246,23 @@ def list_backups():
     files = sorted(
         os.path.basename(f) for f in glob.glob(os.path.join(BACKUP_DIR, "*.zip"))
     )
-    return jsonify(files)
+    meta = {}
+    if os.path.exists(METADATA_FILE):
+        with open(METADATA_FILE, "r", encoding="utf-8") as f:
+            meta = json.load(f)
+    result = [{"name": f, "description": meta.get(f, "")} for f in files]
+    return jsonify(result)
 
 
 @app.post("/api/backups")
 def create_backup_route():
-    path = manual_backup()
+    data = request.get_json(force=True, silent=True) or {}
+    desc = data.get("description")
+    path = manual_backup(desc)
     if not path:
         return jsonify({"error": "no data"}), 404
     name = os.path.basename(path)
-    return jsonify({"path": f"backups/{name}"})
+    return jsonify({"path": f"backups/{name}", "description": desc or ""})
 
 
 @app.delete("/api/backups/<name>")
@@ -241,6 +271,12 @@ def delete_backup(name):
     if not os.path.exists(path):
         return jsonify({"error": "not found"}), 404
     os.remove(path)
+    if os.path.exists(METADATA_FILE):
+        with open(METADATA_FILE, "r", encoding="utf-8") as f:
+            meta = json.load(f)
+        if meta.pop(name, None) is not None:
+            with open(METADATA_FILE, "w", encoding="utf-8") as f:
+                json.dump(meta, f, ensure_ascii=False, indent=2)
     return jsonify({"status": "deleted"})
 
 
@@ -257,6 +293,15 @@ def restore_backup():
     with ZipFile(path) as zf:
         with zf.open("latest.json") as f:
             new_data = json.load(f)
+        if "history.json" in zf.namelist():
+            zf.extract("history.json", DATA_DIR)
+            with open(HISTORY_FILE, "r", encoding="utf-8") as h:
+                history[:] = json.load(h)
+        if "db.sqlite" in zf.namelist():
+            zf.extract("db.sqlite", os.path.dirname(DB_PATH))
+        for item in zf.namelist():
+            if item.startswith("imagenes_sinoptico/"):
+                zf.extract(item, app.static_folder)
 
     with write_lock:
         memory = new_data
