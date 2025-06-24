@@ -1,6 +1,7 @@
-import { getAll, ready, subscribeToChanges } from '../dataService.js';
+import { getAll, ready, subscribeToChanges, syncNow } from '../dataService.js';
 
 export async function render(container) {
+  await syncNow();
   container.innerHTML = `
     <div class="top-actions">
       <button id="printBtn">🖨 Print</button>

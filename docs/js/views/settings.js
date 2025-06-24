@@ -1,9 +1,10 @@
-import { getAll, ready, subscribeToChanges } from '../dataService.js';
+import { getAll, ready, subscribeToChanges, syncNow } from '../dataService.js';
 import { getUser } from '../session.js';
 import { activateDevMode, deactivateDevMode } from '../pageSettings.js';
 import { animateInsert } from '../ui/animations.js';
 
 export async function render(container) {
+  await syncNow();
   container.innerHTML = `
     <h1>Modo Dev</h1>
     <section class="dev-options">

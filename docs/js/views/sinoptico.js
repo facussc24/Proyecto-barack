@@ -1,8 +1,9 @@
-import { getAll, subscribeToChanges } from '../dataService.js';
+import { getAll, subscribeToChanges, syncNow } from '../dataService.js';
 import { createSinopticoEditor } from '../editors/sinopticoEditor.js';
 import { isAdmin, isGuest } from '../session.js';
 
 export async function render(container) {
+  await syncNow();
   const editBtnHtml = isAdmin() ? '<button id="sin-edit">Editar</button>' : '';
   container.innerHTML = `
     <div class="toolbar">
