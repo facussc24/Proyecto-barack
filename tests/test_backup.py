@@ -20,8 +20,10 @@ def test_manual_backup_metadata(tmp_path, monkeypatch):
     server = importlib.import_module("server")
     importlib.reload(server)
 
-    path = server.manual_backup("desc")
+    path = server.manual_backup(name="Mi Backup", description="desc")
     assert path is not None
+    fname = os.path.basename(path)
+    assert fname.startswith("MiBackup_") and fname.endswith(".zip")
     meta_file = Path(os.environ["BACKUP_DIR"]) / "metadata.json"
     assert meta_file.exists()
     meta = json.load(meta_file.open())
