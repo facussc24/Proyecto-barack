@@ -27,7 +27,7 @@ export async function render(container) {
       <select id="savedFilters"><option value="">Saved filters</option></select>
       <button id="moreFilters">More filters</button>
     </div>
-    <div id="loading"><div class="spinner"></div></div>
+    <div id="loading" style="display:none"><div class="spinner"></div></div>
     <section class="tabla-contenedor">
       <table id="maestroTable" class="master-table">
         <thead>
