@@ -39,6 +39,8 @@ The frontend reads the server URL from `localStorage` (`apiUrl`) or from the `AP
   full application state.
 - `SSL_CERT` / `SSL_KEY` – optional certificate paths for HTTPS when running `server.py`.
 - `DB_PATH` – path to the SQLite file used by `backend/main.py` (`data/db.sqlite` by default).
+- `ALLOWED_ORIGINS` – comma-separated list of origins allowed for CORS when
+  running `server.py` or `backend/main.py`.
 
 ## Offline fallback
 
@@ -51,13 +53,13 @@ If the API server is unreachable, the frontend keeps working thanks to IndexedDB
 1. `pip install -r requirements.txt`
 2. Run `python server.py` to serve the frontend and JSON API on port 5000.
    Set `API_URL` in the browser (or as an environment variable) if the server is on another machine.
-3. Alternatively run `python backend/main.py` for the SQLite API on port 8000.
+3. Alternatively run `python backend/main.py` for the SQLite API on port 5000.
 
 ### Docker Compose
 
 1. Ensure Docker and Docker Compose are installed.
 2. Build the image the first time with `docker-compose build`.
 3. Run `docker-compose up` from the project root.
-4. Nginx will serve the `docs/` folder on port 8080 and the API from `backend/main.py` on port 8000.
-5. Point the frontend to `http://<host>:8000/api` as needed.
+4. Nginx will serve the `docs/` folder on port 8080 and the API from `backend/main.py` on port 5000.
+5. Point the frontend to `http://<host>:5000/api` as needed.
 

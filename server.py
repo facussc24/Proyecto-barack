@@ -42,8 +42,13 @@ IMAGES_DIR = os.path.join(app.static_folder, "imagenes_sinoptico")
 ASSET_DIRS = ["imagenes_sinoptico", "images"]
 from flask_socketio import SocketIO
 
-# Permit requests from the development front-end and the local API consumer
-allowed = ["http://192.168.1.233:8080", "http://localhost:8080"]
+# Allowed origins can be configured via ALLOWED_ORIGINS. Multiple values should
+# be comma-separated.
+origins = os.getenv(
+    "ALLOWED_ORIGINS",
+    "http://192.168.1.233:8080,http://localhost:8080",
+)
+allowed = [o.strip() for o in origins.split(",") if o.strip()]
 socketio = SocketIO(app, async_mode="eventlet", cors_allowed_origins=allowed)
 clients = {}
 CORS(app, resources={r"/api/*": {"origins": allowed}})

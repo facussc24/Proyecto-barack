@@ -15,8 +15,13 @@ DB_PATH = os.getenv("DB_PATH", os.path.join("data", "db.sqlite"))
 os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
 
 app = Flask(__name__)
-CORS(app)
-socketio = SocketIO(app, async_mode="eventlet", cors_allowed_origins="*")
+origins = os.getenv(
+    "ALLOWED_ORIGINS",
+    "http://192.168.1.233:8080,http://localhost:8080",
+)
+allowed = [o.strip() for o in origins.split(",") if o.strip()]
+CORS(app, resources={r"/api/*": {"origins": allowed}})
+socketio = SocketIO(app, async_mode="eventlet", cors_allowed_origins=allowed)
 sse_clients = []
 
 
