@@ -9,7 +9,8 @@ const routes = {
   '#/sinoptico': renderSinoptico,
   '#/amfe': renderAmfe,
   '#/maestro': renderMaestro,
-  '#/settings': renderSettings,
+  '#/admin': renderSettings,
+  '#/settings': renderSettings, // legacy
 };
 
 const bodyClasses = {
@@ -17,7 +18,8 @@ const bodyClasses = {
   '#/sinoptico': 'sinoptico-page',
   '#/amfe': 'amfe-page',
   '#/maestro': 'maestro-page',
-  '#/settings': 'settings-page',
+  '#/admin': 'admin-page',
+  '#/settings': 'admin-page', // legacy
 };
 
 export function router() {
@@ -31,7 +33,7 @@ export function router() {
     'sinoptico-page',
     'amfe-page',
     'maestro-page',
-    'settings-page'
+    'admin-page'
   );
   const cls = bodyClasses[hash];
   if (cls) document.body.classList.add(cls);

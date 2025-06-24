@@ -7,8 +7,25 @@ import { askBackupName } from '../ui/backupNameModal.js';
 export async function render(container) {
   await syncNow();
   container.innerHTML = `
-    <h1>Modo Dev</h1>
-    <section class="dev-options">
+    <h1>Admin</h1>
+    <section class="backup-controls">
+      <h2>Backup controls</h2>
+      <input id="backupDesc" type="text" placeholder="Descripción">
+      <button id="createBackup" type="button">Crear backup</button>
+      <select id="backupList"></select>
+      <span id="selectedDesc"></span>
+      <button id="restoreBackup" type="button">Restaurar</button>
+      <button id="deleteBackup" type="button">Eliminar backup</button>
+    </section>
+    <section class="live-data">
+      <h2>Datos en vivo (clientes, insumos, productos, sinóptico)</h2>
+      <p>Usuario actual: <span id="devUser"></span></p>
+      <p>Hora del servidor: <span id="devTime">-</span></p>
+      <p>Usuarios conectados: <span id="devClients">-</span></p>
+      <p>Registros en sinóptico: <span id="sinoCount">-</span></p>
+    </section>
+    <section class="history-section">
+      <h2>Historial de cambios y backups</h2>
       <label>
         <input type="checkbox" id="toggleDevMode">
         Activar Modo Dev
@@ -26,33 +43,17 @@ export async function render(container) {
         <input type="checkbox" id="toggleGridOverlay">
         Mostrar cuadrícula
       </label>
-    </section>
-    <section class="dev-info">
-      <h2>Información del servidor</h2>
-      <p>Usuario actual: <span id="devUser"></span></p>
-      <p>Hora del servidor: <span id="devTime">-</span></p>
-      <p>Usuarios conectados: <span id="devClients">-</span></p>
       <p>Entradas historial: <span id="devHistory">-</span></p>
-    </section>
-    <section class="backup-tools">
-      <h2>Copias de seguridad</h2>
-      <input id="backupDesc" type="text" placeholder="Descripción">
-      <button id="createBackup" type="button">Crear backup</button>
-      <select id="backupList"></select>
-      <span id="selectedDesc"></span>
-      <button id="restoreBackup" type="button">Restaurar</button>
-      <button id="deleteBackup" type="button">Eliminar backup</button>
     </section>`;
 
   animateInsert(container);
 
-  const p = document.createElement('p');
-  container.appendChild(p);
+  const sinCount = container.querySelector('#sinoCount');
 
   async function load() {
     await ready;
     const data = await getAll('sinoptico');
-    p.textContent = `Registros en sinóptico: ${data.length}`;
+    if (sinCount) sinCount.textContent = data.length;
   }
 
   await load();
