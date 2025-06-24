@@ -1,4 +1,5 @@
 // Página de inicio con enlaces directos a las herramientas
+import { subscribeToChanges } from '../dataService.js';
 
 export function render(container) {
   container.innerHTML = `
@@ -29,7 +30,10 @@ export function render(container) {
 
 
   const kpiGrid = container.querySelector('#kpiGrid');
-  if (kpiGrid) loadKpis(kpiGrid);
+  if (kpiGrid) {
+    loadKpis(kpiGrid);
+    subscribeToChanges(() => loadKpis(kpiGrid));
+  }
   const moduleGrid = container.querySelector('#moduleGrid');
   if (moduleGrid) loadModules(moduleGrid);
 }
