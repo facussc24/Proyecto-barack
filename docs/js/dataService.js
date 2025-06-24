@@ -213,6 +213,9 @@ if (hasWindow && SOCKET_URL && typeof io !== 'undefined') {
   socket.on('product_updated', row => {
     applyProductUpdate(row);
   });
+  socket.on('backups_updated', () => {
+    document.dispatchEvent(new Event('backups_updated'));
+  });
 }
 
 if (hasWindow && SOCKET_URL && typeof EventSource !== 'undefined') {
@@ -666,6 +669,12 @@ export function subscribeSinopticoChanges(handler) {
   }
 }
 
+export function subscribeBackupUpdates(handler) {
+  if (hasWindow) {
+    document.addEventListener('backups_updated', handler);
+  }
+}
+
 const api = {
   getAll,
   getAllSinoptico,
@@ -710,6 +719,7 @@ const api = {
   },
   subscribeToChanges,
   subscribeSinopticoChanges,
+  subscribeBackupUpdates,
   syncNow,
   lockRecord,
   unlockRecord,
@@ -733,4 +743,5 @@ export {
   syncNow,
   lockRecord,
   unlockRecord,
+  subscribeBackupUpdates,
 };

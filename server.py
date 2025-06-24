@@ -305,6 +305,7 @@ def create_backup_route():
     if not path:
         return jsonify({"error": "no data to backup"}), 400
     final = os.path.basename(path)
+    socketio.emit("backups_updated")
     return jsonify({"name": final, "description": desc or ""})
 
 
@@ -323,6 +324,7 @@ def delete_backup(name):
         if meta.pop(safe, None) is not None:
             with open(METADATA_FILE, "w", encoding="utf-8") as f:
                 json.dump(meta, f, ensure_ascii=False, indent=2)
+    socketio.emit("backups_updated")
     return jsonify({"status": "deleted"})
 
 
@@ -370,6 +372,7 @@ def restore_backup():
             json.dump(history, f, ensure_ascii=False, indent=2)
 
     socketio.emit("data_updated")
+    socketio.emit("backups_updated")
     return jsonify({"status": "ok"})
 
 
