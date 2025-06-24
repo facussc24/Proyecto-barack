@@ -67,12 +67,18 @@ def backup_latest():
             zf.write(DATA_FILE, arcname="latest.json")
 
 
-def manual_backup(description=None):
+def manual_backup(name=None, description=None):
     if not os.path.exists(DATA_FILE):
         return None
 
+    base = name or "backup"
+    base = "".join(c for c in base if c.isalnum() or c in "-_").strip("-_") or "backup"
     ts = datetime.utcnow().strftime("%Y-%m-%d_%H-%M-%S")
-    dest = os.path.join(BACKUP_DIR, f"{ts}.zip")
+    filename = f"{base}_{ts}.zip"
+    safe = _validate_backup_name(filename)
+    if not safe:
+        safe = _validate_backup_name(f"backup_{ts}.zip")
+    dest = os.path.join(BACKUP_DIR, safe)
     with ZipFile(dest, "w", compression=ZIP_DEFLATED) as zf:
         zf.write(DATA_FILE, arcname="latest.json")
         if os.path.exists(HISTORY_FILE):
@@ -294,11 +300,12 @@ def list_backups():
 def create_backup_route():
     data = request.get_json(force=True, silent=True) or {}
     desc = data.get("description")
-    path = manual_backup(desc)
+    name = data.get("name")
+    path = manual_backup(name=name, description=desc)
     if not path:
         return jsonify({"error": "no data to backup"}), 400
-    name = os.path.basename(path)
-    return jsonify({"path": f"backups/{name}", "description": desc or ""})
+    final = os.path.basename(path)
+    return jsonify({"name": final, "description": desc or ""})
 
 
 @app.delete("/api/backups/<name>")

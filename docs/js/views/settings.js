@@ -2,6 +2,7 @@ import { getAll, ready, subscribeToChanges, syncNow } from '../dataService.js';
 import { getUser } from '../session.js';
 import { activateDevMode, deactivateDevMode } from '../pageSettings.js';
 import { animateInsert } from '../ui/animations.js';
+import { askBackupName } from '../ui/backupNameModal.js';
 
 export async function render(container) {
   await syncNow();
@@ -144,14 +145,24 @@ export async function render(container) {
 
   if (createBtn) {
     createBtn.addEventListener('click', async () => {
+      const name = await askBackupName();
+      if (!name) return;
       const description = descInput?.value || '';
-      await fetch('/api/backups', {
+      if (window.mostrarMensaje) window.mostrarMensaje('Cargando…', 'warning');
+      const resp = await fetch('/api/backups', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ description })
+        body: JSON.stringify({ name, description })
       });
       if (descInput) descInput.value = '';
-      loadBackups();
+      await loadBackups();
+      if (resp.ok) {
+        const data = await resp.json();
+        const fecha = new Date().toLocaleString();
+        if (window.mostrarMensaje) {
+          window.mostrarMensaje(`Backup creado: ${data.name} ${fecha}`, 'success');
+        }
+      }
     });
   }
 
