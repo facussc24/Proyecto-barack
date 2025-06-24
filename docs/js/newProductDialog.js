@@ -63,7 +63,6 @@ export function initNewProductDialog() {
     }
     if (form) form.reset();
     dialog.close();
-    document.dispatchEvent(new Event('sinopticoUpdated'));
   });
 }
 

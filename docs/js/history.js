@@ -1,4 +1,5 @@
 'use strict';
+import { subscribeToChanges } from './dataService.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const tbody = document.querySelector('#historyTable tbody');
@@ -99,4 +100,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
   loadBackups();
   loadHistory();
+  subscribeToChanges(loadHistory);
 });

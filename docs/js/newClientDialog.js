@@ -38,7 +38,6 @@ export function initNewClientDialog() {
     }
     input.value = '';
     dialog.close();
-    document.dispatchEvent(new Event('sinopticoUpdated'));
   });
 }
 
