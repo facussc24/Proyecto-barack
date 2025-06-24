@@ -630,6 +630,14 @@ export function subscribeSinopticoChanges(handler) {
   }
 }
 
+export function subscribeBackupUpdates(handler, interval = 10000) {
+  if (socket) {
+    socket.on('backups_updated', handler);
+  } else if (hasWindow) {
+    setInterval(handler, interval);
+  }
+}
+
 const api = {
   getAll,
   getAllSinoptico,
@@ -674,6 +682,7 @@ const api = {
   },
   subscribeToChanges,
   subscribeSinopticoChanges,
+  subscribeBackupUpdates,
   syncNow,
 };
 
@@ -683,4 +692,4 @@ if (hasWindow) {
 
 export default api;
 
-export { getAll, add, update, remove, exportJSON, importJSON, ready, initialized, syncNow };
+export { getAll, add, update, remove, exportJSON, importJSON, ready, initialized, syncNow, subscribeBackupUpdates };

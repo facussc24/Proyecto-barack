@@ -94,3 +94,34 @@ def test_backup_and_restore_assets(tmp_path, monkeypatch):
     assert resp.status_code == 200
     assert (img_dir / "foo.jpg").exists()
     assert (other_dir / "bar.png").exists()
+
+
+def test_backups_updated_event(tmp_path, monkeypatch):
+    monkeypatch.setenv("BACKUP_DIR", str(tmp_path / "backups"))
+    monkeypatch.setenv("DATA_DIR", str(tmp_path / "data"))
+    monkeypatch.setenv("DB_PATH", str(tmp_path / "data/db.sqlite"))
+
+    data_dir = Path(os.environ["DATA_DIR"])
+    data_dir.mkdir(parents=True)
+    with open(data_dir / "latest.json", "w") as f:
+        json.dump({"a": 1}, f)
+    with open(Path(os.environ["DB_PATH"]), "w") as f:
+        f.write("db")
+
+    server = importlib.import_module("server")
+    importlib.reload(server)
+
+    socket_client = server.socketio.test_client(server.app)
+    socket_client.get_received()
+
+    path = server.manual_backup()
+    assert path is not None
+    events = socket_client.get_received()
+    assert any(e.get("name") == "backups_updated" for e in events)
+
+    socket_client.get_received()
+    client = server.app.test_client()
+    resp = client.delete(f"/api/backups/{os.path.basename(path)}")
+    assert resp.status_code == 200
+    events = socket_client.get_received()
+    assert any(e.get("name") == "backups_updated" for e in events)
