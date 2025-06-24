@@ -178,6 +178,11 @@ const ready = new Promise((res) => {
 
 const initialized = ready.then(() => initFromServer());
 
+async function syncNow() {
+  await ready;
+  return initFromServer(true);
+}
+
 let socket;
 let sse;
 if (hasWindow && SOCKET_URL && typeof io !== 'undefined') {
@@ -336,11 +341,11 @@ function notifyChange() {
   }
 }
 
-async function initFromServer() {
+async function initFromServer(force = false) {
   if (!API_URL) return false;
   const freshness = Date.now() - lastFetch;
   // avoid redundant requests shortly after a previous fetch
-  if (freshness < 5 * 60 * 1000) return false;
+  if (!force && freshness < 5 * 60 * 1000) return false;
   try {
     const resp = await fetch(API_URL);
     if (resp.ok) {
@@ -669,6 +674,7 @@ const api = {
   },
   subscribeToChanges,
   subscribeSinopticoChanges,
+  syncNow,
 };
 
 if (hasWindow) {
@@ -677,4 +683,4 @@ if (hasWindow) {
 
 export default api;
 
-export { getAll, add, update, remove, exportJSON, importJSON, ready, initialized };
+export { getAll, add, update, remove, exportJSON, importJSON, ready, initialized, syncNow };

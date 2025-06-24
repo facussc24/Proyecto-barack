@@ -1,6 +1,7 @@
-import { getAll, ready, subscribeToChanges } from '../dataService.js';
+import { getAll, ready, subscribeToChanges, syncNow } from '../dataService.js';
 
 export async function render(container) {
+  await syncNow();
   container.innerHTML = `
     <h1>AMFE</h1>
     <button id="amfe-export" aria-label="Opciones de exportación" title="Opciones de exportación">Exportar...</button>
