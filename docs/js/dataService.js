@@ -745,3 +745,25 @@ if (hasWindow) {
 
 export default api;
 
+export {
+  getAll,
+  getAllSinoptico,
+  addNode,
+  updateNode,
+  deleteNode,
+  replaceAll,
+  add,
+  update,
+  remove,
+  exportJSON,
+  importJSON,
+  ready,
+  initialized,
+  subscribeToChanges,
+  subscribeSinopticoChanges,
+  subscribeBackupUpdates,
+  syncNow,
+  lockRecord,
+  unlockRecord,
+};
+
