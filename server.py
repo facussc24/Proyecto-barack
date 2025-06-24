@@ -39,6 +39,7 @@ else:
 
 app = Flask(__name__, static_folder="docs", static_url_path="")
 IMAGES_DIR = os.path.join(app.static_folder, "imagenes_sinoptico")
+ASSET_DIRS = ["imagenes_sinoptico", "images"]
 from flask_socketio import SocketIO
 
 # Permit requests from the development front-end and the local API consumer
@@ -73,12 +74,14 @@ def manual_backup(description=None):
             zf.write(HISTORY_FILE, arcname="history.json")
         if os.path.exists(DB_PATH):
             zf.write(DB_PATH, arcname="db.sqlite")
-        if os.path.isdir(IMAGES_DIR):
-            for root_dir, _, files in os.walk(IMAGES_DIR):
-                for f in files:
-                    fp = os.path.join(root_dir, f)
-                    arc = os.path.relpath(fp, start=app.static_folder)
-                    zf.write(fp, arcname=arc)
+        for directory in ASSET_DIRS:
+            folder = os.path.join(app.static_folder, directory)
+            if os.path.isdir(folder):
+                for root_dir, _, files in os.walk(folder):
+                    for f in files:
+                        fp = os.path.join(root_dir, f)
+                        arc = os.path.relpath(fp, start=app.static_folder)
+                        zf.write(fp, arcname=arc)
 
     meta = {}
     if os.path.exists(METADATA_FILE):
@@ -323,7 +326,7 @@ def restore_backup():
         if "db.sqlite" in zf.namelist():
             zf.extract("db.sqlite", os.path.dirname(DB_PATH))
         for item in zf.namelist():
-            if item.startswith("imagenes_sinoptico/"):
+            if any(item.startswith(f"{d}/") for d in ASSET_DIRS):
                 zf.extract(item, app.static_folder)
 
     with write_lock:
