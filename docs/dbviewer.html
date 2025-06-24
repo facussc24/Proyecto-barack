@@ -14,6 +14,7 @@
     <p>Para conocer el esquema completo puedes consultar <a href="er.svg" target="_blank">er.svg</a>.</p>
   </main>
   <script src="js/nav.js"></script>
+  <script type="module" src="js/patchConflict.js" defer></script>
   <script>
     fetch('/api/data').then(r => r.json()).then(data => {
       const pre = document.getElementById('dbDump');
