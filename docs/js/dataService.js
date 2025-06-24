@@ -10,6 +10,16 @@ const API_BASE =
     : typeof process !== 'undefined' && process.env
       ? process.env.API_BASE || process.env.apiBase
       : null;
+
+function currentUser() {
+  if (typeof sessionStorage === 'undefined') return null;
+  try {
+    const u = JSON.parse(sessionStorage.getItem('currentUser') || 'null');
+    return u ? u.name : null;
+  } catch {
+    return null;
+  }
+}
 // URL of the backend API used to store and retrieve data
 const DEFAULT_API_URL =
   API_BASE != null ? `${API_BASE.replace(/\/$/, '')}/api/data` : '/api/data';
@@ -564,6 +574,32 @@ export async function deleteNode(id) {
   return remove('sinoptico', id);
 }
 
+export async function lockRecord(table, id) {
+  const user = currentUser();
+  if (!user) return { error: 'no user' };
+  const resp = await fetch(`/api/locks/${table}/${id}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ user }),
+  });
+  if (!resp.ok) {
+    return Promise.reject(await resp.json().catch(() => ({})));
+  }
+  return resp.json();
+}
+
+export async function unlockRecord(table, id) {
+  const user = currentUser();
+  if (!user) return;
+  try {
+    await fetch(`/api/locks/${table}/${id}?user=${encodeURIComponent(user)}`, {
+      method: 'DELETE',
+    });
+  } catch {
+    // ignore
+  }
+}
+
 
 export async function replaceAll(arr) {
   if (!Array.isArray(arr)) return;
@@ -675,6 +711,8 @@ const api = {
   subscribeToChanges,
   subscribeSinopticoChanges,
   syncNow,
+  lockRecord,
+  unlockRecord,
 };
 
 if (hasWindow) {
@@ -683,4 +721,16 @@ if (hasWindow) {
 
 export default api;
 
-export { getAll, add, update, remove, exportJSON, importJSON, ready, initialized, syncNow };
+export {
+  getAll,
+  add,
+  update,
+  remove,
+  exportJSON,
+  importJSON,
+  ready,
+  initialized,
+  syncNow,
+  lockRecord,
+  unlockRecord,
+};

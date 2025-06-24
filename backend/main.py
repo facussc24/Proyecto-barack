@@ -3,7 +3,7 @@ import sqlite3
 import queue
 import json
 from datetime import datetime
-from flask import Flask, request, jsonify, Response, send_file
+from flask import Flask, request, jsonify, Response, send_file, has_request_context
 from flask_cors import CORS
 from flask_socketio import SocketIO
 from io import BytesIO
@@ -23,6 +23,7 @@ allowed = [o.strip() for o in origins_env.split(",") if o.strip()]
 CORS(app, resources={r"/api/*": {"origins": allowed}})
 socketio = SocketIO(app, async_mode="eventlet", cors_allowed_origins=allowed)
 sse_clients = []
+locks = {}
 
 
 @app.get("/health")
@@ -270,6 +271,12 @@ def update_product(prod_id):
         conn.close()
         return jsonify({"error": "conflict", "message": "timestamp mismatch"}), 409
 
+    user = data.get("user") or request.headers.get("X-User")
+    lock = locks.get(("products", prod_id))
+    if lock and lock.get("user") != user:
+        conn.close()
+        return jsonify({"error": "locked", "lock": lock}), 409
+
     new_updated = datetime.utcnow().isoformat() + "Z"
     fields = []
     values = []
@@ -281,8 +288,6 @@ def update_product(prod_id):
     values.append(new_updated)
     values.append(prod_id)
     cur.execute(f"UPDATE products SET {', '.join(fields)} WHERE id = ?", values)
-
-    user = data.get("user") or request.headers.get("X-User")
     cur.execute(
         "INSERT INTO history(product_id, user, action, timestamp) VALUES (?,?,?,?)",
         (prod_id, user, "update", new_updated),
@@ -334,6 +339,50 @@ TABLE_MAP = {
 }
 
 
+@app.route("/api/locks/<table>/<int:item_id>", methods=["POST", "DELETE", "GET"])
+def row_locks(table, item_id):
+    if table not in TABLE_MAP:
+        return jsonify({"error": "table not found"}), 404
+    db_table = TABLE_MAP[table]
+    key = (db_table, item_id)
+
+    if request.method == "GET":
+        lock = locks.get(key)
+        return jsonify(lock or {})
+
+    if request.method == "POST":
+        data = request.get_json(force=True, silent=True) or {}
+        user = data.get("user") or request.headers.get("X-User")
+        if not user:
+            return jsonify({"error": "user required"}), 400
+        existing = locks.get(key)
+        if existing and existing.get("user") != user:
+            return jsonify({"error": "locked", "lock": existing}), 409
+        info = {
+            "table": db_table,
+            "id": item_id,
+            "user": user,
+            "timestamp": datetime.utcnow().isoformat() + "Z",
+        }
+        locks[key] = info
+        return jsonify(info)
+
+    # DELETE
+    data = request.get_json(force=True, silent=True) or {}
+    user = (
+        data.get("user")
+        or request.args.get("user")
+        or request.headers.get("X-User")
+    )
+    existing = locks.get(key)
+    if not existing:
+        return jsonify({"error": "lock not found"}), 404
+    if user and existing.get("user") != user:
+        return jsonify({"error": "lock owned by another user"}), 403
+    locks.pop(key, None)
+    return jsonify({"status": "released"})
+
+
 def select_all(table):
     conn = get_db()
     rows = conn.execute(f"SELECT * FROM {table}").fetchall()
@@ -377,7 +426,7 @@ def insert_row(table, data):
     return result, None
 
 
-def update_row(table, item_id, data):
+def update_row(table, item_id, data, user=None):
     conn = get_db()
     cur = conn.cursor()
     cur.execute(f"SELECT * FROM {table} WHERE id = ?", (item_id,))
@@ -390,12 +439,21 @@ def update_row(table, item_id, data):
     ):
         conn.close()
         return None, "conflict: outdated version", 409
+    if user is None:
+        user = data.get("user")
+        if has_request_context():
+            user = user or request.headers.get("X-User")
+    lock = locks.get((table, item_id))
+    if lock and lock.get("user") != user:
+        conn.close()
+        return None, "locked by another user", 409
+
     new_version = row["version"] + 1
     new_updated = datetime.utcnow().isoformat() + "Z"
     fields = []
     values = []
     for k, v in data.items():
-        if k in ("id", "updated_at", "version"):
+        if k in ("id", "updated_at", "version", "user"):
             continue
         fields.append(f"{k} = ?")
         values.append(v)
@@ -469,7 +527,8 @@ def generic_crud(table, item_id=None):
 
     if request.method == "PATCH":
         payload = request.get_json(force=True, silent=True) or {}
-        res, err, code = update_row(db_table, item_id, payload)
+        user = payload.get("user") or request.headers.get("X-User")
+        res, err, code = update_row(db_table, item_id, payload, user=user)
         if err:
             return jsonify({"success": False, "errors": err}), code
         return jsonify({"success": True, "data": res})

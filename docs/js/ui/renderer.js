@@ -308,8 +308,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     // Inline edit helper
     const fieldOrder=['Descripción','Vehículo','Código','Consumo','Unidad','Imagen'];
-    function startEditRow(tr,fila) {
-      if(tr.classList.contains('editing'))return; 
+    async function startEditRow(tr,fila) {
+      if(tr.classList.contains('editing'))return;
+      try {
+        await dataService.lockRecord('sinoptico', fila.ID);
+      } catch(err) {
+        const u = err && err.lock ? err.lock.user : '';
+        alert(u ? `Registro en uso por ${u}` : 'Registro bloqueado');
+        return;
+      }
       tr.classList.add('editing');
       const cells=tr.querySelectorAll('td');
       tr._orig=[...cells].map(td=>td.innerHTML);
@@ -330,9 +337,10 @@ document.addEventListener('DOMContentLoaded', () => {
       save.onclick=async()=>{
         const nuevo=tdCons.querySelector('input').value;
         await dataService.updateNode(fila.ID,{Consumo:nuevo});
+        await dataService.unlockRecord('sinoptico', fila.ID);
         loadData();
       };
-      cancel.onclick=()=> loadData();
+      cancel.onclick=()=>{ dataService.unlockRecord('sinoptico', fila.ID); loadData(); };
     }
     function dibujar(parent='',nivel=0){ (agrupado[parent]||[]).forEach(fila=>{
       const tr=document.createElement('tr');
