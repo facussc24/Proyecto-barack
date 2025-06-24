@@ -180,16 +180,6 @@ function markFetchSuccess() {
     }
   }
 }
-
-function handleApiError(resp, fallback = 'Error') {
-  if (typeof window === 'undefined' || !window.mostrarMensaje) return;
-  resp
-    .json()
-    .then((d) => {
-      window.mostrarMensaje(d.error || fallback);
-    })
-    .catch(() => window.mostrarMensaje(fallback));
-}
 // promise that resolves once IndexedDB is ready (or failed)
 let readyResolve;
 const ready = new Promise((res) => {
@@ -377,12 +367,8 @@ async function initFromServer(force = false) {
       markFetchSuccess();
       return true;
     }
-    handleApiError(resp, 'Error al cargar datos');
   } catch (e) {
     console.error('Failed to initialize data from server', e);
-    if (typeof window !== 'undefined' && window.mostrarMensaje) {
-      window.mostrarMensaje('Error de conexión');
-    }
   }
   return false;
 }
@@ -747,11 +733,6 @@ export default api;
 
 export {
   getAll,
-  getAllSinoptico,
-  addNode,
-  updateNode,
-  deleteNode,
-  replaceAll,
   add,
   update,
   remove,
@@ -759,11 +740,8 @@ export {
   importJSON,
   ready,
   initialized,
-  subscribeToChanges,
-  subscribeSinopticoChanges,
-  subscribeBackupUpdates,
   syncNow,
   lockRecord,
   unlockRecord,
+  subscribeBackupUpdates,
 };
-
