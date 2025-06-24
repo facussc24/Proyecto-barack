@@ -14,9 +14,9 @@
 </head>
 <body>
   <nav id="nav-placeholder"></nav>
-  <section id="loading"></section>
+  <section id="loading"><div class="spinner"></div></section>
   <section id="appMessage" role="alert" aria-live="polite"></section>
-  <main id="app">Cargando…</main>
+  <main id="app"></main>
   <dialog id="dlgNuevoCliente" class="modal">
     <form method="dialog">
       <label for="nuevoClienteNombre">Nombre del cliente:</label>
@@ -29,7 +29,7 @@
   </dialog>
   <script src="lib/dexie.min.js" defer></script>
   <script src="lib/fuse.min.js" defer></script>
-  <script src="/socket.io/socket.io.js" defer></script>
+  <script src="socket.io/socket.io.js" defer></script>
   <script type="module" src="js/authGuard.js"></script>
   <script type="module" src="js/nav.js" defer></script>
   <script type="module" src="js/router.js" defer></script>
