@@ -150,11 +150,33 @@ const hasWindow = !isNode && typeof window !== 'undefined' && window.document;
 let db = null;
 // in-memory fallback per store
 const memory = {};
+// timestamp of the last successful fetch from the server
+let lastFetch = 0;
+if (hasWindow) {
+  try {
+    lastFetch = parseInt(localStorage.getItem('lastServerFetch'), 10) || 0;
+  } catch {
+    // ignore
+  }
+}
+
+function markFetchSuccess() {
+  lastFetch = Date.now();
+  if (hasWindow) {
+    try {
+      localStorage.setItem('lastServerFetch', String(lastFetch));
+    } catch {
+      // ignore
+    }
+  }
+}
 // promise that resolves once IndexedDB is ready (or failed)
 let readyResolve;
 const ready = new Promise((res) => {
   readyResolve = res;
 });
+
+const initialized = ready.then(() => initFromServer());
 
 let socket;
 let sse;
@@ -167,6 +189,7 @@ if (hasWindow && SOCKET_URL && typeof io !== 'undefined') {
       if (resp.ok) {
         const serverData = await resp.json();
         await applyServerData(serverData);
+        markFetchSuccess();
       }
     } catch (e) {
       console.error('Failed to refresh data from server', e);
@@ -311,6 +334,25 @@ function notifyChange() {
     document.dispatchEvent(new Event(DATA_CHANGED));
     document.dispatchEvent(new Event('sinopticoUpdated'));
   }
+}
+
+async function initFromServer() {
+  if (!API_URL) return false;
+  const freshness = Date.now() - lastFetch;
+  // avoid redundant requests shortly after a previous fetch
+  if (freshness < 5 * 60 * 1000) return false;
+  try {
+    const resp = await fetch(API_URL);
+    if (resp.ok) {
+      const serverData = await resp.json();
+      await applyServerData(serverData);
+      markFetchSuccess();
+      return true;
+    }
+  } catch (e) {
+    console.error('Failed to initialize data from server', e);
+  }
+  return false;
 }
 
 async function getAll(store = 'sinoptico') {
@@ -596,6 +638,7 @@ const api = {
   exportJSON,
   importJSON,
   ready,
+  initialized,
   async reset() {
     if (db) {
       await db.delete();
@@ -634,4 +677,4 @@ if (hasWindow) {
 
 export default api;
 
-export { getAll, add, update, remove, exportJSON, importJSON, ready };
+export { getAll, add, update, remove, exportJSON, importJSON, ready, initialized };
