@@ -15,8 +15,13 @@ DB_PATH = os.getenv("DB_PATH", os.path.join("data", "db.sqlite"))
 os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
 
 app = Flask(__name__)
-CORS(app)
-socketio = SocketIO(app, async_mode="eventlet", cors_allowed_origins="*")
+origins_env = os.getenv(
+    "ALLOWED_ORIGINS",
+    "http://192.168.1.233:8080,http://localhost:8080",
+)
+allowed = [o.strip() for o in origins_env.split(",") if o.strip()]
+CORS(app, resources={r"/api/*": {"origins": allowed}})
+socketio = SocketIO(app, async_mode="eventlet", cors_allowed_origins=allowed)
 sse_clients = []
 
 
@@ -447,7 +452,12 @@ def generic_crud(table, item_id=None):
     if request.method == "GET" and item_id is not None:
         row = select_one(db_table, item_id)
         if row is None:
-            return jsonify({"success": False, "errors": f"{db_table} id {item_id} not found"}), 404
+            return (
+                jsonify(
+                    {"success": False, "errors": f"{db_table} id {item_id} not found"}
+                ),
+                404,
+            )
         return jsonify({"success": True, "data": row})
 
     if request.method == "POST":
