@@ -78,9 +78,12 @@ Los respaldos se encuentran en la carpeta `data/backups/`. Cada archivo incluye 
 
 Para revisar visualmente el contenido actual de la base de datos se incluye la página `docs/dbviewer.html`. Ábrela con el servidor en marcha para ver los datos en formato JSON.
 
-El servidor también expone `GET /api/sinoptico/export` para descargar la tabla
-de Sinóptico en Excel o PDF. Usa el parámetro `format=excel` o `format=pdf`
-según prefieras.
+El servidor también expone rutas de exportación para descargar tablas en Excel
+o PDF. Usa el parámetro `format=excel` o `format=pdf` según prefieras:
+
+- `GET /api/sinoptico/export`
+- `GET /api/maestro/export`
+- `GET /api/amfe/export`
 
 Si quieres guardar la base de datos en otra ubicación puedes definir la variable de entorno `DATA_DIR` antes de iniciar el servidor y apuntar a la carpeta deseada.
 

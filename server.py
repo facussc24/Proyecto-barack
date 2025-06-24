@@ -215,6 +215,10 @@ def export_module(module):
         rows = history
     elif module == "sinoptico":
         rows = memory.get("sinoptico", [])
+    elif module == "maestro":
+        rows = memory.get("maestro", [])
+    elif module == "amfe":
+        rows = memory.get("amfe", [])
     else:
         return jsonify({"error": "not found"}), 404
 
