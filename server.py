@@ -357,4 +357,4 @@ if __name__ == "__main__":
         scheduler.add_job(backup_latest, "interval", days=1)
         scheduler.start()
 
-    app.run(host="0.0.0.0", port=5000)
+    socketio.run(app, host="0.0.0.0", port=5000)
