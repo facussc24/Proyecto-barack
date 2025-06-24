@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const descLabel = document.getElementById('selectedDesc');
   const restoreBtn = document.getElementById('restoreBackup');
   const deleteBtn = document.getElementById('deleteBackup');
+  const statusSpan = document.getElementById('backupMessage');
 
   async function loadHistory() {
     const params = new URLSearchParams();
@@ -64,11 +65,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   createBtn?.addEventListener('click', async () => {
     const description = descInput?.value || '';
-    await fetch('/api/backups', {
+    const resp = await fetch('/api/backups', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ description })
     });
+    if (resp.ok && statusSpan) {
+      statusSpan.textContent = 'Backup creado';
+      statusSpan.classList.add('show');
+      setTimeout(() => statusSpan.classList.remove('show'), 3000);
+    }
     if (descInput) descInput.value = '';
     loadBackups();
   });

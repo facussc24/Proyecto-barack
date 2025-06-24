@@ -1,7 +1,7 @@
 {
   "name": "proyecto-barack",
-  "version": "405",
-  "description": "Versión actual: **405**",
+  "version": "406",
+  "description": "Versión actual: **406**",
   "main": "index.js",
   "directories": {
     "lib": "lib"
