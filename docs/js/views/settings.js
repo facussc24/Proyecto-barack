@@ -171,8 +171,23 @@ export async function render(container) {
     deleteBtn.addEventListener('click', async () => {
       const name = backupSel.value;
       if (!name) return;
-      await fetch(`/api/backups/${encodeURIComponent(name)}`, { method: 'DELETE' });
-      loadBackups();
+      if (!window.confirm('¿Eliminar backup?')) {
+        if (window.mostrarMensaje) window.mostrarMensaje('Cancelado', 'info');
+        return;
+      }
+      try {
+        const resp = await fetch(`/api/backups/${encodeURIComponent(name)}`, { method: 'DELETE' });
+        if (!resp.ok) {
+          const err = await resp.json().catch(() => ({}));
+          if (window.mostrarMensaje) window.mostrarMensaje(err.error || 'Error al eliminar');
+        } else {
+          if (window.mostrarMensaje) window.mostrarMensaje('Backup eliminado', 'success');
+          loadBackups();
+        }
+      } catch (e) {
+        console.error(e);
+        if (window.mostrarMensaje) window.mostrarMensaje('Error al eliminar');
+      }
     });
   }
 
