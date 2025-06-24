@@ -199,6 +199,17 @@ h1 {
   background-color: var(--color-primary-hover);
 }
 
+.backup-status {
+  color: green;
+  font-weight: bold;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.backup-status.show {
+  opacity: 1;
+}
+
 .card {
   background: var(--color-light);
   color: var(--color-text);
