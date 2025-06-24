@@ -6,7 +6,7 @@ Este documento analiza el problema al acceder a la SPA desde `/` o `/index.html`
 
 - La configuración actual contiene `try_files $uri $uri/ =404;`.
 - Cuando se accede a `/` Nginx intenta servir primero el directorio `/` y luego `/index.html/` (que no existe) y termina devolviendo *404*.
-- Como la aplicación usa rutas con hash (`#/settings`), la parte después del `#` nunca se envía al servidor, por lo que Nginx no sabe que debe cargar `index.html`.
+- Como la aplicación usa rutas con hash (`#/admin`), la parte después del `#` nunca se envía al servidor, por lo que Nginx no sabe que debe cargar `index.html`.
 
 ## Causa raíz
 
@@ -14,7 +14,7 @@ Este documento analiza el problema al acceder a la SPA desde `/` o `/index.html`
 
 ## Solución
 
-Hacer que todas las rutas caigan en `index.html` cuando no exista un archivo real. Opcionalmente se puede redirigir `/` a `#/settings` si se desea que la SPA abra esa vista por defecto.
+Hacer que todas las rutas caigan en `index.html` cuando no exista un archivo real. Opcionalmente se puede redirigir `/` a `#/admin` si se desea que la SPA abra esa vista por defecto.
 
 ### Configuración propuesta (`nginx.conf`)
 
@@ -33,9 +33,9 @@ server {
         try_files $uri $uri/ /index.html;
     }
 
-    # Descomenta lo siguiente si quieres ir directo a #/settings
+    # Descomenta lo siguiente si quieres ir directo a #/admin
     #location = / {
-    #    return 302 /index.html#/settings;
+    #    return 302 /index.html#/admin;
     #}
 }
 ```

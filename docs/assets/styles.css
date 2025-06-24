@@ -2648,6 +2648,6 @@ tr:not(.pending) td:first-child::before {
   display: none !important;
 }
 
-body.settings-page main {
+body.admin-page main {
   animation: fadeIn 0.3s ease-in-out;
 }

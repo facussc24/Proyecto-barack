@@ -37,7 +37,7 @@ export function deactivateDevMode() {
 }
 
 export function checkDevBanner() {
-  const inSettings = document.body.classList.contains('settings-page');
+  const inSettings = document.body.classList.contains('admin-page');
   if (inSettings && localStorage.getItem('devMode') === 'true') {
     showDevBanner();
   }
