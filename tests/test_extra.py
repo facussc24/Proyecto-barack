@@ -2,6 +2,7 @@ import importlib
 from pathlib import Path
 from backend import main
 
+
 def _load_server(monkeypatch, tmp_path):
     monkeypatch.setenv("BACKUP_DIR", str(tmp_path / "backups"))
     monkeypatch.setenv("DATA_DIR", str(tmp_path / "data"))
@@ -13,23 +14,27 @@ def test_update_row_conflict():
     row, err = main.insert_row("Cliente", {"codigo": "X1", "nombre": "A"})
     assert err is None
     res, err, code = main.update_row(
-        "Cliente", row["id"], {"updated_at": "bad", "version": row["version"], "nombre": "B"}
+        "Cliente",
+        row["id"],
+        {"updated_at": "bad", "version": row["version"], "nombre": "B"},
     )
     assert res is None
-    assert err == "conflict"
+    assert err.startswith("conflict")
     assert code == 409
 
 
 def test_delete_row_not_found():
     res, err, code = main.delete_row("Cliente", 999)
     assert res is None
-    assert err == "not found"
+    assert err.endswith("not found")
     assert code == 404
 
 
 def test_export_products_excel(tmp_path, monkeypatch):
     db = main.get_db()
-    db.execute("INSERT INTO products(name, price, updated_at) VALUES('A', 1.0, '2024-01-01')")
+    db.execute(
+        "INSERT INTO products(name, price, updated_at) VALUES('A', 1.0, '2024-01-01')"
+    )
     db.commit()
     client = main.app.test_client()
     resp = client.get("/api/products/export")

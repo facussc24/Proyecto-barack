@@ -143,6 +143,7 @@ Cuando uses varias PC debes indicar la URL del servidor. Puedes hacerlo con:
 
 1. Guardar la dirección en `localStorage` usando `localStorage.setItem('apiUrl', 'http://<IP>:5000/api/data')` desde la consola del navegador.
 2. O bien establecer la variable de entorno `API_URL` antes de iniciar la aplicación.
+3. Para controlar CORS define `ALLOWED_ORIGINS` con una lista separada por comas de URLs permitidas.
 
 Si no se define ningún valor se usará `http://192.168.1.233:5000/api/data` por defecto.
 Para mas detalles consulta `docs/backend.md`.
