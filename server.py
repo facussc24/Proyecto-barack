@@ -91,6 +91,23 @@ def manual_backup(description=None):
     return dest
 
 
+def _validate_backup_name(name: str) -> str | None:
+    """Return the sanitized backup name if valid, otherwise None."""
+    if not name or "/" in name or "\\" in name:
+        return None
+    if name in {".", ".."}:
+        return None
+    base = os.path.basename(name)
+    if base != name or not base.endswith(".zip"):
+        return None
+    full = os.path.abspath(os.path.join(BACKUP_DIR, base))
+    if os.path.commonpath([full, os.path.abspath(BACKUP_DIR)]) != os.path.abspath(
+        BACKUP_DIR
+    ):
+        return None
+    return base
+
+
 def cleanup_backups():
     cutoff = datetime.utcnow() - timedelta(days=180)
     for path in glob.glob(os.path.join(BACKUP_DIR, "*.zip")):
@@ -267,14 +284,17 @@ def create_backup_route():
 
 @app.delete("/api/backups/<name>")
 def delete_backup(name):
-    path = os.path.join(BACKUP_DIR, name)
+    safe = _validate_backup_name(name)
+    if not safe:
+        return jsonify({"error": "invalid name"}), 400
+    path = os.path.join(BACKUP_DIR, safe)
     if not os.path.exists(path):
         return jsonify({"error": "not found"}), 404
     os.remove(path)
     if os.path.exists(METADATA_FILE):
         with open(METADATA_FILE, "r", encoding="utf-8") as f:
             meta = json.load(f)
-        if meta.pop(name, None) is not None:
+        if meta.pop(safe, None) is not None:
             with open(METADATA_FILE, "w", encoding="utf-8") as f:
                 json.dump(meta, f, ensure_ascii=False, indent=2)
     return jsonify({"status": "deleted"})
@@ -287,7 +307,10 @@ def restore_backup():
     name = data.get("name")
     if not name:
         return jsonify({"error": "missing name"}), 400
-    path = os.path.join(BACKUP_DIR, name)
+    safe = _validate_backup_name(name)
+    if not safe:
+        return jsonify({"error": "invalid name"}), 400
+    path = os.path.join(BACKUP_DIR, safe)
     if not os.path.exists(path):
         return jsonify({"error": "not found"}), 404
     with ZipFile(path) as zf:
@@ -314,7 +337,7 @@ def restore_backup():
             "timestamp": datetime.utcnow().isoformat() + "Z",
             "ip": request.remote_addr,
             "host": request.headers.get("X-Host") or request.host,
-            "restore": name,
+            "restore": safe,
         }
         history.append(entry)
         with open(HISTORY_FILE, "w", encoding="utf-8") as f:
