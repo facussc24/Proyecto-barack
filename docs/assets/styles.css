@@ -71,7 +71,7 @@ body {
   pointer-events: auto;
   color: var(--color-text);
   filter: brightness(var(--page-brightness, 100%));
-  opacity: 0;
+  opacity: 1;
   transition: opacity 0.15s ease-in-out, filter 0.2s ease-in-out;
 }
 
