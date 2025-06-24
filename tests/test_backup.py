@@ -55,6 +55,14 @@ def test_restore_and_delete_invalid_names(tmp_path, monkeypatch):
     assert resp.status_code == 400
 
 
+def test_delete_unknown_backup(tmp_path, monkeypatch):
+    server = _load_server(monkeypatch, tmp_path)
+    client = server.app.test_client()
+
+    resp = client.delete("/api/backups/missing.zip")
+    assert resp.status_code == 404
+
+
 def test_backup_and_restore_assets(tmp_path, monkeypatch):
     monkeypatch.setenv("BACKUP_DIR", str(tmp_path / "backups"))
     monkeypatch.setenv("DATA_DIR", str(tmp_path / "data"))
