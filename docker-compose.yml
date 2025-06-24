@@ -6,8 +6,9 @@ services:
     image: barack-backend:latest
     environment:
       - DB_PATH=/data/db.sqlite
+      - DATA_DIR=/data
     volumes:
-      - ./data/db.sqlite:/data/db.sqlite
+      - ./data:/data
       - ./backups:/app/backups
     ports: ["5000:5000"]
   docs:

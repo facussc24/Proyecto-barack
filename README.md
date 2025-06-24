@@ -45,7 +45,7 @@ módulo `js/dataService.js`. A partir de la versión 358 puedes exportar e
 importar la información desde la página de inicio mediante dos botones. El
 archivo descargado se guarda como `data/latest.json`. El registro de cambios se
 almacena en `data/history.json` y las copias de seguridad se guardan en
-`data/backups/`.
+`backups/`.
 
 Para realizar copias de seguridad manuales desde la consola del navegador sigue
 si lo prefieres este procedimiento:
@@ -73,8 +73,8 @@ El servidor debe ejecutarse en un único equipo o servidor accesible por la red 
 
 El archivo activo se guarda en `data/latest.json`.
 Puedes generar copias manualmente con `POST /api/backups` o desde la página **Modo Dev**.
-Por defecto se programa una copia diaria en `data/backups/AAAA-MM-DD.json`. Si prefieres desactivar esta tarea define `DISABLE_AUTOBACKUP=1` antes de iniciar el servidor.
-Los respaldos se encuentran en la carpeta `data/backups/`. Cada archivo incluye la base de datos, el historial, la base SQLite y las carpetas de imágenes para que puedas restaurar el estado completo de la aplicación. Si eliminas el repositorio también se borrará esta carpeta a menos que la conserves aparte.
+Por defecto se programa una copia diaria en `backups/AAAA-MM-DD.json`. Si prefieres desactivar esta tarea define `DISABLE_AUTOBACKUP=1` antes de iniciar el servidor.
+Los respaldos se encuentran en la carpeta `backups/`. Cada archivo incluye la base de datos, el historial, la base SQLite y las carpetas de imágenes para que puedas restaurar el estado completo de la aplicación. Si eliminas el repositorio también se borrará esta carpeta a menos que la conserves aparte.
 
 Para revisar visualmente el contenido actual de la base de datos se incluye la página `docs/dbviewer.html`. Ábrela con el servidor en marcha para ver los datos en formato JSON.
 
@@ -128,7 +128,7 @@ docker compose up -d
 ```
 
 Al finalizar la SPA quedará disponible en `http://192.168.1.233:8080` y la API en `http://192.168.1.233:5000/api/...`.
-Los datos se guardan en `./data/db.sqlite` y los respaldos en `./backups`.
+Los archivos `latest.json`, `history.json` y `db.sqlite` se almacenan en `./data` y los respaldos en `./backups`.
 
 Si usas Windows y no puedes acceder desde otras máquinas, abre los puertos 5000 y 8080 en el firewall:
 
