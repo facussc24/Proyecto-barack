@@ -34,8 +34,10 @@ export async function render(container) {
     </section>
     <section class="backup-tools">
       <h2>Copias de seguridad</h2>
+      <input id="backupDesc" type="text" placeholder="Descripción">
       <button id="createBackup" type="button">Crear backup</button>
       <select id="backupList"></select>
+      <span id="selectedDesc"></span>
       <button id="restoreBackup" type="button">Restaurar</button>
       <button id="deleteBackup" type="button">Eliminar backup</button>
     </section>`;
@@ -65,6 +67,8 @@ export async function render(container) {
   const histSpan = container.querySelector('#devHistory');
   const backupSel = container.querySelector('#backupList');
   const createBtn = container.querySelector('#createBackup');
+  const descInput = container.querySelector('#backupDesc');
+  const descLabel = container.querySelector('#selectedDesc');
   const restoreBtn = container.querySelector('#restoreBackup');
   const deleteBtn = container.querySelector('#deleteBackup');
 
@@ -127,8 +131,10 @@ export async function render(container) {
       const list = await resp.json();
       if (backupSel) {
         backupSel.innerHTML = list
-          .map((name) => `<option value="${name}">${name}</option>`) 
+          .map((b) => `<option value="${b.name}" data-desc="${b.description || ''}">${b.name}</option>`)
           .join('');
+        const opt = backupSel.selectedOptions[0];
+        if (descLabel) descLabel.textContent = opt ? opt.dataset.desc : '';
       }
     } catch (e) {
       console.error(e);
@@ -137,7 +143,13 @@ export async function render(container) {
 
   if (createBtn) {
     createBtn.addEventListener('click', async () => {
-      await fetch('/api/backups', { method: 'POST' });
+      const description = descInput?.value || '';
+      await fetch('/api/backups', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ description })
+      });
+      if (descInput) descInput.value = '';
       loadBackups();
     });
   }
@@ -162,6 +174,11 @@ export async function render(container) {
       loadBackups();
     });
   }
+
+  backupSel?.addEventListener('change', () => {
+    const opt = backupSel.selectedOptions[0];
+    if (descLabel) descLabel.textContent = opt ? opt.dataset.desc : '';
+  });
 
   loadBackups();
 
