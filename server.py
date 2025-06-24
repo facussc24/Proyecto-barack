@@ -199,6 +199,13 @@ def server_info():
     return jsonify(info)
 
 
+@app.get("/api/products")
+def get_products():
+    """Return the list of products stored in memory if present."""
+    products = memory.get("productos_db") or memory.get("products") or []
+    return jsonify(products)
+
+
 @app.get("/api/<module>/export")
 def export_module(module):
     fmt = request.args.get("format", "excel")
