@@ -281,7 +281,10 @@ function setupExport() {
   const pdfBtn = document.getElementById('btnPdf');
   async function exportServer(fmt) {
     const resp = await fetch(`/api/sinoptico/export?format=${fmt}`);
-    if (!resp.ok) throw new Error('fail');
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({}));
+      throw new Error(err.error || 'Error al exportar');
+    }
     const blob = await resp.blob();
     const url = URL.createObjectURL(blob);
     const ext = fmt === 'excel' ? 'xlsx' : 'pdf';
@@ -293,8 +296,8 @@ function setupExport() {
     a.remove();
     URL.revokeObjectURL(url);
   }
-  excelBtn?.addEventListener('click', () => exportServer('excel').catch(() => {}));
-  pdfBtn?.addEventListener('click', () => exportServer('pdf').catch(() => {}));
+  excelBtn?.addEventListener('click', () => exportServer('excel').catch(e => showToast(e.message)));
+  pdfBtn?.addEventListener('click', () => exportServer('pdf').catch(e => showToast(e.message)));
 }
 
 

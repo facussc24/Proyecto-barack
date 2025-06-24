@@ -220,7 +220,7 @@ def export_module(module):
     elif module == "amfe":
         rows = memory.get("amfe", [])
     else:
-        return jsonify({"error": "not found"}), 404
+        return jsonify({"error": "module not found", "module": module}), 404
 
     if fmt == "pdf":
         output = BytesIO()
@@ -291,7 +291,7 @@ def create_backup_route():
     desc = data.get("description")
     path = manual_backup(desc)
     if not path:
-        return jsonify({"error": "no data"}), 404
+        return jsonify({"error": "no data to backup"}), 400
     name = os.path.basename(path)
     return jsonify({"path": f"backups/{name}", "description": desc or ""})
 
@@ -303,7 +303,7 @@ def delete_backup(name):
         return jsonify({"error": "invalid name"}), 400
     path = os.path.join(BACKUP_DIR, safe)
     if not os.path.exists(path):
-        return jsonify({"error": "not found"}), 404
+        return jsonify({"error": "backup not found", "name": safe}), 404
     os.remove(path)
     if os.path.exists(METADATA_FILE):
         with open(METADATA_FILE, "r", encoding="utf-8") as f:
@@ -326,7 +326,7 @@ def restore_backup():
         return jsonify({"error": "invalid name"}), 400
     path = os.path.join(BACKUP_DIR, safe)
     if not os.path.exists(path):
-        return jsonify({"error": "not found"}), 404
+        return jsonify({"error": "backup not found", "name": safe}), 404
     with ZipFile(path) as zf:
         with zf.open("latest.json") as f:
             new_data = json.load(f)

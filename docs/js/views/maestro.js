@@ -161,7 +161,11 @@ export async function render(container) {
     showSpinner();
     try {
       const resp = await fetch(`/api/maestro/export?format=${fmt}`);
-      if (!resp.ok) throw new Error('fail');
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({}));
+        if (window.mostrarMensaje) window.mostrarMensaje(err.error || 'Error al exportar');
+        return;
+      }
       const blob = await resp.blob();
       const url = URL.createObjectURL(blob);
       const ext = fmt === 'excel' ? 'xlsx' : 'pdf';
@@ -172,12 +176,13 @@ export async function render(container) {
       a.click();
       a.remove();
       URL.revokeObjectURL(url);
+      if (window.mostrarMensaje) window.mostrarMensaje('Exportación completa', 'success');
     } finally {
       hideSpinner();
     }
   }
 
-  excelBtn.addEventListener('click', () => exportServer('excel').catch(() => {}));
+  excelBtn.addEventListener('click', () => exportServer('excel'));
 
   pdfBtn.addEventListener('click', async () => {
     try {
