@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; connect-src *; img-src * data:; style-src * 'unsafe-inline';">
+  <title>Listado Maestro</title>
+  <link rel="stylesheet" href="assets/styles.css">
+  <script>
+    if (localStorage.getItem('darkMode') === 'true') {
+      document.documentElement.classList.add('dark');
+    }
+  </script>
+</head>
+<body>
+  <nav id="nav-placeholder"></nav>
+  <main class="maestro-page">
+    <button class="back-btn" onclick="goBack()">← Volver</button>
+    <h1>Listado Maestro</h1>
+    <div class="top-actions">
+      <button id="printBtn">🖨 Print</button>
+      <div class="export-group">
+        <button data-fmt="excel" id="btnExcel" class="btn-excel">Excel</button>
+        <button data-fmt="pdf" id="btnPdf" class="btn-pdf">PDF</button>
+      </div>
+      <button id="newClientBtn">+ Crear Cliente</button>
+    </div>
+    <div class="search-bar">
+      <input id="search" type="text" placeholder="Buscar por cualquier parámetro…">
+    </div>
+    <div class="maestro-tabs">
+      <button data-tab="all" class="active">Todos</button>
+      <button data-tab="pickup">Pickups</button>
+      <button data-tab="return">Returns</button>
+    </div>
+    <div class="advanced-filters">
+      <input type="date" id="startDate">
+      <input type="date" id="endDate">
+      <select id="estado"><option value="">Estado</option></select>
+      <select id="departamento"><option value="">Departamento</option></select>
+      <select id="savedFilters"><option value="">Saved filters</option></select>
+      <button id="moreFilters">More filters</button>
+    </div>
+    <div id="loading"><div class="spinner"></div></div>
+    <section class="tabla-contenedor">
+      <table id="maestroTable" class="master-table">
+        <thead>
+          <tr>
+            <th class="checkbox-col"><input type="checkbox" id="selectAll"></th>
+            <th>REF</th>
+            <th>Created</th>
+            <th>Customer</th>
+            <th>Products</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Distribution</th>
+            <th>Status</th>
+            <th>Delivery Status</th>
+            <th>Price</th>
+          </tr>
+        </thead>
+        <tbody id="maestroBody"></tbody>
+      </table>
+    </section>
+    <div class="results-info">
+      <span id="resultsCount"></span>
+      <label>Resultados por página
+        <select id="pageSize">
+          <option>10</option>
+          <option>25</option>
+          <option>50</option>
+        </select>
+      </label>
+    </div>
+    <div class="pagination">
+      <button id="prevPage" disabled>← Anterior</button>
+      <button id="nextPage">Siguiente →</button>
+    </div>
+    <section id="appMessage" role="alert" aria-live="polite"></section>
+  </main>
+  <section id="fileWarning" class="file-warning" style="display:none">
+    Para utilizar la aplicación abre el archivo en un navegador moderno.
+  </section>
+  <script>
+    if (location.protocol === 'file:') {
+      document.getElementById('fileWarning').style.display = 'block';
+    }
+  </script>
+  <noscript>
+    <p class="noscript-warning">
+      Esta página necesita JavaScript para funcionar. Si la estás viendo desde
+      GitHub, descárgala y ábrela localmente con un navegador.
+    </p>
+  </noscript>
+  <script src="lib/dexie.min.js" defer></script>
+  <script src="./socket.io/socket.io.js" defer></script>
+  <script type="module" src="js/authGuard.js"></script>
+  <script type="module" src="js/nav.js" defer></script>
+  <script type="module" src="js/dataService.js" defer></script>
+  <script src="lib/xlsx.full.noeval.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js" defer></script>
+  <script type="module" src="js/maestro.js" defer></script>
+  <script type="module" src="js/ui/animations.js" defer></script>
+  <script type="module" src="js/backButton.js" defer></script>
+  <script type="module" src="js/app.js" defer></script>
+  <script type="module" src="js/hideLoading.js" defer></script>
+  <script type="module" src="js/pageSettings.js" defer></script>
+  <script type="module" src="js/version.js" defer></script>
+</body>
+</html>

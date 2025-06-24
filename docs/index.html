@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: data: blob: 'unsafe-inline' 'unsafe-eval'; connect-src *; img-src * data:; style-src 'self' 'unsafe-inline' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:;">
+  <title>Ingeniería Barack</title>
+  <link rel="stylesheet" href="assets/styles.css">
+  <script>
+    if (localStorage.getItem('darkMode') === 'true') {
+      document.documentElement.classList.add('dark');
+    }
+  </script>
+</head>
+<body>
+  <nav id="nav-placeholder"></nav>
+  <section id="loading"></section>
+  <section id="appMessage" role="alert" aria-live="polite"></section>
+  <main id="app">Cargando…</main>
+  <dialog id="dlgNuevoCliente" class="modal">
+    <form method="dialog">
+      <label for="nuevoClienteNombre">Nombre del cliente:</label>
+      <input id="nuevoClienteNombre" type="text" required>
+      <div class="form-actions">
+        <button type="submit">Crear</button>
+        <button type="button">Cancelar</button>
+      </div>
+    </form>
+  </dialog>
+  <script src="lib/dexie.min.js" defer></script>
+  <script src="lib/fuse.min.js" defer></script>
+  <script src="./socket.io/socket.io.js" defer></script>
+  <script type="module" src="js/authGuard.js"></script>
+  <script type="module" src="js/nav.js" defer></script>
+  <script type="module" src="js/router.js" defer></script>
+  <script type="module" src="js/dataService.js" defer></script>
+  <script src="lib/xlsx.full.noeval.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js" defer></script>
+  <script src="lib/chart.min.js" defer></script>
+  <script type="module" src="js/views/sinoptico.js" defer></script>
+  <script type="module" src="js/ui/renderer.js" defer></script>
+  <script type="module" src="js/ui/animations.js" defer></script>
+  <script type="module" src="js/app.js" defer></script>
+  <script type="module" src="js/pageSettings.js" defer></script>
+  <script type="module" src="js/hideLoading.js" defer></script>
+  <script type="module" src="js/newClientDialog.js" defer></script>
+  <script type="module" src="js/views/home.js" defer></script>
+  <script type="module" src="js/views/amfe.js" defer></script>
+  <script type="module" src="js/views/settings.js" defer></script>
+  <script type="module" src="js/views/maestro.js" defer></script>
+  <script type="module" src="js/version.js" defer></script>
+</body>
+</html>

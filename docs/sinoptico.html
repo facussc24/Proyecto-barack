@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; connect-src *; img-src * data:; style-src * 'unsafe-inline';">
+  <title>Sinóptico</title>
+  <link rel="stylesheet" href="assets/styles.css">
+  <script>
+    if (localStorage.getItem('darkMode') === 'true') {
+      document.documentElement.classList.add('dark');
+    }
+  </script>
+</head>
+<body class="sinoptico-page">
+  <nav id="nav-placeholder"></nav>
+  <button class="back-btn" onclick="goBack()">← Volver</button>
+  <section class="filtro-contenedor">
+    <section class="filtros-texto">
+      <label for="search">Buscar:</label>
+      <div class="input-wrapper">
+        <input id="search" type="text" autocomplete="off" />
+        <button id="clearSearch" aria-label="Limpiar">×</button>
+        <ul id="sinopticoSuggestions" class="suggestions-list"></ul>
+      </div>
+      <label for="levelFilter">Tipo:</label>
+      <select id="levelFilter">
+        <option value="">Todos</option>
+        <option value="Cliente">Cliente</option>
+        <option value="Pieza final">Producto</option>
+        <option value="Subproducto">Subproducto</option>
+        <option value="Insumo">Insumo</option>
+      </select>
+      <div id="selectedItems" class="chips"></div>
+      <button id="expandirTodo" aria-label="Expandir todo" title="Expandir todo">Expandir todo</button>
+      <button id="colapsarTodo" aria-label="Colapsar todo" title="Colapsar todo">Colapsar todo</button>
+    </section>
+    <section class="filtro-opciones">
+      <label><input type="checkbox" id="chkMostrarNivel0" checked> Nivel 0</label>
+      <label><input type="checkbox" id="chkMostrarNivel1" checked> Nivel 1</label>
+      <label><input type="checkbox" id="chkMostrarNivel2" checked> Nivel 2</label>
+      <label><input type="checkbox" id="chkMostrarNivel3" checked> Nivel 3</label>
+      <div class="export-group">
+        <button data-fmt="excel" id="btnExcel" class="btn-excel">Excel</button>
+        <button data-fmt="pdf" id="btnPdf" class="btn-pdf">PDF</button>
+      </div>
+    </section>
+  </section>
+  <section class="tabla-contenedor">
+    <table id="sinoptico">
+      <thead>
+        <tr>
+          <th>Descripción</th>
+          <th>Proyecto</th>
+          <th>Código</th>
+          <th>Consumo</th>
+          <th>Unidad</th>
+          <th>Imagen</th>
+        </tr>
+      </thead>
+      <tbody id="sinopticoBody"></tbody>
+    </table>
+  </section>
+  <script src="lib/dexie.min.js" defer></script>
+  <script src="lib/fuse.min.js" defer></script>
+  <script src="./socket.io/socket.io.js" defer></script>
+  <script type="module" src="js/authGuard.js"></script>
+  <script type="module" src="js/nav.js" defer></script>
+  <script src="lib/xlsx.full.noeval.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js" defer></script>
+  <script type="module" src="js/dataService.js" defer></script>
+  <script type="module" src="js/views/sinoptico.js" defer></script>
+  <script type="module" src="js/ui/renderer.js" defer></script>
+  <script type="module" src="js/ui/animations.js" defer></script>
+  <script type="module" src="js/backButton.js" defer></script>
+  <script type="module" src="js/imageViewer.js" defer></script>
+  <script type="module" src="js/app.js" defer></script>
+  <script type="module" src="js/pageSettings.js" defer></script>
+  <script type="module" src="js/hideLoading.js" defer></script>
+  <script type="module" src="js/newClientDialog.js" defer></script>
+  <script type="module" src="js/version.js" defer></script>
+  <script type="module">
+    import { isGuest } from './js/session.js';
+    if (isGuest()) {
+      sessionStorage.setItem('sinopticoEdit', 'false');
+    }
+  </script>
+</body>
+</html>
