@@ -259,11 +259,11 @@ def update_product(prod_id):
     row = cur.fetchone()
     if row is None:
         conn.close()
-        return jsonify({"error": "not found"}), 404
+        return jsonify({"error": "product not found", "id": prod_id}), 404
 
     if row["updated_at"] != updated_at:
         conn.close()
-        return jsonify({"error": "conflict"}), 409
+        return jsonify({"error": "conflict", "message": "timestamp mismatch"}), 409
 
     new_updated = datetime.utcnow().isoformat() + "Z"
     fields = []
@@ -379,12 +379,12 @@ def update_row(table, item_id, data):
     row = cur.fetchone()
     if not row:
         conn.close()
-        return None, "not found", 404
+        return None, f"{table} id {item_id} not found", 404
     if row["updated_at"] != data.get("updated_at") or row["version"] != data.get(
         "version"
     ):
         conn.close()
-        return None, "conflict", 409
+        return None, "conflict: outdated version", 409
     new_version = row["version"] + 1
     new_updated = datetime.utcnow().isoformat() + "Z"
     fields = []
@@ -420,7 +420,7 @@ def delete_row(table, item_id):
     row = cur.fetchone()
     if not row:
         conn.close()
-        return None, "not found", 404
+        return None, f"{table} id {item_id} not found", 404
     try:
         cur.execute(f"DELETE FROM {table} WHERE id = ?", (item_id,))
         conn.commit()
@@ -436,7 +436,7 @@ def delete_row(table, item_id):
 @app.route("/api/<table>/<int:item_id>", methods=["GET", "PATCH", "DELETE"])
 def generic_crud(table, item_id=None):
     if table not in TABLE_MAP:
-        return jsonify({"success": False, "errors": "not found"}), 404
+        return jsonify({"success": False, "errors": f"table '{table}' not found"}), 404
 
     db_table = TABLE_MAP[table]
 
@@ -447,7 +447,7 @@ def generic_crud(table, item_id=None):
     if request.method == "GET" and item_id is not None:
         row = select_one(db_table, item_id)
         if row is None:
-            return jsonify({"success": False, "errors": "not found"}), 404
+            return jsonify({"success": False, "errors": f"{db_table} id {item_id} not found"}), 404
         return jsonify({"success": True, "data": row})
 
     if request.method == "POST":
@@ -504,7 +504,7 @@ def export_module(module):
         conn.close()
         data = [dict(r) for r in rows]
     else:
-        return jsonify({"error": "not found"}), 404
+        return jsonify({"error": "module not found", "module": module}), 404
 
     if fmt == "pdf":
         output = BytesIO()

@@ -64,11 +64,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
   createBtn?.addEventListener('click', async () => {
     const description = descInput?.value || '';
-    await fetch('/api/backups', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ description })
-    });
+    try {
+      const resp = await fetch('/api/backups', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ description })
+      });
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({}));
+        if (window.mostrarMensaje) window.mostrarMensaje(err.error || 'Error al crear backup');
+      } else {
+        if (window.mostrarMensaje) window.mostrarMensaje('Backup creado', 'success');
+      }
+    } catch (e) {
+      console.error(e);
+      if (window.mostrarMensaje) window.mostrarMensaje('Error al crear backup');
+    }
     if (descInput) descInput.value = '';
     loadBackups();
   });
@@ -81,18 +92,40 @@ document.addEventListener('DOMContentLoaded', () => {
   restoreBtn?.addEventListener('click', async () => {
     const name = backupSel.value;
     if (!name) return;
-    await fetch('/api/restore', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name })
-    });
+    try {
+      const resp = await fetch('/api/restore', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name })
+      });
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({}));
+        if (window.mostrarMensaje) window.mostrarMensaje(err.error || 'Error al restaurar');
+      } else {
+        if (window.mostrarMensaje) window.mostrarMensaje('Restaurado', 'success');
+      }
+    } catch (e) {
+      console.error(e);
+      if (window.mostrarMensaje) window.mostrarMensaje('Error al restaurar');
+    }
   });
 
   deleteBtn?.addEventListener('click', async () => {
     const name = backupSel.value;
     if (!name) return;
-    await fetch(`/api/backups/${encodeURIComponent(name)}`, { method: 'DELETE' });
-    loadBackups();
+    try {
+      const resp = await fetch(`/api/backups/${encodeURIComponent(name)}`, { method: 'DELETE' });
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({}));
+        if (window.mostrarMensaje) window.mostrarMensaje(err.error || 'Error al eliminar');
+      } else {
+        if (window.mostrarMensaje) window.mostrarMensaje('Backup eliminado', 'success');
+        loadBackups();
+      }
+    } catch (e) {
+      console.error(e);
+      if (window.mostrarMensaje) window.mostrarMensaje('Error al eliminar');
+    }
   });
 
   applyBtn?.addEventListener('click', loadHistory);

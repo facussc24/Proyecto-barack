@@ -70,7 +70,10 @@ export async function render(container) {
       // Interception point: developers can set localStorage.setItem('useMock','true')
       // to skip the network call and provide local data when running offline.
       const resp = await fetch(`/api/sinoptico/export?format=${fmt}`);
-      if (!resp.ok) throw new Error('fail');
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({}));
+        throw new Error(err.error || 'Error al exportar');
+      }
       const blob = await resp.blob();
       const url = URL.createObjectURL(blob);
       const ext = fmt === 'excel' ? 'xlsx' : 'pdf';
@@ -83,15 +86,15 @@ export async function render(container) {
       URL.revokeObjectURL(url);
       if (window.mostrarMensaje) window.mostrarMensaje('Exportación completa', 'success');
     } catch (e) {
+      const err = e && e.message ? e.message : 'Error al exportar';
+      if (window.mostrarMensaje) window.mostrarMensaje(err);
       throw e;
     } finally {
       hideSpinner();
     }
   }
 
-  excelBtn?.addEventListener('click', () => exportServer('excel').catch(() => {
-    if (window.mostrarMensaje) window.mostrarMensaje('Error al exportar');
-  }));
+  excelBtn?.addEventListener('click', () => exportServer('excel').catch(() => {}));
 
   pdfBtn?.addEventListener('click', async () => {
     try {

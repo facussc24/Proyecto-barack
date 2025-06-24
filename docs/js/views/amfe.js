@@ -60,7 +60,10 @@ export async function render(container) {
       // bypass the network request and provide your own Blob when testing
       // offline or mocking the server.
       const resp = await fetch(`/api/amfe/export?format=${fmt}`);
-      if (!resp.ok) throw new Error('fail');
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({}));
+        throw new Error(err.error || 'Error al exportar');
+      }
       const blob = await resp.blob();
       const url = URL.createObjectURL(blob);
       const ext = fmt === 'excel' ? 'xlsx' : 'pdf';
@@ -73,7 +76,8 @@ export async function render(container) {
       URL.revokeObjectURL(url);
       if (window.mostrarMensaje) window.mostrarMensaje('Exportación completa', 'success');
     } catch (e) {
-      if (window.mostrarMensaje) window.mostrarMensaje('Error al exportar');
+      const err = e && e.message ? e.message : 'Error al exportar';
+      if (window.mostrarMensaje) window.mostrarMensaje(err);
     } finally {
       hideSpinner();
     }
