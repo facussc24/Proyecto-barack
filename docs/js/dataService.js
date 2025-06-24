@@ -745,16 +745,3 @@ if (hasWindow) {
 
 export default api;
 
-export {
-  getAll,
-  add,
-  update,
-  remove,
-  exportJSON,
-  importJSON,
-  ready,
-  initialized,
-  syncNow,
-  lockRecord,
-  unlockRecord,
-};
