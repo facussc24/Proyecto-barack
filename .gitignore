@@ -1,6 +1,0 @@
-node_modules
-server/data.json
-data.json
-data/
-# SQLite database (not versioned)
-data/db.sqlite
