@@ -83,6 +83,13 @@ body.fade-out {
   opacity: 0;
 }
 
+.noscript-warning {
+  color: #b00;
+  background: #fff4f4;
+  padding: 8px;
+  text-align: center;
+}
+
 body.home {
   padding-top: 0;
 }
