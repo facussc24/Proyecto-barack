@@ -104,3 +104,36 @@ def test_backup_and_restore_assets(tmp_path, monkeypatch):
     assert resp.status_code == 200
     assert (img_dir / "foo.jpg").exists()
     assert (other_dir / "bar.png").exists()
+
+
+def test_socketio_backup_events(tmp_path, monkeypatch):
+    monkeypatch.setenv("BACKUP_DIR", str(tmp_path / "backups"))
+    monkeypatch.setenv("DATA_DIR", str(tmp_path / "data"))
+    monkeypatch.setenv("DB_PATH", str(tmp_path / "data/db.sqlite"))
+
+    data_dir = Path(os.environ["DATA_DIR"])
+    data_dir.mkdir(parents=True)
+    with open(data_dir / "latest.json", "w") as f:
+        json.dump({"a": 1}, f)
+    with open(Path(os.environ["DB_PATH"]), "w") as f:
+        f.write("db")
+
+    server = importlib.import_module("server")
+    importlib.reload(server)
+
+    client = server.app.test_client()
+    sio = server.socketio.test_client(server.app, flask_test_client=client)
+    sio.get_received()  # clear connect events
+
+    resp = client.post("/api/backups", json={})
+    assert resp.status_code == 200
+    name = resp.get_json()["name"]
+    events = [e["name"] for e in sio.get_received()]
+    assert events == ["backups_updated"]
+
+    resp = client.delete(f"/api/backups/{name}")
+    assert resp.status_code == 200
+    events = [e["name"] for e in sio.get_received()]
+    assert events == ["backups_updated"]
+
+    sio.disconnect()

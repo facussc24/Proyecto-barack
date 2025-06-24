@@ -1,4 +1,10 @@
-import { getAll, ready, subscribeToChanges, syncNow } from '../dataService.js';
+import {
+  getAll,
+  ready,
+  subscribeToChanges,
+  syncNow,
+  subscribeBackupUpdates,
+} from '../dataService.js';
 import { getUser } from '../session.js';
 import { activateDevMode, deactivateDevMode } from '../pageSettings.js';
 import { animateInsert } from '../ui/animations.js';
@@ -209,6 +215,7 @@ export async function render(container) {
   });
 
   loadBackups();
+  subscribeBackupUpdates(loadBackups);
 
   async function refreshInfo() {
     try {
