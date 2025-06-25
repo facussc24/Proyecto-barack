@@ -210,6 +210,23 @@ h1 {
   opacity: 1;
 }
 
+.backup-list {
+  list-style: decimal inside;
+  padding-left: 1em;
+  margin: 0;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.backup-list li {
+  cursor: pointer;
+  padding: 2px 4px;
+}
+
+.backup-list li.selected {
+  background-color: var(--maestro-row-alt);
+}
+
 .card {
   background: var(--color-light);
   color: var(--color-text);
