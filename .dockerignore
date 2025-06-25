@@ -10,7 +10,9 @@ __pycache__/
 
 # test and documentation directories
 tests/
-docs/
+docs/*
+!docs/imagenes_sinoptico/
+!docs/imagenes_sinoptico/**
 
 # Node modules and package lock (if any)
 node_modules/
