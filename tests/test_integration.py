@@ -59,3 +59,18 @@ def test_post_client_and_fetch_list():
     assert resp.status_code == 200
     items = resp.get_json()["data"]
     assert any(item["codigo"] == "CNEW" for item in items)
+
+
+def test_patch_conflict_on_version():
+    client = main.app.test_client()
+    db = main.get_db()
+    db.execute(
+        "INSERT INTO Cliente(codigo,nombre,updated_at) VALUES('C3','A','2024-01-01')"
+    )
+    db.execute(
+        "INSERT INTO Producto(codigo,descripcion,cliente_id,peso,updated_at,version) VALUES('P3','Prod',1,1,'2024-01-01',1)"
+    )
+    db.commit()
+    payload = {"updated_at": "wrong", "version": 2, "descripcion": "Cambio"}
+    resp = client.patch("/api/productos_db/1", json=payload)
+    assert resp.status_code == 409

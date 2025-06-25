@@ -389,9 +389,7 @@ def update_row(table, item_id, data):
     if not row:
         conn.close()
         return None, "not found", 404
-    if row["updated_at"] != data.get("updated_at") or row["version"] != data.get(
-        "version"
-    ):
+    if row["version"] != data.get("version"):
         conn.close()
         return None, "conflict", 409
     new_version = row["version"] + 1
