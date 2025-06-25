@@ -103,6 +103,13 @@ Para levantar el servidor que también hospeda la carpeta `docs` ejecuta:
 docker compose up -d
 ```
 
+> **Nota:** Asegúrate de que las carpetas `./data` y `./backups` existan y
+> cuenten con permisos de escritura antes de ejecutar `docker compose up`.
+> Docker creará automáticamente `db.sqlite` dentro de `./data` la primera vez
+> que se inicie el backend. Si cualquiera de estas rutas falta o es de solo
+> lectura se producirá un `sqlite3.OperationalError` y Nginx mostrará
+> “Bad Gateway”.
+
 Todas las computadoras de la red deben abrir la URL `http://<HOST>:8080/`,
 donde `<HOST>` es el nombre o la IP del equipo que ejecutó `docker compose up`.
 El archivo `docker-compose.yml` ya establece
