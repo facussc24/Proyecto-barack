@@ -42,7 +42,8 @@ export async function render(container) {
       <h2>Copias de seguridad</h2>
       <input id="backupDesc" type="text" placeholder="Descripción">
       <button id="createBackup" type="button">Crear backup</button>
-      <select id="backupList"></select>
+      <span id="backupMessage" class="backup-status" aria-live="polite"></span>
+      <ol id="backupList" class="backup-list"></ol>
       <span id="selectedDesc"></span>
       <button id="restoreBackup" type="button">Restaurar</button>
       <button id="deleteBackup" type="button">Eliminar backup</button>
@@ -71,13 +72,10 @@ export async function render(container) {
   const timeSpan = container.querySelector('#devTime');
   const clientsSpan = container.querySelector('#devClients');
   const histSpan = container.querySelector('#devHistory');
-  const backupSel = container.querySelector('#backupList');
+  const backupList = container.querySelector('#backupList');
   const createBtn = container.querySelector('#createBackup');
   const descInput = container.querySelector('#backupDesc');
-  const backupMsg = document.createElement('span');
-  backupMsg.id = 'backupMsg';
-  backupMsg.style.marginLeft = '0.5em';
-  if (createBtn) createBtn.insertAdjacentElement('afterend', backupMsg);
+  const backupMsg = container.querySelector('#backupMessage');
   const descLabel = container.querySelector('#selectedDesc');
   const restoreBtn = container.querySelector('#restoreBackup');
   const deleteBtn = container.querySelector('#deleteBackup');
@@ -146,17 +144,33 @@ export async function render(container) {
     userSpan.textContent = `${user.name} (${user.role})`;
   }
 
+  let selectedBackup = '';
+
+  function highlightSelected() {
+    if (!backupList) return;
+    [...backupList.children].forEach(li => {
+      li.classList.toggle('selected', li.dataset.name === selectedBackup);
+    });
+  }
+
   async function loadBackups() {
     try {
       const resp = await fetch('/api/backups');
       if (!resp.ok) return;
       const list = await resp.json();
-      if (backupSel) {
-        backupSel.innerHTML = list
-          .map((b) => `<option value="${b.name}" data-desc="${b.description || ''}">${b.name}</option>`)
+      if (backupList) {
+        backupList.innerHTML = list
+          .map(b => `<li data-name="${b.name}" data-desc="${b.description || ''}"><strong>${b.name.replace('.zip','')}</strong> - ${b.description || ''}</li>`)
           .join('');
-        const opt = backupSel.selectedOptions[0];
-        if (descLabel) descLabel.textContent = opt ? opt.dataset.desc : '';
+        const first = backupList.querySelector('li');
+        if (first) {
+          selectedBackup = first.dataset.name;
+          if (descLabel) descLabel.textContent = first.dataset.desc || '';
+        } else {
+          selectedBackup = '';
+          if (descLabel) descLabel.textContent = '';
+        }
+        highlightSelected();
       }
     } catch (e) {
       console.error(e);
@@ -179,10 +193,14 @@ export async function render(container) {
         } catch {
           msg = resp.statusText;
         }
-        backupMsg.textContent = `Error: ${msg}`;
+        if (backupMsg) backupMsg.textContent = `Error: ${msg}`;
         return;
       }
-      backupMsg.textContent = '';
+      if (backupMsg) {
+        backupMsg.textContent = 'Backup creado correctamente';
+        backupMsg.classList.add('show');
+        setTimeout(() => backupMsg.classList.remove('show'), 3000);
+      }
       if (descInput) descInput.value = '';
       loadBackups();
     });
@@ -190,28 +208,52 @@ export async function render(container) {
 
   if (restoreBtn) {
     restoreBtn.addEventListener('click', async () => {
-      const name = backupSel.value;
+      const name = selectedBackup;
       if (!name) return;
-      await fetch('/api/restore', {
+      const resp = await fetch('/api/restore', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name }),
       });
+      if (!resp.ok) {
+        let msg = '';
+        try {
+          const data = await resp.json();
+          msg = data.error || resp.statusText;
+        } catch {
+          msg = resp.statusText;
+        }
+        if (window.mostrarMensaje) window.mostrarMensaje(`Error al restaurar: ${msg}`);
+      }
     });
   }
 
   if (deleteBtn) {
     deleteBtn.addEventListener('click', async () => {
-      const name = backupSel.value;
+      const name = selectedBackup;
       if (!name) return;
-      await fetch(`/api/backups/${encodeURIComponent(name)}`, { method: 'DELETE' });
+      const resp = await fetch(`/api/backups/${encodeURIComponent(name)}`, { method: 'DELETE' });
+      if (!resp.ok) {
+        let msg = '';
+        try {
+          const data = await resp.json();
+          msg = data.error || resp.statusText;
+        } catch {
+          msg = resp.statusText;
+        }
+        if (window.mostrarMensaje) window.mostrarMensaje(`Error al eliminar: ${msg}`);
+        return;
+      }
       loadBackups();
     });
   }
 
-  backupSel?.addEventListener('change', () => {
-    const opt = backupSel.selectedOptions[0];
-    if (descLabel) descLabel.textContent = opt ? opt.dataset.desc : '';
+  backupList?.addEventListener('click', ev => {
+    const li = ev.target.closest('li');
+    if (!li) return;
+    selectedBackup = li.dataset.name;
+    if (descLabel) descLabel.textContent = li.dataset.desc || '';
+    highlightSelected();
   });
 
   loadBackups();
