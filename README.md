@@ -121,12 +121,16 @@ que el backend esté activo visitando `http://localhost:5000/health`.
 
 Todas las computadoras de la red deben abrir la URL
 `http://desktop-14jg95b:8080/index.html#/home` o la equivalente con su
-hostname. El archivo `docker-compose.yml` ya establece
-`ALLOWED_ORIGINS=http://localhost:5000`, por lo que la API acepta solicitudes
-de forma predeterminada desde ese origen. Si utilizas otro hostname, añádelo en la variable
-`ALLOWED_ORIGINS` del servicio `backend` para evitar errores de CORS.
+hostname. El backend permite solicitudes desde esta URL de forma predeterminada.
+Si la interfaz se aloja en otro hostname, añade esa dirección en la variable de
+entorno `ALLOWED_ORIGINS` dentro de `docker-compose.yml` o al ejecutar
+`server.py` para evitar errores de CORS.
 
 ### Configurar `ALLOWED_ORIGINS`
+
+Si no defines esta variable, `server.py` utilizará una lista de orígenes
+permitidos que incluye `http://desktop-14jg95b:8080` y `http://localhost:8080`.
+Modifica el valor únicamente cuando la interfaz se sirva desde otra URL.
 
 Si la interfaz se sirve desde un nombre de host o puerto distinto al del backend,
 debes añadir esa URL a la variable de entorno `ALLOWED_ORIGINS` para evitar
