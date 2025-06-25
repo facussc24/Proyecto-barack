@@ -20,32 +20,6 @@ export function applyUserSettings() {
   }
 }
 
-export function showDevBanner() {
-  if (typeof window.mostrarMensaje === 'function') {
-    window.mostrarMensaje('Modo Dev activo', 'warning');
-  }
-}
-
-export function activateDevMode() {
-  localStorage.setItem('devMode', 'true');
-  showDevBanner();
-}
-
-export function deactivateDevMode() {
-  localStorage.removeItem('devMode');
-  if (typeof window.mostrarMensaje === 'function') {
-    window.mostrarMensaje('Modo Dev desactivado', 'info');
-  }
-}
-
-export function checkDevBanner() {
-  const inSettings = document.body.classList.contains('settings-page');
-  if (inSettings && localStorage.getItem('devMode') === 'true') {
-    showDevBanner();
-  }
-}
-
 document.addEventListener('DOMContentLoaded', () => {
   applyUserSettings();
-  checkDevBanner();
 });
