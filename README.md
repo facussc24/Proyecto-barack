@@ -103,6 +103,15 @@ Para levantar el servidor que también hospeda la carpeta `docs` ejecuta:
 docker compose up -d
 ```
 
+Todas las computadoras de la red deben abrir la URL `http://<HOST>:8080/`,
+donde `<HOST>` es el nombre o la IP del equipo que ejecutó `docker compose up`.
+Si utilizas un hostname distinto a `localhost`, añádelo en la variable
+`ALLOWED_ORIGINS` del servicio `backend` para evitar errores de CORS:
+
+```bash
+ALLOWED_ORIGINS=http://desktop-14jg95b:8080 docker compose up -d
+```
+
 ### Configurar `ALLOWED_ORIGINS`
 
 Si la interfaz se sirve desde un nombre de host o puerto distinto al del backend,
@@ -110,7 +119,7 @@ debes añadir esa URL a la variable de entorno `ALLOWED_ORIGINS` para evitar
 errores de CORS. Por ejemplo:
 
 ```bash
-ALLOWED_ORIGINS=http://desktop-14jg95b:8080 docker compose up
+ALLOWED_ORIGINS=http://desktop-14jg95b:8080 docker compose up -d
 ```
 
 ## API
@@ -212,6 +221,8 @@ localStorage.setItem('apiUrl', 'http://localhost:5000/api/data');
 ```
 
 La aplicación usará esa dirección al recargarse.
+Por lo general no necesitas cambiar `apiUrl` si abres la interfaz en
+`http://<HOST>:8080/`; modifícalo únicamente para conectar con otro servidor.
 
 ### Publicar en GitHub Pages
 
