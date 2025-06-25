@@ -19,6 +19,7 @@ HISTORY_FILE = os.path.join(DATA_DIR, "history.json")
 BACKUP_DIR = os.getenv("BACKUP_DIR", "/app/backups")
 DB_PATH = os.getenv("DB_PATH", os.path.join("data", "db.sqlite"))
 METADATA_FILE = os.path.join(BACKUP_DIR, "metadata.json")
+ACTIVE_KEY = "_active"
 write_lock = Lock()
 data_cache = None
 
@@ -103,6 +104,11 @@ def manual_backup(description=None, activate=False):
         with open(METADATA_FILE, "r", encoding="utf-8") as f:
             meta = json.load(f)
     meta[os.path.basename(dest)] = description or ""
+    if activate:
+        meta[ACTIVE_KEY] = {
+            "name": os.path.basename(dest),
+            "timestamp": datetime.utcnow().isoformat() + "Z",
+        }
     with open(METADATA_FILE, "w", encoding="utf-8") as f:
         json.dump(meta, f, ensure_ascii=False, indent=2)
 
@@ -290,7 +296,15 @@ def list_backups():
     if os.path.exists(METADATA_FILE):
         with open(METADATA_FILE, "r", encoding="utf-8") as f:
             meta = json.load(f)
-    result = [{"name": f, "description": meta.get(f, "")} for f in files]
+    active = meta.get(ACTIVE_KEY, {}).get("name") if meta else None
+    result = [
+        {
+            "name": f,
+            "description": meta.get(f, ""),
+            "active": f == active,
+        }
+        for f in files
+    ]
     return jsonify(result)
 
 
@@ -368,6 +382,14 @@ def restore_backup():
         history.append(entry)
         with open(HISTORY_FILE, "w", encoding="utf-8") as f:
             json.dump(history, f, ensure_ascii=False, indent=2)
+
+    meta = {}
+    if os.path.exists(METADATA_FILE):
+        with open(METADATA_FILE, "r", encoding="utf-8") as f:
+            meta = json.load(f)
+    meta[ACTIVE_KEY] = {"name": safe, "timestamp": datetime.utcnow().isoformat() + "Z"}
+    with open(METADATA_FILE, "w", encoding="utf-8") as f:
+        json.dump(meta, f, ensure_ascii=False, indent=2)
 
     socketio.emit("data_updated")
     return jsonify({"status": "ok"})

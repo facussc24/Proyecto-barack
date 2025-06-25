@@ -59,7 +59,13 @@ export async function render(container) {
       const list = await resp.json();
       if (backupList) {
         backupList.innerHTML = list
-          .map(b => `<li data-name="${b.name}" data-desc="${b.description || ''}" data-stats='${JSON.stringify(b.stats || {})}'><strong>${b.name.replace('.zip','')}</strong> - ${b.description || ''}</li>`)
+          .map(b =>
+            `<li data-name="${b.name}" data-desc="${b.description || ''}" data-stats='${JSON.stringify(
+              b.stats || {}
+            )}'><strong>${b.name.replace('.zip', '')}</strong>${
+              b.active ? ' <span class="active-label">ACTUAL</span>' : ''
+            } - ${b.description || ''}</li>`
+          )
           .join('');
         const first = backupList.querySelector('li');
         if (first) {
