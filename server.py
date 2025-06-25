@@ -180,7 +180,10 @@ def static_proxy(path):
         alt = file_path + ".html"
         if os.path.exists(alt):
             path += ".html"
-    return send_from_directory(app.static_folder, path)
+    resp = send_from_directory(app.static_folder, path)
+    if path.endswith((".html", ".js")):
+        resp.headers["Cache-Control"] = "no-store"
+    return resp
 
 
 @app.route("/api/data", methods=["GET", "POST"])
