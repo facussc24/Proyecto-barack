@@ -101,14 +101,16 @@ El servidor y la interfaz se ejecutan en un único contenedor. Para iniciarlo
 ejecuta los siguientes comandos:
 
 ```bash
-docker compose down --volumes
-docker compose build
-docker compose up -d
+docker compose down
+docker compose up --build -d
 ```
 
-Tras iniciar los contenedores abre `http://<HOST>:5000/history.html`
-para administrar respaldos y ver el historial. Todos los usuarios deben utilizar
-esta misma URL para que sus datos permanezcan sincronizados.
+Tras iniciar los contenedores abre
+`http://desktop-14jg95b:8080/index.html#/home` (reemplaza el hostname
+según corresponda) para acceder a la aplicación. Desde la vista
+**Historial** podrás administrar respaldos. Todos los usuarios deben utilizar
+esta misma URL para que sus datos permanezcan sincronizados. Puedes verificar
+que el backend esté activo visitando `http://localhost:5000/health`.
 
 > **Nota:** Asegúrate de que las carpetas `./data` y `./backups` existan y
 > cuenten con permisos de escritura antes de ejecutar `docker compose up`.
@@ -117,11 +119,11 @@ esta misma URL para que sus datos permanezcan sincronizados.
 > lectura se producirá un `sqlite3.OperationalError` y Nginx mostrará
 > “Bad Gateway”.
 
-Todas las computadoras de la red deben abrir la URL `http://<HOST>:5000/`,
-donde `<HOST>` es el nombre o la IP del equipo que ejecutó `docker compose up`.
-El archivo `docker-compose.yml` ya establece
-`ALLOWED_ORIGINS=http://localhost:5000`, por lo que dicha URL se acepta
-de forma predeterminada. Si utilizas otro hostname, añádelo en la variable
+Todas las computadoras de la red deben abrir la URL
+`http://desktop-14jg95b:8080/index.html#/home` o la equivalente con su
+hostname. El archivo `docker-compose.yml` ya establece
+`ALLOWED_ORIGINS=http://localhost:5000`, por lo que la API acepta solicitudes
+de forma predeterminada desde ese origen. Si utilizas otro hostname, añádelo en la variable
 `ALLOWED_ORIGINS` del servicio `backend` para evitar errores de CORS.
 
 ### Configurar `ALLOWED_ORIGINS`
