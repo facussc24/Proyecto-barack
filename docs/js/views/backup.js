@@ -73,11 +73,16 @@ export async function render(container) {
         } catch {
           msg = resp.statusText;
         }
-        if (backupMsg) backupMsg.textContent = `Error: ${msg}`;
+        if (backupMsg) {
+          backupMsg.textContent = `Error al crear el backup: ${msg}. \nVerifica que el servidor esté en funcionamiento.`;
+          backupMsg.classList.add('show', 'error');
+          setTimeout(() => backupMsg.classList.remove('show'), 5000);
+        }
         return;
       }
       if (backupMsg) {
         backupMsg.textContent = 'Backup creado correctamente';
+        backupMsg.classList.remove('error');
         backupMsg.classList.add('show');
         setTimeout(() => backupMsg.classList.remove('show'), 3000);
       }
