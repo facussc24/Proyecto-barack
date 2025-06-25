@@ -70,6 +70,7 @@ await dataService.importJSON(json); // Restaura la copia
 Este proyecto incluye un pequeño servidor Flask (`server.py`) para almacenar la base de datos en `data/latest.json`.
 A partir de esta versión el mismo script también sirve la interfaz web desde la carpeta `docs`, de modo que todas las páginas quedan disponibles en `http://<IP>:5000/` (por ejemplo, `http://192.168.1.233:5000/`).
 El servidor debe ejecutarse en un único equipo o servidor accesible por la red para que todos los usuarios compartan la misma información.
+Todos los navegadores deben por tanto utilizar la misma URL de la API para mantenerse sincronizados.
 
 El archivo activo se guarda en `data/latest.json`.
 Puedes generar copias manualmente con `POST /api/backups` o desde la página **Modo Dev**.
@@ -145,11 +146,12 @@ Si usas Windows y no puedes acceder desde otras máquinas, abre los puertos 5000
 GitHub Pages solo aloja archivos estáticos y no puede ejecutar este servidor.
 Cuando uses varias PC debes indicar la URL del servidor. Puedes hacerlo con:
 
-1. Guardar la dirección en `localStorage` usando `localStorage.setItem('apiUrl', 'http://<IP>:5000/api/data')` desde la consola del navegador.
-2. O bien establecer la variable de entorno `API_URL` antes de iniciar la aplicación.
+1. Usar el campo **Servidor API** en la página **Modo Dev** para guardar la dirección.
+2. Guardar la dirección en `localStorage` usando `localStorage.setItem('apiUrl', 'http://<IP>:5000/api/data')` desde la consola del navegador.
+3. O bien establecer la variable de entorno `API_URL` antes de iniciar la aplicación.
 
 Si no se define ningún valor se usará `http://localhost:5000/api/data` por defecto.
-Para mas detalles consulta `docs/backend.md`.
+Para más información sobre variables como `API_URL`, `DATA_DIR` y `DB_PATH` revisa `docs/backend.md`.
 
 ## API
 
