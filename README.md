@@ -97,13 +97,16 @@ Si quieres guardar la base de datos en otra ubicación puedes definir la variabl
 El backend basado en SQLite (`backend/main.py`) lee la ruta del archivo desde `DB_PATH`. Si no se define, usará `data/db.sqlite`.
 
 
-Para levantar el servidor que también hospeda la carpeta `docs` ejecuta:
+Para levantar el servidor que también hospeda la carpeta `docs` ejecuta los
+siguientes comandos:
 
 ```bash
+docker compose down --volumes
+docker compose build
 docker compose up -d
 ```
 
-Tras iniciar los contenedores abre `http://desktop-14jg95b:8080/index.html#/backup`
+Tras iniciar los contenedores abre `http://<HOST>:8080/index.html#/backup`
 para crear o restaurar respaldos. Todos los usuarios deben utilizar esta misma
 URL para que sus datos permanezcan sincronizados.
 
