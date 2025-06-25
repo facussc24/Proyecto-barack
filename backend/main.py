@@ -472,6 +472,7 @@ def generic_crud(table, item_id=None):
         name = row.get("nombre") or row.get("descripcion") or row.get("codigo") or ""
         summary = f"Cre\u00f3 {db_table.lower()} {name} (id {row['id']})"
         log_event(user, summary)
+        socketio.emit("data_updated")
         return jsonify({"success": True, "data": row})
 
     if request.method == "PATCH":
@@ -483,6 +484,7 @@ def generic_crud(table, item_id=None):
         name = res.get("nombre") or res.get("descripcion") or res.get("codigo") or ""
         summary = f"Actualiz\u00f3 {db_table.lower()} {name} (id {res['id']})"
         log_event(user, summary)
+        socketio.emit("data_updated")
         return jsonify({"success": True, "data": res})
 
     if request.method == "DELETE":
@@ -493,6 +495,7 @@ def generic_crud(table, item_id=None):
         name = res.get("nombre") or res.get("descripcion") or res.get("codigo") or ""
         summary = f"Elimin\u00f3 {db_table.lower()} {name} (id {res['id']})"
         log_event(user, summary)
+        socketio.emit("data_updated")
         return jsonify({"success": True, "data": res})
 
     return jsonify({"success": False, "errors": "method not allowed"}), 405
@@ -696,6 +699,7 @@ def restore_backup():
     meta[ACTIVE_KEY] = {"name": safe, "timestamp": ts_iso}
     with open(META_FILE, "w", encoding="utf-8") as f:
         json.dump(meta, f, ensure_ascii=False, indent=2)
+    socketio.emit("data_updated")
     return jsonify({"status": "ok"})
 
 
