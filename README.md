@@ -6,6 +6,15 @@ Esta es una pequeña SPA (Single Page Application) escrita en HTML, CSS y JavaSc
 Incluye un módulo llamado *Sinóptico* para gestionar jerarquías de productos.
 Todo se ejecuta en el navegador y no requiere servidor.
 
+## Inicio
+
+El flujo recomendado para poner en marcha la aplicación es ejecutar desde PowerShell o la terminal:
+
+```bash
+docker compose up -d
+```
+
+
 ## Control de versiones
 
 Cada nueva versión debe incluir un número visible junto a la fecha y hora en la parte inferior derecha de la interfaz para confirmar que el cambio ha sido aplicado.
@@ -87,72 +96,12 @@ Si quieres guardar la base de datos en otra ubicación puedes definir la variabl
 
 El backend basado en SQLite (`backend/main.py`) lee la ruta del archivo desde `DB_PATH`. Si no se define, usará `data/db.sqlite`.
 
-Para iniciar solo este backend ejecuta:
-
-```bash
-python backend/main.py
-```
 
 Para levantar el servidor que también hospeda la carpeta `docs` ejecuta:
 
 ```bash
 docker compose up -d
 ```
-
-### Alternative setup
-
-Si prefieres iniciar el servidor con Python directamente:
-
-```bash
-pip install -r requirements.txt
-python server.py
-```
-
-En Windows puedes ejecutar:
-
-```bash
-py -3 -m pip install -r requirements.txt
-py -3 server.py
-```
-
-Para habilitar HTTPS puedes crear un certificado autofirmado con:
-
-```bash
-openssl req -x509 -newkey rsa:4096 -nodes -keyout key.pem -out cert.pem -days 365
-```
-
-Luego inicia el servidor indicando las rutas en `SSL_CERT` y `SSL_KEY`:
-
-```bash
-SSL_CERT=cert.pem SSL_KEY=key.pem python server.py
-```
-
-Si tienes Docker instalado puedes iniciar todo con Docker Compose. La primera vez construye la imagen definida en `backend/Dockerfile`:
-
-```bash
-docker compose down
-docker compose build
-docker compose up -d
-```
-
-Al finalizar la SPA quedará disponible en `http://localhost:8080` y la API en `http://localhost:5000/api/...`.
-Los datos se guardan en `./data/db.sqlite` y los respaldos en `./backups`.
-La imagen de Nginx ya configura la SPA para usar /api/data en el mismo host. Si habías establecido otra URL con `localStorage.setItem('apiUrl', ...)`, elimínala con `localStorage.removeItem('apiUrl')`.
-
-Si usas Windows y no puedes acceder desde otras máquinas, abre los puertos 5000 y 8080 en el firewall:
-
-1. Abre *Panel de control* → *Sistema y seguridad* → *Firewall de Windows Defender*.
-2. Selecciona *Configuración avanzada* y crea reglas de entrada para TCP en ambos puertos.
-
-GitHub Pages solo aloja archivos estáticos y no puede ejecutar este servidor.
-Cuando uses varias PC debes indicar la URL del servidor. Puedes hacerlo con:
-
-1. Usar el campo **Servidor API** en la página **Modo Dev** para guardar la dirección.
-2. Guardar la dirección en `localStorage` usando `localStorage.setItem('apiUrl', 'http://localhost:5000/api/data')` desde la consola del navegador.
-3. O bien establecer la variable de entorno `API_URL` antes de iniciar la aplicación.
-
-Si no se define ningún valor se usará `http://localhost:5000/api/data` por defecto.
-Para más información sobre variables como `API_URL`, `DATA_DIR` y `DB_PATH` revisa `docs/backend.md`.
 
 ### Configurar `ALLOWED_ORIGINS`
 
@@ -286,3 +235,5 @@ que copie periódicamente `db.sqlite` a ese mismo directorio.
 1. Integrar `Flask-Migrate`/`Alembic` para gestionar las migraciones del esquema.
 2. Evaluar migrar a PostgreSQL u otro motor en entornos productivos.
 3. Automatizar el respaldo del archivo SQLite en `./backups`.
+
+*Nota:* Para desarrollo avanzado también puedes iniciar el servidor directamente con Python.
