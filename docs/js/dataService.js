@@ -11,15 +11,30 @@ const API_BASE =
       ? process.env.API_BASE || process.env.apiBase
       : null;
 // URL of the backend API used to store and retrieve data
-const DEFAULT_API_URL =
-  API_BASE != null ? `${API_BASE.replace(/\/$/, '')}/api/data` : '/api/data';
+const DEFAULT_API_URL = API_BASE != null
+  ? `${API_BASE.replace(/\/$/, '')}/api/data`
+  : typeof location !== 'undefined' && location.origin
+    ? `${location.origin}/api/data`
+    : '/api/data';
 let API_URL = DEFAULT_API_URL;
 
 // Prefer value from localStorage
+let _healthCheck = Promise.resolve();
 if (typeof localStorage !== 'undefined') {
   try {
     const stored = localStorage.getItem('apiUrl');
-    if (stored) API_URL = stored;
+    if (stored) {
+      API_URL = stored;
+      if (typeof fetch === 'function') {
+        const base = stored.replace(/\/api\/data$/, '');
+        _healthCheck = fetch(`${base}/health`).then(r => {
+          if (!r.ok) throw new Error('health check failed');
+        }).catch(() => {
+          try { localStorage.removeItem('apiUrl'); } catch {}
+          API_URL = DEFAULT_API_URL;
+        });
+      }
+    }
   } catch {
     // ignore
   }
@@ -176,7 +191,9 @@ const ready = new Promise((res) => {
   readyResolve = res;
 });
 
-const initialized = ready.then(() => initFromServer());
+const initialized = ready
+  .then(() => _healthCheck)
+  .then(() => initFromServer());
 
 async function syncNow() {
   await ready;

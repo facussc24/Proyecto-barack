@@ -214,15 +214,17 @@ Luego abre `http://localhost:8000/` y navega normalmente.
 
 ### Definir `API_URL` en `localStorage`
 
-Si la API se ejecuta en otra máquina guarda su URL con:
+Por defecto la interfaz calcula la ruta de la API con
+`location.origin + '/api/data'` y comprueba que esté disponible mediante
+`/health`. Sólo es necesario establecer `apiUrl` cuando el servidor se
+encuentra en otro host:
 
 ```js
 localStorage.setItem('apiUrl', 'http://localhost:5000/api/data');
 ```
 
-La aplicación usará esa dirección al recargarse.
-Por lo general no necesitas cambiar `apiUrl` si abres la interfaz en
-`http://<HOST>:8080/`; modifícalo únicamente para conectar con otro servidor.
+Si la URL almacenada no responde se descarta y se vuelve a usar la ruta
+automática.
 
 ### Publicar en GitHub Pages
 
