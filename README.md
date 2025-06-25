@@ -103,6 +103,10 @@ Para levantar el servidor que también hospeda la carpeta `docs` ejecuta:
 docker compose up -d
 ```
 
+Tras iniciar los contenedores abre `http://desktop-14jg95b:8080/index.html#/backup`
+para crear o restaurar respaldos. Todos los usuarios deben utilizar esta misma
+URL para que sus datos permanezcan sincronizados.
+
 > **Nota:** Asegúrate de que las carpetas `./data` y `./backups` existan y
 > cuenten con permisos de escritura antes de ejecutar `docker compose up`.
 > Docker creará automáticamente `db.sqlite` dentro de `./data` la primera vez
