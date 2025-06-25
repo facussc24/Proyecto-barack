@@ -97,17 +97,16 @@ Si quieres guardar la base de datos en otra ubicación puedes definir la variabl
 El backend basado en SQLite (`backend/main.py`) lee la ruta del archivo desde `DB_PATH`. Si no se define, usará `data/db.sqlite`.
 
 
-Para levantar el servidor que también hospeda la carpeta `docs` ejecuta los
-siguientes comandos:
+El servidor y la interfaz se ejecutan en un único contenedor. Para iniciarlo
+ejecuta los siguientes comandos:
 
 ```bash
 docker compose down --volumes
 docker compose build
 docker compose up -d
-docker compose restart docs  # Recarga Nginx con la nueva configuración
 ```
 
-Tras iniciar los contenedores abre `http://<HOST>:8080/index.html#/backup`
+Tras iniciar los contenedores abre `http://<HOST>:5000/index.html#/backup`
 para crear o restaurar respaldos. Todos los usuarios deben utilizar esta misma
 URL para que sus datos permanezcan sincronizados.
 
@@ -118,10 +117,10 @@ URL para que sus datos permanezcan sincronizados.
 > lectura se producirá un `sqlite3.OperationalError` y Nginx mostrará
 > “Bad Gateway”.
 
-Todas las computadoras de la red deben abrir la URL `http://<HOST>:8080/`,
+Todas las computadoras de la red deben abrir la URL `http://<HOST>:5000/`,
 donde `<HOST>` es el nombre o la IP del equipo que ejecutó `docker compose up`.
 El archivo `docker-compose.yml` ya establece
-`ALLOWED_ORIGINS=http://desktop-14jg95b:8080`, por lo que dicha URL se acepta
+`ALLOWED_ORIGINS=http://localhost:5000`, por lo que dicha URL se acepta
 de forma predeterminada. Si utilizas otro hostname, añádelo en la variable
 `ALLOWED_ORIGINS` del servicio `backend` para evitar errores de CORS.
 
@@ -132,10 +131,10 @@ debes añadir esa URL a la variable de entorno `ALLOWED_ORIGINS` para evitar
 errores de CORS. Por ejemplo:
 
 ```bash
-ALLOWED_ORIGINS=http://mi-host:8080 docker compose up -d
+ALLOWED_ORIGINS=http://mi-host:5000 docker compose up -d
 
 # O con el servidor en Python
-ALLOWED_ORIGINS=http://mi-host:8080 python server.py
+ALLOWED_ORIGINS=http://mi-host:5000 python server.py
 ```
 
 ## API
