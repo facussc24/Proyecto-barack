@@ -95,14 +95,21 @@ python backend/main.py
 Para levantar el servidor que también hospeda la carpeta `docs` ejecuta:
 
 ```bash
+docker compose up -d
+```
+
+### Alternative setup
+
+Si prefieres iniciar el servidor con Python directamente:
+
+```bash
 pip install -r requirements.txt
 python server.py
 ```
 
-En Windows puedes ejecutar los siguientes comandos:
+En Windows puedes ejecutar:
 
 ```bash
-cd "C:\\Users\\FacundoS-PC\\Documents\\Proyecto-barack-main (11)\\Proyecto-barack-main"
 py -3 -m pip install -r requirements.txt
 py -3 server.py
 ```
