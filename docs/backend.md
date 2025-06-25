@@ -42,6 +42,16 @@ The frontend reads the server URL from `localStorage` (`apiUrl`) or from the `AP
 - `ALLOWED_ORIGINS` – comma-separated list of origins allowed for CORS and
   WebSocket connections. Defaults to `http://192.168.1.233:8080,http://localhost:8080`.
 
+### Changing `ALLOWED_ORIGINS`
+
+If the web interface is hosted under a different hostname or port, add that
+origin to the `ALLOWED_ORIGINS` environment variable before starting the
+backend. For example:
+
+```bash
+ALLOWED_ORIGINS=http://desktop-14jg95b:8080 docker compose up
+```
+
 ## Offline fallback
 
 If the API server is unreachable, the frontend keeps working thanks to IndexedDB (via Dexie) and localStorage. Data modifications are saved locally and synchronized once the server becomes available again.

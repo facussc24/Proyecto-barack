@@ -153,7 +153,16 @@ Cuando uses varias PC debes indicar la URL del servidor. Puedes hacerlo con:
 
 Si no se define ningún valor se usará `http://localhost:5000/api/data` por defecto.
 Para más información sobre variables como `API_URL`, `DATA_DIR` y `DB_PATH` revisa `docs/backend.md`.
-Si necesitas usar otra dirección u otro puerto, agrega esa URL a la variable `ALLOWED_ORIGINS` antes de iniciar el servidor.
+
+### Configurar `ALLOWED_ORIGINS`
+
+Si la interfaz se sirve desde un nombre de host o puerto distinto al del backend,
+debes añadir esa URL a la variable de entorno `ALLOWED_ORIGINS` para evitar
+errores de CORS. Por ejemplo:
+
+```bash
+ALLOWED_ORIGINS=http://desktop-14jg95b:8080 docker compose up
+```
 
 ## API
 
