@@ -2,6 +2,8 @@ import os
 import sqlite3
 import queue
 import json
+import glob
+import shutil
 from datetime import datetime
 from flask import Flask, request, jsonify, Response, send_file
 from flask_cors import CORS
@@ -10,9 +12,13 @@ from io import BytesIO
 import xlsxwriter
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
+from zipfile import ZipFile, ZIP_DEFLATED
 
 DB_PATH = os.getenv("DB_PATH", os.path.join("data", "db.sqlite"))
+BACKUP_DIR = os.getenv("BACKUP_DIR", "/app/backups")
+META_FILE = os.path.join(BACKUP_DIR, "metadata.json")
 os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
+os.makedirs(BACKUP_DIR, exist_ok=True)
 
 app = Flask(__name__)
 CORS(app)
@@ -471,6 +477,143 @@ def generic_crud(table, item_id=None):
         return jsonify({"success": True, "data": res})
 
     return jsonify({"success": False, "errors": "method not allowed"}), 405
+
+
+def manual_backup(description=None):
+    if not os.path.exists(DB_PATH):
+        return None
+    ts = datetime.utcnow().strftime("%Y-%m-%d_%H-%M-%S")
+    dest = os.path.join(BACKUP_DIR, f"{ts}.zip")
+    with ZipFile(dest, "w", compression=ZIP_DEFLATED) as zf:
+        zf.write(DB_PATH, arcname="db.sqlite")
+    conn = get_db()
+    tables = [
+        "Cliente",
+        "Proveedor",
+        "UnidadMedida",
+        "Insumo",
+        "Producto",
+        "Subproducto",
+        "ProductoInsumo",
+    ]
+    stats = {tbl: conn.execute(f"SELECT COUNT(*) FROM {tbl}").fetchone()[0] for tbl in tables}
+    conn.close()
+
+    meta = {}
+    if os.path.exists(META_FILE):
+        with open(META_FILE, "r", encoding="utf-8") as f:
+            meta = json.load(f)
+    meta[os.path.basename(dest)] = {
+        "description": description or "",
+        "stats": stats,
+    }
+    with open(META_FILE, "w", encoding="utf-8") as f:
+        json.dump(meta, f, ensure_ascii=False, indent=2)
+    return dest
+
+
+def _validate_backup_name(name: str) -> str | None:
+    if not name or "/" in name or "\\" in name:
+        return None
+    if name in {".", ".."}:
+        return None
+    base = os.path.basename(name)
+    if base != name or not base.endswith(".zip"):
+        return None
+    full = os.path.abspath(os.path.join(BACKUP_DIR, base))
+    if os.path.commonpath([full, os.path.abspath(BACKUP_DIR)]) != os.path.abspath(BACKUP_DIR):
+        return None
+    return base
+
+
+@app.get("/api/backups")
+def list_backups():
+    files = sorted(os.path.basename(f) for f in glob.glob(os.path.join(BACKUP_DIR, "*.zip")))
+    meta = {}
+    if os.path.exists(META_FILE):
+        with open(META_FILE, "r", encoding="utf-8") as f:
+            meta = json.load(f)
+    result = []
+    for f in files:
+        info = meta.get(f, {})
+        result.append({
+            "name": f,
+            "description": info.get("description", ""),
+            "stats": info.get("stats", {}),
+        })
+    return jsonify(result)
+
+
+@app.post("/api/backups")
+def create_backup_route():
+    data = request.get_json(force=True, silent=True) or {}
+    desc = data.get("description")
+    path = manual_backup(desc)
+    if not path:
+        return jsonify({"error": "no data"}), 404
+    name = os.path.basename(path)
+    info = {}
+    if os.path.exists(META_FILE):
+        with open(META_FILE, "r", encoding="utf-8") as f:
+            info = json.load(f).get(name, {})
+    return jsonify({
+        "path": f"backups/{name}",
+        "description": desc or "",
+        "stats": info.get("stats", {}),
+    })
+
+
+@app.delete("/api/backups/<name>")
+def delete_backup(name):
+    safe = _validate_backup_name(name)
+    if not safe:
+        return jsonify({"error": "invalid name"}), 400
+    path = os.path.join(BACKUP_DIR, safe)
+    if not os.path.exists(path):
+        return jsonify({"error": "not found"}), 404
+    os.remove(path)
+    if os.path.exists(META_FILE):
+        with open(META_FILE, "r", encoding="utf-8") as f:
+            meta = json.load(f)
+        if meta.pop(safe, None) is not None:
+            with open(META_FILE, "w", encoding="utf-8") as f:
+                json.dump(meta, f, ensure_ascii=False, indent=2)
+    return jsonify({"status": "deleted"})
+
+
+@app.post("/api/restore")
+def restore_backup():
+    data = request.get_json(force=True, silent=True) or {}
+    name = data.get("name")
+    if not name:
+        return jsonify({"error": "missing name"}), 400
+    safe = _validate_backup_name(name)
+    if not safe:
+        return jsonify({"error": "invalid name"}), 400
+    path = os.path.join(BACKUP_DIR, safe)
+    if not os.path.exists(path):
+        return jsonify({"error": "not found"}), 404
+    with ZipFile(path) as zf:
+        zf.extract("db.sqlite", os.path.dirname(DB_PATH))
+    return jsonify({"status": "ok"})
+
+
+@app.get("/api/db-stats")
+def db_stats():
+    conn = get_db()
+    tables = [
+        "Cliente",
+        "Proveedor",
+        "UnidadMedida",
+        "Insumo",
+        "Producto",
+        "Subproducto",
+        "ProductoInsumo",
+    ]
+    stats = {tbl: conn.execute(f"SELECT COUNT(*) FROM {tbl}").fetchone()[0] for tbl in tables}
+    conn.close()
+    stats["backups"] = len(glob.glob(os.path.join(BACKUP_DIR, "*.zip")))
+    return jsonify(stats)
 
 
 @app.get("/api/<module>/export")

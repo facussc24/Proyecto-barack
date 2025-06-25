@@ -10,8 +10,13 @@ export async function render(container) {
       <span id="backupMessage" class="backup-status" aria-live="polite"></span>
       <ol id="backupList" class="backup-list"></ol>
       <span id="selectedDesc"></span>
+      <ul id="selectedStats" class="stats-list"></ul>
       <button id="restoreBackup" type="button">Restaurar</button>
       <button id="deleteBackup" type="button">Eliminar backup</button>
+    </section>
+    <section class="stats">
+      <h2>Datos actuales</h2>
+      <ul id="statsList"></ul>
     </section>`;
 
   animateInsert(container);
@@ -23,6 +28,8 @@ export async function render(container) {
   const descLabel = container.querySelector('#selectedDesc');
   const restoreBtn = container.querySelector('#restoreBackup');
   const deleteBtn = container.querySelector('#deleteBackup');
+  const statsList = container.querySelector('#statsList');
+  const selectedStats = container.querySelector('#selectedStats');
 
   let selectedBackup = '';
 
@@ -40,18 +47,39 @@ export async function render(container) {
       const list = await resp.json();
       if (backupList) {
         backupList.innerHTML = list
-          .map(b => `<li data-name="${b.name}" data-desc="${b.description || ''}"><strong>${b.name.replace('.zip','')}</strong> - ${b.description || ''}</li>`)
+          .map(b => `<li data-name="${b.name}" data-desc="${b.description || ''}" data-stats='${JSON.stringify(b.stats || {})}'><strong>${b.name.replace('.zip','')}</strong> - ${b.description || ''}</li>`)
           .join('');
         const first = backupList.querySelector('li');
         if (first) {
           selectedBackup = first.dataset.name;
           if (descLabel) descLabel.textContent = first.dataset.desc || '';
+          if (selectedStats) {
+            const stats = JSON.parse(first.dataset.stats || '{}');
+            selectedStats.innerHTML = Object.entries(stats)
+              .map(([k, v]) => `<li><strong>${k}:</strong> ${v}</li>`)
+              .join('');
+          }
         } else {
           selectedBackup = '';
           if (descLabel) descLabel.textContent = '';
+          if (selectedStats) selectedStats.innerHTML = '';
         }
         highlightSelected();
       }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  async function loadStats() {
+    if (!statsList) return;
+    try {
+      const resp = await fetch('/api/db-stats');
+      if (!resp.ok) return;
+      const data = await resp.json();
+      statsList.innerHTML = Object.entries(data)
+        .map(([k, v]) => `<li><strong>${k}:</strong> ${v}</li>`)
+        .join('');
     } catch (e) {
       console.error(e);
     }
@@ -138,8 +166,15 @@ export async function render(container) {
     if (!li) return;
     selectedBackup = li.dataset.name;
     if (descLabel) descLabel.textContent = li.dataset.desc || '';
+    if (selectedStats) {
+      const stats = JSON.parse(li.dataset.stats || '{}');
+      selectedStats.innerHTML = Object.entries(stats)
+        .map(([k, v]) => `<li><strong>${k}:</strong> ${v}</li>`)
+        .join('');
+    }
     highlightSelected();
   });
 
   loadBackups();
+  loadStats();
 }
