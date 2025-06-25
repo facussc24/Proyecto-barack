@@ -25,6 +25,11 @@ export async function render(container) {
         <input type="checkbox" id="toggleGridOverlay">
         Mostrar cuadrícula
       </label>
+      <label>
+        Servidor API:
+        <input id="apiUrlInput" type="text" placeholder="http://host:puerto/api/data">
+        <button id="saveApiUrl" type="button">Guardar</button>
+      </label>
     </section>
     <section class="dev-info">
       <h2>Información del servidor</h2>
@@ -72,10 +77,15 @@ export async function render(container) {
   const descLabel = container.querySelector('#selectedDesc');
   const restoreBtn = container.querySelector('#restoreBackup');
   const deleteBtn = container.querySelector('#deleteBackup');
+  const apiInput = container.querySelector('#apiUrlInput');
+  const saveApiBtn = container.querySelector('#saveApiUrl');
 
   const storedBrightness = localStorage.getItem('pageBrightness') || '100';
   range.value = storedBrightness;
   valueLabel.textContent = storedBrightness + '%';
+
+  const savedApiUrl = localStorage.getItem('apiUrl');
+  if (apiInput && savedApiUrl) apiInput.value = savedApiUrl;
 
   const devActive = localStorage.getItem('devMode') === 'true';
   if (devChk) devChk.checked = devActive;
@@ -118,6 +128,13 @@ export async function render(container) {
     document.body.classList.toggle('grid-overlay', val);
     localStorage.setItem('showGrid', val);
     activateDevMode();
+  });
+
+  saveApiBtn?.addEventListener('click', () => {
+    const url = apiInput?.value.trim();
+    if (url) localStorage.setItem('apiUrl', url);
+    else localStorage.removeItem('apiUrl');
+    location.reload();
   });
 
   const user = getUser();
