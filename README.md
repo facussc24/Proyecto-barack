@@ -14,6 +14,13 @@ El flujo recomendado para poner en marcha la aplicación es ejecutar desde Power
 docker compose up -d
 ```
 
+Por defecto se inicia únicamente el contenedor `app`. Si también quieres
+servir la carpeta `docs` mediante Nginx ejecuta:
+
+```bash
+docker compose --profile prod up -d
+```
+
 
 ## Control de versiones
 
