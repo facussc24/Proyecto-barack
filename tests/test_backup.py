@@ -237,3 +237,44 @@ def test_server_info_reports_active_backup(tmp_path, monkeypatch):
     assert resp.status_code == 200
     data = resp.get_json()
     assert data["active_backup"] == name
+
+
+def test_simple_backup_and_restore(tmp_path, monkeypatch):
+    monkeypatch.setenv("BACKUP_DIR", str(tmp_path / "backups"))
+
+    backend = importlib.reload(importlib.import_module("backend.main"))
+    db = Path(os.environ["DB_PATH"])
+    import sqlite3
+    conn = sqlite3.connect(db)
+    conn.execute("CREATE TABLE t(id INTEGER)")
+    conn.commit()
+    conn.close()
+
+    client = backend.app.test_client()
+
+    resp = client.post("/api/simple-backup")
+    assert resp.status_code == 200
+    name = resp.get_json()["name"]
+    assert (Path(os.environ["BACKUP_DIR"]) / name).exists()
+
+    conn = sqlite3.connect(db)
+    conn.execute("DROP TABLE t")
+    conn.commit()
+    conn.close()
+
+    resp = client.post("/api/simple-restore", json={"name": name})
+    assert resp.status_code == 200
+    conn = sqlite3.connect(db)
+    cur = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='t'")
+    assert cur.fetchone() is not None
+    conn.close()
+
+
+def test_simple_restore_invalid_name(tmp_path, monkeypatch):
+    monkeypatch.setenv("BACKUP_DIR", str(tmp_path / "backups"))
+
+    backend = importlib.reload(importlib.import_module("backend.main"))
+    client = backend.app.test_client()
+
+    resp = client.post("/api/simple-restore", json={"name": "../hack.db"})
+    assert resp.status_code == 400

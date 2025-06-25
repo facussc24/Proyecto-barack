@@ -524,6 +524,28 @@ def manual_backup(description=None, activate=False):
     return dest
 
 
+def simple_backup() -> str | None:
+    """Create a plain SQLite copy under BACKUP_DIR/backup_<timestamp>.db."""
+    if not os.path.exists(DB_PATH):
+        return None
+    ts = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+    dest = os.path.join(BACKUP_DIR, f"backup_{ts}.db")
+    shutil.copy2(DB_PATH, dest)
+    return dest
+
+
+def _validate_simple_name(name: str) -> str | None:
+    if not name or "/" in name or "\\" in name or name in {".", ".."}:
+        return None
+    base = os.path.basename(name)
+    if base != name or not base.endswith(".db"):
+        return None
+    full = os.path.abspath(os.path.join(BACKUP_DIR, base))
+    if os.path.commonpath([full, os.path.abspath(BACKUP_DIR)]) != os.path.abspath(BACKUP_DIR):
+        return None
+    return base
+
+
 def _validate_backup_name(name: str) -> str | None:
     if not name or "/" in name or "\\" in name:
         return None
@@ -658,6 +680,39 @@ def restore_backup():
     meta[ACTIVE_KEY] = {"name": safe, "timestamp": ts_iso}
     with open(META_FILE, "w", encoding="utf-8") as f:
         json.dump(meta, f, ensure_ascii=False, indent=2)
+    return jsonify({"status": "ok"})
+
+
+@app.post("/api/simple-backup")
+def create_simple_backup_route():
+    path = simple_backup()
+    if not path:
+        return jsonify({"error": "no data"}), 404
+    return jsonify({"name": os.path.basename(path)})
+
+
+@app.get("/api/simple-backups")
+def list_simple_backups_route():
+    files = sorted(
+        os.path.basename(f)
+        for f in glob.glob(os.path.join(BACKUP_DIR, "backup_*.db"))
+    )
+    return jsonify(files)
+
+
+@app.post("/api/simple-restore")
+def simple_restore_route():
+    data = request.get_json(force=True, silent=True) or {}
+    name = data.get("name")
+    if not name:
+        return jsonify({"error": "missing name"}), 400
+    safe = _validate_simple_name(name)
+    if not safe:
+        return jsonify({"error": "invalid name"}), 400
+    src = os.path.join(BACKUP_DIR, safe)
+    if not os.path.exists(src):
+        return jsonify({"error": "not found"}), 404
+    shutil.copy2(src, DB_PATH)
     return jsonify({"status": "ok"})
 
 
