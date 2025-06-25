@@ -1,4 +1,7 @@
+
 'use strict';
+
+const socket = io();
 
 const BASE =
   (localStorage.getItem('apiUrl') || '').replace(/\/api\/data$/, '') ||
@@ -31,8 +34,9 @@ document.addEventListener('DOMContentLoaded', () => {
       tbody.innerHTML = '';
       data.slice().reverse().forEach(entry => {
         const tr = document.createElement('tr');
+        const ts = entry.ts ? new Date(entry.ts).toLocaleString() : '';
         tr.innerHTML =
-          `<td>${entry.ts || ''}</td>` +
+          `<td>${ts}</td>` +
           `<td>${entry.summary || ''}</td>`;
         tbody.appendChild(tr);
       });
@@ -150,4 +154,11 @@ document.addEventListener('DOMContentLoaded', () => {
   loadBackups();
   loadSimple();
   loadHistory();
+
+  socket.on('data_updated', () => {
+    loadHistory();
+    if (typeof loadClients === 'function') loadClients();
+  });
+
+  socket.on('connect_error', e => console.error('WS error', e));
 });

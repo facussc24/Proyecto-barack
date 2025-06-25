@@ -245,6 +245,7 @@ def test_simple_backup_and_restore(tmp_path, monkeypatch):
     backend = importlib.reload(importlib.import_module("backend.main"))
     db = Path(os.environ["DB_PATH"])
     import sqlite3
+
     conn = sqlite3.connect(db)
     conn.execute("CREATE TABLE t(id INTEGER)")
     conn.commit()

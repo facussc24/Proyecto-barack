@@ -562,7 +562,9 @@ def _validate_simple_name(name: str) -> str | None:
     if base != name or not base.endswith(".db"):
         return None
     full = os.path.abspath(os.path.join(BACKUP_DIR, base))
-    if os.path.commonpath([full, os.path.abspath(BACKUP_DIR)]) != os.path.abspath(BACKUP_DIR):
+    if os.path.commonpath([full, os.path.abspath(BACKUP_DIR)]) != os.path.abspath(
+        BACKUP_DIR
+    ):
         return None
     return base
 
@@ -716,8 +718,7 @@ def create_simple_backup_route():
 @app.get("/api/simple-backups")
 def list_simple_backups_route():
     files = sorted(
-        os.path.basename(f)
-        for f in glob.glob(os.path.join(BACKUP_DIR, "backup_*.db"))
+        os.path.basename(f) for f in glob.glob(os.path.join(BACKUP_DIR, "backup_*.db"))
     )
     return jsonify(files)
 
