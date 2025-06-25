@@ -126,16 +126,9 @@ function loadModules(el) {
     {
       main: 'history.html',
       icon: '📜',
-      text: 'Historial',
+      text: 'Historial y Backups',
       actions: [],
       class: 'admin-only',
-    },
-    {
-      main: '#/backup',
-      icon: '⚙️',
-      text: 'Backups',
-      actions: [],
-      class: 'no-guest',
     },
   ];
 

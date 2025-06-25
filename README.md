@@ -106,9 +106,9 @@ docker compose build
 docker compose up -d
 ```
 
-Tras iniciar los contenedores abre `http://<HOST>:5000/index.html#/backup`
-para crear o restaurar respaldos. Todos los usuarios deben utilizar esta misma
-URL para que sus datos permanezcan sincronizados.
+Tras iniciar los contenedores abre `http://<HOST>:5000/history.html`
+para administrar respaldos y ver el historial. Todos los usuarios deben utilizar
+esta misma URL para que sus datos permanezcan sincronizados.
 
 > **Nota:** Asegúrate de que las carpetas `./data` y `./backups` existan y
 > cuenten con permisos de escritura antes de ejecutar `docker compose up`.

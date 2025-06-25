@@ -1,7 +1,6 @@
 import { render as renderHome } from './views/home.js';
 import { render as renderSinoptico } from './views/sinoptico.js';
 import { render as renderAmfe } from './views/amfe.js';
-import { render as renderBackup } from './views/backup.js';
 import { render as renderMaestro } from './views/maestro.js';
 
 const routes = {
@@ -9,7 +8,6 @@ const routes = {
   '#/sinoptico': renderSinoptico,
   '#/amfe': renderAmfe,
   '#/maestro': renderMaestro,
-  '#/backup': renderBackup,
 };
 
 const bodyClasses = {
@@ -17,7 +15,6 @@ const bodyClasses = {
   '#/sinoptico': 'sinoptico-page',
   '#/amfe': 'amfe-page',
   '#/maestro': 'maestro-page',
-  '#/backup': 'backup-page',
 };
 
 export function router() {
@@ -30,8 +27,7 @@ export function router() {
     'home',
     'sinoptico-page',
     'amfe-page',
-    'maestro-page',
-    'backup-page'
+    'maestro-page'
   );
   const cls = bodyClasses[hash];
   if (cls) document.body.classList.add(cls);
