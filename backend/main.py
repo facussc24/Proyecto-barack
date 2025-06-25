@@ -324,7 +324,9 @@ def update_product(prod_id):
 @app.get("/api/history")
 def get_history():
     conn = get_db()
-    rows = conn.execute("SELECT ts, summary FROM history_log ORDER BY ts").fetchall()
+    rows = conn.execute(
+        "SELECT ts, summary FROM history_log ORDER BY ts DESC"
+    ).fetchall()
     conn.close()
     return jsonify([{"ts": r["ts"], "summary": r["summary"]} for r in rows])
 
