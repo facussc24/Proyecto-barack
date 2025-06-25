@@ -1,0 +1,33 @@
+# Exclude git history and metadata
+.git
+
+# Python cache and virtual envs
+__pycache__/
+*.py[cod]
+
+# pytest cache
+.pytest_cache/
+
+# test and documentation directories
+tests/
+docs/
+
+# Node modules and package lock (if any)
+node_modules/
+
+# Temporary or development files
+*.log
+*.tmp
+*.swp
+
+# Build artifacts
+*.egg-info/
+
+# Other development directories
+.vscode/
+.idea/
+.env
+.venv
+
+# Database dumps or large assets not needed
+BASE DE DATOS/
