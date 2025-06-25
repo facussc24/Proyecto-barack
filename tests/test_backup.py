@@ -26,7 +26,9 @@ def test_manual_backup_metadata(tmp_path, monkeypatch):
     assert meta_file.exists()
     meta = json.load(meta_file.open())
     assert os.path.basename(path) in meta
-    assert meta[os.path.basename(path)] == "desc"
+    entry = meta[os.path.basename(path)]
+    assert entry["description"] == "desc"
+    assert "last_updated" in entry
     with server.ZipFile(path) as zf:
         assert "db.sqlite" in zf.namelist()
         assert "latest.json" in zf.namelist()
@@ -145,4 +147,31 @@ def test_active_flag_on_backup_and_restore(tmp_path, monkeypatch):
     resp = client.get("/api/backups")
     data = {item["name"]: item for item in resp.get_json()}
     assert data[b1]["active"] is True
+
+
+def test_last_updated_updates_on_change(tmp_path, monkeypatch):
+    monkeypatch.setenv("BACKUP_DIR", str(tmp_path / "backups"))
+    monkeypatch.setenv("DATA_DIR", str(tmp_path / "data"))
+    monkeypatch.setenv("DB_PATH", str(tmp_path / "data/db.sqlite"))
+
+    data_dir = Path(os.environ["DATA_DIR"])
+    data_dir.mkdir(parents=True)
+    with open(data_dir / "latest.json", "w") as f:
+        json.dump({}, f)
+
+    with open(Path(os.environ["DB_PATH"]), "w") as f:
+        f.write("db")
+
+    server = importlib.reload(importlib.import_module("server"))
+    name = os.path.basename(server.manual_backup("init", activate=True))
+    meta_file = Path(os.environ["BACKUP_DIR"]) / "metadata.json"
+    meta = json.load(meta_file.open())
+    initial = meta[name]["last_updated"]
+
+    client = server.app.test_client()
+    resp = client.post("/api/data", json={"changed": True})
+    assert resp.status_code == 200
+
+    meta = json.load(meta_file.open())
+    assert meta[name]["last_updated"] != initial
 

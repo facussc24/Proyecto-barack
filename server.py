@@ -103,11 +103,15 @@ def manual_backup(description=None, activate=False):
     if os.path.exists(METADATA_FILE):
         with open(METADATA_FILE, "r", encoding="utf-8") as f:
             meta = json.load(f)
-    meta[os.path.basename(dest)] = description or ""
+    ts_iso = datetime.utcnow().isoformat() + "Z"
+    meta[os.path.basename(dest)] = {
+        "description": description or "",
+        "last_updated": ts_iso,
+    }
     if activate:
         meta[ACTIVE_KEY] = {
             "name": os.path.basename(dest),
-            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "timestamp": ts_iso,
         }
     with open(METADATA_FILE, "w", encoding="utf-8") as f:
         json.dump(meta, f, ensure_ascii=False, indent=2)
@@ -135,6 +139,26 @@ def _validate_backup_name(name: str) -> str | None:
     ):
         return None
     return base
+
+
+def _touch_last_updated() -> None:
+    """Update last_updated for the active backup if metadata exists."""
+    if not os.path.exists(METADATA_FILE):
+        return
+    with open(METADATA_FILE, "r", encoding="utf-8") as f:
+        meta = json.load(f)
+    active = meta.get(ACTIVE_KEY, {}).get("name")
+    if not active:
+        return
+    entry = meta.get(active)
+    if isinstance(entry, str):
+        entry = {"description": entry}
+    if not isinstance(entry, dict):
+        entry = {}
+    entry["last_updated"] = datetime.utcnow().isoformat() + "Z"
+    meta[active] = entry
+    with open(METADATA_FILE, "w", encoding="utf-8") as f:
+        json.dump(meta, f, ensure_ascii=False, indent=2)
 
 
 def cleanup_backups():
@@ -188,6 +212,8 @@ def data():
         history.append(entry)
         with open(HISTORY_FILE, "w", encoding="utf-8") as f:
             json.dump(history, f, ensure_ascii=False, indent=2)
+
+    _touch_last_updated()
 
     socketio.emit("data_updated")
     return jsonify({"status": "ok"})
@@ -297,14 +323,19 @@ def list_backups():
         with open(METADATA_FILE, "r", encoding="utf-8") as f:
             meta = json.load(f)
     active = meta.get(ACTIVE_KEY, {}).get("name") if meta else None
-    result = [
-        {
-            "name": f,
-            "description": meta.get(f, ""),
-            "active": f == active,
-        }
-        for f in files
-    ]
+    result = []
+    for f in files:
+        info = meta.get(f, {})
+        if isinstance(info, str):
+            info = {"description": info}
+        result.append(
+            {
+                "name": f,
+                "description": info.get("description", ""),
+                "last_updated": info.get("last_updated"),
+                "active": f == active,
+            }
+        )
     return jsonify(result)
 
 
@@ -387,7 +418,15 @@ def restore_backup():
     if os.path.exists(METADATA_FILE):
         with open(METADATA_FILE, "r", encoding="utf-8") as f:
             meta = json.load(f)
-    meta[ACTIVE_KEY] = {"name": safe, "timestamp": datetime.utcnow().isoformat() + "Z"}
+    ts_iso = datetime.utcnow().isoformat() + "Z"
+    entry = meta.get(safe, {})
+    if isinstance(entry, str):
+        entry = {"description": entry}
+    if not isinstance(entry, dict):
+        entry = {}
+    entry["last_updated"] = ts_iso
+    meta[safe] = entry
+    meta[ACTIVE_KEY] = {"name": safe, "timestamp": ts_iso}
     with open(METADATA_FILE, "w", encoding="utf-8") as f:
         json.dump(meta, f, ensure_ascii=False, indent=2)
 
