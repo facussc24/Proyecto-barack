@@ -1,0 +1,24 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.pyc
+
+# pytest cache
+.pytest_cache/
+
+# Node dependencies
+node_modules/
+
+# Backups and data
+backups/
+data/
+
+# Build directories
+build/
+dist/
+
+# Environment files
+.env
+
+# Misc
+.DS_Store
+
