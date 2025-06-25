@@ -69,7 +69,15 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   createBtn?.addEventListener('click', async () => {
-    const description = descInput?.value || '';
+    const description = descInput?.value.trim() || '';
+    if (!description) {
+      if (statusSpan) {
+        statusSpan.textContent = 'Ingresa una descripción';
+        statusSpan.classList.add('show', 'error');
+        setTimeout(() => statusSpan.classList.remove('show'), 3000);
+      }
+      return;
+    }
     const resp = await fetch(`${BASE}/api/backups`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -77,8 +85,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     if (resp.ok && statusSpan) {
       statusSpan.textContent = 'Backup creado';
+      statusSpan.classList.remove('error');
       statusSpan.classList.add('show');
       setTimeout(() => statusSpan.classList.remove('show'), 3000);
+    } else if (!resp.ok && statusSpan) {
+      let msg = '';
+      try {
+        const data = await resp.json();
+        msg = data.error || resp.statusText;
+      } catch {
+        msg = resp.statusText;
+      }
+      statusSpan.textContent = `Error al crear backup: ${msg}`;
+      statusSpan.classList.add('show', 'error');
+      setTimeout(() => statusSpan.classList.remove('show'), 5000);
     }
     if (descInput) descInput.value = '';
     loadBackups();

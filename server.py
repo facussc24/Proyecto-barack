@@ -298,6 +298,8 @@ def list_backups():
 def create_backup_route():
     data = request.get_json(force=True, silent=True) or {}
     desc = data.get("description")
+    if not desc or not str(desc).strip():
+        return jsonify({"error": "missing description"}), 400
     activate = bool(data.get("activate"))
     path = manual_backup(desc, activate)
     if not path:

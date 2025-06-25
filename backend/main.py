@@ -496,7 +496,9 @@ def manual_backup(description=None):
         "Subproducto",
         "ProductoInsumo",
     ]
-    stats = {tbl: conn.execute(f"SELECT COUNT(*) FROM {tbl}").fetchone()[0] for tbl in tables}
+    stats = {
+        tbl: conn.execute(f"SELECT COUNT(*) FROM {tbl}").fetchone()[0] for tbl in tables
+    }
     conn.close()
 
     meta = {}
@@ -521,14 +523,18 @@ def _validate_backup_name(name: str) -> str | None:
     if base != name or not base.endswith(".zip"):
         return None
     full = os.path.abspath(os.path.join(BACKUP_DIR, base))
-    if os.path.commonpath([full, os.path.abspath(BACKUP_DIR)]) != os.path.abspath(BACKUP_DIR):
+    if os.path.commonpath([full, os.path.abspath(BACKUP_DIR)]) != os.path.abspath(
+        BACKUP_DIR
+    ):
         return None
     return base
 
 
 @app.get("/api/backups")
 def list_backups():
-    files = sorted(os.path.basename(f) for f in glob.glob(os.path.join(BACKUP_DIR, "*.zip")))
+    files = sorted(
+        os.path.basename(f) for f in glob.glob(os.path.join(BACKUP_DIR, "*.zip"))
+    )
     meta = {}
     if os.path.exists(META_FILE):
         with open(META_FILE, "r", encoding="utf-8") as f:
@@ -536,11 +542,13 @@ def list_backups():
     result = []
     for f in files:
         info = meta.get(f, {})
-        result.append({
-            "name": f,
-            "description": info.get("description", ""),
-            "stats": info.get("stats", {}),
-        })
+        result.append(
+            {
+                "name": f,
+                "description": info.get("description", ""),
+                "stats": info.get("stats", {}),
+            }
+        )
     return jsonify(result)
 
 
@@ -548,6 +556,8 @@ def list_backups():
 def create_backup_route():
     data = request.get_json(force=True, silent=True) or {}
     desc = data.get("description")
+    if not desc or not str(desc).strip():
+        return jsonify({"error": "missing description"}), 400
     path = manual_backup(desc)
     if not path:
         return jsonify({"error": "no data"}), 404
@@ -556,11 +566,13 @@ def create_backup_route():
     if os.path.exists(META_FILE):
         with open(META_FILE, "r", encoding="utf-8") as f:
             info = json.load(f).get(name, {})
-    return jsonify({
-        "path": f"backups/{name}",
-        "description": desc or "",
-        "stats": info.get("stats", {}),
-    })
+    return jsonify(
+        {
+            "path": f"backups/{name}",
+            "description": desc or "",
+            "stats": info.get("stats", {}),
+        }
+    )
 
 
 @app.delete("/api/backups/<name>")
@@ -610,7 +622,9 @@ def db_stats():
         "Subproducto",
         "ProductoInsumo",
     ]
-    stats = {tbl: conn.execute(f"SELECT COUNT(*) FROM {tbl}").fetchone()[0] for tbl in tables}
+    stats = {
+        tbl: conn.execute(f"SELECT COUNT(*) FROM {tbl}").fetchone()[0] for tbl in tables
+    }
     conn.close()
     stats["backups"] = len(glob.glob(os.path.join(BACKUP_DIR, "*.zip")))
     return jsonify(stats)
