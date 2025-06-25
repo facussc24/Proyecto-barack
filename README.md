@@ -4,7 +4,7 @@ Versión actual: **406**
 
 Esta es una pequeña SPA (Single Page Application) escrita en HTML, CSS y JavaScript.
 Incluye un módulo llamado *Sinóptico* para gestionar jerarquías de productos.
-Todo se ejecuta en el navegador y no requiere servidor.
+La SPA utiliza un backend Flask, expuesto mediante Docker Compose o ejecutándolo directamente con Python.
 
 ## Inicio
 
