@@ -43,7 +43,12 @@ ASSET_DIRS = ["imagenes_sinoptico", "images"]
 from flask_socketio import SocketIO
 
 # Permit requests from the development front-end and the local API consumer
-default_origins = ["http://192.168.1.233:8080", "http://localhost:8080"]
+# Added desktop hostname so the SPA works out of the box when served there
+default_origins = [
+    "http://192.168.1.233:8080",
+    "http://localhost:8080",
+    "http://desktop-14jg95b:8080",
+]
 orig_env = os.getenv("ALLOWED_ORIGINS")
 origins = (
     [o.strip() for o in orig_env.split(",") if o.strip()]
