@@ -4,14 +4,27 @@ Versión actual: **407**
 
 Esta es una pequeña SPA (Single Page Application) escrita en HTML, CSS y JavaScript.
 Incluye un módulo llamado *Sinóptico* para gestionar jerarquías de productos.
-La SPA utiliza un backend Flask, expuesto mediante Docker Compose o ejecutándolo directamente con Python.
+La SPA utiliza un backend Flask. Para entornos de producción o multiusuario se recomienda iniciar `docker-compose.yml`, que levanta el servicio `backend` y Nginx usando `nginx.conf`. En desarrollo puedes ejecutar `python server.py` o construir la imagen unica con `docker build -t barack .` y `docker run -p 5000:5000 barack`.
 
 ## Inicio
 
-El flujo recomendado para poner en marcha la aplicación es ejecutar desde PowerShell o la terminal:
+Para producción o cuando la aplicación se comparte en red, levanta el stack con Docker Compose:
 
 ```bash
 docker compose up -d
+```
+
+Para hacer pruebas rápidas inicia el backend con Python:
+
+```bash
+python server.py
+```
+
+O bien utiliza la imagen de un solo contenedor:
+
+```bash
+docker build -t barack .
+docker run -p 5000:5000 barack
 ```
 
 
@@ -117,6 +130,10 @@ URL para que sus datos permanezcan sincronizados.
 > que se inicie el backend. Si cualquiera de estas rutas falta o es de solo
 > lectura se producirá un `sqlite3.OperationalError` y Nginx mostrará
 > “Bad Gateway”.
+
+### Ajustar los timeouts de Nginx
+
+Si una copia de seguridad tarda más de 120 segundos, edita `nginx.conf` y aumenta `proxy_send_timeout`, `proxy_read_timeout` y `proxy_connect_timeout`. Luego ejecuta `docker compose restart docs` para aplicar el cambio.
 
 Todas las computadoras de la red deben abrir la URL `http://<HOST>:8080/`,
 donde `<HOST>` es el nombre o la IP del equipo que ejecutó `docker compose up`.
