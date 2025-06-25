@@ -74,6 +74,10 @@ export async function render(container) {
   const backupSel = container.querySelector('#backupList');
   const createBtn = container.querySelector('#createBackup');
   const descInput = container.querySelector('#backupDesc');
+  const backupMsg = document.createElement('span');
+  backupMsg.id = 'backupMsg';
+  backupMsg.style.marginLeft = '0.5em';
+  if (createBtn) createBtn.insertAdjacentElement('afterend', backupMsg);
   const descLabel = container.querySelector('#selectedDesc');
   const restoreBtn = container.querySelector('#restoreBackup');
   const deleteBtn = container.querySelector('#deleteBackup');
@@ -162,11 +166,23 @@ export async function render(container) {
   if (createBtn) {
     createBtn.addEventListener('click', async () => {
       const description = descInput?.value || '';
-      await fetch('/api/backups', {
+      const resp = await fetch('/api/backups', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ description })
       });
+      if (!resp.ok) {
+        let msg = '';
+        try {
+          const data = await resp.json();
+          msg = data.error || resp.statusText;
+        } catch {
+          msg = resp.statusText;
+        }
+        backupMsg.textContent = `Error: ${msg}`;
+        return;
+      }
+      backupMsg.textContent = '';
       if (descInput) descInput.value = '';
       loadBackups();
     });
