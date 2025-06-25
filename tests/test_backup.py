@@ -35,7 +35,6 @@ def test_manual_backup_metadata(tmp_path, monkeypatch):
 def _load_server(monkeypatch, tmp_path):
     monkeypatch.setenv("BACKUP_DIR", str(tmp_path / "backups"))
     monkeypatch.setenv("DATA_DIR", str(tmp_path / "data"))
-    monkeypatch.setenv("DB_PATH", str(tmp_path / "data/db.sqlite"))
     return importlib.reload(importlib.import_module("server"))
 
 
@@ -94,3 +93,24 @@ def test_backup_and_restore_assets(tmp_path, monkeypatch):
     assert resp.status_code == 200
     assert (img_dir / "foo.jpg").exists()
     assert (other_dir / "bar.png").exists()
+
+
+def test_create_backup_requires_description(tmp_path, monkeypatch):
+    server = _load_server(monkeypatch, tmp_path)
+    Path(os.environ["DB_PATH"]).touch()
+    client = server.app.test_client()
+    resp = client.post("/api/backups", json={"description": ""})
+    assert resp.status_code == 400
+    resp = client.post("/api/backups", json={})
+    assert resp.status_code == 400
+
+
+def test_backend_create_backup_requires_description(tmp_path, monkeypatch):
+    monkeypatch.setenv("BACKUP_DIR", str(tmp_path / "backups"))
+    Path(os.environ["DB_PATH"]).touch()
+    backend = importlib.reload(importlib.import_module("backend.main"))
+    client = backend.app.test_client()
+    resp = client.post("/api/backups", json={"description": ""})
+    assert resp.status_code == 400
+    resp = client.post("/api/backups", json={})
+    assert resp.status_code == 400

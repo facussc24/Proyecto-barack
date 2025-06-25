@@ -104,7 +104,15 @@ export async function render(container) {
 
   if (createBtn) {
     createBtn.addEventListener('click', async () => {
-      const description = descInput?.value || '';
+      const description = descInput?.value.trim() || '';
+      if (!description) {
+        if (backupMsg) {
+          backupMsg.textContent = 'Ingresa una descripción';
+          backupMsg.classList.add('show', 'error');
+          setTimeout(() => backupMsg.classList.remove('show'), 3000);
+        }
+        return;
+      }
       const resp = await fetch(`${BASE}/api/backups`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -119,7 +127,7 @@ export async function render(container) {
           msg = resp.statusText;
         }
         if (backupMsg) {
-          backupMsg.textContent = `Error al crear el backup: ${msg}. \nVerifica que el servidor esté en funcionamiento.`;
+          backupMsg.textContent = `Error al crear el backup: ${msg}.`;
           backupMsg.classList.add('show', 'error');
           setTimeout(() => backupMsg.classList.remove('show'), 5000);
         }
