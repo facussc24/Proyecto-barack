@@ -133,6 +133,7 @@ def test_active_flag_on_backup_and_restore(tmp_path, monkeypatch):
     server = importlib.reload(importlib.import_module("server"))
     b1 = os.path.basename(server.manual_backup("one"))
     import time
+
     time.sleep(1)
     b2 = os.path.basename(server.manual_backup("two", activate=True))
     client = server.app.test_client()
@@ -205,6 +206,7 @@ def test_restore_updates_last_updated(tmp_path, monkeypatch):
     before = meta[name]["last_updated"]
 
     import time
+
     time.sleep(1)
 
     client = server.app.test_client()
@@ -235,4 +237,3 @@ def test_server_info_reports_active_backup(tmp_path, monkeypatch):
     assert resp.status_code == 200
     data = resp.get_json()
     assert data["active_backup"] == name
-
