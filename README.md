@@ -104,6 +104,7 @@ siguientes comandos:
 docker compose down --volumes
 docker compose build
 docker compose up -d
+docker compose restart docs  # Recarga Nginx con la nueva configuración
 ```
 
 Tras iniciar los contenedores abre `http://<HOST>:8080/index.html#/backup`
