@@ -231,6 +231,12 @@ h1 {
   background-color: var(--maestro-row-alt);
 }
 
+.active-label {
+  color: green;
+  font-weight: bold;
+  margin-left: 4px;
+}
+
 .card {
   background: var(--color-light);
   color: var(--color-text);

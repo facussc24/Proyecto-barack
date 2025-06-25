@@ -114,3 +114,35 @@ def test_backend_create_backup_requires_description(tmp_path, monkeypatch):
     assert resp.status_code == 400
     resp = client.post("/api/backups", json={})
     assert resp.status_code == 400
+
+
+def test_active_flag_on_backup_and_restore(tmp_path, monkeypatch):
+    monkeypatch.setenv("BACKUP_DIR", str(tmp_path / "backups"))
+    monkeypatch.setenv("DATA_DIR", str(tmp_path / "data"))
+    monkeypatch.setenv("DB_PATH", str(tmp_path / "data/db.sqlite"))
+
+    data_dir = Path(os.environ["DATA_DIR"])
+    data_dir.mkdir(parents=True)
+    with open(data_dir / "latest.json", "w") as f:
+        json.dump({"a": 1}, f)
+    with open(Path(os.environ["DB_PATH"]), "w") as f:
+        f.write("db")
+
+    server = importlib.reload(importlib.import_module("server"))
+    b1 = os.path.basename(server.manual_backup("one"))
+    import time
+    time.sleep(1)
+    b2 = os.path.basename(server.manual_backup("two", activate=True))
+    client = server.app.test_client()
+    resp = client.get("/api/backups")
+    assert resp.status_code == 200
+    data = {item["name"]: item for item in resp.get_json()}
+    assert data[b1]["active"] is False
+    assert data[b2]["active"] is True
+
+    resp = client.post("/api/restore", json={"name": b1})
+    assert resp.status_code == 200
+    resp = client.get("/api/backups")
+    data = {item["name"]: item for item in resp.get_json()}
+    assert data[b1]["active"] is True
+

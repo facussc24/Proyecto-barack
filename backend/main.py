@@ -17,6 +17,7 @@ from zipfile import ZipFile, ZIP_DEFLATED
 DB_PATH = os.getenv("DB_PATH", os.path.join("data", "db.sqlite"))
 BACKUP_DIR = os.getenv("BACKUP_DIR", "/app/backups")
 META_FILE = os.path.join(BACKUP_DIR, "metadata.json")
+ACTIVE_KEY = "_active"
 os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
 os.makedirs(BACKUP_DIR, exist_ok=True)
 
@@ -479,7 +480,7 @@ def generic_crud(table, item_id=None):
     return jsonify({"success": False, "errors": "method not allowed"}), 405
 
 
-def manual_backup(description=None):
+def manual_backup(description=None, activate=False):
     if not os.path.exists(DB_PATH):
         return None
     ts = datetime.utcnow().strftime("%Y-%m-%d_%H-%M-%S")
@@ -509,6 +510,11 @@ def manual_backup(description=None):
         "description": description or "",
         "stats": stats,
     }
+    if activate:
+        meta[ACTIVE_KEY] = {
+            "name": os.path.basename(dest),
+            "timestamp": datetime.utcnow().isoformat() + "Z",
+        }
     with open(META_FILE, "w", encoding="utf-8") as f:
         json.dump(meta, f, ensure_ascii=False, indent=2)
     return dest
@@ -539,6 +545,7 @@ def list_backups():
     if os.path.exists(META_FILE):
         with open(META_FILE, "r", encoding="utf-8") as f:
             meta = json.load(f)
+    active = meta.get(ACTIVE_KEY, {}).get("name") if meta else None
     result = []
     for f in files:
         info = meta.get(f, {})
@@ -547,6 +554,7 @@ def list_backups():
                 "name": f,
                 "description": info.get("description", ""),
                 "stats": info.get("stats", {}),
+                "active": f == active,
             }
         )
     return jsonify(result)
@@ -558,7 +566,8 @@ def create_backup_route():
     desc = data.get("description")
     if not desc or not str(desc).strip():
         return jsonify({"error": "missing description"}), 400
-    path = manual_backup(desc)
+    activate = bool(data.get("activate"))
+    path = manual_backup(desc, activate)
     if not path:
         return jsonify({"error": "no data"}), 404
     name = os.path.basename(path)
@@ -607,6 +616,13 @@ def restore_backup():
         return jsonify({"error": "not found"}), 404
     with ZipFile(path) as zf:
         zf.extract("db.sqlite", os.path.dirname(DB_PATH))
+    meta = {}
+    if os.path.exists(META_FILE):
+        with open(META_FILE, "r", encoding="utf-8") as f:
+            meta = json.load(f)
+    meta[ACTIVE_KEY] = {"name": safe, "timestamp": datetime.utcnow().isoformat() + "Z"}
+    with open(META_FILE, "w", encoding="utf-8") as f:
+        json.dump(meta, f, ensure_ascii=False, indent=2)
     return jsonify({"status": "ok"})
 
 
