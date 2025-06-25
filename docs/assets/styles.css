@@ -2689,6 +2689,3 @@ tr:not(.pending) td:first-child::before {
 body.settings-page main {
   animation: fadeIn 0.3s ease-in-out;
 }
-body.backup-page main {
-  animation: fadeIn 0.3s ease-in-out;
-}
