@@ -43,7 +43,14 @@ export async function render(container) {
   async function loadBackups() {
     try {
       const resp = await fetch('/api/backups');
-      if (!resp.ok) return;
+      if (!resp.ok) {
+        if (backupMsg) {
+          backupMsg.textContent = 'Error al cargar la lista de backups';
+          backupMsg.classList.add('show', 'error');
+          setTimeout(() => backupMsg.classList.remove('show'), 5000);
+        }
+        return;
+      }
       const list = await resp.json();
       if (backupList) {
         backupList.innerHTML = list
@@ -68,6 +75,11 @@ export async function render(container) {
       }
     } catch (e) {
       console.error(e);
+      if (backupMsg) {
+        backupMsg.textContent = 'Error al cargar la lista de backups';
+        backupMsg.classList.add('show', 'error');
+        setTimeout(() => backupMsg.classList.remove('show'), 5000);
+      }
     }
   }
 
