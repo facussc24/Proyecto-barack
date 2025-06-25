@@ -248,6 +248,12 @@ def server_info():
         "data_keys": list(memory.keys()),
         "backup_count": len(glob.glob(os.path.join(BACKUP_DIR, "*.zip"))),
     }
+    if os.path.exists(METADATA_FILE):
+        with open(METADATA_FILE, "r", encoding="utf-8") as f:
+            meta = json.load(f)
+        info["active_backup"] = meta.get(ACTIVE_KEY, {}).get("name")
+    else:
+        info["active_backup"] = None
     return jsonify(info)
 
 

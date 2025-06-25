@@ -214,3 +214,25 @@ def test_restore_updates_last_updated(tmp_path, monkeypatch):
     meta = json.load(meta_file.open())
     assert meta[name]["last_updated"] != before
 
+
+def test_server_info_reports_active_backup(tmp_path, monkeypatch):
+    monkeypatch.setenv("BACKUP_DIR", str(tmp_path / "backups"))
+    monkeypatch.setenv("DATA_DIR", str(tmp_path / "data"))
+    monkeypatch.setenv("DB_PATH", str(tmp_path / "data/db.sqlite"))
+
+    data_dir = Path(os.environ["DATA_DIR"])
+    data_dir.mkdir(parents=True)
+    with open(data_dir / "latest.json", "w") as f:
+        json.dump({}, f)
+    with open(Path(os.environ["DB_PATH"]), "w") as f:
+        f.write("db")
+
+    server = importlib.reload(importlib.import_module("server"))
+    name = os.path.basename(server.manual_backup("info", activate=True))
+
+    client = server.app.test_client()
+    resp = client.get("/api/server-info")
+    assert resp.status_code == 200
+    data = resp.get_json()
+    assert data["active_backup"] == name
+
