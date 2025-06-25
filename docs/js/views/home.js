@@ -131,9 +131,9 @@ function loadModules(el) {
       class: 'admin-only',
     },
     {
-      main: '#/settings',
+      main: '#/backup',
       icon: '⚙️',
-      text: 'Modo Dev',
+      text: 'Backups',
       actions: [],
       class: 'no-guest',
     },
