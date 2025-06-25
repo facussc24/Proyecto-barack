@@ -84,7 +84,7 @@ Todos los navegadores deben por tanto utilizar la misma URL de la API para mante
 El archivo activo se guarda en `data/latest.json`.
 Puedes generar copias manualmente con `POST /api/backups` o desde la página **Backups**.
 Por defecto se programa una copia diaria en `data/backups/AAAA-MM-DD.json`. Si prefieres desactivar esta tarea define `DISABLE_AUTOBACKUP=1` antes de iniciar el servidor.
-Los respaldos se encuentran en la carpeta `data/backups/`. Cada archivo incluye la base de datos, el historial, la base SQLite y las carpetas de imágenes para que puedas restaurar el estado completo de la aplicación. Si eliminas el repositorio también se borrará esta carpeta a menos que la conserves aparte.
+Los respaldos se guardan en la carpeta `data/backups/` y requieren que el servidor esté activo para poder generarse. Cada archivo incluye la base de datos, el historial, la base SQLite y las carpetas de imágenes para que puedas restaurar el estado completo de la aplicación. Si eliminas el repositorio también se borrará esta carpeta a menos que la conserves aparte.
 
 Para revisar visualmente el contenido actual de la base de datos se incluye la página `docs/dbviewer.html`. Ábrela con el servidor en marcha para ver los datos en formato JSON.
 

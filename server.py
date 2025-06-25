@@ -68,7 +68,11 @@ def backup_latest():
             zf.write(DATA_FILE, arcname="latest.json")
 
 
-def manual_backup(description=None):
+def manual_backup(description=None, activate=False):
+    """Create a ZIP backup. If ``activate`` is True, DATA_FILE points to a
+    timestamped copy of the JSON so it becomes the active database."""
+    global DATA_FILE
+
     if not os.path.exists(DATA_FILE):
         return None
 
@@ -96,6 +100,11 @@ def manual_backup(description=None):
     meta[os.path.basename(dest)] = description or ""
     with open(METADATA_FILE, "w", encoding="utf-8") as f:
         json.dump(meta, f, ensure_ascii=False, indent=2)
+
+    if activate:
+        new_json = os.path.join(BACKUP_DIR, f"{ts}.json")
+        shutil.copyfile(DATA_FILE, new_json)
+        DATA_FILE = new_json
 
     return dest
 
@@ -284,7 +293,8 @@ def list_backups():
 def create_backup_route():
     data = request.get_json(force=True, silent=True) or {}
     desc = data.get("description")
-    path = manual_backup(desc)
+    activate = bool(data.get("activate"))
+    path = manual_backup(desc, activate)
     if not path:
         return jsonify({"error": "no data"}), 404
     name = os.path.basename(path)
