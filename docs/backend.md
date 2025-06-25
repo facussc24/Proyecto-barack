@@ -40,7 +40,9 @@ The frontend reads the server URL from `localStorage` (`apiUrl`) or from the `AP
 - `SSL_CERT` / `SSL_KEY` – optional certificate paths for HTTPS when running `server.py`.
 - `DB_PATH` – path to the SQLite file used by `backend/main.py` (`data/db.sqlite` by default).
 - `ALLOWED_ORIGINS` – comma-separated list of origins allowed for CORS and
-  WebSocket connections. Defaults to `http://192.168.1.233:8080,http://localhost:8080`.
+  WebSocket connections. Defaults to
+  `http://desktop-14jg95b:8080,http://192.168.1.233:8080,http://localhost:8080`.
+  This includes the desktop hostname specified in `docker-compose.yml`.
 
 ### Changing `ALLOWED_ORIGINS`
 
@@ -48,8 +50,18 @@ If the web interface is hosted under a different hostname or port, add that
 origin to the `ALLOWED_ORIGINS` environment variable before starting the
 backend. For example:
 
+The provided `docker-compose.yml` sets this variable to
+`http://desktop-14jg95b:8080`, so the SPA works out of the box. To use another
+origin run:
+
 ```bash
-ALLOWED_ORIGINS=http://desktop-14jg95b:8080 docker compose up
+ALLOWED_ORIGINS=http://mi-host:8080 docker compose up
+```
+
+Or when using the plain Python server:
+
+```bash
+ALLOWED_ORIGINS=http://mi-host:8080 python server.py
 ```
 
 ## Offline fallback

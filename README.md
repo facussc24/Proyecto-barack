@@ -105,12 +105,10 @@ docker compose up -d
 
 Todas las computadoras de la red deben abrir la URL `http://<HOST>:8080/`,
 donde `<HOST>` es el nombre o la IP del equipo que ejecutó `docker compose up`.
-Si utilizas un hostname distinto a `localhost`, añádelo en la variable
-`ALLOWED_ORIGINS` del servicio `backend` para evitar errores de CORS:
-
-```bash
-ALLOWED_ORIGINS=http://desktop-14jg95b:8080 docker compose up -d
-```
+El archivo `docker-compose.yml` ya establece
+`ALLOWED_ORIGINS=http://desktop-14jg95b:8080`, por lo que dicha URL se acepta
+de forma predeterminada. Si utilizas otro hostname, añádelo en la variable
+`ALLOWED_ORIGINS` del servicio `backend` para evitar errores de CORS.
 
 ### Configurar `ALLOWED_ORIGINS`
 
@@ -119,7 +117,10 @@ debes añadir esa URL a la variable de entorno `ALLOWED_ORIGINS` para evitar
 errores de CORS. Por ejemplo:
 
 ```bash
-ALLOWED_ORIGINS=http://desktop-14jg95b:8080 docker compose up -d
+ALLOWED_ORIGINS=http://mi-host:8080 docker compose up -d
+
+# O con el servidor en Python
+ALLOWED_ORIGINS=http://mi-host:8080 python server.py
 ```
 
 ## API
