@@ -6,7 +6,6 @@ services:
     image: barack:latest
     environment:
       - DB_PATH=/data/db.sqlite
-      - ALLOWED_ORIGINS=http://localhost:5000
     volumes:
       - ./data:/data
       - ./backups:/app/backups
