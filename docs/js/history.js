@@ -1,5 +1,10 @@
 'use strict';
 
+const BASE =
+  (localStorage.getItem('apiUrl') || '').replace(/\/api\/data$/, '') ||
+  window.API_BASE ||
+  '';
+
 document.addEventListener('DOMContentLoaded', () => {
   const tbody = document.querySelector('#historyTable tbody');
   const pageInput = document.getElementById('pageFilter');
@@ -50,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function loadBackups() {
     try {
-      const resp = await fetch('/api/backups');
+      const resp = await fetch(`${BASE}/api/backups`);
       if (!resp.ok) return;
       const list = await resp.json();
       backupSel.innerHTML = list
@@ -65,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   createBtn?.addEventListener('click', async () => {
     const description = descInput?.value || '';
-    const resp = await fetch('/api/backups', {
+    const resp = await fetch(`${BASE}/api/backups`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ description })
@@ -87,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
   restoreBtn?.addEventListener('click', async () => {
     const name = backupSel.value;
     if (!name) return;
-    await fetch('/api/restore', {
+    await fetch(`${BASE}/api/restore`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name })
@@ -97,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
   deleteBtn?.addEventListener('click', async () => {
     const name = backupSel.value;
     if (!name) return;
-    await fetch(`/api/backups/${encodeURIComponent(name)}`, { method: 'DELETE' });
+    await fetch(`${BASE}/api/backups/${encodeURIComponent(name)}`, { method: 'DELETE' });
     loadBackups();
   });
 

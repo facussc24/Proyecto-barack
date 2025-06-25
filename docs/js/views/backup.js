@@ -1,5 +1,10 @@
 import { animateInsert } from '../ui/animations.js';
 
+const BASE =
+  (localStorage.getItem('apiUrl') || '').replace(/\/api\/data$/, '') ||
+  window.API_BASE ||
+  '';
+
 export async function render(container) {
   container.innerHTML = `
     <h1>Backups</h1>
@@ -42,7 +47,7 @@ export async function render(container) {
 
   async function loadBackups() {
     try {
-      const resp = await fetch('/api/backups');
+      const resp = await fetch(`${BASE}/api/backups`);
       if (!resp.ok) {
         if (backupMsg) {
           backupMsg.textContent = 'Error al cargar la lista de backups';
@@ -86,7 +91,7 @@ export async function render(container) {
   async function loadStats() {
     if (!statsList) return;
     try {
-      const resp = await fetch('/api/db-stats');
+      const resp = await fetch(`${BASE}/api/db-stats`);
       if (!resp.ok) return;
       const data = await resp.json();
       statsList.innerHTML = Object.entries(data)
@@ -100,7 +105,7 @@ export async function render(container) {
   if (createBtn) {
     createBtn.addEventListener('click', async () => {
       const description = descInput?.value || '';
-      const resp = await fetch('/api/backups', {
+      const resp = await fetch(`${BASE}/api/backups`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ description })
@@ -135,7 +140,7 @@ export async function render(container) {
     restoreBtn.addEventListener('click', async () => {
       const name = selectedBackup;
       if (!name) return;
-      const resp = await fetch('/api/restore', {
+      const resp = await fetch(`${BASE}/api/restore`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name }),
@@ -157,7 +162,7 @@ export async function render(container) {
     deleteBtn.addEventListener('click', async () => {
       const name = selectedBackup;
       if (!name) return;
-      const resp = await fetch(`/api/backups/${encodeURIComponent(name)}`, { method: 'DELETE' });
+      const resp = await fetch(`${BASE}/api/backups/${encodeURIComponent(name)}`, { method: 'DELETE' });
       if (!resp.ok) {
         let msg = '';
         try {
