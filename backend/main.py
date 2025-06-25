@@ -90,6 +90,16 @@ def init_db():
 
     cur.execute(
         """
+        CREATE TABLE IF NOT EXISTS history_log(
+            ts TEXT NOT NULL,
+            user TEXT,
+            summary TEXT
+        )
+        """
+    )
+
+    cur.execute(
+        """
         CREATE TABLE IF NOT EXISTS Cliente (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             codigo TEXT NOT NULL UNIQUE CHECK(codigo != '' AND codigo NOT GLOB '*[^A-Z0-9-]*'),
@@ -245,6 +255,16 @@ def init_db():
 init_db()
 
 
+def log_event(user: str | None, summary: str) -> None:
+    conn = get_db()
+    conn.execute(
+        "INSERT INTO history_log(ts, user, summary) VALUES (?,?,?)",
+        (datetime.utcnow().isoformat() + "Z", user, summary),
+    )
+    conn.commit()
+    conn.close()
+
+
 @app.get("/api/products")
 def get_products():
     conn = get_db()
@@ -303,26 +323,10 @@ def update_product(prod_id):
 
 @app.get("/api/history")
 def get_history():
-    product = request.args.get("product")
-    user = request.args.get("user")
-    from_ts = request.args.get("from")
-
-    query = "SELECT * FROM history WHERE 1=1"
-    params = []
-    if product:
-        query += " AND product_id = ?"
-        params.append(product)
-    if user:
-        query += " AND user = ?"
-        params.append(user)
-    if from_ts:
-        query += " AND timestamp >= ?"
-        params.append(from_ts)
-
     conn = get_db()
-    rows = conn.execute(query, params).fetchall()
+    rows = conn.execute("SELECT ts, summary FROM history_log ORDER BY ts").fetchall()
     conn.close()
-    return jsonify([dict(r) for r in rows])
+    return jsonify([{"ts": r["ts"], "summary": r["summary"]} for r in rows])
 
 
 TABLE_MAP = {
@@ -464,6 +468,10 @@ def generic_crud(table, item_id=None):
         row, err = insert_row(db_table, payload)
         if err:
             return jsonify({"success": False, "errors": err}), 400
+        user = payload.get("user") or request.headers.get("X-User")
+        name = row.get("nombre") or row.get("descripcion") or row.get("codigo") or ""
+        summary = f"Cre\u00f3 {db_table.lower()} {name} (id {row['id']})"
+        log_event(user, summary)
         return jsonify({"success": True, "data": row})
 
     if request.method == "PATCH":
@@ -471,12 +479,20 @@ def generic_crud(table, item_id=None):
         res, err, code = update_row(db_table, item_id, payload)
         if err:
             return jsonify({"success": False, "errors": err}), code
+        user = payload.get("user") or request.headers.get("X-User")
+        name = res.get("nombre") or res.get("descripcion") or res.get("codigo") or ""
+        summary = f"Actualiz\u00f3 {db_table.lower()} {name} (id {res['id']})"
+        log_event(user, summary)
         return jsonify({"success": True, "data": res})
 
     if request.method == "DELETE":
         res, err, code = delete_row(db_table, item_id)
         if err:
             return jsonify({"success": False, "errors": err}), code
+        user = request.headers.get("X-User")
+        name = res.get("nombre") or res.get("descripcion") or res.get("codigo") or ""
+        summary = f"Elimin\u00f3 {db_table.lower()} {name} (id {res['id']})"
+        log_event(user, summary)
         return jsonify({"success": True, "data": res})
 
     return jsonify({"success": False, "errors": "method not allowed"}), 405

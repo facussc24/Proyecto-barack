@@ -24,35 +24,21 @@ document.addEventListener('DOMContentLoaded', () => {
   const simpleList = document.getElementById('simpleList');
 
   async function loadHistory() {
-    const params = new URLSearchParams();
-    if (pageInput.value) params.append('page', pageInput.value);
-    if (userInput.value) params.append('user', userInput.value);
-    if (startInput.value) params.append('from', startInput.value);
-    if (endInput.value) params.append('to', endInput.value);
     try {
-      const resp = await fetch('/api/history?' + params.toString());
+      const resp = await fetch('/api/history');
       if (!resp.ok) throw new Error('Request failed');
       const data = await resp.json();
       tbody.innerHTML = '';
       data.slice().reverse().forEach(entry => {
         const tr = document.createElement('tr');
-        let summary = entry.summary;
-        if (!summary && entry.changes) {
-          try {
-            summary = entry.changes.summary || JSON.stringify(entry.changes).slice(0, 60);
-          } catch {
-            summary = '';
-          }
-        }
         tr.innerHTML =
-          `<td>${entry.timestamp || ''}</td>` +
-          `<td>${entry.ip || ''}</td>` +
-          `<td>${summary || ''}</td>`;
+          `<td>${entry.ts || ''}</td>` +
+          `<td>${entry.summary || ''}</td>`;
         tbody.appendChild(tr);
       });
     } catch (e) {
       console.error(e);
-      tbody.innerHTML = '<tr><td colspan="3">Error al cargar historial</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="2">Error al cargar historial</td></tr>';
     }
   }
 
