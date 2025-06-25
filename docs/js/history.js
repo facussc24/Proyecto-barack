@@ -19,6 +19,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const restoreBtn = document.getElementById('restoreBackup');
   const deleteBtn = document.getElementById('deleteBackup');
   const statusSpan = document.getElementById('backupMessage');
+  const simpleCreate = document.getElementById('simpleCreate');
+  const simpleRestore = document.getElementById('simpleRestore');
+  const simpleList = document.getElementById('simpleList');
 
   async function loadHistory() {
     const params = new URLSearchParams();
@@ -63,6 +66,20 @@ document.addEventListener('DOMContentLoaded', () => {
         .join('');
       const opt = backupSel.selectedOptions[0];
       if (descLabel) descLabel.textContent = opt ? opt.dataset.desc : '';
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  async function loadSimple() {
+    try {
+      const resp = await fetch(`${BASE}/api/simple-backups`);
+      if (!resp.ok) return;
+      const list = await resp.json();
+      if (simpleList)
+        simpleList.innerHTML = list
+          .map(n => `<option value="${n}">${n}</option>`)
+          .join('');
     } catch (e) {
       console.error(e);
     }
@@ -119,6 +136,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  simpleCreate?.addEventListener('click', async () => {
+    await fetch(`${BASE}/api/simple-backup`, { method: 'POST' });
+    loadSimple();
+  });
+
+  simpleRestore?.addEventListener('click', async () => {
+    const name = simpleList?.value;
+    if (!name) return;
+    const resp = await fetch(`${BASE}/api/simple-restore`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name })
+    });
+    if (resp.ok) location.reload();
+  });
+
   deleteBtn?.addEventListener('click', async () => {
     const name = backupSel.value;
     if (!name) return;
@@ -129,5 +162,6 @@ document.addEventListener('DOMContentLoaded', () => {
   applyBtn?.addEventListener('click', loadHistory);
 
   loadBackups();
+  loadSimple();
   loadHistory();
 });
