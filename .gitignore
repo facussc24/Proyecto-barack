@@ -1,0 +1,17 @@
+__pycache__/
+.pytest_cache/
+*.pyc
+
+node_modules/
+
+data/
+backups/
+
+# Editor directories and OS files
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
