@@ -290,6 +290,7 @@ def update_product(prod_id):
         (prod_id, user, "update", new_updated),
     )
     conn.commit()
+    _touch_last_updated()
 
     cur.execute("SELECT * FROM products WHERE id = ?", (prod_id,))
     updated = cur.fetchone()
@@ -376,6 +377,7 @@ def insert_row(table, data):
         conn.close()
         return None, str(e)
     conn.close()
+    _touch_last_updated()
     return result, None
 
 
@@ -417,6 +419,7 @@ def update_row(table, item_id, data):
         conn.close()
         return None, str(e), 400
     conn.close()
+    _touch_last_updated()
     return result, None, 200
 
 
@@ -436,6 +439,7 @@ def delete_row(table, item_id):
         conn.close()
         return None, str(e), 400
     conn.close()
+    _touch_last_updated()
     return dict(row), None, 200
 
 
@@ -506,14 +510,16 @@ def manual_backup(description=None, activate=False):
     if os.path.exists(META_FILE):
         with open(META_FILE, "r", encoding="utf-8") as f:
             meta = json.load(f)
+    ts_iso = datetime.utcnow().isoformat() + "Z"
     meta[os.path.basename(dest)] = {
         "description": description or "",
         "stats": stats,
+        "last_updated": ts_iso,
     }
     if activate:
         meta[ACTIVE_KEY] = {
             "name": os.path.basename(dest),
-            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "timestamp": ts_iso,
         }
     with open(META_FILE, "w", encoding="utf-8") as f:
         json.dump(meta, f, ensure_ascii=False, indent=2)
@@ -536,6 +542,25 @@ def _validate_backup_name(name: str) -> str | None:
     return base
 
 
+def _touch_last_updated() -> None:
+    if not os.path.exists(META_FILE):
+        return
+    with open(META_FILE, "r", encoding="utf-8") as f:
+        meta = json.load(f)
+    active = meta.get(ACTIVE_KEY, {}).get("name")
+    if not active:
+        return
+    entry = meta.get(active, {})
+    if isinstance(entry, str):
+        entry = {"description": entry}
+    if not isinstance(entry, dict):
+        entry = {}
+    entry["last_updated"] = datetime.utcnow().isoformat() + "Z"
+    meta[active] = entry
+    with open(META_FILE, "w", encoding="utf-8") as f:
+        json.dump(meta, f, ensure_ascii=False, indent=2)
+
+
 @app.get("/api/backups")
 def list_backups():
     files = sorted(
@@ -549,11 +574,14 @@ def list_backups():
     result = []
     for f in files:
         info = meta.get(f, {})
+        if isinstance(info, str):
+            info = {"description": info}
         result.append(
             {
                 "name": f,
                 "description": info.get("description", ""),
                 "stats": info.get("stats", {}),
+                "last_updated": info.get("last_updated"),
                 "active": f == active,
             }
         )
@@ -580,6 +608,7 @@ def create_backup_route():
             "path": f"backups/{name}",
             "description": desc or "",
             "stats": info.get("stats", {}),
+            "last_updated": info.get("last_updated"),
         }
     )
 
@@ -620,7 +649,15 @@ def restore_backup():
     if os.path.exists(META_FILE):
         with open(META_FILE, "r", encoding="utf-8") as f:
             meta = json.load(f)
-    meta[ACTIVE_KEY] = {"name": safe, "timestamp": datetime.utcnow().isoformat() + "Z"}
+    ts_iso = datetime.utcnow().isoformat() + "Z"
+    entry = meta.get(safe, {})
+    if isinstance(entry, str):
+        entry = {"description": entry}
+    if not isinstance(entry, dict):
+        entry = {}
+    entry["last_updated"] = ts_iso
+    meta[safe] = entry
+    meta[ACTIVE_KEY] = {"name": safe, "timestamp": ts_iso}
     with open(META_FILE, "w", encoding="utf-8") as f:
         json.dump(meta, f, ensure_ascii=False, indent=2)
     return jsonify({"status": "ok"})
