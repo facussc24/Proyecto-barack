@@ -68,7 +68,7 @@ await dataService.importJSON(json); // Restaura la copia
 ## Sincronización de datos
 
 Este proyecto incluye un pequeño servidor Flask (`server.py`) para almacenar la base de datos en `data/latest.json`.
-A partir de esta versión el mismo script también sirve la interfaz web desde la carpeta `docs`, de modo que todas las páginas quedan disponibles en `http://<IP>:5000/` (por ejemplo, `http://192.168.1.233:5000/`).
+A partir de esta versión el mismo script también sirve la interfaz web desde la carpeta `docs`, de modo que todas las páginas quedan disponibles en `http://<IP>:5000/` (por ejemplo, `http://localhost:5000/`).
 El servidor debe ejecutarse en un único equipo o servidor accesible por la red para que todos los usuarios compartan la misma información.
 Todos los navegadores deben por tanto utilizar la misma URL de la API para mantenerse sincronizados.
 
@@ -135,8 +135,9 @@ docker compose build
 docker compose up -d
 ```
 
-Al finalizar la SPA quedará disponible en `http://192.168.1.233:8080` y la API en `http://192.168.1.233:5000/api/...`.
+Al finalizar la SPA quedará disponible en `http://localhost:8080` y la API en `http://localhost:5000/api/...`.
 Los datos se guardan en `./data/db.sqlite` y los respaldos en `./backups`.
+La imagen de Nginx ya configura la SPA para usar /api/data en el mismo host. Si habías establecido otra URL con `localStorage.setItem('apiUrl', ...)`, elimínala con `localStorage.removeItem('apiUrl')`.
 
 Si usas Windows y no puedes acceder desde otras máquinas, abre los puertos 5000 y 8080 en el firewall:
 
@@ -147,11 +148,12 @@ GitHub Pages solo aloja archivos estáticos y no puede ejecutar este servidor.
 Cuando uses varias PC debes indicar la URL del servidor. Puedes hacerlo con:
 
 1. Usar el campo **Servidor API** en la página **Modo Dev** para guardar la dirección.
-2. Guardar la dirección en `localStorage` usando `localStorage.setItem('apiUrl', 'http://<IP>:5000/api/data')` desde la consola del navegador.
+2. Guardar la dirección en `localStorage` usando `localStorage.setItem('apiUrl', 'http://localhost:5000/api/data')` desde la consola del navegador.
 3. O bien establecer la variable de entorno `API_URL` antes de iniciar la aplicación.
 
 Si no se define ningún valor se usará `http://localhost:5000/api/data` por defecto.
 Para más información sobre variables como `API_URL`, `DATA_DIR` y `DB_PATH` revisa `docs/backend.md`.
+Si necesitas usar otra dirección u otro puerto, agrega esa URL a la variable `ALLOWED_ORIGINS` antes de iniciar el servidor.
 
 ## API
 
@@ -167,11 +169,10 @@ La API expone rutas REST en `/api/<tabla>` para todas las entidades. Por ejemplo
 
 Puedes probar estas rutas con `curl`:
 
-```bash
-curl http://192.168.1.233:5000/api/clientes
+curl http://localhost:5000/api/clientes
 curl -X POST -H "Content-Type: application/json" \
   -d '{"codigo":"CL1","nombre":"Demo","updated_at":"2024-01-01"}' \
-  http://192.168.1.233:5000/api/clientes
+  http://localhost:5000/api/clientes
 ```
 
 También puedes ejecutar el script `tools/backup_restore_script.py` para
@@ -249,7 +250,7 @@ Luego abre `http://localhost:8000/` y navega normalmente.
 Si la API se ejecuta en otra máquina guarda su URL con:
 
 ```js
-localStorage.setItem('apiUrl', 'http://<IP>:5000/api/data');
+localStorage.setItem('apiUrl', 'http://localhost:5000/api/data');
 ```
 
 La aplicación usará esa dirección al recargarse.
