@@ -39,6 +39,8 @@ The frontend reads the server URL from `localStorage` (`apiUrl`) or from the `AP
   full application state.
 - `SSL_CERT` / `SSL_KEY` – optional certificate paths for HTTPS when running `server.py`.
 - `DB_PATH` – path to the SQLite file used by `backend/main.py` (`data/db.sqlite` by default).
+- `ALLOWED_ORIGINS` – comma-separated list of origins allowed for CORS and
+  WebSocket connections. Defaults to `http://192.168.1.233:8080,http://localhost:8080`.
 
 ## Offline fallback
 
