@@ -17,8 +17,8 @@ function createWindow(port) {
 }
 
 app.whenReady().then(() => {
-  const appServer = createServer();
-  server = appServer.listen(0, () => {
+  const { httpServer } = createServer();
+  server = httpServer.listen(0, () => {
     const port = server.address().port;
     createWindow(port);
   });

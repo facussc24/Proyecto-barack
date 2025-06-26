@@ -15,13 +15,12 @@ describe('POST /api/clients with name only', () => {
   });
 
   test('creates client', async () => {
-    const app = createServer();
+    const { app } = createServer();
     const resp = await request(app)
       .post('/api/clients')
       .send({ name: 'Test Client' });
     expect(resp.status).toBe(200);
-    expect(resp.body.success).toBe(true);
-    expect(resp.body.data.nombre).toBe('Test Client');
-    expect(resp.body.data.codigo).toBeDefined();
+    expect(resp.body.nombre).toBe('Test Client');
+    expect(resp.body.codigo).toBeDefined();
   });
 });

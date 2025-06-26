@@ -2,6 +2,8 @@ const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const fs = require('fs');
+const http = require('http');
+const { Server } = require('socket.io');
 
 const DATA_DIR = path.join(__dirname, 'datos');
 const DB_FILE = path.join(DATA_DIR, 'base_de_datos.sqlite');
@@ -40,6 +42,9 @@ function createServer() {
   const app = express();
   app.use(express.json());
   app.use('/docs', express.static(path.join(__dirname, 'docs')));
+
+  const httpServer = http.createServer(app);
+  const io = new Server(httpServer);
 
   const db = initDb();
 
@@ -88,25 +93,23 @@ function createServer() {
   /** Clients CRUD **/
   app.get('/api/clients', (req, res) => {
     db.all('SELECT * FROM clients', (err, rows) => {
-      if (err) return res.status(500).json({ success: false, error: err.message });
-      res.json({ success: true, data: rows });
+      if (err) return res.status(500).json({ error: err.message });
+      res.json(rows);
     });
   });
 
   app.post('/api/clients', (req, res) => {
-    const { codigo, nombre, name, imagen_path } = req.body || {};
-    const finalName = nombre || name;
-    if (!finalName) {
-      return res.status(400).json({ success: false, error: 'nombre required' });
-    }
-    const finalCode = codigo || Date.now().toString();
+    const { name } = req.body || {};
+    if (!name) return res.status(400).json({ error: 'name required' });
+    const codigo = Date.now().toString();
     const ts = new Date().toISOString();
     db.run(
-      `INSERT INTO clients(codigo,nombre,imagen_path,updated_at,version) VALUES (?,?,?,?,1)`,
-      [finalCode, finalName, imagen_path || null, ts],
+      'INSERT INTO clients(codigo,nombre,updated_at,version) VALUES(?,?,?,1)',
+      [codigo, name, ts],
       function (err) {
-        if (err) return res.status(400).json({ success: false, error: err.message });
-        res.json({ success: true, data: { id: this.lastID, codigo: finalCode, nombre: finalName, imagen_path: imagen_path || null, updated_at: ts, version: 1 } });
+        if (err) return res.status(400).json({ error: err.message });
+        io.emit('data_updated');
+        res.json({ id: this.lastID, codigo, nombre: name, updated_at: ts, version: 1 });
       }
     );
   });
@@ -165,7 +168,7 @@ function createServer() {
     });
   });
 
-  return app;
+  return { app, httpServer, io };
 }
 
 module.exports = createServer;

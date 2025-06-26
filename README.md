@@ -60,8 +60,7 @@ Todas las vistas utilizan la misma base de datos `ProyectoBarackDB` a través de
 módulo `js/dataService.js`. A partir de la versión 358 puedes exportar e
 importar la información desde la página de inicio mediante dos botones. El
 archivo descargado se guarda como `data/latest.json`. El registro de cambios se
-almacena en `data/history.json` y las copias de seguridad se guardan en
-`data/backups/`.
+almacena en `data/history.json`.
 
 Para realizar copias de seguridad manuales desde la consola del navegador sigue
 si lo prefieres este procedimiento:
@@ -89,9 +88,6 @@ El servidor debe ejecutarse en un único equipo o servidor accesible por la red 
 Todos los navegadores deben por tanto utilizar la misma URL de la API para mantenerse sincronizados.
 
 El archivo activo se guarda en `data/latest.json`.
-Puedes generar copias manualmente con `POST /api/backups` o desde la página **Backups**.
-Por defecto se programa una copia diaria en `data/backups/AAAA-MM-DD.json`. Si prefieres desactivar esta tarea define `DISABLE_AUTOBACKUP=1` antes de iniciar el servidor.
-Los respaldos se guardan en la carpeta `data/backups/` y requieren que el servidor esté activo para poder generarse. Cada archivo incluye la base de datos, el historial, la base SQLite y las carpetas de imágenes para que puedas restaurar el estado completo de la aplicación. Si eliminas el repositorio también se borrará esta carpeta a menos que la conserves aparte.
 
 Para revisar visualmente el contenido actual de la base de datos se incluye la página `docs/dbviewer.html`. Ábrela con el servidor en marcha para ver los datos en formato JSON.
 
@@ -125,12 +121,8 @@ servicio `docs` ejecutando `docker compose --profile prod up -d`. En ese caso
 la SPA se encontrará disponible en `http://<host>:8080/index.html#/home` y la
 API seguirá escuchando en `http://<host>:5000`.
 
-> **Nota:** Asegúrate de que las carpetas `./data` y `./backups` existan y
-> cuenten con permisos de escritura antes de ejecutar `docker compose up`.
-> Docker creará automáticamente `db.sqlite` dentro de `./data` la primera vez
-> que se inicie el backend. Si cualquiera de estas rutas falta o es de solo
-> lectura se producirá un `sqlite3.OperationalError` y Nginx mostrará
-> “Bad Gateway”.
+> **Nota:** Asegúrate de que la carpeta `./data` existe y cuenta con permisos de escritura antes de ejecutar `docker compose up`.
+> Docker creará automáticamente `db.sqlite` la primera vez que se inicie el backend. Si la ruta falta o es de solo lectura se producirá un `sqlite3.OperationalError` y Nginx mostrará “Bad Gateway”.
 
 Todas las computadoras de la red deben abrir la URL
 `http://<host>:5000/index.html#/home` o la equivalente con su hostname.
@@ -168,8 +160,6 @@ La API expone rutas REST en `/api/<tabla>` para todas las entidades. Por ejemplo
 - `POST /api/insumos` – crea un insumo
 - `PATCH /api/productos_db/<id>` – actualiza un producto
 - `DELETE /api/productos_db/<id>` – elimina un producto
-- `GET /api/backups` – lista de respaldos
-- `POST /api/backups` – crea un respaldo manual
 - `POST /api/restore` – restaura la base de datos desde un archivo
 
 Puedes probar estas rutas con `curl`:
@@ -180,9 +170,6 @@ curl -X POST -H "Content-Type: application/json" \
   http://localhost:5000/api/clientes
 ```
 
-También puedes ejecutar el script `tools/backup_restore_script.py` para
-probar la creación de clientes, generar un respaldo y restaurarlo mientras
-escuchas el evento `data_updated` por WebSocket.
 
 Para cargar datos de ejemplo ejecuta:
 
@@ -276,16 +263,11 @@ La ruta del archivo se define con la variable de entorno `DB_PATH` (por defecto
 `data/db.sqlite`). Actualmente no se emplea un ORM ni un sistema de migraciones,
 por lo que cualquier cambio en el esquema debe aplicarse manualmente.
 
-El servidor `server.py` cuenta con una ruta `/api/backups` que vuelca el archivo
-`latest.json` a la carpeta `./backups` y programa un respaldo diario. La base de
-datos SQLite no posee un mecanismo similar; sería conveniente añadir un script
-que copie periódicamente `db.sqlite` a ese mismo directorio.
 
 ### Próximos pasos sugeridos
 
 1. Integrar `Flask-Migrate`/`Alembic` para gestionar las migraciones del esquema.
 2. Evaluar migrar a PostgreSQL u otro motor en entornos productivos.
-3. Automatizar el respaldo del archivo SQLite en `./backups`.
 
 *Nota:* Para desarrollo avanzado también puedes iniciar el servidor directamente con Python.
 
