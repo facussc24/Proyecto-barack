@@ -16,7 +16,6 @@
 <body>
   <nav id="nav-placeholder"></nav>
   <button id="sidebarToggle" class="sidebar-toggle" type="button" aria-label="Abrir filtros">▶</button>
-  <div id="sidebarOverlay" class="sidebar-overlay"></div>
   <aside id="datasetSidebar" class="dataset-sidebar">
     <button data-filter="" class="active">Todos</button>
     <button data-filter="Cliente">Clientes</button>
@@ -128,12 +127,6 @@
   <script src="https://cdn.socket.io/4.7.2/socket.io.min.js" defer></script>
   <script type="module" src="js/authGuard.js"></script>
   <script type="module" src="js/nav.js" defer></script>
-  <script>
-    window.API_BASE = 'http://desktop-14jg95b:5000';
-    if (!localStorage.getItem('apiUrl')) {
-      localStorage.setItem('apiUrl', window.API_BASE + '/api/data');
-    }
-  </script>
   <script type="module" src="js/dataService.js" defer></script>
   <script type="module" src="js/interactiveTable.js" defer></script>
   <script type="module" src="js/ui/animations.js" defer></script>

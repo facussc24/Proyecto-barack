@@ -173,7 +173,6 @@ function setupFilterButtons() {
 function setupSidebar() {
   const toggle = document.getElementById('sidebarToggle');
   const sidebar = document.getElementById('datasetSidebar');
-  const overlay = document.getElementById('sidebarOverlay');
   if (!sidebar || !toggle) return;
   const close = () => {
     document.body.classList.remove('sidebar-open');
@@ -190,7 +189,6 @@ function setupSidebar() {
       open();
     }
   });
-  overlay && overlay.addEventListener('click', close);
   document.addEventListener('keydown', ev => {
     if (ev.key === 'Escape') close();
   });

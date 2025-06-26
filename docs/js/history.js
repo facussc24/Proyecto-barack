@@ -42,9 +42,13 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       const data = await resp.json();
       tbody.innerHTML = '';
+      const fmt = new Intl.DateTimeFormat('es-AR', {
+        dateStyle: 'short',
+        timeStyle: 'short'
+      });
       data.slice().reverse().forEach(entry => {
         const tr = document.createElement('tr');
-        const ts = entry.ts ? dayjs(entry.ts).format('DD/MM/YYYY HH:mm') : '';
+        const ts = entry.ts ? fmt.format(new Date(entry.ts)) : '';
         tr.innerHTML =
           `<td>${ts}</td>` +
           `<td>${entry.summary || ''}</td>`;
@@ -108,12 +112,11 @@ document.addEventListener('DOMContentLoaded', () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ description })
     });
-    if (resp.ok && statusSpan) {
-      statusSpan.textContent = 'Backup creado';
-      statusSpan.classList.remove('error');
-      statusSpan.classList.add('show');
-      setTimeout(() => statusSpan.classList.remove('show'), 3000);
-    } else if (!resp.ok && statusSpan) {
+    if (resp.ok) {
+      showToast('Backup creado');
+      loadHistory();
+      if (typeof loadClients === 'function') loadClients();
+    } else if (statusSpan) {
       if (resp.status === 409) {
         alert('Conflicto al crear backup. Recargá la página.');
       }
@@ -150,7 +153,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     if (resp.ok) {
-      alert('Backup restaurado con éxito');
+      showToast('Backup restaurado');
       if (typeof loadClients === 'function') loadClients();
       loadHistory();
     } else {
@@ -164,7 +167,10 @@ document.addEventListener('DOMContentLoaded', () => {
       showToast('Error al crear backup exprés');
       return;
     }
+    showToast('Backup exprés creado');
     loadSimple();
+    loadHistory();
+    if (typeof loadClients === 'function') loadClients();
   });
 
   simpleRestore?.addEventListener('click', async () => {
@@ -179,8 +185,13 @@ document.addEventListener('DOMContentLoaded', () => {
       alert('Conflicto al restaurar. Recargá la página.');
       return;
     }
-    if (resp.ok) location.reload();
-    else showToast('Error al restaurar respaldo');
+    if (resp.ok) {
+      showToast('Backup exprés restaurado');
+      loadHistory();
+      if (typeof loadClients === 'function') loadClients();
+    } else {
+      showToast('Error al restaurar respaldo');
+    }
   });
 
   deleteBtn?.addEventListener('click', async () => {
@@ -191,7 +202,10 @@ document.addEventListener('DOMContentLoaded', () => {
       showToast('Error al eliminar backup');
       return;
     }
+    showToast('Backup eliminado');
     loadBackups();
+    loadHistory();
+    if (typeof loadClients === 'function') loadClients();
   });
 
   applyBtn?.addEventListener('click', loadHistory);
