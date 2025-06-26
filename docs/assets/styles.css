@@ -56,7 +56,6 @@
   color: var(--color-light);
 }
 .dark .column-toggle-container,
-.dark .tabla-contenedor,
 .dark .category-section table,
 .dark .intro,
 .dark .suggestions-list {
@@ -169,15 +168,18 @@ h1 {
 }
 
 .backup-tools {
-  margin: 20px;
+  margin: 20px auto;
   padding: 10px;
   background-color: var(--color-light);
   border-radius: 6px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   align-items: center;
   gap: 10px;
   animation: fadeIn 0.3s ease-in-out;
+  max-width: 900px;
 }
 
 .backup-tools select {
@@ -235,6 +237,16 @@ h1 {
   color: green;
   font-weight: bold;
   margin-left: 4px;
+}
+
+/* layout helpers for historial/backups */
+.simple-backup {
+  margin: 20px auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  max-width: 900px;
 }
 
 .card {
@@ -366,6 +378,7 @@ body.sinoptico-page .filtros-texto select {
    ============================== */
 .tabla-contenedor {
   width: 100%;
+  max-width: 900px;
   margin: 0 auto 30px auto;
   overflow-x: auto;  /* scroll horizontal si hace falta */
   overflow-y: auto;  /* scroll vertical si hace falta */
