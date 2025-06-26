@@ -15,15 +15,12 @@ else:
     server.kill()
     raise RuntimeError("server not responding")
 
-# prepare data and backup
+# prepare data
 requests.post("http://localhost:5000/api/data", json={})
 requests.post(
     "http://localhost:5000/api/clientes",
     json={"codigo": "C1", "nombre": "Test", "user": "admin"},
 )
-resp = requests.post("http://localhost:5000/api/backups", json={"description": "auto"})
-resp.raise_for_status()
-backup_name = resp.json()["path"].split("/")[-1]
 
 with sync_playwright() as p:
     browser = p.chromium.launch()
@@ -33,10 +30,6 @@ with sync_playwright() as p:
         page.click("#adminBtn")
     page.goto("http://localhost:5000/history.html")
     page.wait_for_selector("#historyTable tbody tr")
-    page.wait_for_function("document.querySelector('#backupList').options.length > 0")
-
-    assert page.inner_text("#createBackup").strip() == "Crear backup"
-    assert page.locator("#createBackup").count() == 1
 
     bg = page.evaluate(
         "getComputedStyle(document.querySelector('.tabla-contenedor')).backgroundColor"
@@ -45,11 +38,6 @@ with sync_playwright() as p:
 
     rows = page.locator("#historyTable tbody tr")
     assert rows.count() >= 1
-
-    page.select_option("#backupList", backup_name)
-    with page.expect_event("dialog") as d:
-        page.click("#restoreBackup")
-    assert d.value.message == "Backup restaurado con éxito"
 
     cache = requests.get("http://localhost:5000/index.html")
     assert cache.headers.get("Cache-Control") == "no-store"

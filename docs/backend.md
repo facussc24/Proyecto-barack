@@ -33,10 +33,7 @@ The frontend reads the server URL from `localStorage` (`apiUrl`) or from the `AP
 ## Environment variables
 
 - `API_URL` – URL used by the frontend to access `/api/data`.
-- `DATA_DIR` – directory where `server.py` stores `latest.json` and backups (`data` by default).
-  Backups generated with `/api/backups` also include `history.json`, the SQLite
-  database and any image folders under `docs` so restoring a ZIP reinstates the
-  full application state.
+- `DATA_DIR` – directory where `server.py` stores `latest.json` (`data` by default).
 - `SSL_CERT` / `SSL_KEY` – optional certificate paths for HTTPS when running `server.py`.
 - `DB_PATH` – path to the SQLite file used by `backend/main.py` (`data/db.sqlite` by default).
 - `ALLOWED_ORIGINS` – comma-separated list of origins allowed for CORS and
