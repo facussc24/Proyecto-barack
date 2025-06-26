@@ -12,6 +12,7 @@ import xlsxwriter
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from zipfile import ZipFile, ZIP_DEFLATED
+from pathlib import Path
 
 DATA_DIR = os.getenv("DATA_DIR", "data")
 DATA_FILE = os.path.join(DATA_DIR, "latest.json")
@@ -46,6 +47,21 @@ from flask_socketio import SocketIO
 socketio = SocketIO(app, cors_allowed_origins="*")
 clients = {}
 CORS(app)
+
+
+@app.errorhandler(Exception)
+def handle_error(e):
+    code = getattr(e, "code", 500)
+    msg = getattr(e, "description", str(e))
+    return jsonify({"error": msg, "code": code}), code
+
+
+@app.after_request
+def add_security_headers(resp):
+    resp.headers["X-Frame-Options"] = "DENY"
+    resp.headers["X-Content-Type-Options"] = "nosniff"
+    resp.headers["Content-Security-Policy"] = "default-src 'self'"
+    return resp
 
 
 @app.get("/health")
@@ -390,6 +406,8 @@ def restore_backup():
         if "db.sqlite" in zf.namelist():
             zf.extract("db.sqlite", os.path.dirname(DB_PATH))
         for item in zf.namelist():
+            if ".." in Path(item).parts:
+                continue
             if any(item.startswith(f"{d}/") for d in ASSET_DIRS):
                 zf.extract(item, app.static_folder)
 
