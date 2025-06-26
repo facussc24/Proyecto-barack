@@ -1,9 +1,15 @@
 import { logout } from './session.js';
 window.logout = logout;
 
+// Derive API base automatically when running outside GitHub Pages
 const API_BASE = window.location.hostname.includes('github.io')
   ? null
-  : 'http://TU_IP:5000';
+  : window.location.origin;
+
+// Expose the value for other modules if not already defined
+if (!window.API_BASE) {
+  window.API_BASE = API_BASE;
+}
 
 // Toggle tema
 const btnTheme = document.querySelector('.theme-toggle');
