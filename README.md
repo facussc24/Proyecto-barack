@@ -275,3 +275,6 @@ por lo que cualquier cambio en el esquema debe aplicarse manualmente.
 
 Para actualizar la version de escritorio simplemente reemplaza los archivos de la aplicacion por los nuevos. Mantén la carpeta `datos` sin borrar para conservar la base `base_de_datos.sqlite`.
 
+Consulta [docs/electron.md](docs/electron.md) para detalles sobre la construcción
+del modo escritorio con Electron y las recomendaciones sobre CommonJS.
+
