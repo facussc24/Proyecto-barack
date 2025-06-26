@@ -168,7 +168,7 @@ function createServer() {
     });
   });
 
-  return { app, httpServer, io };
+  return { app, httpServer, io, db };
 }
 
 module.exports = createServer;
