@@ -13,29 +13,46 @@ function initDb() {
     fs.mkdirSync(DATA_DIR, { recursive: true });
   }
   const db = new sqlite3.Database(DB_FILE);
-  db.serialize(() => {
-    db.run('PRAGMA foreign_keys = ON');
-    db.run(`CREATE TABLE IF NOT EXISTS items (
+  return new Promise((resolve, reject) => {
+    db.serialize(() => {
+      db.run('PRAGMA foreign_keys = ON');
+      db.run(
+        `CREATE TABLE IF NOT EXISTS items (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       nombre TEXT NOT NULL,
       precio REAL,
       updated_at TEXT NOT NULL
-    )`);
-    db.run(`CREATE TABLE IF NOT EXISTS clients (
+    )`,
+        err => {
+          if (err) return reject(err);
+        }
+      );
+      db.run(
+        `CREATE TABLE IF NOT EXISTS clients (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       codigo TEXT NOT NULL UNIQUE CHECK(codigo != '' AND codigo NOT GLOB '*[^A-Z0-9-]*'),
       nombre TEXT NOT NULL,
       imagen_path TEXT,
       updated_at TEXT NOT NULL,
       version INTEGER NOT NULL DEFAULT 1
-    )`);
-    db.run(`CREATE TABLE IF NOT EXISTS history (
+    )`,
+        err => {
+          if (err) return reject(err);
+        }
+      );
+      db.run(
+        `CREATE TABLE IF NOT EXISTS history (
       ts TEXT NOT NULL,
       user TEXT,
       summary TEXT
-    )`);
+    )`,
+        err => {
+          if (err) return reject(err);
+          resolve(db);
+        }
+      );
+    });
   });
-  return db;
 }
 
 function createServer() {
@@ -46,7 +63,10 @@ function createServer() {
   const httpServer = http.createServer(app);
   const io = new Server(httpServer);
 
-  const db = initDb();
+  let db;
+  const dbReady = initDb().then((d) => {
+    db = d;
+  });
 
   app.get('/api/items', (req, res) => {
     db.all('SELECT * FROM items', (err, rows) => {
@@ -168,7 +188,7 @@ function createServer() {
     });
   });
 
-  return { app, httpServer, io };
+  return { app, httpServer, io, dbReady };
 }
 
 module.exports = createServer;

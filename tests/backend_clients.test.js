@@ -14,13 +14,14 @@ describe('POST /api/clients with name only', () => {
     if (fs.existsSync(DB_FILE)) fs.unlinkSync(DB_FILE);
   });
 
-  test('creates client', async () => {
-    const { app } = createServer();
-    const resp = await request(app)
-      .post('/api/clients')
-      .send({ name: 'Test Client' });
-    expect(resp.status).toBe(200);
-    expect(resp.body.nombre).toBe('Test Client');
-    expect(resp.body.codigo).toBeDefined();
+    test('creates client', async () => {
+      const { app, dbReady } = createServer();
+      await dbReady;
+      const resp = await request(app)
+        .post('/api/clients')
+        .send({ name: 'Test Client' });
+      expect(resp.status).toBe(200);
+      expect(resp.body.nombre).toBe('Test Client');
+      expect(resp.body.codigo).toBeDefined();
   });
 });
