@@ -172,7 +172,7 @@ async function syncNow() {
 let socket;
 let sse;
 if (hasWindow && SOCKET_URL && typeof io !== 'undefined') {
-  socket = io(SOCKET_URL, { transports: ['websocket'] });
+  socket = io(SOCKET_URL, { transports: ['websocket'], reconnection: true });
   socket.on('connect_error', err => alert('WS error: ' + err.message));
 } else if (hasWindow) {
   alert('Socket.IO no disponible');
@@ -199,6 +199,11 @@ if (socket) {
   });
   socket.on('product_updated', row => {
     applyProductUpdate(row);
+  });
+
+  socket.on('reconnect', () => {
+    if (typeof loadClients === 'function') loadClients();
+    if (typeof loadHistory === 'function') loadHistory();
   });
 }
 

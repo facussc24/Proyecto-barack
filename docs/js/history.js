@@ -2,7 +2,7 @@
 'use strict';
 
 const socket = (typeof io !== 'undefined')
-  ? io({ transports: ['websocket'] })
+  ? io({ transports: ['websocket'], reconnection: true })
   : (alert('Socket.IO no disponible'), null);
 
 
@@ -204,6 +204,11 @@ document.addEventListener('DOMContentLoaded', () => {
     socket.on('data_updated', () => {
       loadHistory();
       if (typeof loadClients === 'function') loadClients();
+    });
+
+    socket.on('reconnect', () => {
+      if (typeof loadClients === 'function') loadClients();
+      loadHistory();
     });
 
     socket.on('connect_error', e => console.error('WS error', e));

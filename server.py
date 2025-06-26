@@ -66,6 +66,12 @@ def add_security_headers(resp):
     return resp
 
 
+@app.after_request
+def no_cache(resp):
+    resp.headers["Cache-Control"] = "no-store"
+    return resp
+
+
 @app.get("/health")
 def health():
     return jsonify({"status": "ok"})
