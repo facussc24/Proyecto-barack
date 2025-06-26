@@ -288,3 +288,8 @@ que copie periódicamente `db.sqlite` a ese mismo directorio.
 3. Automatizar el respaldo del archivo SQLite en `./backups`.
 
 *Nota:* Para desarrollo avanzado también puedes iniciar el servidor directamente con Python.
+
+## Actualizacion de la aplicacion
+
+Para actualizar la version de escritorio simplemente reemplaza los archivos de la aplicacion por los nuevos. Mantén la carpeta `datos` sin borrar para conservar la base `base_de_datos.sqlite`.
+
