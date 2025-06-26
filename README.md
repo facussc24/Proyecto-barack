@@ -141,6 +141,8 @@ Si la interfaz se aloja en otro hostname, añade esa dirección en la variable d
 entorno `ALLOWED_ORIGINS` dentro de `docker-compose.yml` o al ejecutar
 `server.py` para evitar errores de CORS.
 
+> **Nota:** Si tu dispositivo no resuelve el hostname, abrí la SPA con la IP local del servidor, por ejemplo `http://192.168.x.y:8080/index.html#/home`.
+
 ### Configurar `ALLOWED_ORIGINS`
 
 Si no defines esta variable, `server.py` utilizará una lista de orígenes
