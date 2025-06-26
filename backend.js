@@ -8,11 +8,10 @@ const { Server } = require('socket.io');
 const DATA_DIR = path.join(__dirname, 'datos');
 const DB_FILE = path.join(DATA_DIR, 'base_de_datos.sqlite');
 
-function initDb() {
+function initDb(db) {
   if (!fs.existsSync(DATA_DIR)) {
     fs.mkdirSync(DATA_DIR, { recursive: true });
   }
-  const db = new sqlite3.Database(DB_FILE);
   return new Promise((resolve, reject) => {
     db.serialize(() => {
       db.run('PRAGMA foreign_keys = ON');
@@ -63,9 +62,11 @@ function createServer() {
   const httpServer = http.createServer(app);
   const io = new Server(httpServer);
 
-  let db;
-  const dbReady = initDb().then((d) => {
-    db = d;
+  const db = new sqlite3.Database(DB_FILE);
+  const dbReady = initDb(db);
+
+  httpServer.on('close', () => {
+    db.close();
   });
 
   function allAsync(sql, params = []) {
@@ -242,7 +243,7 @@ function createServer() {
     }
   });
 
-  return { app, httpServer, io, dbReady };
+  return { app, httpServer, io, dbReady, db };
 }
 
 module.exports = createServer;
