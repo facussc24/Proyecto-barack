@@ -60,4 +60,24 @@ describe('API', function() {
       .get('/api/clients')
       .expect(200, done);
   });
+
+  it('GET /api/data returns all tables', async function() {
+    await request(serverObj.app).post('/api/clients').send({ name: 'Data' });
+    const resp = await request(serverObj.app).get('/api/data');
+    assert.ok(Array.isArray(resp.body.items));
+    assert.ok(Array.isArray(resp.body.clients));
+    assert.ok(Array.isArray(resp.body.history));
+    assert.ok(resp.body.clients.find(c => c.nombre === 'Data'));
+  });
+
+  it('POST /api/data replaces tables', async function() {
+    const agent = request(serverObj.app);
+    await agent.post('/api/items').send({ nombre: 'Old', precio: 1 });
+    const now = new Date().toISOString();
+    const payload = { items: [{ id: 1, nombre: 'New', precio: 2, updated_at: now }], clients: [], history: [] };
+    await agent.post('/api/data').send(payload);
+    const items = await agent.get('/api/items');
+    assert.strictEqual(items.body.length, 1);
+    assert.strictEqual(items.body[0].nombre, 'New');
+  });
 });
