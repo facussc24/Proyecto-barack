@@ -157,7 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
   simpleCreate?.addEventListener('click', async () => {
     const resp = await fetch('/api/simple-backup', { method: 'POST' });
     if (!resp.ok) {
-      showToast('Error al crear respaldo rápido');
+      showToast('Error al crear backup exprés');
       return;
     }
     loadSimple();
