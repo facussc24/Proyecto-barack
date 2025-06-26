@@ -16,8 +16,9 @@ function createWindow(port) {
   win.loadURL(`http://localhost:${port}/docs/login.html`);
 }
 
-app.whenReady().then(() => {
-  const { httpServer } = createServer();
+app.whenReady().then(async () => {
+  const { httpServer, dbReady } = createServer();
+  await dbReady;
   server = httpServer.listen(0, () => {
     const port = server.address().port;
     createWindow(port);

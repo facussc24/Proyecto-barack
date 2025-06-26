@@ -13,7 +13,11 @@ describe('API', function() {
   beforeEach(function(done) {
     if (fs.existsSync(DB_FILE)) fs.unlinkSync(DB_FILE);
     serverObj = createServer();
-    server = serverObj.httpServer.listen(0, done);
+    serverObj.dbReady
+      .then(() => {
+        server = serverObj.httpServer.listen(0, done);
+      })
+      .catch(done);
   });
   afterEach(function(done) {
     server.close(() => {
@@ -49,5 +53,11 @@ describe('API', function() {
     assert.ok(Array.isArray(resp.body));
     assert.ok(resp.body.length > 0);
     assert.ok(resp.body[0].summary);
+  });
+
+  it('handles request immediately after startup', function(done) {
+    request(serverObj.app)
+      .get('/api/clients')
+      .expect(200, done);
   });
 });
