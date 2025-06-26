@@ -94,17 +94,19 @@ function createServer() {
   });
 
   app.post('/api/clients', (req, res) => {
-    const { codigo, nombre, imagen_path } = req.body || {};
-    if (!codigo || !nombre) {
-      return res.status(400).json({ success: false, error: 'codigo and nombre required' });
+    const { codigo, nombre, name, imagen_path } = req.body || {};
+    const finalName = nombre || name;
+    if (!finalName) {
+      return res.status(400).json({ success: false, error: 'nombre required' });
     }
+    const finalCode = codigo || Date.now().toString();
     const ts = new Date().toISOString();
     db.run(
       `INSERT INTO clients(codigo,nombre,imagen_path,updated_at,version) VALUES (?,?,?,?,1)`,
-      [codigo, nombre, imagen_path || null, ts],
+      [finalCode, finalName, imagen_path || null, ts],
       function (err) {
         if (err) return res.status(400).json({ success: false, error: err.message });
-        res.json({ success: true, data: { id: this.lastID, codigo, nombre, imagen_path: imagen_path || null, updated_at: ts, version: 1 } });
+        res.json({ success: true, data: { id: this.lastID, codigo: finalCode, nombre: finalName, imagen_path: imagen_path || null, updated_at: ts, version: 1 } });
       }
     );
   });
