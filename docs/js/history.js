@@ -5,6 +5,25 @@ const socket = (typeof io !== 'undefined')
   ? io({ transports: ['websocket'], reconnection: true })
   : (alert('Socket.IO no disponible'), null);
 
+let connToast;
+
+function showConnToast() {
+  if (connToast) return;
+  const div = document.createElement('div');
+  div.className = 'toast';
+  div.textContent = 'Sin conexión al servidor';
+  div.style.animation = 'fadeIn var(--anim-duration) forwards';
+  document.body.appendChild(div);
+  connToast = div;
+}
+
+function clearConnToast() {
+  if (connToast) {
+    connToast.remove();
+    connToast = null;
+  }
+}
+
 
 function showToast(msg) {
   const div = document.createElement('div');
@@ -221,10 +240,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     socket.on('reconnect', () => {
+      clearConnToast();
       if (typeof loadClients === 'function') loadClients();
       loadHistory();
     });
 
-    socket.on('connect_error', e => console.error('WS error', e));
+    socket.on('connect', clearConnToast);
+    socket.on('connect_error', () => showConnToast());
   }
 });
