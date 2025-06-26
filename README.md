@@ -114,15 +114,16 @@ docker compose up --build -d
 
 Tras iniciar los contenedores abre
 `http://<host>:5000/index.html#/home` (reemplaza `<host>` según
-corresponda) para acceder a la aplicación. Desde la vista **Historial**
+corresponda) para acceder a la aplicación cuando ejecutas el contenedor
+único. Desde la vista **Historial**
 podrás administrar respaldos. Todos los usuarios deben utilizar esta misma
 URL para que sus datos permanezcan sincronizados. Puedes verificar que el
 backend esté activo visitando `http://localhost:5000/health`.
 
 Si prefieres servir los archivos estáticos con Nginx puedes iniciar el
 servicio `docs` ejecutando `docker compose --profile prod up -d`. En ese caso
-la SPA se encontrará disponible en
-`http://<host>:8080/index.html#/home`.
+la SPA se encontrará disponible en `http://<host>:8080/index.html#/home` y la
+API seguirá escuchando en `http://<host>:5000`.
 
 > **Nota:** Asegúrate de que las carpetas `./data` y `./backups` existan y
 > cuenten con permisos de escritura antes de ejecutar `docker compose up`.

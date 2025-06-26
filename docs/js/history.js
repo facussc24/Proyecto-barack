@@ -119,11 +119,15 @@ document.addEventListener('DOMContentLoaded', () => {
   restoreBtn?.addEventListener('click', async () => {
     const name = backupSel.value;
     if (!name) return;
-    await fetch(`${BASE}/api/restore`, {
+    const resp = await fetch(`${BASE}/api/restore`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name })
     });
+    if (resp.status === 409) {
+      alert('Conflicto al restaurar. Recargá la página.');
+      return;
+    }
   });
 
   simpleCreate?.addEventListener('click', async () => {

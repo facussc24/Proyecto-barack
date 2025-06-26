@@ -395,6 +395,9 @@ def update_row(table, item_id, data):
     if not row:
         conn.close()
         return None, "not found", 404
+    if data.get("version") is None:
+        conn.close()
+        return None, "version required", 400
     if row["version"] != data.get("version"):
         conn.close()
         return None, "conflict", 409
