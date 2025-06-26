@@ -1,4 +1,6 @@
 const express = require('express');
+const http = require('http');
+const { Server } = require('socket.io');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const fs = require('fs');
@@ -38,6 +40,8 @@ function initDb() {
 
 function createServer() {
   const app = express();
+  const httpServer = http.createServer(app);
+  const io = new Server(httpServer);
   app.use(express.json());
   app.use('/docs', express.static(path.join(__dirname, 'docs')));
 
@@ -105,6 +109,7 @@ function createServer() {
       function (err) {
         if (err) return res.status(400).json({ success: false, error: err.message });
         res.json({ success: true, data: { id: this.lastID, codigo, nombre, imagen_path: imagen_path || null, updated_at: ts, version: 1 } });
+        io.emit('data_updated');
       }
     );
   });
@@ -163,7 +168,7 @@ function createServer() {
     });
   });
 
-  return app;
+  return httpServer;
 }
 
 module.exports = createServer;
