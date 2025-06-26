@@ -13,6 +13,7 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 from zipfile import ZipFile, ZIP_DEFLATED
 from pathlib import Path
+from backend import main as db
 
 DATA_DIR = os.getenv("DATA_DIR", "data")
 DATA_FILE = os.path.join(DATA_DIR, "latest.json")
@@ -40,6 +41,7 @@ else:
     history = []
 
 app = Flask(__name__, static_folder="docs", static_url_path="")
+db.init_db()
 IMAGES_DIR = os.path.join(app.static_folder, "imagenes_sinoptico")
 ASSET_DIRS = ["imagenes_sinoptico", "images"]
 from flask_socketio import SocketIO
@@ -446,6 +448,60 @@ def restore_backup():
 
     socketio.emit("data_updated")
     return jsonify({"status": "ok"})
+
+
+@app.route("/api/<table>", methods=["GET", "POST"])
+@app.route("/api/<table>/<int:item_id>", methods=["GET", "PATCH", "DELETE"])
+def db_crud(table, item_id=None):
+    """Proxy DB CRUD operations using backend.main logic."""
+    if table not in db.TABLE_MAP:
+        return jsonify({"success": False, "errors": "not found"}), 404
+
+    db_table = db.TABLE_MAP[table]
+
+    if request.method == "GET" and item_id is None:
+        data = db.select_all(db_table)
+        return jsonify({"success": True, "data": data})
+
+    if request.method == "GET" and item_id is not None:
+        row = db.select_one(db_table, item_id)
+        if row is None:
+            return jsonify({"success": False, "errors": "not found"}), 404
+        return jsonify({"success": True, "data": row})
+
+    if request.method == "POST":
+        payload = request.get_json(force=True, silent=True) or {}
+        row, err = db.insert_row(db_table, payload)
+        if err:
+            return jsonify({"success": False, "errors": err}), 400
+        user = payload.get("user") or request.headers.get("X-User")
+        name = row.get("nombre") or row.get("descripcion") or row.get("codigo") or ""
+        db.log_event(user, f"Cre\u00f3 {db_table.lower()} {name} (id {row['id']})")
+        socketio.emit("data_updated")
+        return jsonify({"success": True, "data": row})
+
+    if request.method == "PATCH":
+        payload = request.get_json(force=True, silent=True) or {}
+        res, err, code = db.update_row(db_table, item_id, payload)
+        if err:
+            return jsonify({"success": False, "errors": err}), code
+        user = payload.get("user") or request.headers.get("X-User")
+        name = res.get("nombre") or res.get("descripcion") or res.get("codigo") or ""
+        db.log_event(user, f"Actualiz\u00f3 {db_table.lower()} {name} (id {res['id']})")
+        socketio.emit("data_updated")
+        return jsonify({"success": True, "data": res})
+
+    if request.method == "DELETE":
+        res, err, code = db.delete_row(db_table, item_id)
+        if err:
+            return jsonify({"success": False, "errors": err}), code
+        user = request.headers.get("X-User")
+        name = res.get("nombre") or res.get("descripcion") or res.get("codigo") or ""
+        db.log_event(user, f"Elimin\u00f3 {db_table.lower()} {name} (id {res['id']})")
+        socketio.emit("data_updated")
+        return jsonify({"success": True, "data": res})
+
+    return jsonify({"success": False, "errors": "method not allowed"}), 405
 
 
 if __name__ == "__main__":
