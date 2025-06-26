@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
       tbody.innerHTML = '';
       data.slice().reverse().forEach(entry => {
         const tr = document.createElement('tr');
-        const ts = entry.ts ? new Date(entry.ts).toLocaleString() : '';
+        const ts = entry.ts ? dayjs(entry.ts).format('DD/MM/YYYY HH:mm') : '';
         tr.innerHTML =
           `<td>${ts}</td>` +
           `<td>${entry.summary || ''}</td>`;
@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
   restoreBtn?.addEventListener('click', async () => {
     const name = backupSel.value;
     if (!name) return;
-    const resp = await fetch('/api/restore', {
+    const resp = await fetch('/api/backups/restore', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name })
@@ -149,7 +149,11 @@ document.addEventListener('DOMContentLoaded', () => {
       alert('Conflicto al restaurar. Recargá la página.');
       return;
     }
-    if (!resp.ok) {
+    if (resp.ok) {
+      alert('Backup restaurado con éxito');
+      if (typeof loadClients === 'function') loadClients();
+      loadHistory();
+    } else {
       showToast('Error al restaurar backup');
     }
   });
