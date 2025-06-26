@@ -171,11 +171,31 @@ async function syncNow() {
 
 let socket;
 let sse;
-if (hasWindow && SOCKET_URL && typeof io !== 'undefined') {
-  socket = io(SOCKET_URL, { transports: ['websocket'], reconnection: true });
-  socket.on('connect_error', err => alert('WS error: ' + err.message));
+let connToast;
+
+function showConnToast() {
+  if (connToast) return;
+  const div = document.createElement('div');
+  div.className = 'toast';
+  div.textContent = 'Sin conexión al servidor';
+  div.style.animation = 'fadeIn var(--anim-duration) forwards';
+  document.body.appendChild(div);
+  connToast = div;
+}
+
+function clearConnToast() {
+  if (connToast) {
+    connToast.remove();
+    connToast = null;
+  }
+}
+
+if (hasWindow && typeof io !== 'undefined') {
+  socket = io({ transports: ['websocket'], reconnection: true });
+  socket.on('connect_error', showConnToast);
+  socket.on('connect', clearConnToast);
 } else if (hasWindow) {
-  alert('Socket.IO no disponible');
+  showConnToast();
 }
 
 if (socket) {
@@ -202,6 +222,7 @@ if (socket) {
   });
 
   socket.on('reconnect', () => {
+    clearConnToast();
     if (typeof loadClients === 'function') loadClients();
     if (typeof loadHistory === 'function') loadHistory();
   });
