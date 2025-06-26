@@ -649,6 +649,7 @@ def create_backup_route():
     if os.path.exists(META_FILE):
         with open(META_FILE, "r", encoding="utf-8") as f:
             info = json.load(f).get(name, {})
+    socketio.emit("data_updated")
     return jsonify(
         {
             "path": f"backups/{name}",
@@ -674,6 +675,7 @@ def delete_backup(name):
         if meta.pop(safe, None) is not None:
             with open(META_FILE, "w", encoding="utf-8") as f:
                 json.dump(meta, f, ensure_ascii=False, indent=2)
+    socketio.emit("data_updated")
     return jsonify({"status": "deleted"})
 
 

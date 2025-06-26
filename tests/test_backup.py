@@ -279,3 +279,51 @@ def test_simple_restore_invalid_name(tmp_path, monkeypatch):
 
     resp = client.post("/api/simple-restore", json={"name": "../hack.db"})
     assert resp.status_code == 400
+
+
+def test_socketio_events_on_server_backup(tmp_path, monkeypatch):
+    monkeypatch.setenv("BACKUP_DIR", str(tmp_path / "backups"))
+    monkeypatch.setenv("DATA_DIR", str(tmp_path / "data"))
+    monkeypatch.setenv("DB_PATH", str(tmp_path / "data/db.sqlite"))
+
+    data_dir = Path(os.environ["DATA_DIR"])
+    data_dir.mkdir(parents=True)
+    (data_dir / "latest.json").write_text("{}")
+    Path(os.environ["DB_PATH"]).write_text("db")
+
+    server = importlib.reload(importlib.import_module("server"))
+    sio_client = server.socketio.test_client(server.app)
+    client = server.app.test_client()
+
+    resp = client.post("/api/backups", json={"description": "d"})
+    assert resp.status_code == 200
+    events = sio_client.get_received()
+    assert any(e["name"] == "data_updated" for e in events)
+    name = os.path.basename(resp.get_json()["path"])
+
+    resp = client.delete(f"/api/backups/{name}")
+    assert resp.status_code == 200
+    events = sio_client.get_received()
+    assert any(e["name"] == "data_updated" for e in events)
+    sio_client.disconnect()
+
+
+def test_socketio_events_on_backend_backup(tmp_path, monkeypatch):
+    backend = importlib.import_module("backend.main")
+    backend.BACKUP_DIR = str(tmp_path / "backups")
+    backend.META_FILE = os.path.join(backend.BACKUP_DIR, "metadata.json")
+    os.makedirs(backend.BACKUP_DIR, exist_ok=True)
+    sio_client = backend.socketio.test_client(backend.app)
+    client = backend.app.test_client()
+
+    resp = client.post("/api/backups", json={"description": "d"})
+    assert resp.status_code == 200
+    events = sio_client.get_received()
+    assert any(e["name"] == "data_updated" for e in events)
+    name = os.path.basename(resp.get_json()["path"])
+
+    resp = client.delete(f"/api/backups/{name}")
+    assert resp.status_code == 200
+    events = sio_client.get_received()
+    assert any(e["name"] == "data_updated" for e in events)
+    sio_client.disconnect()
