@@ -172,7 +172,13 @@ async function syncNow() {
 let socket;
 let sse;
 if (hasWindow && SOCKET_URL && typeof io !== 'undefined') {
-  socket = io(SOCKET_URL);
+  socket = io(SOCKET_URL, { transports: ['websocket'] });
+  socket.on('connect_error', err => alert('WS error: ' + err.message));
+} else if (hasWindow) {
+  alert('Socket.IO no disponible');
+}
+
+if (socket) {
   socket.on('data_updated', async () => {
     if (!API_URL) return;
     try {

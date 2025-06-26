@@ -1,7 +1,9 @@
 
 'use strict';
 
-const socket = io();
+const socket = (typeof io !== 'undefined')
+  ? io({ transports: ['websocket'] })
+  : (alert('Socket.IO no disponible'), null);
 
 
 function showToast(msg) {
@@ -194,10 +196,12 @@ document.addEventListener('DOMContentLoaded', () => {
   loadSimple();
   loadHistory();
 
-  socket.on('data_updated', () => {
-    loadHistory();
-    if (typeof loadClients === 'function') loadClients();
-  });
+  if (socket) {
+    socket.on('data_updated', () => {
+      loadHistory();
+      if (typeof loadClients === 'function') loadClients();
+    });
 
-  socket.on('connect_error', e => console.error('WS error', e));
+    socket.on('connect_error', e => console.error('WS error', e));
+  }
 });
