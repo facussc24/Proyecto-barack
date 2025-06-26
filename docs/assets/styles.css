@@ -1678,23 +1678,8 @@ body.sidebar-open .sidebar-toggle {
   background: rgba(255, 255, 255, 0.2);
 }
 
-.sidebar-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity var(--anim-duration) var(--anim-ease);
-  z-index: 1099;
-}
-
 body.sidebar-open .dataset-sidebar {
   left: 0;
-}
-
-body.sidebar-open .sidebar-overlay {
-  opacity: 1;
-  visibility: visible;
 }
 
 /* Admin menu buttons */

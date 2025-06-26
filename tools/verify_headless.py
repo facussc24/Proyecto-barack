@@ -17,7 +17,10 @@ else:
 
 # prepare data and backup
 requests.post("http://localhost:5000/api/data", json={})
-requests.post("http://localhost:5000/api/clientes", json={"codigo": "C1", "nombre": "Test", "user": "admin"})
+requests.post(
+    "http://localhost:5000/api/clientes",
+    json={"codigo": "C1", "nombre": "Test", "user": "admin"},
+)
 resp = requests.post("http://localhost:5000/api/backups", json={"description": "auto"})
 resp.raise_for_status()
 backup_name = resp.json()["path"].split("/")[-1]
@@ -35,14 +38,16 @@ with sync_playwright() as p:
     assert page.inner_text("#createBackup").strip() == "Crear backup"
     assert page.locator("#createBackup").count() == 1
 
-    bg = page.evaluate("getComputedStyle(document.querySelector('.tabla-contenedor')).backgroundColor")
-    assert '255, 255, 255' in bg
+    bg = page.evaluate(
+        "getComputedStyle(document.querySelector('.tabla-contenedor')).backgroundColor"
+    )
+    assert "255, 255, 255" in bg
 
     rows = page.locator("#historyTable tbody tr")
     assert rows.count() >= 1
 
     page.select_option("#backupList", backup_name)
-    with page.expect_event('dialog') as d:
+    with page.expect_event("dialog") as d:
         page.click("#restoreBackup")
     assert d.value.message == "Backup restaurado con éxito"
 
@@ -50,7 +55,7 @@ with sync_playwright() as p:
     assert cache.headers.get("Cache-Control") == "no-store"
 
     # verify reconnect handler defined in history.js
-    with open('docs/js/history.js', 'r', encoding='utf-8') as f:
+    with open("docs/js/history.js", "r", encoding="utf-8") as f:
         js_content = f.read()
     assert "socket.on('reconnect'" in js_content
 

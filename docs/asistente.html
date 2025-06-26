@@ -124,12 +124,6 @@
   <script src="lib/dexie.min.js" defer></script>
   <script src="https://cdn.socket.io/4.7.2/socket.io.min.js" defer></script>
   <script type="module" src="js/authGuard.js"></script>
-  <script>
-    window.API_BASE = 'http://desktop-14jg95b:5000';
-    if (!localStorage.getItem('apiUrl')) {
-      localStorage.setItem('apiUrl', window.API_BASE + '/api/data');
-    }
-  </script>
   <script type="module" src="js/dataService.js" defer></script>
   <script type="module" src="js/asistente.js" defer></script>
   <script type="module" src="js/ui/renderer.js" defer></script>
