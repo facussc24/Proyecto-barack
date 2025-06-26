@@ -68,6 +68,21 @@ function createServer() {
     db = d;
   });
 
+  function allAsync(sql, params = []) {
+    return new Promise((resolve, reject) => {
+      db.all(sql, params, (err, rows) => (err ? reject(err) : resolve(rows)));
+    });
+  }
+
+  function runAsync(sql, params = []) {
+    return new Promise((resolve, reject) => {
+      db.run(sql, params, function (err) {
+        if (err) reject(err);
+        else resolve(this);
+      });
+    });
+  }
+
   app.get('/api/items', (req, res) => {
     db.all('SELECT * FROM items', (err, rows) => {
       if (err) return res.status(500).json({ error: err.message });
@@ -186,6 +201,45 @@ function createServer() {
       if (err) return res.status(400).json({ success: false, error: err.message });
       res.json({ success: true, data: { ts, user: user || null, summary } });
     });
+  });
+
+  /** Combined export/import */
+  app.get('/api/data', async (req, res) => {
+    try {
+      const [items, clients, history] = await Promise.all([
+        allAsync('SELECT * FROM items'),
+        allAsync('SELECT * FROM clients'),
+        allAsync('SELECT * FROM history ORDER BY ts DESC'),
+      ]);
+      res.json({ items, clients, history });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  app.post('/api/data', async (req, res) => {
+    const data = req.body || {};
+    try {
+      await runAsync('BEGIN');
+      await runAsync('DELETE FROM items');
+      for (const row of data.items || []) {
+        await runAsync('INSERT INTO items(id,nombre,precio,updated_at) VALUES (?,?,?,?)', [row.id, row.nombre, row.precio, row.updated_at]);
+      }
+      await runAsync('DELETE FROM clients');
+      for (const row of data.clients || []) {
+        await runAsync('INSERT INTO clients(id,codigo,nombre,imagen_path,updated_at,version) VALUES (?,?,?,?,?,?)', [row.id, row.codigo, row.nombre, row.imagen_path, row.updated_at, row.version ?? 1]);
+      }
+      await runAsync('DELETE FROM history');
+      for (const row of data.history || []) {
+        await runAsync('INSERT INTO history(ts,user,summary) VALUES (?,?,?)', [row.ts, row.user, row.summary]);
+      }
+      await runAsync('COMMIT');
+      io.emit('data_updated');
+      res.json({ success: true });
+    } catch (err) {
+      try { await runAsync('ROLLBACK'); } catch (e) {}
+      res.status(400).json({ error: err.message });
+    }
   });
 
   return { app, httpServer, io, dbReady };
