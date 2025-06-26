@@ -310,7 +310,6 @@ def update_product(prod_id):
         (prod_id, user, "update", new_updated),
     )
     conn.commit()
-    _touch_last_updated()
 
     cur.execute("SELECT * FROM products WHERE id = ?", (prod_id,))
     updated = cur.fetchone()
@@ -383,7 +382,6 @@ def insert_row(table, data):
         conn.close()
         return None, str(e)
     conn.close()
-    _touch_last_updated()
     return result, None
 
 
@@ -426,7 +424,6 @@ def update_row(table, item_id, data):
         conn.close()
         return None, str(e), 400
     conn.close()
-    _touch_last_updated()
     return result, None, 200
 
 
@@ -446,7 +443,6 @@ def delete_row(table, item_id):
         conn.close()
         return None, str(e), 400
     conn.close()
-    _touch_last_updated()
     return dict(row), None, 200
 
 
@@ -504,244 +500,6 @@ def generic_crud(table, item_id=None):
         return jsonify({"success": True, "data": res})
 
     return jsonify({"success": False, "errors": "method not allowed"}), 405
-
-
-def manual_backup(description=None, activate=False):
-    if not os.path.exists(DB_PATH):
-        return None
-    ts = datetime.utcnow().strftime("%Y-%m-%d_%H-%M-%S")
-    dest = os.path.join(BACKUP_DIR, f"{ts}.zip")
-    with ZipFile(dest, "w", compression=ZIP_DEFLATED) as zf:
-        zf.write(DB_PATH, arcname="db.sqlite")
-    conn = get_db()
-    tables = [
-        "Cliente",
-        "Proveedor",
-        "UnidadMedida",
-        "Insumo",
-        "Producto",
-        "Subproducto",
-        "ProductoInsumo",
-    ]
-    stats = {
-        tbl: conn.execute(f"SELECT COUNT(*) FROM {tbl}").fetchone()[0] for tbl in tables
-    }
-    conn.close()
-
-    meta = {}
-    if os.path.exists(META_FILE):
-        with open(META_FILE, "r", encoding="utf-8") as f:
-            meta = json.load(f)
-    ts_iso = datetime.utcnow().isoformat() + "Z"
-    meta[os.path.basename(dest)] = {
-        "description": description or "",
-        "stats": stats,
-        "last_updated": ts_iso,
-    }
-    if activate:
-        meta[ACTIVE_KEY] = {
-            "name": os.path.basename(dest),
-            "timestamp": ts_iso,
-        }
-    with open(META_FILE, "w", encoding="utf-8") as f:
-        json.dump(meta, f, ensure_ascii=False, indent=2)
-    return dest
-
-
-def simple_backup() -> str | None:
-    """Create a plain SQLite copy under BACKUP_DIR/backup_<timestamp>.db."""
-    if not os.path.exists(DB_PATH):
-        return None
-    ts = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
-    dest = os.path.join(BACKUP_DIR, f"backup_{ts}.db")
-    shutil.copy2(DB_PATH, dest)
-    return dest
-
-
-def _validate_simple_name(name: str) -> str | None:
-    if not name or "/" in name or "\\" in name or name in {".", ".."}:
-        return None
-    base = os.path.basename(name)
-    if base != name or not base.endswith(".db"):
-        return None
-    full = os.path.abspath(os.path.join(BACKUP_DIR, base))
-    if os.path.commonpath([full, os.path.abspath(BACKUP_DIR)]) != os.path.abspath(
-        BACKUP_DIR
-    ):
-        return None
-    return base
-
-
-def _validate_backup_name(name: str) -> str | None:
-    if not name or "/" in name or "\\" in name:
-        return None
-    if name in {".", ".."}:
-        return None
-    base = os.path.basename(name)
-    if base != name or not base.endswith(".zip"):
-        return None
-    full = os.path.abspath(os.path.join(BACKUP_DIR, base))
-    if os.path.commonpath([full, os.path.abspath(BACKUP_DIR)]) != os.path.abspath(
-        BACKUP_DIR
-    ):
-        return None
-    return base
-
-
-def _touch_last_updated() -> None:
-    if not os.path.exists(META_FILE):
-        return
-    with open(META_FILE, "r", encoding="utf-8") as f:
-        meta = json.load(f)
-    active = meta.get(ACTIVE_KEY, {}).get("name")
-    if not active:
-        return
-    entry = meta.get(active, {})
-    if isinstance(entry, str):
-        entry = {"description": entry}
-    if not isinstance(entry, dict):
-        entry = {}
-    entry["last_updated"] = datetime.utcnow().isoformat() + "Z"
-    meta[active] = entry
-    with open(META_FILE, "w", encoding="utf-8") as f:
-        json.dump(meta, f, ensure_ascii=False, indent=2)
-
-
-@app.get("/api/backups")
-def list_backups():
-    files = sorted(
-        os.path.basename(f) for f in glob.glob(os.path.join(BACKUP_DIR, "*.zip"))
-    )
-    meta = {}
-    if os.path.exists(META_FILE):
-        with open(META_FILE, "r", encoding="utf-8") as f:
-            meta = json.load(f)
-    active = meta.get(ACTIVE_KEY, {}).get("name") if meta else None
-    result = []
-    for f in files:
-        info = meta.get(f, {})
-        if isinstance(info, str):
-            info = {"description": info}
-        result.append(
-            {
-                "name": f,
-                "description": info.get("description", ""),
-                "stats": info.get("stats", {}),
-                "last_updated": info.get("last_updated"),
-                "active": f == active,
-            }
-        )
-    return jsonify(result)
-
-
-@app.post("/api/backups")
-def create_backup_route():
-    data = request.get_json(force=True, silent=True) or {}
-    desc = data.get("description")
-    if not desc or not str(desc).strip():
-        return jsonify({"error": "missing description"}), 400
-    activate = bool(data.get("activate"))
-    path = manual_backup(desc, activate)
-    if not path:
-        return jsonify({"error": "no data"}), 404
-    name = os.path.basename(path)
-    info = {}
-    if os.path.exists(META_FILE):
-        with open(META_FILE, "r", encoding="utf-8") as f:
-            info = json.load(f).get(name, {})
-    socketio.emit("data_updated")
-    return jsonify(
-        {
-            "path": f"backups/{name}",
-            "description": desc or "",
-            "stats": info.get("stats", {}),
-            "last_updated": info.get("last_updated"),
-        }
-    )
-
-
-@app.delete("/api/backups/<name>")
-def delete_backup(name):
-    safe = _validate_backup_name(name)
-    if not safe:
-        return jsonify({"error": "invalid name"}), 400
-    path = os.path.join(BACKUP_DIR, safe)
-    if not os.path.exists(path):
-        return jsonify({"error": "not found"}), 404
-    os.remove(path)
-    if os.path.exists(META_FILE):
-        with open(META_FILE, "r", encoding="utf-8") as f:
-            meta = json.load(f)
-        if meta.pop(safe, None) is not None:
-            with open(META_FILE, "w", encoding="utf-8") as f:
-                json.dump(meta, f, ensure_ascii=False, indent=2)
-    socketio.emit("data_updated")
-    return jsonify({"status": "deleted"})
-
-
-@app.post("/api/restore")
-def restore_backup():
-    data = request.get_json(force=True, silent=True) or {}
-    name = data.get("name")
-    if not name:
-        return jsonify({"error": "missing name"}), 400
-    safe = _validate_backup_name(name)
-    if not safe:
-        return jsonify({"error": "invalid name"}), 400
-    path = os.path.join(BACKUP_DIR, safe)
-    if not os.path.exists(path):
-        return jsonify({"error": "not found"}), 404
-    with ZipFile(path) as zf:
-        zf.extract("db.sqlite", os.path.dirname(DB_PATH))
-    meta = {}
-    if os.path.exists(META_FILE):
-        with open(META_FILE, "r", encoding="utf-8") as f:
-            meta = json.load(f)
-    ts_iso = datetime.utcnow().isoformat() + "Z"
-    entry = meta.get(safe, {})
-    if isinstance(entry, str):
-        entry = {"description": entry}
-    if not isinstance(entry, dict):
-        entry = {}
-    entry["last_updated"] = ts_iso
-    meta[safe] = entry
-    meta[ACTIVE_KEY] = {"name": safe, "timestamp": ts_iso}
-    with open(META_FILE, "w", encoding="utf-8") as f:
-        json.dump(meta, f, ensure_ascii=False, indent=2)
-    socketio.emit("data_updated")
-    return jsonify({"status": "ok"})
-
-
-@app.post("/api/simple-backup")
-def create_simple_backup_route():
-    path = simple_backup()
-    if not path:
-        return jsonify({"error": "no data"}), 404
-    return jsonify({"name": os.path.basename(path)})
-
-
-@app.get("/api/simple-backups")
-def list_simple_backups_route():
-    files = sorted(
-        os.path.basename(f) for f in glob.glob(os.path.join(BACKUP_DIR, "backup_*.db"))
-    )
-    return jsonify(files)
-
-
-@app.post("/api/simple-restore")
-def simple_restore_route():
-    data = request.get_json(force=True, silent=True) or {}
-    name = data.get("name")
-    if not name:
-        return jsonify({"error": "missing name"}), 400
-    safe = _validate_simple_name(name)
-    if not safe:
-        return jsonify({"error": "invalid name"}), 400
-    src = os.path.join(BACKUP_DIR, safe)
-    if not os.path.exists(src):
-        return jsonify({"error": "not found"}), 404
-    shutil.copy2(src, DB_PATH)
-    return jsonify({"status": "ok"})
 
 
 @app.get("/api/db-stats")
