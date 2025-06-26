@@ -85,106 +85,6 @@ def backup_latest():
             zf.write(DATA_FILE, arcname="latest.json")
 
 
-def manual_backup(description=None, activate=False):
-    """Create a ZIP backup. If ``activate`` is True, DATA_FILE points to a
-    timestamped copy of the JSON so it becomes the active database."""
-    global DATA_FILE
-
-    if not os.path.exists(DATA_FILE):
-        return None
-
-    ts = datetime.utcnow().strftime("%Y-%m-%d_%H-%M-%S")
-    dest = os.path.join(BACKUP_DIR, f"{ts}.zip")
-    with ZipFile(dest, "w", compression=ZIP_DEFLATED) as zf:
-        zf.write(DATA_FILE, arcname="latest.json")
-        if os.path.exists(HISTORY_FILE):
-            zf.write(HISTORY_FILE, arcname="history.json")
-        if os.path.exists(DB_PATH):
-            zf.write(DB_PATH, arcname="db.sqlite")
-        for directory in ASSET_DIRS:
-            folder = os.path.join(app.static_folder, directory)
-            if os.path.isdir(folder):
-                for root_dir, _, files in os.walk(folder):
-                    for f in files:
-                        fp = os.path.join(root_dir, f)
-                        arc = os.path.relpath(fp, start=app.static_folder)
-                        zf.write(fp, arcname=arc)
-
-    meta = {}
-    if os.path.exists(METADATA_FILE):
-        with open(METADATA_FILE, "r", encoding="utf-8") as f:
-            meta = json.load(f)
-    ts_iso = datetime.utcnow().isoformat() + "Z"
-    meta[os.path.basename(dest)] = {
-        "description": description or "",
-        "last_updated": ts_iso,
-    }
-    if activate:
-        meta[ACTIVE_KEY] = {
-            "name": os.path.basename(dest),
-            "timestamp": ts_iso,
-        }
-    with open(METADATA_FILE, "w", encoding="utf-8") as f:
-        json.dump(meta, f, ensure_ascii=False, indent=2)
-
-    if activate:
-        new_json = os.path.join(BACKUP_DIR, f"{ts}.json")
-        shutil.copyfile(DATA_FILE, new_json)
-        DATA_FILE = new_json
-
-    return dest
-
-
-def _validate_backup_name(name: str) -> str | None:
-    """Return the sanitized backup name if valid, otherwise None."""
-    if not name or "/" in name or "\\" in name:
-        return None
-    if name in {".", ".."}:
-        return None
-    base = os.path.basename(name)
-    if base != name or not base.endswith(".zip"):
-        return None
-    full = os.path.abspath(os.path.join(BACKUP_DIR, base))
-    if os.path.commonpath([full, os.path.abspath(BACKUP_DIR)]) != os.path.abspath(
-        BACKUP_DIR
-    ):
-        return None
-    return base
-
-
-def _touch_last_updated() -> None:
-    """Update last_updated for the active backup if metadata exists."""
-    if not os.path.exists(METADATA_FILE):
-        return
-    with open(METADATA_FILE, "r", encoding="utf-8") as f:
-        meta = json.load(f)
-    active = meta.get(ACTIVE_KEY, {}).get("name")
-    if not active:
-        return
-    entry = meta.get(active)
-    if isinstance(entry, str):
-        entry = {"description": entry}
-    if not isinstance(entry, dict):
-        entry = {}
-    entry["last_updated"] = datetime.utcnow().isoformat() + "Z"
-    meta[active] = entry
-    with open(METADATA_FILE, "w", encoding="utf-8") as f:
-        json.dump(meta, f, ensure_ascii=False, indent=2)
-
-
-def cleanup_backups():
-    cutoff = datetime.utcnow() - timedelta(days=180)
-    for path in glob.glob(os.path.join(BACKUP_DIR, "*.zip")):
-        try:
-            date = datetime.strptime(os.path.basename(path)[:-4], "%Y-%m-%d")
-        except ValueError:
-            continue
-        if date < cutoff:
-            os.remove(path)
-
-
-@app.route("/", defaults={"path": "index.html"})
-@app.route("/<path:path>")
 def static_proxy(path):
     file_path = os.path.join(app.static_folder, path)
     if not os.path.splitext(path)[1] and not os.path.exists(file_path):
@@ -226,8 +126,6 @@ def data():
         history.append(entry)
         with open(HISTORY_FILE, "w", encoding="utf-8") as f:
             json.dump(history, f, ensure_ascii=False, indent=2)
-
-    _touch_last_updated()
 
     socketio.emit("data_updated")
     return jsonify({"status": "ok"})
@@ -333,137 +231,6 @@ def handle_disconnect():
     clients.pop(request.sid, None)
 
 
-@app.get("/api/backups")
-def list_backups():
-    files = sorted(
-        os.path.basename(f) for f in glob.glob(os.path.join(BACKUP_DIR, "*.zip"))
-    )
-    meta = {}
-    if os.path.exists(METADATA_FILE):
-        with open(METADATA_FILE, "r", encoding="utf-8") as f:
-            meta = json.load(f)
-    active = meta.get(ACTIVE_KEY, {}).get("name") if meta else None
-    result = []
-    for f in files:
-        info = meta.get(f, {})
-        if isinstance(info, str):
-            info = {"description": info}
-        result.append(
-            {
-                "name": f,
-                "description": info.get("description", ""),
-                "last_updated": info.get("last_updated"),
-                "active": f == active,
-            }
-        )
-    return jsonify(result)
-
-
-@app.post("/api/backups")
-def create_backup_route():
-    data = request.get_json(force=True, silent=True) or {}
-    desc = data.get("description")
-    if not desc or not str(desc).strip():
-        return jsonify({"error": "missing description"}), 400
-    activate = bool(data.get("activate"))
-    path = manual_backup(desc, activate)
-    if not path:
-        return jsonify({"error": "no data"}), 404
-    name = os.path.basename(path)
-    socketio.emit("data_updated")
-    return jsonify({"path": f"backups/{name}", "description": desc or ""})
-
-
-@app.delete("/api/backups/<name>")
-def delete_backup(name):
-    safe = _validate_backup_name(name)
-    if not safe:
-        return jsonify({"error": "invalid name"}), 400
-    path = os.path.join(BACKUP_DIR, safe)
-    if not os.path.exists(path):
-        return jsonify({"error": "not found"}), 404
-    os.remove(path)
-    if os.path.exists(METADATA_FILE):
-        with open(METADATA_FILE, "r", encoding="utf-8") as f:
-            meta = json.load(f)
-        if meta.pop(safe, None) is not None:
-            with open(METADATA_FILE, "w", encoding="utf-8") as f:
-                json.dump(meta, f, ensure_ascii=False, indent=2)
-    socketio.emit("data_updated")
-    return jsonify({"status": "deleted"})
-
-
-@app.post("/api/restore")
-def restore_backup():
-    global memory, history, data_cache
-    data = request.get_json(force=True, silent=True) or {}
-    name = data.get("name")
-    if not name:
-        return jsonify({"error": "missing name"}), 400
-    safe = _validate_backup_name(name)
-    if not safe:
-        return jsonify({"error": "invalid name"}), 400
-    path = os.path.join(BACKUP_DIR, safe)
-    if not os.path.exists(path):
-        return jsonify({"error": "not found"}), 404
-    with ZipFile(path) as zf:
-        with zf.open("latest.json") as f:
-            new_data = json.load(f)
-        if "history.json" in zf.namelist():
-            zf.extract("history.json", DATA_DIR)
-            with open(HISTORY_FILE, "r", encoding="utf-8") as h:
-                history[:] = json.load(h)
-        if "db.sqlite" in zf.namelist():
-            zf.extract("db.sqlite", os.path.dirname(DB_PATH))
-        for item in zf.namelist():
-            if ".." in Path(item).parts:
-                continue
-            if any(item.startswith(f"{d}/") for d in ASSET_DIRS):
-                zf.extract(item, app.static_folder)
-
-    with write_lock:
-        memory = new_data
-        data_cache = None  # clear cache so GET /api/data returns restored content
-        with open(DATA_FILE, "w", encoding="utf-8") as out:
-            json.dump(memory, out, ensure_ascii=False, indent=2)
-        with open(DATA_FILE, "r", encoding="utf-8") as out:
-            memory = json.load(out)
-        entry = {
-            "timestamp": datetime.utcnow().isoformat() + "Z",
-            "ip": request.remote_addr,
-            "host": request.headers.get("X-Host") or request.host,
-            "restore": safe,
-        }
-        history.append(entry)
-        with open(HISTORY_FILE, "w", encoding="utf-8") as f:
-            json.dump(history, f, ensure_ascii=False, indent=2)
-
-    meta = {}
-    if os.path.exists(METADATA_FILE):
-        with open(METADATA_FILE, "r", encoding="utf-8") as f:
-            meta = json.load(f)
-    ts_iso = datetime.utcnow().isoformat() + "Z"
-    entry = meta.get(safe, {})
-    if isinstance(entry, str):
-        entry = {"description": entry}
-    if not isinstance(entry, dict):
-        entry = {}
-    entry["last_updated"] = ts_iso
-    meta[safe] = entry
-    meta[ACTIVE_KEY] = {"name": safe, "timestamp": ts_iso}
-    with open(METADATA_FILE, "w", encoding="utf-8") as f:
-        json.dump(meta, f, ensure_ascii=False, indent=2)
-
-    socketio.emit("data_updated")
-    return jsonify({"status": "ok"})
-
-
-@app.post("/api/backups/restore")
-def restore_backup_alias():
-    """Alias for legacy path used by frontend"""
-    return restore_backup()
-
-
 @app.route("/api/<table>", methods=["GET", "POST"])
 @app.route("/api/<table>/<int:item_id>", methods=["GET", "PATCH", "DELETE"])
 def db_crud(table, item_id=None):
@@ -519,7 +286,6 @@ def db_crud(table, item_id=None):
 
 
 if __name__ == "__main__":
-    cleanup_backups()
     if os.getenv("DISABLE_AUTOBACKUP") != "1":
         scheduler = BackgroundScheduler(daemon=True)
         scheduler.add_job(backup_latest, "interval", days=1)
