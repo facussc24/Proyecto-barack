@@ -458,6 +458,12 @@ def restore_backup():
     return jsonify({"status": "ok"})
 
 
+@app.post("/api/backups/restore")
+def restore_backup_alias():
+    """Alias for legacy path used by frontend"""
+    return restore_backup()
+
+
 @app.route("/api/<table>", methods=["GET", "POST"])
 @app.route("/api/<table>/<int:item_id>", methods=["GET", "PATCH", "DELETE"])
 def db_crud(table, item_id=None):
