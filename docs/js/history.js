@@ -3,10 +3,14 @@
 
 const socket = io();
 
-const BASE =
-  (localStorage.getItem('apiUrl') || '').replace(/\/api\/data$/, '') ||
-  window.API_BASE ||
-  '';
+
+function showToast(msg) {
+  const div = document.createElement('div');
+  div.className = 'toast';
+  div.textContent = msg;
+  document.body.appendChild(div);
+  setTimeout(() => div.remove(), 3000);
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   const tbody = document.querySelector('#historyTable tbody');
@@ -29,7 +33,11 @@ document.addEventListener('DOMContentLoaded', () => {
   async function loadHistory() {
     try {
       const resp = await fetch('/api/history');
-      if (!resp.ok) throw new Error('Request failed');
+      if (!resp.ok) {
+        if (resp.status === 409) alert('Conflicto al cargar historial');
+        else showToast('Error al cargar historial');
+        return;
+      }
       const data = await resp.json();
       tbody.innerHTML = '';
       data.slice().reverse().forEach(entry => {
@@ -48,8 +56,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function loadBackups() {
     try {
-      const resp = await fetch(`${BASE}/api/backups`);
-      if (!resp.ok) return;
+      const resp = await fetch('/api/backups');
+      if (!resp.ok) {
+        if (resp.status === 409) alert('Conflicto al obtener respaldos');
+        else showToast('Error al obtener respaldos');
+        return;
+      }
       const list = await resp.json();
       backupSel.innerHTML = list
         .map(b => `<option value="${b.name}" data-desc="${b.description || ''}">${b.name}</option>`)
@@ -63,8 +75,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function loadSimple() {
     try {
-      const resp = await fetch(`${BASE}/api/simple-backups`);
-      if (!resp.ok) return;
+      const resp = await fetch('/api/simple-backups');
+      if (!resp.ok) {
+        if (resp.status === 409) alert('Conflicto al listar respaldos');
+        else showToast('Error al listar respaldos');
+        return;
+      }
       const list = await resp.json();
       if (simpleList)
         simpleList.innerHTML = list
@@ -85,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       return;
     }
-    const resp = await fetch(`${BASE}/api/backups`, {
+    const resp = await fetch('/api/backups', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ description })
@@ -96,6 +112,9 @@ document.addEventListener('DOMContentLoaded', () => {
       statusSpan.classList.add('show');
       setTimeout(() => statusSpan.classList.remove('show'), 3000);
     } else if (!resp.ok && statusSpan) {
+      if (resp.status === 409) {
+        alert('Conflicto al crear backup. Recargá la página.');
+      }
       let msg = '';
       try {
         const data = await resp.json();
@@ -119,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
   restoreBtn?.addEventListener('click', async () => {
     const name = backupSel.value;
     if (!name) return;
-    const resp = await fetch(`${BASE}/api/restore`, {
+    const resp = await fetch('/api/restore', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name })
@@ -128,28 +147,44 @@ document.addEventListener('DOMContentLoaded', () => {
       alert('Conflicto al restaurar. Recargá la página.');
       return;
     }
+    if (!resp.ok) {
+      showToast('Error al restaurar backup');
+    }
   });
 
   simpleCreate?.addEventListener('click', async () => {
-    await fetch(`${BASE}/api/simple-backup`, { method: 'POST' });
+    const resp = await fetch('/api/simple-backup', { method: 'POST' });
+    if (!resp.ok) {
+      showToast('Error al crear respaldo rápido');
+      return;
+    }
     loadSimple();
   });
 
   simpleRestore?.addEventListener('click', async () => {
     const name = simpleList?.value;
     if (!name) return;
-    const resp = await fetch(`${BASE}/api/simple-restore`, {
+    const resp = await fetch('/api/simple-restore', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name })
     });
+    if (resp.status === 409) {
+      alert('Conflicto al restaurar. Recargá la página.');
+      return;
+    }
     if (resp.ok) location.reload();
+    else showToast('Error al restaurar respaldo');
   });
 
   deleteBtn?.addEventListener('click', async () => {
     const name = backupSel.value;
     if (!name) return;
-    await fetch(`${BASE}/api/backups/${encodeURIComponent(name)}`, { method: 'DELETE' });
+    const resp = await fetch(`/api/backups/${encodeURIComponent(name)}`, { method: 'DELETE' });
+    if (!resp.ok) {
+      showToast('Error al eliminar backup');
+      return;
+    }
     loadBackups();
   });
 

@@ -3,50 +3,11 @@
 
 export const DATA_CHANGED = 'DATA_CHANGED';
 const STORAGE_KEY = 'genericData';
-// Base URL for the backend API (without trailing slash or '/api')
-const API_BASE =
-  typeof globalThis !== 'undefined' && globalThis.API_BASE
-    ? globalThis.API_BASE
-    : typeof process !== 'undefined' && process.env
-      ? process.env.API_BASE || process.env.apiBase
-      : null;
 // URL of the backend API used to store and retrieve data
-const DEFAULT_API_URL = API_BASE != null
-  ? `${API_BASE.replace(/\/$/, '')}/api/data`
-  : typeof location !== 'undefined' && location.origin
-    ? `${location.origin}/api/data`
-    : '/api/data';
-let API_URL = DEFAULT_API_URL;
-
-// Prefer value from localStorage
-let _healthCheck = Promise.resolve();
-if (typeof localStorage !== 'undefined') {
-  try {
-    const stored = localStorage.getItem('apiUrl');
-    if (stored) {
-      API_URL = stored;
-      if (typeof fetch === 'function') {
-        const base = stored.replace(/\/api\/data$/, '');
-        _healthCheck = fetch(`${base}/health`).then(r => {
-          if (!r.ok) throw new Error('health check failed');
-        }).catch(() => {
-          try { localStorage.removeItem('apiUrl'); } catch {}
-          API_URL = DEFAULT_API_URL;
-        });
-      }
-    }
-  } catch {
-    // ignore
-  }
-}
-
-// Fallback to environment variable when running under Node
-if (API_URL === DEFAULT_API_URL && typeof process !== 'undefined' && process.env) {
-  const envUrl = process.env.API_URL || process.env.apiUrl;
-  if (envUrl) API_URL = envUrl;
-}
-
-const SOCKET_URL = API_URL ? API_URL.replace(/\/api\/data$/, '') : null;
+const API_URL = '/api/data';
+const SOCKET_URL = '';
+// Health check promise kept for compatibility
+const _healthCheck = Promise.resolve();
 
 const docMap = {
   'Flujograma': 'flujograma',
@@ -130,19 +91,27 @@ function applyProductUpdate(row) {
   notifyChange();
 }
 
-async function persistCurrentState() {
-  if (!API_URL) return;
-  try {
-    const json = await exportJSON(true);
-    await fetch(API_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: json,
-    });
-  } catch (e) {
-    console.error('Failed to sync data with server', e);
+  async function persistCurrentState() {
+    if (!API_URL) return;
+    try {
+      const json = await exportJSON(true);
+      const resp = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: json,
+      });
+      if (!resp.ok) {
+        const msg = resp.status === 409
+          ? 'Conflicto al sincronizar datos'
+          : 'Error al sincronizar datos';
+        if (typeof window !== 'undefined') {
+          alert(msg);
+        }
+      }
+    } catch (e) {
+      console.error('Failed to sync data with server', e);
+    }
   }
-}
 
 // Dexie may be loaded via a script tag in the browser. Grab the global instance
 // if present. When running under Node we fallback to requiring the package so
@@ -212,6 +181,11 @@ if (hasWindow && SOCKET_URL && typeof io !== 'undefined') {
         const serverData = await resp.json();
         await applyServerData(serverData);
         markFetchSuccess();
+      } else {
+        const msg = resp.status === 409
+          ? 'Conflicto al actualizar datos'
+          : 'Error al actualizar datos';
+        if (typeof window !== 'undefined') alert(msg);
       }
     } catch (e) {
       console.error('Failed to refresh data from server', e);
@@ -371,6 +345,10 @@ async function initFromServer(force = false) {
       markFetchSuccess();
       return true;
     }
+    const msg = resp.status === 409
+      ? 'Conflicto al obtener datos'
+      : 'Error al obtener datos';
+    if (typeof window !== 'undefined') alert(msg);
   } catch (e) {
     console.error('Failed to initialize data from server', e);
   }
@@ -484,6 +462,10 @@ async function exportJSON(preferLocal = false) {
         const serverData = await resp.json();
         return JSON.stringify(serverData);
       }
+      const msg = resp.status === 409
+        ? 'Conflicto al descargar datos'
+        : 'Error al descargar datos';
+      if (typeof window !== 'undefined') alert(msg);
     } catch (e) {
       console.error('Failed to fetch data from server', e);
     }
@@ -519,11 +501,17 @@ async function importJSON(json) {
   // Attempt to persist the data on the server first
   if (API_URL) {
     try {
-      await fetch(API_URL, {
+      const resp = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
+      if (!resp.ok) {
+        const msg = resp.status === 409
+          ? 'Conflicto al importar datos'
+          : 'Error al importar datos';
+        if (typeof window !== 'undefined') alert(msg);
+      }
     } catch (e) {
       console.error('Failed to send data to server', e);
     }
