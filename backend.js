@@ -147,7 +147,7 @@ function createServer() {
   app.get('/api/history', (req, res) => {
     db.all('SELECT * FROM history ORDER BY ts DESC', (err, rows) => {
       if (err) return res.status(500).json({ success: false, error: err.message });
-      res.json({ success: true, data: rows });
+      res.json(rows);
     });
   });
 
