@@ -2,6 +2,8 @@ const express = require('express');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const fs = require('fs');
+const { Server } = require('socket.io');
+const http = require('http');
 
 const DATA_DIR = path.join(__dirname, 'datos');
 const DB_FILE = path.join(DATA_DIR, 'base_de_datos.sqlite');
@@ -41,6 +43,10 @@ function createServer() {
   app.use(express.json());
   app.use('/docs', express.static(path.join(__dirname, 'docs')));
 
+  const httpServer = http.createServer(app);
+  const io = new Server(httpServer);
+  httpServer.app = app;
+
   const db = initDb();
 
   app.get('/api/items', (req, res) => {
@@ -59,6 +65,7 @@ function createServer() {
       function (err) {
         if (err) return res.status(400).json({ error: err.message });
         res.json({ id: this.lastID, nombre, precio, updated_at: updated });
+        io.emit('data_updated');
       }
     );
   });
@@ -105,6 +112,7 @@ function createServer() {
       function (err) {
         if (err) return res.status(400).json({ success: false, error: err.message });
         res.json({ success: true, data: { id: this.lastID, codigo, nombre, imagen_path: imagen_path || null, updated_at: ts, version: 1 } });
+        io.emit("data_updated");
       }
     );
   });
@@ -157,13 +165,18 @@ function createServer() {
       return res.status(400).json({ success: false, error: 'summary required' });
     }
     const ts = new Date().toISOString();
-    db.run('INSERT INTO history(ts, user, summary) VALUES (?,?,?)', [ts, user || null, summary], function (err) {
-      if (err) return res.status(400).json({ success: false, error: err.message });
-      res.json({ success: true, data: { ts, user: user || null, summary } });
-    });
+    db.run(
+      'INSERT INTO history(ts, user, summary) VALUES (?,?,?)',
+      [ts, user || null, summary],
+      function (err) {
+        if (err) return res.status(400).json({ success: false, error: err.message });
+        res.json({ success: true, data: { ts, user: user || null, summary } });
+        io.emit('data_updated');
+      }
+    );
   });
 
-  return app;
+  return httpServer;
 }
 
 module.exports = createServer;
