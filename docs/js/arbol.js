@@ -1,5 +1,6 @@
 import { getAll, addNode, ready } from './dataService.js';
 import { animateInsert, animateRemove } from './ui/animations.js';
+import { showSaveStatus } from './utils/status.js';
 
 function getClienteNombre(clientes, id) {
   const c = clientes.find(x => String(x.ID) === String(id));
@@ -208,6 +209,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const desc = descInput.value.trim();
     if (!cid || !desc) return;
     const code = codeInput.value.trim();
+    showSaveStatus('Guardando...');
     const product = buildProduct(
       desc,
       code,
@@ -220,6 +222,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     await persist(product, [], []);
     if (progressBar) progressBar.style.width = '100%';
     if (window.mostrarMensaje) window.mostrarMensaje('Producto creado con éxito', 'success');
+    showSaveStatus('Guardado ✓');
     window.location.href = 'sinoptico.html';
   });
 
@@ -354,6 +357,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   finishBtn?.addEventListener('click', async () => {
     if (!productData) return;
     showSpinner();
+    showSaveStatus('Guardando...');
     try {
       const product = buildProduct(
         productData.desc,
@@ -367,6 +371,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       await persist(product, subcomponents, insumos);
       if (progressBar) progressBar.style.width = '100%';
       if (window.mostrarMensaje) window.mostrarMensaje('Guardado', 'success');
+      showSaveStatus('Guardado ✓');
       window.location.href = 'sinoptico.html';
     } catch {
       if (window.mostrarMensaje) window.mostrarMensaje('Error al guardar');
