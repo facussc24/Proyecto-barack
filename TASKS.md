@@ -13,3 +13,9 @@
 - Abrir el menú "Crear" para asegurarse de que se despliegan todos los diálogos correspondientes.
 - Tras crear un registro, comprobar que la nueva entrada aparece en la tabla.
 - Activar el modo oscuro y verificar que se aplica sin problemas.
+
+## Estado de las páginas de `docs`
+Se revisaron las vistas abriendo `docs/*.html` con un servidor Express local.
+Todos los recursos estáticos se cargan sin problemas, pero al no contar con
+`server.exe` las peticiones a `/api/*` y `socket.io` devuelven 404. Con el
+backend en ejecución no debería aparecer ningún error.
