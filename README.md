@@ -221,15 +221,15 @@ del modo escritorio con Electron y las recomendaciones sobre CommonJS.
 
 ## Compilar el backend con PyInstaller
 
-Si deseas un ejecutable nativo del servidor ejecuta:
+Para generar `server.exe` ejecuta:
 
 ```bash
 pyinstaller --onefile backend/main.py --name server
 ```
 
-El archivo resultante `server.exe` se ubicará dentro de `dist/`.
-Inicia `server.exe` antes de `app.exe` y coloca ambos junto a la
-carpeta `datos` (o un enlace simbólico) para que compartan la base de datos.
+El ejecutable aparecerá en `dist/server.exe`. Inícialo antes de `app.exe`
+y coloca ambos junto a la carpeta `datos` (o un enlace simbólico) para que
+compartan la base de datos.
 
 ## Compartir la carpeta `datos` en red
 
