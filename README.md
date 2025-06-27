@@ -154,12 +154,14 @@ verifica lo siguiente:
 
 1. Asegúrate de usar un navegador moderno que permita cargar módulos y acceder
    a **IndexedDB**.
-2. Revisa la consola de desarrollo en busca de errores de permisos o bloqueos.
+2. Revisa la consola de desarrollo en busca de errores de permisos, scripts
+   bloqueados o solicitudes **404**.
 
-Si al abrir `docs/maestro.html` directamente desde GitHub ves una pantalla en
-blanco, es porque la cabecera *Content‑Security‑Policy* de GitHub impide ejecutar
-los scripts. Sirve la carpeta `docs` con `python -m http.server` o habilita
-GitHub Pages para que el Listado Maestro funcione correctamente.
+Si al abrir `docs/maestro.html` o cualquier otra página de la carpeta `docs` de
+forma local ves una pantalla en blanco, es porque la cabecera
+*Content‑Security‑Policy* impide ejecutar los scripts. Sirve la carpeta `docs`
+con `python -m http.server` (o habilita GitHub Pages) y accede a través de
+`http://localhost:8000/` para que el Listado Maestro funcione correctamente.
 
 Tras corregir cualquier problema relacionado con el almacenamiento, vuelve a
 intentar la edición.
@@ -169,11 +171,13 @@ mediante un navegador, prueba estas acciones:
 
 1. Vacía la memoria caché del navegador y recarga con **Ctrl+F5** para evitar
    archivos antiguos.
-2. Comprueba en la consola que el backend responda a las solicitudes. Un error
-   404 puede indicar que `server.exe` no está en ejecución.
-3. Si la interfaz se aloja en un dominio distinto al servidor, asegúrate de
+2. Abre la consola del navegador y revisa si hay solicitudes **404** o scripts
+   bloqueados.
+3. Comprueba que el backend responda visitando `http://localhost:5000/health`.
+   Si no hay respuesta, inicia `server.exe`.
+4. Si la interfaz se aloja en un dominio distinto al servidor, asegúrate de
    habilitar **CORS** en el backend o definir la variable `ALLOWED_ORIGINS`.
-4. Verifica que la carpeta `datos` sea accesible y que la base de datos no esté
+5. Verifica que la carpeta `datos` sea accesible y que la base de datos no esté
    bloqueada por otra aplicación.
 
 ## Hospedaje local y GitHub Pages
