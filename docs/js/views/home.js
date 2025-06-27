@@ -94,11 +94,11 @@ async function loadKpis(el) {
 function loadModules(el) {
   const modules = [
     {
-      main: 'sinoptico.html',
+      main: '#/sinoptico',
       icon: '📄',
       text: 'Ver Sinóptico',
       actions: [
-        { label: 'Ver Sinóptico', href: 'sinoptico.html' },
+        { label: 'Ver Sinóptico', href: '#/sinoptico' },
       ],
     },
     {
@@ -121,11 +121,11 @@ function loadModules(el) {
       class: 'no-guest',
     },
     {
-      main: 'maestro.html',
+      main: '#/maestro',
       icon: '📋',
       text: 'Listado Maestro',
       actions: [
-        { label: 'Ver maestro', href: 'maestro.html' },
+        { label: 'Ver maestro', href: '#/maestro' },
       ],
     },
     {
