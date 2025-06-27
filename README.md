@@ -4,21 +4,15 @@ Versión actual: **407**
 
 Esta es una pequeña SPA (Single Page Application) escrita en HTML, CSS y JavaScript.
 Incluye un módulo llamado *Sinóptico* para gestionar jerarquías de productos.
-La SPA utiliza un backend Flask, expuesto mediante Docker Compose o ejecutándolo directamente con Python.
+La SPA utiliza un pequeño backend que se ejecuta localmente para almacenar la información.
 
 ## Inicio
 
-El flujo recomendado para poner en marcha la aplicación es ejecutar desde PowerShell o la terminal:
+Para iniciar el proyecto clona el repositorio, instala las dependencias y ejecuta:
 
 ```bash
-docker compose up -d
-```
-
-Por defecto se inicia únicamente el contenedor `app`. Si también quieres
-servir la carpeta `docs` mediante Nginx ejecuta:
-
-```bash
-docker compose --profile prod up -d
+npm install
+npm start
 ```
 
 
@@ -57,10 +51,9 @@ Por defecto se usa **Dexie/IndexedDB** para el almacenamiento local, pero `js/da
 ### Exportar e importar datos
 
 Todas las vistas utilizan la misma base de datos `ProyectoBarackDB` a través del
-módulo `js/dataService.js`. A partir de la versión 358 puedes exportar e
-importar la información desde la página de inicio mediante dos botones. El
-archivo descargado se guarda como `data/latest.json`. El registro de cambios se
-almacena en `data/history.json`.
+módulo `js/dataService.js`. Desde la página de inicio puedes exportar e importar
+la información mediante dos botones. El registro de cambios se almacena en
+`data/history.json`.
 
 Para realizar copias de seguridad manuales desde la consola del navegador sigue
 si lo prefieres este procedimiento:
@@ -82,74 +75,25 @@ await dataService.importJSON(json); // Restaura la copia
 
 ## Sincronización de datos
 
-Este proyecto incluye un pequeño servidor Flask (`server.py`) para almacenar la base de datos en `data/latest.json`.
-A partir de esta versión el mismo script también sirve la interfaz web desde la carpeta `docs`, de modo que todas las páginas quedan disponibles en `http://<IP>:5000/` (por ejemplo, `http://localhost:5000/`).
-El servidor debe ejecutarse en un único equipo o servidor accesible por la red para que todos los usuarios compartan la misma información.
-Todos los navegadores deben por tanto utilizar la misma URL de la API para mantenerse sincronizados.
-
-El archivo activo se guarda en `data/latest.json`.
+El backend incluido (`backend/main.py`) sirve la API y la interfaz desde `http://localhost:5000/`.
+Ejecuta `python backend/main.py` si deseas utilizar la aplicación desde un navegador sin Electron.
+Todos los usuarios deben apuntar al mismo servidor para compartir la información.
 
 Para revisar visualmente el contenido actual de la base de datos se incluye la página `docs/dbviewer.html`. Ábrela con el servidor en marcha para ver los datos en formato JSON.
 
-El servidor también expone `GET /api/sinoptico/export` para descargar la tabla
-de Sinóptico en Excel o PDF. Usa el parámetro `format=excel` o `format=pdf`
-según prefieras.
+Si quieres guardar la base de datos en otra ubicación puedes definir la variable de entorno `DATA_DIR` antes de iniciar el servidor y apuntar a la carpeta deseada.
 
 Si quieres guardar la base de datos en otra ubicación puedes definir la variable de entorno `DATA_DIR` antes de iniciar el servidor y apuntar a la carpeta deseada.
 
 El backend basado en SQLite (`backend/main.py`) lee la ruta del archivo desde `DB_PATH`. Si no se define, usará `data/db.sqlite`.
 
 
-El servidor y la interfaz se ejecutan en un único contenedor. Para iniciarlo
-ejecuta los siguientes comandos:
+El backend permite solicitudes desde la misma URL donde se abrió la interfaz. Si
+la interfaz se aloja en otra dirección puedes establecer la variable de entorno
+`ALLOWED_ORIGINS` para autorizarla. Por ejemplo:
 
 ```bash
-docker compose down
-docker compose up --build -d
-```
-
-Tras iniciar los contenedores abre
-`http://<host>:5000/index.html#/home` (reemplaza `<host>` según
-corresponda) para acceder a la aplicación cuando ejecutas el contenedor
-único. Desde la vista **Historial**
-podrás administrar respaldos. Todos los usuarios deben utilizar esta misma
-URL para que sus datos permanezcan sincronizados. Puedes verificar que el
-backend esté activo visitando `http://localhost:5000/health`.
-
-Si prefieres servir los archivos estáticos con Nginx puedes iniciar el
-servicio `docs` ejecutando `docker compose --profile prod up -d`. En ese caso
-la SPA se encontrará disponible en `http://<host>:8080/index.html#/home` y la
-API seguirá escuchando en `http://<host>:5000`.
-
-> **Nota:** Asegúrate de que la carpeta `./data` existe y cuenta con permisos de escritura antes de ejecutar `docker compose up`.
-> Docker creará automáticamente `db.sqlite` la primera vez que se inicie el backend. Si la ruta falta o es de solo lectura se producirá un `sqlite3.OperationalError` y Nginx mostrará “Bad Gateway”.
-
-Todas las computadoras de la red deben abrir la URL
-`http://<host>:5000/index.html#/home` o la equivalente con su hostname.
-El backend permite solicitudes desde esta URL de forma predeterminada. Si se
-inicia el servicio `docs` con Nginx, la ruta alterna será
-`http://<host>:8080/index.html#/home`.
-Si la interfaz se aloja en otro hostname, añade esa dirección en la variable de
-entorno `ALLOWED_ORIGINS` dentro de `docker-compose.yml` o al ejecutar
-`server.py` para evitar errores de CORS.
-
-> **Nota:** Si tu dispositivo no resuelve el hostname, abrí la SPA con la IP local del servidor, por ejemplo `http://192.168.x.y:8080/index.html#/home`.
-
-### Configurar `ALLOWED_ORIGINS`
-
-Si no defines esta variable, `server.py` utilizará una lista de orígenes
-permitidos que incluye `http://desktop-14jg95b:8080` y `http://localhost:8080`.
-Modifica el valor únicamente cuando la interfaz se sirva desde otra URL.
-
-Si la interfaz se sirve desde un nombre de host o puerto distinto al del backend,
-debes añadir esa URL a la variable de entorno `ALLOWED_ORIGINS` para evitar
-errores de CORS. Por ejemplo:
-
-```bash
-ALLOWED_ORIGINS=http://mi-host:5000 docker compose up -d
-
-# O con el servidor en Python
-ALLOWED_ORIGINS=http://mi-host:5000 python server.py
+ALLOWED_ORIGINS=http://mi-host:5000 python backend/main.py
 ```
 
 ## API
@@ -160,7 +104,6 @@ La API expone rutas REST en `/api/<tabla>` para todas las entidades. Por ejemplo
 - `POST /api/insumos` – crea un insumo
 - `PATCH /api/productos_db/<id>` – actualiza un producto
 - `DELETE /api/productos_db/<id>` – elimina un producto
-- `POST /api/restore` – restaura la base de datos desde un archivo
 
 Puedes probar estas rutas con `curl`:
 
@@ -290,4 +233,16 @@ mklink /D datos \\servidor\ruta\datos
 
 De esta forma todas las instalaciones leerán y escribirán el mismo archivo
 `base_de_datos.sqlite`, por lo que los cambios se propagan automáticamente.
+
+## Pruebas locales
+
+Para comprobar el funcionamiento sin contenedores ejecuta:
+
+```bash
+npm start
+```
+
+Se abrirá la versión de escritorio basada en Electron y un servidor en
+`http://localhost:5000`. También puedes abrir `docs/index.html` manualmente y
+verificar que el CRUD y las actualizaciones por WebSocket funcionen correctamente.
 
