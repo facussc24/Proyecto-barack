@@ -117,7 +117,6 @@ function loadModules(el) {
       text: 'Listado Maestro',
       actions: [
         { label: 'Ver maestro', href: 'maestro.html' },
-        { label: 'Exportar maestro', href: 'maestro.html#export' },
       ],
     },
     {
