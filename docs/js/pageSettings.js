@@ -1,7 +1,5 @@
 import { isGuest } from './session.js';
 // Apply saved UI preferences like brightness and version overlay
-// The API URL field in settings stores its value in localStorage ('apiUrl').
-// dataService reads it on page load after a reload.
 export function applyUserSettings() {
   const brightness = localStorage.getItem('pageBrightness') || '100';
   document.documentElement.style.setProperty('--page-brightness', brightness + '%');

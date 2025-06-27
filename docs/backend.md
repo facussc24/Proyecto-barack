@@ -7,8 +7,6 @@ This project serves the frontend from GitHub Pages or any static server while st
 - **GitHub Pages / `docs/`**: contains only static HTML, CSS and JavaScript. No server-side code runs here.
 - **API server**: runs separately, stores data and broadcasts changes. It can be started with plain Python.
 
-The frontend reads the server URL from `localStorage` (`apiUrl`) or from the `API_URL` environment variable at build time. If none is provided it defaults to `http://localhost:5000/api/data`.
-
 ## API endpoints
 
 
@@ -23,9 +21,7 @@ The frontend reads the server URL from `localStorage` (`apiUrl`) or from the `AP
 
 ## Environment variables
 
-- `API_URL` – URL used by the frontend to access `/api/data`.
 - `DATA_DIR` – directory where the server stores its data (`data` by default).
-- `SSL_CERT` / `SSL_KEY` – optional certificate paths for HTTPS.
 - `DB_PATH` – path to the SQLite file used by `backend/main.py` (`data/db.sqlite` by default).
 - `ALLOWED_ORIGINS` – comma-separated list of origins allowed for CORS and
   WebSocket connections. Defaults to
