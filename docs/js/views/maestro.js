@@ -9,7 +9,7 @@ export async function render(container) {
         <button data-fmt="excel" id="btnExcel" class="btn-excel">Excel</button>
         <button data-fmt="pdf" id="btnPdf" class="btn-pdf">PDF</button>
       </div>
-      <button id="newClientBtn">+ Crear Cliente</button>
+      <button id="btnNuevoCliente">+ Crear Cliente</button>
     </div>
     <div class="search-bar">
       <input id="search" type="text" placeholder="Buscar por cualquier parámetro…">
