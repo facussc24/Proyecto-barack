@@ -164,6 +164,18 @@ GitHub Pages para que el Listado Maestro funcione correctamente.
 Tras corregir cualquier problema relacionado con el almacenamiento, vuelve a
 intentar la edición.
 
+Si una página no carga correctamente desde el modo escritorio o al acceder
+mediante un navegador, prueba estas acciones:
+
+1. Vacía la memoria caché del navegador y recarga con **Ctrl+F5** para evitar
+   archivos antiguos.
+2. Comprueba en la consola que el backend responda a las solicitudes. Un error
+   404 puede indicar que `server.exe` no está en ejecución.
+3. Si la interfaz se aloja en un dominio distinto al servidor, asegúrate de
+   habilitar **CORS** en el backend o definir la variable `ALLOWED_ORIGINS`.
+4. Verifica que la carpeta `datos` sea accesible y que la base de datos no esté
+   bloqueada por otra aplicación.
+
 ## Hospedaje local y GitHub Pages
 
 ### Servir la carpeta `docs` con Python
