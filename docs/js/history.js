@@ -1,31 +1,10 @@
 
 'use strict';
 
-const socket = (typeof io !== 'undefined')
-  ? io({ transports: ['websocket'], reconnection: true })
-  : (alert('Socket.IO no disponible'), null);
-
-let connToast;
-
-function showConnToast() {
-  if (connToast) return;
-  const div = document.createElement('div');
-  div.className = 'toast';
-  div.textContent = 'Sin conexión al servidor';
-  div.style.animation = 'fadeIn var(--anim-duration) forwards';
-  document.body.appendChild(div);
-  connToast = div;
-}
-
-function clearConnToast() {
-  if (connToast) {
-    connToast.remove();
-    connToast = null;
-  }
-}
+const socket = io({ transports: ['websocket'], reconnection: true });
 
 
-function showToast(msg) {
+function toast(msg) {
   const div = document.createElement('div');
   div.className = 'toast';
   div.textContent = msg;
@@ -46,23 +25,22 @@ document.addEventListener('DOMContentLoaded', () => {
       const resp = await fetch('/api/history');
       if (!resp.ok) {
         if (resp.status === 409) alert('Conflicto al cargar historial');
-        else showToast('Error al cargar historial');
+        else toast('Error al cargar historial');
         return;
       }
       const data = await resp.json();
-      tbody.innerHTML = '';
       const fmt = new Intl.DateTimeFormat('es-AR', {
         dateStyle: 'short',
         timeStyle: 'short'
       });
-      data.slice().reverse().forEach(entry => {
-        const tr = document.createElement('tr');
-        const ts = entry.ts ? fmt.format(new Date(entry.ts)) : '';
-        tr.innerHTML =
-          `<td>${ts}</td>` +
-          `<td>${entry.summary || ''}</td>`;
-        tbody.appendChild(tr);
-      });
+      tbody.innerHTML = data
+        .slice()
+        .reverse()
+        .map(entry => {
+          const ts = entry.ts ? fmt.format(new Date(entry.ts)) : '';
+          return `<tr><td>${ts}</td><td>${entry.summary || ''}</td></tr>`;
+        })
+        .join('');
     } catch (e) {
       console.error(e);
       tbody.innerHTML = '<tr><td colspan="2">Error al cargar historial</td></tr>';
@@ -79,19 +57,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   loadHistory();
 
-  if (socket) {
-    socket.on('data_updated', () => {
-      loadHistory();
-      if (typeof window.loadClients === 'function') window.loadClients();
-    });
-
-    socket.on('reconnect', () => {
-      clearConnToast();
-      if (typeof window.loadClients === 'function') window.loadClients();
-      loadHistory();
-    });
-
-    socket.on('connect', clearConnToast);
-    socket.on('connect_error', () => showConnToast());
-  }
+  socket.on('data_updated', () => {
+    loadClients();
+    loadHistory();
+  });
+  socket.io.on('reconnect_error', () => toast('Sin conexión al servidor'));
 });
