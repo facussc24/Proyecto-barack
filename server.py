@@ -1,32 +1,23 @@
 import os
 import json
-import glob
-import shutil
-from datetime import datetime, timedelta
+from datetime import datetime
 from threading import Lock
 from flask import Flask, request, jsonify, send_from_directory, send_file
 from flask_cors import CORS
-from apscheduler.schedulers.background import BackgroundScheduler
 from io import BytesIO
 import xlsxwriter
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
-from zipfile import ZipFile, ZIP_DEFLATED
-from pathlib import Path
 from backend import main as db
 
 DATA_DIR = os.getenv("DATA_DIR", "data")
 DATA_FILE = os.path.join(DATA_DIR, "latest.json")
 HISTORY_FILE = os.path.join(DATA_DIR, "history.json")
-BACKUP_DIR = os.getenv("BACKUP_DIR", "/app/backups")
-DB_PATH = os.getenv("DB_PATH", os.path.join("data", "db.sqlite"))
-METADATA_FILE = os.path.join(BACKUP_DIR, "metadata.json")
-ACTIVE_KEY = "_active"
+DB_PATH = os.getenv("DB_PATH", os.path.join("datos", "base_de_datos.sqlite"))
 write_lock = Lock()
 data_cache = None
 
 os.makedirs(DATA_DIR, exist_ok=True)
-os.makedirs(BACKUP_DIR, exist_ok=True)
 if os.path.exists(DATA_FILE):
     with open(DATA_FILE, "r", encoding="utf-8") as f:
         memory = json.load(f)
@@ -75,14 +66,6 @@ def no_cache(resp):
 @app.get("/health")
 def health():
     return jsonify({"status": "ok"})
-
-
-def backup_latest():
-    if os.path.exists(DATA_FILE):
-        today = datetime.utcnow().strftime("%Y-%m-%d")
-        dest = os.path.join(BACKUP_DIR, f"{today}.zip")
-        with ZipFile(dest, "w", compression=ZIP_DEFLATED) as zf:
-            zf.write(DATA_FILE, arcname="latest.json")
 
 
 def static_proxy(path):
@@ -158,14 +141,7 @@ def server_info():
         "connected_clients": len(clients),
         "history_entries": len(history),
         "data_keys": list(memory.keys()),
-        "backup_count": len(glob.glob(os.path.join(BACKUP_DIR, "*.zip"))),
     }
-    if os.path.exists(METADATA_FILE):
-        with open(METADATA_FILE, "r", encoding="utf-8") as f:
-            meta = json.load(f)
-        info["active_backup"] = meta.get(ACTIVE_KEY, {}).get("name")
-    else:
-        info["active_backup"] = None
     return jsonify(info)
 
 
@@ -286,9 +262,4 @@ def db_crud(table, item_id=None):
 
 
 if __name__ == "__main__":
-    if os.getenv("DISABLE_AUTOBACKUP") != "1":
-        scheduler = BackgroundScheduler(daemon=True)
-        scheduler.add_job(backup_latest, "interval", days=1)
-        scheduler.start()
-
     socketio.run(app, host="0.0.0.0", port=5000)
