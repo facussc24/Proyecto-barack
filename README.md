@@ -278,3 +278,16 @@ Para actualizar la version de escritorio simplemente reemplaza los archivos de l
 Consulta [docs/electron.md](docs/electron.md) para detalles sobre la construcción
 del modo escritorio con Electron y las recomendaciones sobre CommonJS.
 
+## Compartir la carpeta `datos` en red
+
+Si varias computadoras necesitan acceder a la misma base de datos, crea una
+carpeta compartida y reemplaza el directorio `datos` local por un enlace
+simbólico hacia esa ruta. En Windows puedes usar:
+
+```cmd
+mklink /D datos \\servidor\ruta\datos
+```
+
+De esta forma todas las instalaciones leerán y escribirán el mismo archivo
+`base_de_datos.sqlite`, por lo que los cambios se propagan automáticamente.
+
