@@ -83,10 +83,7 @@ Para revisar visualmente el contenido actual de la base de datos se incluye la p
 
 Si quieres guardar la base de datos en otra ubicación puedes definir la variable de entorno `DATA_DIR` antes de iniciar el servidor y apuntar a la carpeta deseada.
 
-Si quieres guardar la base de datos en otra ubicación puedes definir la variable de entorno `DATA_DIR` antes de iniciar el servidor y apuntar a la carpeta deseada.
-
 El backend basado en SQLite (`backend/main.py`) lee la ruta del archivo desde `DB_PATH`. Si no se define, usará `data/db.sqlite`.
-
 
 El backend permite solicitudes desde la misma URL donde se abrió la interfaz. Si
 la interfaz se aloja en otra dirección puedes establecer la variable de entorno
@@ -180,22 +177,7 @@ python -m http.server
 
 Luego abre `http://localhost:8000/` y navega normalmente.
 
-### Definir `API_URL` en `localStorage`
-
-Por defecto la interfaz calcula la ruta de la API con
-`location.origin + '/api/data'` y comprueba que esté disponible mediante
-`/health`. Sólo es necesario establecer `apiUrl` cuando el servidor se
-encuentra en otro host:
-
-```js
-localStorage.setItem('apiUrl', 'http://localhost:5000/api/data');
-```
-
-Si la URL almacenada no responde se descarta y se vuelve a usar la ruta
-automática.
-
 ### Publicar en GitHub Pages
-
 En la configuración del repositorio activa **GitHub Pages**. Puedes publicar desde la rama `gh-pages` o desde la carpeta `/docs` de `main`.
 Una vez habilitado podrás acceder a `https://<usuario>.github.io/<repositorio>/` para ver el sitio desplegado.
 
