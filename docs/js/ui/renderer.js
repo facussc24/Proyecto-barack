@@ -79,22 +79,29 @@ document.addEventListener('DOMContentLoaded', () => {
   window.mostrarMensaje = mostrarMensaje;
 
   if (typeof Fuse === 'undefined') {
-    mostrarMensaje('Fuse.js no cargó – búsqueda deshabilitada', 'warning');
+    mostrarMensaje('Fuse.js no cargó – usando búsqueda básica', 'warning');
   }
 
   if (searchInput && suggestionsList) {
     searchInput.addEventListener('input', () => {
-      if (!fuseSinoptico) return;
-      const term = searchInput.value.trim();
+      const term = searchInput.value.trim().toLowerCase();
       suggestionsList.innerHTML = '';
       if (!term) { suggestionsList.style.display = 'none'; return; }
-      let results = fuseSinoptico.search(term, { limit: 20 });
+      let results = [];
+      if (fuseSinoptico) {
+        results = fuseSinoptico.search(term, { limit: 20 }).map(r => r.item);
+      } else {
+        results = sinopticoData.filter(r =>
+          (r.Descripción || '').toLowerCase().includes(term) ||
+          (r.Código || '').toLowerCase().includes(term)
+        ).slice(0, 20);
+      }
       const tipo = levelFilter ? levelFilter.value : '';
-      if (tipo) results = results.filter(res => res.item.Tipo === tipo);
-      results.slice(0, 3).forEach(res => {
+      if (tipo) results = results.filter(r => r.Tipo === tipo);
+      results.slice(0, 3).forEach(item => {
         const li = document.createElement('li');
-        li.textContent = res.item.Descripción;
-        li.dataset.text = res.item.Descripción;
+        li.textContent = item.Descripción;
+        li.dataset.text = item.Descripción;
         suggestionsList.appendChild(li);
       });
       suggestionsList.style.display = suggestionsList.children.length ? 'block' : 'none';
