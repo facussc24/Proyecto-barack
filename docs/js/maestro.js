@@ -67,6 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
             },
 
             addNewProduct(name) {
+                App.ui.showSaveStatus('Guardando...');
                 const newId = App.state.products.length > 0 ? Math.max(...App.state.products.map(p => p.id)) + 1 : 1;
                 const newProductData = {};
                 App.state.docKeys.forEach(key => { newProductData[key] = { rev: '', link: '' }; });
@@ -74,16 +75,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.logHistory(newId, 'Producto', 'creado', '', name.trim());
                 App.storage.save();
                 App.init();
+                App.ui.showSaveStatus('Guardado \u2713');
                 App.ui.showToast('Producto añadido correctamente', 'success');
             },
 
             deleteProduct(productId) {
                 const product = App.state.products.find(p => p.id === productId);
                 if(product) {
+                    App.ui.showSaveStatus('Guardando...');
                     App.state.products = App.state.products.filter(p => p.id !== productId);
                     this.logHistory(productId, 'Producto', 'eliminado', product.name, 'N/A');
                     App.storage.save();
                     App.render.table();
+                    App.ui.showSaveStatus('Guardado \u2713');
                     App.ui.showToast('Producto eliminado', 'error');
                 }
             },
@@ -94,6 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const oldValue = product.data[docKey][field];
                 const newValue = cell.innerText.trim();
                 if (oldValue !== newValue) {
+                    App.ui.showSaveStatus('Guardando...');
                     product.data[docKey][field] = newValue;
                     this.logHistory(productId, docKey, field, oldValue, newValue);
                     const dependents = App.state.dependencies[docKey];
@@ -112,6 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     this.checkAndResolveSemaphore(productId);
                     App.storage.save();
                     App.render.table(App.dom.searchInput.value);
+                    App.ui.showSaveStatus('Guardado \u2713');
                 }
             }
         },
@@ -177,6 +183,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 toast.textContent = message;
                 App.dom.toastContainer.appendChild(toast);
                 setTimeout(() => toast.remove(), 4000);
+            },
+
+            showSaveStatus(text) {
+                const el = document.getElementById('save-status');
+                if (!el) return;
+                el.textContent = text;
+                el.classList.remove('opacity-0');
+                clearTimeout(el._hideTimeout);
+                el._hideTimeout = setTimeout(() => el.classList.add('opacity-0'), 2000);
             },
 
             showModal(title, content, onConfirm, confirmText = 'Confirmar', maxWidth = 'max-w-md') {
