@@ -34,7 +34,18 @@ export function render(container) {
   if (moduleGrid) loadModules(moduleGrid);
 }
 
+function showSpinner() {
+  const el = document.getElementById('loading');
+  if (el) el.style.display = 'flex';
+}
+
+function hideSpinner() {
+  const el = document.getElementById('loading');
+  if (el) el.style.display = 'none';
+}
+
 async function loadKpis(el) {
+  showSpinner();
   try {
     let products = [];
     let history = [];
@@ -75,7 +86,10 @@ async function loadKpis(el) {
     });
   } catch (err) {
     console.error('KPI fetch failed', err);
+    if (window.mostrarMensaje) window.mostrarMensaje('Error al cargar');
   }
+  hideSpinner();
+  if (window.mostrarMensaje) window.mostrarMensaje('Guardado', 'success');
 }
 
 function loadModules(el) {

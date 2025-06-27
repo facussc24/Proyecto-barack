@@ -14,9 +14,28 @@ export function initDBManager() {
   const tipoFilter = form.querySelector('#dbTipoFilter');
   const tableBody = dlg.querySelector('tbody');
 
+  function showSpinner() {
+    const el = document.getElementById('loading');
+    if (el) el.style.display = 'flex';
+  }
+
+  function hideSpinner() {
+    const el = document.getElementById('loading');
+    if (el) el.style.display = 'none';
+  }
+
   async function load() {
+    showSpinner();
     await ready;
-    const data = await getAll('sinoptico');
+    let data = [];
+    try {
+      data = await getAll('sinoptico');
+      if (window.mostrarMensaje) window.mostrarMensaje('Guardado', 'success');
+    } catch {
+      if (window.mostrarMensaje) window.mostrarMensaje('Error al cargar');
+    } finally {
+      hideSpinner();
+    }
     const clientes = data.filter(d => d.Tipo === 'Cliente');
     if (clientFilter) {
       const sel = clientFilter.value || '';
@@ -66,13 +85,19 @@ export function initDBManager() {
     if (btn.classList.contains('db-edit')) {
       const desc = prompt('Nueva descripción');
       if (desc != null) {
+        showSpinner();
         await updateNode(id, { Descripción: desc });
         await load();
+        hideSpinner();
+        if (window.mostrarMensaje) window.mostrarMensaje('Guardado', 'success');
       }
     } else if (btn.classList.contains('db-del')) {
       if (confirm('¿Eliminar elemento?')) {
+        showSpinner();
         await deleteNode(id);
         await load();
+        hideSpinner();
+        if (window.mostrarMensaje) window.mostrarMensaje('Guardado', 'success');
       }
     }
   });
@@ -94,9 +119,12 @@ export function initDBManager() {
       Sourcing: '',
       Código: codeInput.value.trim()
     };
+    showSpinner();
     await addNode(newItem);
     form.reset();
     await load();
+    hideSpinner();
+    if (window.mostrarMensaje) window.mostrarMensaje('Guardado', 'success');
   });
 }
 

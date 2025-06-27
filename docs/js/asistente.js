@@ -46,8 +46,27 @@ document.addEventListener('DOMContentLoaded', async () => {
   const productAlto = document.getElementById('productAlto');
   const productPeso = document.getElementById('productPeso');
 
+  function showSpinner() {
+    const el = document.getElementById('loading');
+    if (el) el.style.display = 'flex';
+  }
+
+  function hideSpinner() {
+    const el = document.getElementById('loading');
+    if (el) el.style.display = 'none';
+  }
+
+  showSpinner();
   await ready;
-  const all = await getAll('sinoptico');
+  let all = [];
+  try {
+    all = await getAll('sinoptico');
+    if (window.mostrarMensaje) window.mostrarMensaje('Guardado', 'success');
+  } catch {
+    if (window.mostrarMensaje) window.mostrarMensaje('Error al cargar');
+  } finally {
+    hideSpinner();
+  }
   const clientes = all.filter(n => n.Tipo === 'Cliente');
   if (clienteSel) {
     clienteSel.innerHTML = clientes
@@ -423,18 +442,25 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   finishBtn?.addEventListener('click', async () => {
     if (!productData) return;
-    const product = buildProduct(
-      productData.desc,
-      productData.code,
-      productData.cid,
-      productData.largo,
-      productData.ancho,
-      productData.alto,
-      productData.peso
-    );
-    await persist(product, subcomponents, insumos);
-    activateStep(4);
-    if (window.mostrarMensaje) window.mostrarMensaje('Árbol creado con éxito', 'success');
-    window.location.href = 'sinoptico.html';
+    showSpinner();
+    try {
+      const product = buildProduct(
+        productData.desc,
+        productData.code,
+        productData.cid,
+        productData.largo,
+        productData.ancho,
+        productData.alto,
+        productData.peso
+      );
+      await persist(product, subcomponents, insumos);
+      activateStep(4);
+      if (window.mostrarMensaje) window.mostrarMensaje('Guardado', 'success');
+      window.location.href = 'sinoptico.html';
+    } catch {
+      if (window.mostrarMensaje) window.mostrarMensaje('Error al guardar');
+    } finally {
+      hideSpinner();
+    }
   });
 });

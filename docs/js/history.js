@@ -20,7 +20,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const endInput = document.getElementById('endDate');
   const applyBtn = document.getElementById('applyFilters');
 
+  function showSpinner() {
+    const el = document.getElementById('loading');
+    if (el) el.style.display = 'flex';
+  }
+
+  function hideSpinner() {
+    const el = document.getElementById('loading');
+    if (el) el.style.display = 'none';
+  }
+
   async function loadHistory() {
+    showSpinner();
     try {
       const resp = await fetch('/api/history');
       if (!resp.ok) {
@@ -44,6 +55,10 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (e) {
       console.error(e);
       tbody.innerHTML = '<tr><td colspan="2">Error al cargar historial</td></tr>';
+      if (window.mostrarMensaje) window.mostrarMensaje('Error al cargar');
+    } finally {
+      hideSpinner();
+      if (window.mostrarMensaje) window.mostrarMensaje('Guardado', 'success');
     }
   }
 
