@@ -73,17 +73,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
   applyBtn?.addEventListener('click', loadHistory);
 
+  if (typeof window !== 'undefined') {
+    window.loadHistory = loadHistory;
+  }
+
   loadHistory();
 
   if (socket) {
     socket.on('data_updated', () => {
       loadHistory();
-      if (typeof loadClients === 'function') loadClients();
+      if (typeof window.loadClients === 'function') window.loadClients();
     });
 
     socket.on('reconnect', () => {
       clearConnToast();
-      if (typeof loadClients === 'function') loadClients();
+      if (typeof window.loadClients === 'function') window.loadClients();
       loadHistory();
     });
 

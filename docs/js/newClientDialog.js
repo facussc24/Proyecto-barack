@@ -5,22 +5,18 @@ export function initNewClientDialog() {
   const openBtn = document.getElementById('btnNuevoCliente');
   if (!dialog || !openBtn) return;
 
-  openBtn.addEventListener('click', () => dialog.showModal());
-
   const form = dialog.querySelector('form');
   const input = dialog.querySelector('#nuevoClienteNombre');
   const submitBtn = form?.querySelector('button[type="submit"]');
-  if (input) input.disabled = true;
-  if (submitBtn) submitBtn.disabled = true;
 
-  fetch('/api/clients')
-    .then(resp => {
-      if (resp.ok) {
-        if (input) input.disabled = false;
-        if (submitBtn) submitBtn.disabled = false;
-      }
-    })
-    .catch(() => {});
+  openBtn.addEventListener('click', () => {
+    if (input) input.disabled = false;
+    if (submitBtn) submitBtn.disabled = false;
+    dialog.showModal();
+    input?.focus();
+  });
+
+  fetch('/api/clients').catch(() => {});
 
   const cancelBtn = dialog.querySelector('button[type="button"]');
   cancelBtn?.addEventListener('click', () => dialog.close());
