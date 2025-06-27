@@ -13,6 +13,17 @@ If you ever need to migrate to ESM modules:
 
 For now keep `"type": "commonjs"` and `.js` extensions to ensure the desktop app starts without module errors.
 
+If you need to run Electron as the `root` user (for example inside a container
+without a regular user account), pass the `--no-sandbox` flag when starting the
+application:
+
+```bash
+npm start -- --no-sandbox
+```
+
+The `package.json` in this repository already includes this argument so the
+development build works even when executed as root.
+
 ## Building the Windows executable
 
 1. Install dependencies if they are not already present:

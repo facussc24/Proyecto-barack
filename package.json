@@ -7,7 +7,7 @@
   "main": "main.js",
   "scripts": {
     "test": "mocha \"tests/**/*.spec.js\"",
-    "start": "electron .",
+    "start": "electron --no-sandbox .",
     "make": "electron-builder"
   },
   "dependencies": {
