@@ -64,8 +64,22 @@ function createServer() {
 
   const db = new sqlite3.Database(DB_FILE);
   const dbReady = initDb(db);
+  let dbWatcher;
+
+  dbReady
+    .then(() => {
+      try {
+        dbWatcher = fs.watch(DB_FILE, () => {
+          io.emit('data_updated');
+        });
+      } catch (err) {
+        console.error('Failed to watch DB file', err);
+      }
+    })
+    .catch(() => {});
 
   httpServer.on('close', () => {
+    if (dbWatcher) dbWatcher.close();
     db.close();
   });
 
