@@ -16,7 +16,7 @@ export function initNewClientDialog() {
     input?.focus();
   });
 
-  fetch('/api/clients').catch(() => {});
+  fetch('/api/clientes').catch(() => {});
 
   const cancelBtn = dialog.querySelector('button[type="button"]');
   cancelBtn?.addEventListener('click', () => dialog.close());
@@ -33,7 +33,7 @@ export function initNewClientDialog() {
     submitBtn && (submitBtn.disabled = true);
     let resp;
     try {
-      resp = await fetch('/api/clients', {
+      resp = await fetch('/api/clientes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: nombre })
