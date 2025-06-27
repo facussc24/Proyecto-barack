@@ -1,0 +1,332 @@
+<!--
+  INSTRUCCIONES PARA INTEGRAR AMFE:
+  1. Crea o reemplaza `docs/amef.html` con este contenido.
+  2. Actualiza el menú de la app para que el enlace “AMFE” apunte a `/docs/amef.html`.
+  3. Conecta el frontend AMFE a la API:
+     • Al cargar la página, haz un fetch GET a `/api/amfe` para obtener los datos existentes.
+     • Para cada proceso y fila, rellena los campos con la respuesta JSON.
+     • Al agregar/eliminar/editar, envía los cambios por POST/PATCH/DELETE a `/api/amfe`.
+     • Emite o escucha eventos WebSocket `amfe_updated` para sincronización en tiempo real.
+  4. Ajusta rutas o nombres de endpoints si tu backend usa otra convención.
+  5. Asegúrate de que todas las funciones de guardado, impresión y borrado interactúen con la base de datos.
+-->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Herramienta AMFE de Proceso Profesional</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="/socket.io/socket.io.js" defer></script>
+    <style>
+        @media print {
+            body * { visibility: hidden; }
+            #printable-area, #printable-area * { visibility: visible; }
+            #printable-area { position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 0; }
+            .no-print { display: none !important; }
+            .details-content { max-height: none !important; display: block !important; }
+            textarea { overflow: hidden; resize: none; border: 1px solid #ccc !important; }
+            .process-block { page-break-inside: avoid; }
+        }
+        body { font-family: 'Inter', sans-serif; background-color: #f0f4f8; }
+        .header-input, .process-input { @apply w-full px-3 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent; }
+        .amef-table th { @apply px-3 py-3 text-xs font-semibold text-left text-white uppercase bg-blue-800 tracking-wider align-middle whitespace-nowrap; }
+        .amef-table td { @apply px-2 py-2 bg-white border-b border-gray-200 align-top; }
+        .amef-table .failure-row:nth-child(odd) td { background-color: #f7fafc; }
+        .amef-table textarea, .amef-table select, .amef-table input { @apply w-full p-1 text-sm text-gray-700 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500; min-width: 120px; }
+        .priority-high { @apply bg-red-500 text-white font-bold text-center rounded; }
+        .priority-medium { @apply bg-yellow-400 text-black font-bold text-center rounded; }
+        .priority-low { @apply bg-green-500 text-white font-bold text-center rounded; }
+        .action-button { @apply inline-flex items-center px-4 py-2 font-semibold text-white bg-blue-600 rounded-md shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out; }
+        .secondary-button { @apply inline-flex items-center px-3 py-1.5 text-sm font-semibold text-gray-700 bg-gray-200 border border-gray-300 rounded-md shadow-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500; }
+        .delete-button { @apply text-gray-400 hover:text-red-500 transition-colors duration-150; }
+        .process-block { @apply bg-white border border-gray-300 rounded-lg shadow-lg mt-8 transition-all duration-300; }
+        .collapsible-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+        .alert-icon { display: none; }
+        .is-overdue .alert-icon { display: inline-block; animation: blink 1.5s infinite; }
+        @keyframes blink { 50% { opacity: 0.3; } }
+        .new-row-highlight { animation: highlight 2s ease-out; }
+        @keyframes highlight { 0% { background-color: #a7f3d0; } 100% { background-color: inherit; } }
+        .modal-overlay { @apply fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4 transition-opacity duration-300; }
+        .modal-box { @apply bg-white rounded-lg shadow-xl w-full max-w-md transform transition-transform duration-300; }
+    </style>
+</head>
+<body class="text-gray-800">
+    <div id="app-container">
+        <div id="printable-area">
+            <header class="p-6 mb-6 bg-white border-2 border-blue-500 rounded-lg shadow-xl">
+                <div class="flex items-center mb-4">
+                    <svg class="w-12 h-12 text-blue-600 mr-4 no-print" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    <h1 class="text-3xl font-bold text-blue-800">Herramienta AMFE de Proceso</h1>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="main-header-fields">
+                    <div><label class="block text-xs font-medium text-gray-600">Nombre de la Organización</label><input type="text" data-field="orgName" class="header-input" value="BARACK MERCOSUL"></div>
+                    <div><label class="block text-xs font-medium text-gray-600">Tema (Nombre de la Pieza)</label><input type="text" data-field="pieceName" class="header-input"></div>
+                    <div><label class="block text-xs font-medium text-gray-600">N° de AMFE</label><input type="text" data-field="amefNumber" class="header-input"></div>
+                    <div><label class="block text-xs font-medium text-gray-600">Responsable del Diseño</label><input type="text" data-field="designLead" class="header-input"></div>
+                </div>
+            </header>
+            <div class="mb-6 p-4 bg-white rounded-lg shadow-md flex flex-col md:flex-row items-center justify-between gap-4 no-print">
+                <div class="relative w-full md:w-2/5">
+                    <input type="text" id="search-operation" placeholder="Buscar operación por nombre o número..." class="header-input pl-10">
+                    <svg class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    <div id="search-suggestions" class="absolute z-20 w-full bg-white border border-gray-300 rounded-b-md shadow-lg mt-1 hidden"></div>
+                </div>
+                <div class="flex gap-2 flex-wrap justify-center">
+                     <button id="clearBtn" class="secondary-button bg-red-100 text-red-700 border-red-200 hover:bg-red-200"><svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>Limpiar Todo</button>
+                    <button id="printBtn" class="secondary-button"><svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm7-8a1 1 0 11-2 0 1 1 0 012 0z"></path></svg>Exportar a PDF</button>
+                    <button id="addProcessBtn" class="action-button w-full sm:w-auto"><span class="mr-2">+</span> Agregar Proceso</button>
+                </div>
+            </div>
+            <div id="processes-container"></div>
+        </div>
+    </div>
+    <div id="modals-container"></div>
+    <div id="save-status" class="fixed bottom-4 right-4 bg-gray-800 text-white text-sm py-2 px-4 rounded-lg shadow-lg opacity-0 transition-opacity duration-500 no-print"></div>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        let saveTimeout;
+        const appContainer = document.getElementById('app-container');
+        const processesContainer = document.getElementById('processes-container');
+        const modalsContainer = document.getElementById('modals-container');
+        const saveStatusEl = document.getElementById('save-status');
+        const socket = io();
+        const API_URL = '/api/amfe';
+        let hasData = false;
+        const TEXTS = {
+            fabricacion: `1- Definir las distintas actividades o pasos de la operación mediante explicación escrita + presencia de imágenes\n2- Definir el plan de reacción ante un "No conforme"\n3- Definir los EPP que debe tener en cuenta para la realización de operación`,
+            visuales: `Mostrar como debe quedar el producto para evitar ciertos defectos`,
+            medicion: `1- Definir las distintas características que pueden ser de producto o de proceso que debe controlar el operador (autocontrol)`
+        };
+        const createTemplates = () => {
+            const modalTemplate = `<div id="confirmation-modal" class="modal-overlay opacity-0 pointer-events-none">
+                <div class="modal-box scale-95"><div class="p-6">
+                    <h3 id="modal-title" class="text-lg font-bold text-gray-900"></h3>
+                    <p id="modal-message" class="mt-2 text-sm text-gray-600"></p>
+                    <div class="mt-6 flex justify-end gap-4">
+                        <button class="modal-cancel-btn secondary-button">Cancelar</button>
+                        <button class="modal-confirm-btn action-button">Confirmar</button>
+                    </div></div></div></div>`;
+            const theadTemplate = `<thead id="main-thead-template"><tr>
+                <th rowspan="2">Modo de Falla Potencial</th><th colspan="3">Efecto Potencial de Falla</th>
+                <th rowspan="2">S</th><th rowspan="2">Causa Potencial</th><th rowspan="2">Control Preventivo Actual</th><th rowspan="2">O</th>
+                <th rowspan="2">Control Detectivo Actual</th><th rowspan="2">D</th><th rowspan="2">AP</th><th rowspan="2">Acciones Recomendadas</th>
+                <th rowspan="2" class="no-print"></th>
+                <th colspan="7" class="no-print">Optimización (Paso 6)</th>
+                <th colspan="5" class="no-print">Resultados de la Acción</th>
+                </tr><tr>
+                <th class="!bg-blue-700 text-white/80 font-normal">Planta Interna</th><th class="!bg-blue-700 text-white/80 font-normal">Cliente Externo</th><th class="!bg-blue-700 text-white/80 font-normal">Usuario Final</th>
+                <th class="!bg-blue-600 text-white/80 font-normal no-print">Acción Preventiva</th><th class="!bg-blue-600 text-white/80 font-normal no-print">Acción Detectiva</th>
+                <th class="!bg-blue-600 text-white/80 font-normal no-print">Responsable</th><th class="!bg-blue-600 text-white/80 font-normal no-print">Fecha Objetivo</th>
+                <th class="!bg-blue-600 text-white/80 font-normal no-print">Estatus</th><th class="!bg-blue-600 text-white/80 font-normal no-print">Acción Tomada</th>
+                <th class="!bg-blue-600 text-white/80 font-normal no-print">Fecha de Terminación</th><th class="!bg-green-700 text-white/80 font-normal no-print">Nuevo S</th>
+                <th class="!bg-green-700 text-white/80 font-normal no-print">Nuevo O</th><th class="!bg-green-700 text-white/80 font-normal no-print">Nuevo D</th>
+                <th class="!bg-green-700 text-white/80 font-normal no-print">Nuevo AP</th><th class="!bg-green-700 text-white/80 font-normal no-print">Observaciones</th>
+                </tr></thead>`;
+            modalsContainer.innerHTML = modalTemplate;
+            const templateEl = document.createElement('template');
+            templateEl.id = 'thead-template'; templateEl.innerHTML = theadTemplate;
+            document.body.appendChild(templateEl);
+        };
+        const addProcessBlock = (data = {}) => {
+            const pId = data.id || `process-${Date.now()}`;
+            const processBlock = document.createElement('div');
+            processBlock.className = 'process-block';
+            processBlock.id = pId; processBlock.dataset.id = pId;
+            processBlock.innerHTML = `
+                <div class="p-4 bg-gray-100 border-b border-gray-300 rounded-t-lg flex flex-col md:flex-row justify-between items-center gap-2">
+                    <div class="flex items-center gap-2 w-full"><input type="text" class="operation-number p-2 rounded w-20 text-center font-bold" placeholder="N°" value="${data.number || ''}"><input type="text" class="operation-title text-xl font-bold bg-transparent focus:bg-white p-2 rounded w-full" placeholder="Nombre de la Operación" value="${data.title || ''}"></div>
+                    <div class="flex-shrink-0 no-print"><button class="toggle-details-btn secondary-button mr-2">Detalles <svg class="chevron w-5 h-5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button><button class="delete-process-btn delete-button p-2 rounded-full"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></div>
+                </div>
+                <div class="details-content collapsible-content"><div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 border-b">
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700">Método / Descripción de Operación</label>
+                        <textarea data-field="fabricacion" rows="5" class="process-input mt-1">${data.details?.fabricacion || TEXTS.fabricacion}</textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Máquina / Equipo</label>
+                        <textarea data-field="maquina" rows="3" class="process-input mt-1">${data.details?.maquina || ''}</textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Mano de Obra</label>
+                        <textarea data-field="manoObra" rows="3" class="process-input mt-1">${data.details?.manoObra || ''}</textarea>
+                    </div>
+                    <div class="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 pt-4 border-t mt-4">
+                         <div>
+                            <label class="block text-sm font-medium text-gray-700">Ayudas Visuales</label>
+                            <textarea data-field="visuales" rows="4" class="process-input mt-1">${data.details?.visuales || TEXTS.visuales}</textarea>
+                         </div>
+                         <div>
+                            <label class="block text-sm font-medium text-gray-700">Medición (Autocontrol)</label>
+                            <textarea data-field="medicion" rows="4" class="process-input mt-1">${data.details?.medicion || TEXTS.medicion}</textarea>
+                         </div>
+                    </div>
+                </div></div>
+                <div class="p-4"><div class="flex justify-end mb-4 no-print"><button class="add-failure-btn secondary-button"><svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>Agregar Modo de Falla</button></div>
+                <div class="overflow-x-auto"><table class="min-w-full amef-table"><tbody class="amef-body"></tbody></table></div></div>`;
+            const table = processBlock.querySelector('table');
+            table.insertBefore(document.getElementById('thead-template').content.cloneNode(true), table.firstChild);
+            processesContainer.appendChild(processBlock);
+            if (data.failures && data.failures.length > 0) { data.failures.forEach(fData => addAmefRow(processBlock.querySelector('.amef-body'), fData));
+            } else { addAmefRow(processBlock.querySelector('.amef-body')); }
+            return processBlock;
+        };
+        const addAmefRow = (tbody, data = {}) => {
+            const row = document.createElement('tr');
+            row.className = 'failure-row new-row-highlight';
+            setTimeout(() => row.classList.remove('new-row-highlight'), 2000);
+            const fields = ['mode', 'effectInternal', 'effectExternal', 'effectUser', 's', 'cause', 'controlPreventive', 'o', 'controlDetective', 'd', 'actions', 'preventiveAction', 'detectiveAction', 'responsible', 'targetDate', 'status', 'actionTaken', 'completionDate', 'newS', 'newO', 'newD', 'observations'];
+            const values = fields.map(f => data[f] || (['s','o','d','newS','newO','newD'].includes(f) ? 1 : ''));
+            row.innerHTML = `
+                <td><div class="flex items-center"><svg class="alert-icon w-5 h-5 text-red-500 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.21 3.03-1.742 3.03H4.42c-1.532 0-2.492-1.696-1.742-3.03l5.58-9.92zM10 13a1 1 0 110-2 1 1 0 010 2zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg><textarea data-field="mode" rows="3">${values[0]}</textarea></div></td>
+                <td><textarea data-field="effectInternal" rows="3">${values[1]}</textarea></td><td><textarea data-field="effectExternal" rows="3">${values[2]}</textarea></td><td><textarea data-field="effectUser" rows="3">${values[3]}</textarea></td>
+                <td><select data-field="s" class="s-rating">${generateOptions(10, values[4])}</select></td><td><textarea data-field="cause" rows="3">${values[5]}</textarea></td>
+                <td><textarea data-field="controlPreventive" rows="3">${values[6]}</textarea></td><td><select data-field="o" class="o-rating">${generateOptions(10, values[7])}</select></td>
+                <td><textarea data-field="controlDetective" rows="3">${values[8]}</textarea></td><td><select data-field="d" class="d-rating">${generateOptions(10, values[9])}</select></td>
+                <td><div class="ap-result p-2 text-sm"></div></td><td><textarea data-field="actions" rows="3">${values[10]}</textarea></td>
+                <td class="align-middle text-center no-print"><button class="delete-failure-btn delete-button p-2 mt-2" title="Eliminar Falla"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button></td>
+                <td class="no-print"><textarea data-field="preventiveAction" rows="3">${values[11]}</textarea></td><td class="no-print"><textarea data-field="detectiveAction" rows="3">${values[12]}</textarea></td>
+                <td class="no-print"><input type="text" data-field="responsible" value="${values[13]}"></td><td class="no-print"><input type="date" data-field="targetDate" class="opt-date" value="${values[14]}"></td>
+                <td class="no-print"><select data-field="status" class="opt-status"><option ${values[15]==='Abierto'?'selected':''}>Abierto</option><option ${values[15]==='Completado'?'selected':''}>Completado</option><option ${values[15]==='Descartado'?'selected':''}>Descartado</option></select></td>
+                <td class="no-print"><textarea data-field="actionTaken" rows="3">${values[16]}</textarea></td><td class="no-print"><input type="date" data-field="completionDate" value="${values[17]}"></td>
+                <td class="no-print"><select data-field="newS" class="new-sod">${generateOptions(10, values[18])}</select></td><td class="no-print"><select data-field="newO" class="new-sod">${generateOptions(10, values[19])}</select></td>
+                <td class="no-print"><select data-field="newD" class="new-sod">${generateOptions(10, values[20])}</select></td>
+                <td class="no-print"><div class="new-ap-result p-2 text-sm"></div></td><td class="no-print"><textarea data-field="observations" rows="3">${values[21]}</textarea></td>`;
+            tbody.appendChild(row);
+            updateActionPriority(row);
+            updateNewAP(row);
+            checkOverdueTasks(row);
+            return row;
+        };
+        const handleGlobalClick = (e) => {
+            const processBlock = e.target.closest('.process-block');
+            if(processBlock){
+                if (e.target.closest('.toggle-details-btn')) { const content = processBlock.querySelector('.details-content'); const icon = processBlock.querySelector('.toggle-details-btn .chevron'); content.style.maxHeight ? content.style.maxHeight = null : content.style.maxHeight = content.scrollHeight + "px"; icon.classList.toggle('rotate-180'); }
+                if (e.target.closest('.delete-process-btn')) { showConfirmationModal('Eliminar Proceso', '¿Estás seguro de que quieres eliminar este proceso completo?', () => { processBlock.remove(); scheduleSave(); });}
+                if (e.target.closest('.add-failure-btn')) { const newRow = addAmefRow(processBlock.querySelector('.amef-body')); newRow.scrollIntoView({ behavior: 'smooth', block: 'center' }); scheduleSave(); }
+            }
+            const failureRow = e.target.closest('.failure-row');
+            if(failureRow){
+                if (e.target.closest('.delete-failure-btn')) { showConfirmationModal('Eliminar Modo de Falla', '¿Eliminar este modo de falla?', () => { failureRow.remove(); scheduleSave(); });}
+            }
+        };
+        const calculateAP = (s, o, d) => {
+            if(s>=9){if(o>=4)return{name:'Alto',className:'priority-high'};if(o>=2){if(d>=5)return{name:'Alto',className:'priority-high'};if(d>=2)return{name:'Medio',className:'priority-medium'};return{name:'Bajo',className:'priority-low'}}if(d>=7)return{name:'Alto',className:'priority-high'};if(d>=4)return{name:'Medio',className:'priority-medium'};return{name:'Bajo',className:'priority-low'}}
+            if(s>=7){if(o>=6)return{name:'Alto',className:'priority-high'};if(o>=4){if(d>=5)return{name:'Alto',className:'priority-high'};return{name:'Medio',className:'priority-medium'}}if(o>=2){if(d>=7)return{name:'Alto',className:'priority-high'};if(d>=3)return{name:'Medio',className:'priority-medium'};return{name:'Bajo',className:'priority-low'}}if(d>=8)return{name:'Alto',className:'priority-high'};if(d>=5)return{name:'Medio',className:'priority-medium'};return{name:'Bajo',className:'priority-low'}}
+            if(s>=5){if(o>=8)return{name:'Alto',className:'priority-high'};if(o>=6){if(d>=7)return{name:'Alto',className:'priority-high'};return{name:'Medio',className:'priority-medium'}}if(o>=4){if(d>=8)return{name:'Alto',className:'priority-high'};if(d>=5)return{name:'Medio',className:'priority-medium'};return{name:'Bajo',className:'priority-low'}}if(o>=2){if(d>=9)return{name:'Alto',className:'priority-high'};if(d>=6)return{name:'Medio',className:'priority-medium'};return{name:'Bajo',className:'priority-low'}}if(d>=10)return{name:'Alto',className:'priority-high'};if(d>=7)return{name:'Medio',className:'priority-medium'};return{name:'Bajo',className:'priority-low'}}
+            if(s>=4){if(o>=10)return{name:'Alto',className:'priority-high'};if(o>=8){if(d>=8)return{name:'Alto',className:'priority-high'};return{name:'Medio',className:'priority-medium'}}if(o>=6){if(d>=9)return{name:'Alto',className:'priority-high'};if(d>=6)return{name:'Medio',className:'priority-medium'};return{name:'Bajo',className:'priority-low'}}if(o>=2){if(d>=10)return{name:'Alto',className:'priority-high'};if(d>=7)return{name:'Medio',className:'priority-medium'}}return{name:'Bajo',className:'priority-low'}}
+            if(s>=2){if(o>=8&&d>=10)return{name:'Medio',className:'priority-medium'};return{name:'Bajo',className:'priority-low'}}
+            return{name:'Bajo',className:'priority-low'}
+        };
+        const updateActionPriority = (row) => {
+            const s = parseInt(row.querySelector('[data-field="s"]').value); const o = parseInt(row.querySelector('[data-field="o"]').value); const d = parseInt(row.querySelector('[data-field="d"]').value);
+            const { name, className } = calculateAP(s, o, d); const apCell = row.querySelector('.ap-result');
+            apCell.textContent = name; apCell.className = `ap-result p-2 text-sm font-bold ${className}`;
+        };
+        const updateNewAP = (row) => {
+            const s = parseInt(row.querySelector('[data-field="newS"]').value); const o = parseInt(row.querySelector('[data-field="newO"]').value); const d = parseInt(row.querySelector('[data-field="newD"]').value);
+            const { name, className } = calculateAP(s, o, d); const apCell = row.querySelector('.new-ap-result');
+            apCell.textContent = name; apCell.className = `new-ap-result p-2 text-sm font-bold rounded text-center ${className}`;
+        };
+        const checkOverdueTasks = (failureRow) => {
+            const dateStr = failureRow.querySelector('.opt-date').value; const status = failureRow.querySelector('.opt-status').value;
+            if (!dateStr || status !== 'Abierto') { failureRow.classList.remove('is-overdue'); return; }
+            const today = new Date(); today.setHours(0, 0, 0, 0); const targetDate = new Date(dateStr);
+            failureRow.classList.toggle('is-overdue', targetDate < today);
+        };
+        let confirmCallback = null;
+        const showConfirmationModal = (title, message, onConfirm) => {
+            const modal = document.getElementById('confirmation-modal');
+            modal.querySelector('#modal-title').textContent = title; modal.querySelector('#modal-message').textContent = message;
+            const confirmBtn = modal.querySelector('.modal-confirm-btn');
+            confirmBtn.className = 'action-button';
+            if (title.toLowerCase().includes('limpiar') || title.toLowerCase().includes('eliminar')) { confirmBtn.classList.add('bg-red-600', 'hover:bg-red-700'); }
+            confirmCallback = onConfirm;
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modal.querySelector('.modal-box').classList.remove('scale-95');
+        };
+        const hideConfirmationModal = () => {
+            const modal = document.getElementById('confirmation-modal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            modal.querySelector('.modal-box').classList.add('scale-95');
+            confirmCallback = null;
+        };
+        const scheduleSave = () => {
+            saveStatusEl.textContent = 'Guardando...'; saveStatusEl.classList.remove('opacity-0');
+            clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(saveState, 1500);
+        };
+        const saveState = async () => {
+            const state = { header: {}, processes: [] };
+            document.querySelectorAll('#main-header-fields input').forEach(el => { state.header[el.dataset.field] = el.value; });
+            document.querySelectorAll('.process-block').forEach(pBlock => {
+                const processData = { id: pBlock.dataset.id, number: pBlock.querySelector('.operation-number').value, title: pBlock.querySelector('.operation-title').value, details: {}, failures: [] };
+                pBlock.querySelectorAll('.details-content textarea').forEach(el => { processData.details[el.dataset.field] = el.value; });
+                pBlock.querySelectorAll('.failure-row').forEach(fRow => {
+                    const failureData = {};
+                    fRow.querySelectorAll('[data-field]').forEach(el => { failureData[el.dataset.field] = el.value; });
+                    processData.failures.push(failureData);
+                });
+                state.processes.push(processData);
+            });
+            localStorage.setItem('amefAppState', JSON.stringify(state));
+            try {
+                await fetch(API_URL, {
+                    method: hasData ? 'PATCH' : 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(state)
+                });
+                hasData = true;
+            } catch (e) { console.error(e); }
+            saveStatusEl.textContent = 'Guardado ✓';
+            setTimeout(() => saveStatusEl.classList.add('opacity-0'), 2000);
+        };
+        const loadState = async () => {
+            let state = null;
+            try {
+                const resp = await fetch(API_URL);
+                if (resp.ok) { state = await resp.json(); hasData = true; }
+            } catch (e) { console.error(e); }
+            if (!state) {
+                try { state = JSON.parse(localStorage.getItem('amefAppState')); } catch {}
+            }
+            if (!state) { addProcessBlock(); return; }
+            Object.keys(state.header || {}).forEach(key => { const input = document.querySelector(`#main-header-fields [data-field="${key}"]`); if (input) input.value = state.header[key]; });
+            processesContainer.innerHTML = '';
+            if (state.processes && state.processes.length > 0) { state.processes.forEach(pData => addProcessBlock(pData)); }
+            else { addProcessBlock(); }
+        };
+        const handleSearch = (e) => {
+            const term = e.target.value.toLowerCase(); const suggestionsContainer = document.getElementById('search-suggestions');
+            suggestionsContainer.innerHTML = ''; if (term.length < 1) { suggestionsContainer.classList.add('hidden'); return; }
+            const matches = Array.from(document.querySelectorAll('.process-block')).filter(block => (block.querySelector('.operation-title').value.toLowerCase().includes(term) || block.querySelector('.operation-number').value.toLowerCase().includes(term))).slice(0, 3);
+            if (matches.length > 0) {
+                suggestionsContainer.classList.remove('hidden');
+                matches.forEach(block => {
+                    const title = block.querySelector('.operation-title').value; const num = block.querySelector('.operation-number').value;
+                    const item = document.createElement('div'); item.className = 'p-2 hover:bg-gray-100 cursor-pointer'; item.textContent = `${num} - ${title}`;
+                    item.onclick = () => { block.scrollIntoView({ behavior: 'smooth', block: 'center' }); block.querySelector('.operation-title').focus(); suggestionsContainer.classList.add('hidden'); };
+                    suggestionsContainer.appendChild(item);
+                });
+            } else { suggestionsContainer.classList.add('hidden'); }
+        };
+        const generateOptions = (max, selected) => Array.from({length: max}, (_, i) => `<option value="${i + 1}" ${i + 1 == selected ? 'selected' : ''}>${i + 1}</option>`).join('');
+        createTemplates(); loadState();
+        socket.on('amfe_updated', loadState);
+        document.getElementById('addProcessBtn').addEventListener('click', () => { const newBlock = addProcessBlock(); newBlock.scrollIntoView({ behavior: 'smooth', block: 'center' }); scheduleSave(); });
+        document.getElementById('printBtn').addEventListener('click', () => window.print());
+        document.getElementById('clearBtn').addEventListener('click', () => { showConfirmationModal('Limpiar Todo', 'Esto borrará permanentemente todo el AMFE. ¿Estás seguro?', () => { localStorage.removeItem('amefAppState'); fetch(API_URL, {method:'DELETE'}).catch(()=>{}); processesContainer.innerHTML = ''; addProcessBlock(); }); });
+        document.getElementById('search-operation').addEventListener('input', handleSearch);
+        document.body.addEventListener('click', (e) => { if (!e.target.closest('#search-operation')) { document.getElementById('search-suggestions').classList.add('hidden'); } });
+        appContainer.addEventListener('click', handleGlobalClick);
+        appContainer.addEventListener('change', (e) => { const row = e.target.closest('.failure-row'); if (row) { if (e.target.matches('.s-rating, .o-rating, .d-rating')) { updateActionPriority(row); } if (e.target.matches('.new-sod')) { updateNewAP(row); } if (e.target.matches('.opt-date, .opt-status')) { checkOverdueTasks(row); } scheduleSave(); } });
+        appContainer.addEventListener('input', (e)=>{if(e.target.matches('input, textarea')){scheduleSave()}});
+        modalsContainer.querySelector('#confirmation-modal .modal-confirm-btn').addEventListener('click', () => { if(confirmCallback){ confirmCallback(); hideConfirmationModal(); } });
+        modalsContainer.querySelector('#confirmation-modal .modal-cancel-btn').addEventListener('click', hideConfirmationModal);
+    });
+    </script>
+</body>
+</html>

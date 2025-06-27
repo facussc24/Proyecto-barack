@@ -47,6 +47,16 @@ function initDb(db) {
     )`,
         err => {
           if (err) return reject(err);
+        }
+      );
+      db.run(
+        `CREATE TABLE IF NOT EXISTS amfe (
+      id INTEGER PRIMARY KEY CHECK(id=1),
+      data TEXT NOT NULL,
+      updated_at TEXT NOT NULL
+    )`,
+        err => {
+          if (err) return reject(err);
           resolve(db);
         }
       );
@@ -216,6 +226,49 @@ function createServer() {
     db.run('INSERT INTO history(ts, user, summary) VALUES (?,?,?)', [ts, user || null, summary], function (err) {
       if (err) return res.status(400).json({ success: false, error: err.message });
       res.json({ success: true, data: { ts, user: user || null, summary } });
+    });
+  });
+
+  /** AMFE storage */
+  app.get('/api/amfe', (req, res) => {
+    db.get('SELECT data FROM amfe WHERE id=1', (err, row) => {
+      if (err) return res.status(500).json({ error: err.message });
+      if (!row) return res.json(null);
+      try {
+        res.json(JSON.parse(row.data));
+      } catch (e) {
+        res.status(500).json({ error: 'corrupt data' });
+      }
+    });
+  });
+
+  function upsertAmfe(data, res) {
+    const ts = new Date().toISOString();
+    db.run(
+      `INSERT INTO amfe(id,data,updated_at) VALUES (1,?,?)
+       ON CONFLICT(id) DO UPDATE SET data=excluded.data, updated_at=excluded.updated_at`,
+      [JSON.stringify(data), ts],
+      function (err) {
+        if (err) return res.status(500).json({ error: err.message });
+        io.emit('amfe_updated');
+        res.json({ success: true });
+      }
+    );
+  }
+
+  app.post('/api/amfe', (req, res) => {
+    upsertAmfe(req.body || {}, res);
+  });
+
+  app.patch('/api/amfe', (req, res) => {
+    upsertAmfe(req.body || {}, res);
+  });
+
+  app.delete('/api/amfe', (req, res) => {
+    db.run('DELETE FROM amfe WHERE id=1', err => {
+      if (err) return res.status(500).json({ error: err.message });
+      io.emit('amfe_updated');
+      res.json({ success: true });
     });
   });
 
