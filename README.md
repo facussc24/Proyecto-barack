@@ -53,7 +53,7 @@ Por defecto se usa **Dexie/IndexedDB** para el almacenamiento local, pero `js/da
 Todas las vistas utilizan la misma base de datos `ProyectoBarackDB` a través del
 módulo `js/dataService.js`. Desde la página de inicio puedes exportar e importar
 la información mediante dos botones. El registro de cambios se almacena en
-`data/history.json`.
+`datos/history.json`.
 
 Para realizar copias de seguridad manuales desde la consola del navegador sigue
 si lo prefieres este procedimiento:
@@ -81,9 +81,9 @@ Todos los usuarios deben apuntar al mismo servidor para compartir la informació
 
 Para revisar visualmente el contenido actual de la base de datos se incluye la página `docs/dbviewer.html`. Ábrela con el servidor en marcha para ver los datos en formato JSON.
 
-Si quieres guardar la base de datos en otra ubicación puedes definir la variable de entorno `DATA_DIR` antes de iniciar el servidor y apuntar a la carpeta deseada.
+Si quieres guardar la base de datos en otra ubicación puedes definir la variable de entorno `DATA_DIR` antes de iniciar el servidor y apuntar a la carpeta deseada. Por defecto se usa la carpeta `datos`.
 
-El backend basado en SQLite (`backend/main.py`) lee la ruta del archivo desde `DB_PATH`. Si no se define, usará `data/db.sqlite`.
+El backend basado en SQLite (`backend/main.py`) lee la ruta del archivo desde `DB_PATH`. Si no se define, usará `datos/base_de_datos.sqlite`.
 
 El backend permite solicitudes desde la misma URL donde se abrió la interfaz. Si
 la interfaz se aloja en otra dirección puedes establecer la variable de entorno
@@ -197,8 +197,11 @@ Una vez habilitado podrás acceder a `https://<usuario>.github.io/<repositorio>/
 
 El proyecto utiliza SQLite a través del módulo `sqlite3` en `backend/main.py`.
 La ruta del archivo se define con la variable de entorno `DB_PATH` (por defecto
-`data/db.sqlite`). Actualmente no se emplea un ORM ni un sistema de migraciones,
+`datos/base_de_datos.sqlite`). Actualmente no se emplea un ORM ni un sistema de migraciones,
 por lo que cualquier cambio en el esquema debe aplicarse manualmente.
+
+Todos los archivos generados en tiempo de ejecución se guardan dentro de la carpeta
+`datos`. La antigua carpeta `data` ya no se utiliza y se eliminó del repositorio.
 
 La base funciona en modo *WAL*, por lo que la primera conexión ejecuta
 `PRAGMA journal_mode=WAL` al crear el esquema. Asegúrate de que el archivo
