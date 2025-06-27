@@ -7,12 +7,14 @@ const DB_FILE = path.join(__dirname, '..', 'datos', 'base_de_datos.sqlite');
 
 describe('POST /api/clients with name only', () => {
   beforeEach(() => {
-    if (fs.existsSync(DB_FILE)) fs.unlinkSync(DB_FILE);
+    // clear existing data
+    if (fs.existsSync(DB_FILE)) {
+      const sqlite3 = require('sqlite3').verbose();
+      const db = new sqlite3.Database(DB_FILE);
+      db.exec('DELETE FROM items;DELETE FROM clients;DELETE FROM history;DELETE FROM amfe;', () => db.close());
+    }
   });
 
-  afterEach(() => {
-    if (fs.existsSync(DB_FILE)) fs.unlinkSync(DB_FILE);
-  });
 
     test('creates client', async () => {
       const { app, dbReady } = createServer();

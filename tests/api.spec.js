@@ -11,19 +11,17 @@ describe('API', function() {
   let serverObj;
   let server;
   beforeEach(function(done) {
-    if (fs.existsSync(DB_FILE)) fs.unlinkSync(DB_FILE);
     serverObj = createServer();
     serverObj.dbReady
       .then(() => {
-        server = serverObj.httpServer.listen(0, done);
+        serverObj.db.exec('DELETE FROM items;DELETE FROM clients;DELETE FROM history;DELETE FROM amfe;', () => {
+          server = serverObj.httpServer.listen(0, done);
+        });
       })
       .catch(done);
   });
   afterEach(function(done) {
-    server.close(() => {
-      if (fs.existsSync(DB_FILE)) fs.unlinkSync(DB_FILE);
-      done();
-    });
+    server.close(done);
   });
 
   it('POST /api/clients increases the list', async function() {

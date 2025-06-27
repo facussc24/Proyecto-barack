@@ -8,6 +8,33 @@ const { Server } = require('socket.io');
 const DATA_DIR = path.join(__dirname, 'datos');
 const DB_FILE = path.join(DATA_DIR, 'base_de_datos.sqlite');
 
+let db;
+let dbOpen = false;
+let dbReady;
+
+function ensureDb() {
+  if (!db) {
+    db = new sqlite3.Database(DB_FILE);
+    dbOpen = true;
+    dbReady = initDb(db).catch(err => {
+      dbOpen = false;
+      console.error('DB init failed:', err);
+    });
+    process.once('beforeExit', closeDb);
+    process.once('SIGINT', () => { closeDb(); process.exit(0); });
+    process.once('SIGTERM', () => { closeDb(); process.exit(0); });
+  }
+  return dbReady;
+}
+
+function closeDb() {
+  if (dbOpen) {
+    db.close();
+    dbOpen = false;
+  }
+}
+
+
 function initDb(db) {
   if (!fs.existsSync(DATA_DIR)) {
     fs.mkdirSync(DATA_DIR, { recursive: true });
@@ -65,15 +92,18 @@ function initDb(db) {
 }
 
 function createServer() {
+  ensureDb();
   const app = express();
   app.use(express.json());
+  app.use((req, res, next) => {
+    if (!dbOpen) return res.status(500).json({ error: 'database closed' });
+    next();
+  });
   app.use('/docs', express.static(path.join(__dirname, 'docs')));
 
   const httpServer = http.createServer(app);
   const io = new Server(httpServer);
 
-  const db = new sqlite3.Database(DB_FILE);
-  const dbReady = initDb(db);
   let dbWatcher;
 
   dbReady
@@ -91,17 +121,18 @@ function createServer() {
 
   httpServer.on('close', () => {
     if (dbWatcher) fs.unwatchFile(DB_FILE, dbWatcher);
-    db.close();
   });
 
   function allAsync(sql, params = []) {
     return new Promise((resolve, reject) => {
+      if (!dbOpen) return reject(new Error('database closed'));
       db.all(sql, params, (err, rows) => (err ? reject(err) : resolve(rows)));
     });
   }
 
   function runAsync(sql, params = []) {
     return new Promise((resolve, reject) => {
+      if (!dbOpen) return reject(new Error('database closed'));
       db.run(sql, params, function (err) {
         if (err) reject(err);
         else resolve(this);
