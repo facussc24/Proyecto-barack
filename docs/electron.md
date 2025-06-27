@@ -32,14 +32,14 @@ development build works even when executed as root.
    npm install
    ```
 
-2. Create the installer with Electron Forge:
+2. Create the installer with electron-builder:
 
    ```bash
    npm run make
    ```
 
-   The generated `.exe` resides under `out/make`. Double click it to launch
-   Proyecto Barack.
+   This command uses `electron-builder` and places the installer under `dist/`.
+   Double click the generated file to launch Proyecto Barack.
 
 ## Sharing the database across installations
 
