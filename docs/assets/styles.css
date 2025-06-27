@@ -26,6 +26,13 @@
   --anim-ease: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* colores utilitarios para la vista Maestro (Tailwind fallback) */
+.bg-corporate { background-color: var(--color-primary); }
+.hover\:bg-corporate-dark:hover { background-color: var(--color-primary-hover); }
+.text-corporate { color: var(--color-primary); }
+.border-corporate { border-color: var(--color-primary); }
+.focus\:ring-corporate:focus { box-shadow: 0 0 0 2px var(--color-primary); }
+
 .dark {
   --color-bg: #000;
   --color-text: #e0e0e0;
