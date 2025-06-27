@@ -1,0 +1,22 @@
+{
+  "appId": "com.proyecto.barack",
+  "productName": "Proyecto Barack",
+  "directories": {
+    "output": "dist"
+  },
+  "files": [
+    "**/*",
+    "!dist/**/*",
+    "!out/**/*"
+  ],
+  "extraResources": [
+    {
+      "from": "datos",
+      "to": "datos"
+    }
+  ],
+  "asar": true,
+  "win": {
+    "target": "nsis"
+  }
+}
