@@ -16,11 +16,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Herramienta AMFE de Proceso Profesional</title>
+    <link rel="stylesheet" href="assets/styles.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="/socket.io/socket.io.js" defer></script>
+    <script>
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
     <style>
         @media print {
             body * { visibility: hidden; }
@@ -55,6 +61,7 @@
     </style>
 </head>
 <body class="text-gray-800">
+    <nav id="nav-placeholder"></nav>
     <div id="app-container">
         <div id="printable-area">
             <header class="p-6 mb-6 bg-white border-2 border-blue-500 rounded-lg shadow-xl">
@@ -329,5 +336,10 @@
         modalsContainer.querySelector('#confirmation-modal .modal-cancel-btn').addEventListener('click', hideConfirmationModal);
     });
     </script>
+    <script type="module" src="js/authGuard.js"></script>
+    <script type="module" src="js/nav.js" defer></script>
+    <script type="module" src="js/app.js" defer></script>
+    <script type="module" src="js/pageSettings.js" defer></script>
+    <script type="module" src="js/version.js" defer></script>
 </body>
 </html>
