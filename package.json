@@ -5,6 +5,7 @@
   "license": "MIT",
   "type": "commonjs",
   "scripts": {
-    "test": "echo \"No tests available\" && exit 0"
+    "test": "echo \"No tests available\" && exit 0",
+    "make": "electron-builder --config build.json"
   }
 }
