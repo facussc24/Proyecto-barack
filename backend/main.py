@@ -2,8 +2,6 @@ import os
 import sqlite3
 import queue
 import json
-import glob
-import shutil
 from datetime import datetime
 from flask import Flask, request, jsonify, Response, send_file
 from flask_cors import CORS
@@ -12,14 +10,9 @@ from io import BytesIO
 import xlsxwriter
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
-from zipfile import ZipFile, ZIP_DEFLATED
 
-DB_PATH = os.getenv("DB_PATH", os.path.join("data", "db.sqlite"))
-BACKUP_DIR = os.getenv("BACKUP_DIR", "/app/backups")
-META_FILE = os.path.join(BACKUP_DIR, "metadata.json")
-ACTIVE_KEY = "_active"
+DB_PATH = os.getenv("DB_PATH", os.path.join("datos", "base_de_datos.sqlite"))
 os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
-os.makedirs(BACKUP_DIR, exist_ok=True)
 
 app = Flask(__name__)
 CORS(app)
@@ -518,7 +511,6 @@ def db_stats():
         tbl: conn.execute(f"SELECT COUNT(*) FROM {tbl}").fetchone()[0] for tbl in tables
     }
     conn.close()
-    stats["backups"] = len(glob.glob(os.path.join(BACKUP_DIR, "*.zip")))
     return jsonify(stats)
 
 
