@@ -223,8 +223,8 @@ if (socket) {
 
   socket.on('reconnect', () => {
     clearConnToast();
-    if (typeof loadClients === 'function') loadClients();
-    if (typeof loadHistory === 'function') loadHistory();
+    if (typeof window.loadClients === 'function') window.loadClients();
+    if (typeof window.loadHistory === 'function') window.loadHistory();
   });
 }
 
