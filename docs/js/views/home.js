@@ -47,25 +47,24 @@ function hideSpinner() {
 async function loadKpis(el) {
   showSpinner();
   try {
-    let products = [];
+    let stats = {};
     let history = [];
     try {
-      const [prodRes, histRes] = await Promise.all([
-        fetch('/api/products'),
+      const [statsRes, histRes] = await Promise.all([
+        fetch('/api/db-stats'),
         fetch('/api/history'),
       ]);
-      if (prodRes.ok) products = await prodRes.json();
+      if (statsRes.ok) stats = await statsRes.json();
       if (histRes.ok) history = await histRes.json();
     } catch {
-      products = window.mockProducts || [];
+      stats = window.mockStats || {};
       history = window.mockHistory || [];
     }
-    const pending = products.filter(p => p.pending).length;
-    const completed = products.length - pending;
     const data = [
-      { icon: '📦', label: 'Productos', value: products.length },
-      { icon: '⏳', label: 'Pendientes', value: pending },
-      { icon: '✅', label: 'Completados', value: completed },
+      { icon: '📦', label: 'Productos', value: stats.Producto || 0 },
+      { icon: '🧩', label: 'Subproductos', value: stats.Subproducto || 0 },
+      { icon: '🛠️', label: 'Insumos', value: stats.Insumo || 0 },
+      { icon: '👥', label: 'Clientes', value: stats.Cliente || 0 },
       { icon: '📝', label: 'Cambios', value: history.length },
     ];
     el.innerHTML = data
@@ -112,6 +111,16 @@ function loadModules(el) {
       ],
     },
     {
+      main: 'arbol.html',
+      icon: '🌳',
+      text: 'Árbol de Producto',
+      actions: [
+        { label: 'Crear Árbol', href: 'arbol.html' },
+        { label: 'Asistente', href: 'asistente.html' },
+      ],
+      class: 'no-guest',
+    },
+    {
       main: 'maestro.html',
       icon: '📋',
       text: 'Listado Maestro',
@@ -120,19 +129,16 @@ function loadModules(el) {
       ],
     },
     {
-      main: 'maestro_editor.html',
-      icon: '✏️',
-      text: 'Editar Maestro',
-      actions: [
-        { label: 'Editar maestro', href: 'maestro_editor.html' },
-        { label: 'Ver maestro', href: 'maestro.html' },
-      ],
-      class: 'no-guest',
-    },
-    {
       main: 'registros.html',
       icon: '🗄️',
       text: 'Sinóptico de Registros',
+      actions: [],
+      class: 'no-guest',
+    },
+    {
+      main: 'dbviewer.html',
+      icon: '💾',
+      text: 'Base de Datos',
       actions: [],
       class: 'no-guest',
     },
