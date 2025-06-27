@@ -232,3 +232,31 @@ Se abrirá la versión de escritorio basada en Electron y un servidor en
 `http://localhost:5000`. También puedes abrir `docs/index.html` manualmente y
 verificar que el CRUD y las actualizaciones por WebSocket funcionen correctamente.
 
+
+## Running Tests
+
+Antes de ejecutar la suite de pruebas instala las dependencias necesarias.
+
+Para las bibliotecas de Node.js ejecuta:
+
+```bash
+npm install
+```
+
+Para las dependencias de Python utiliza:
+
+```bash
+pip install flask flask-cors flask-socketio xlsxwriter reportlab eventlet pytest
+```
+
+Luego ejecuta los tests de JavaScript con:
+
+```bash
+npm test
+```
+
+Y las pruebas de Python con:
+
+```bash
+pytest
+```
