@@ -137,6 +137,7 @@ h1 {
   border-top-color: var(--color-accent);
   border-radius: 50%;
   animation: spin 1s linear infinite;
+  display: block;
 }
 
 @keyframes spin {
