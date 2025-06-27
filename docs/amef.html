@@ -94,13 +94,13 @@
     </div>
     <div id="modals-container"></div>
     <div id="save-status" class="fixed bottom-4 right-4 bg-gray-800 text-white text-sm py-2 px-4 rounded-lg shadow-lg opacity-0 transition-opacity duration-500 no-print"></div>
-    <script>
+    <script type="module">
+    import { showSaveStatus } from './js/utils/status.js';
     document.addEventListener('DOMContentLoaded', () => {
         let saveTimeout;
         const appContainer = document.getElementById('app-container');
         const processesContainer = document.getElementById('processes-container');
         const modalsContainer = document.getElementById('modals-container');
-        const saveStatusEl = document.getElementById('save-status');
         const socket = io();
         const API_URL = '/api/amfe';
         let hasData = false;
@@ -263,7 +263,7 @@
             confirmCallback = null;
         };
         const scheduleSave = () => {
-            saveStatusEl.textContent = 'Guardando...'; saveStatusEl.classList.remove('opacity-0');
+            showSaveStatus('Guardando...');
             clearTimeout(saveTimeout);
             saveTimeout = setTimeout(saveState, 1500);
         };
@@ -289,8 +289,7 @@
                 });
                 hasData = true;
             } catch (e) { console.error(e); }
-            saveStatusEl.textContent = 'Guardado ✓';
-            setTimeout(() => saveStatusEl.classList.add('opacity-0'), 2000);
+            showSaveStatus('Guardado ✓');
         };
         const loadState = async () => {
             let state = null;
