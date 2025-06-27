@@ -69,9 +69,10 @@ function createServer() {
   dbReady
     .then(() => {
       try {
-        dbWatcher = fs.watch(DB_FILE, () => {
+        dbWatcher = () => {
           io.emit('data_updated');
-        });
+        };
+        fs.watchFile(DB_FILE, dbWatcher);
       } catch (err) {
         console.error('Failed to watch DB file', err);
       }
@@ -79,7 +80,7 @@ function createServer() {
     .catch(() => {});
 
   httpServer.on('close', () => {
-    if (dbWatcher) dbWatcher.close();
+    if (dbWatcher) fs.unwatchFile(DB_FILE, dbWatcher);
     db.close();
   });
 
