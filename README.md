@@ -188,6 +188,10 @@ La ruta del archivo se define con la variable de entorno `DB_PATH` (por defecto
 `data/db.sqlite`). Actualmente no se emplea un ORM ni un sistema de migraciones,
 por lo que cualquier cambio en el esquema debe aplicarse manualmente.
 
+La base funciona en modo *WAL*, por lo que la primera conexión ejecuta
+`PRAGMA journal_mode=WAL` al crear el esquema. Asegúrate de que el archivo
+permita dicho modo para habilitar el acceso concurrente.
+
 
 ### Próximos pasos sugeridos
 

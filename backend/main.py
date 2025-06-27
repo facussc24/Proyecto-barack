@@ -54,7 +54,10 @@ def get_db():
 
 
 def init_db():
+    is_new = not os.path.exists(DB_PATH)
     conn = get_db()
+    if is_new:
+        conn.execute("PRAGMA journal_mode=WAL")
     cur = conn.cursor()
 
     cur.execute(
