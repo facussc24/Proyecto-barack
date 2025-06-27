@@ -21,8 +21,8 @@ This project serves the frontend from GitHub Pages or any static server while st
 
 ## Environment variables
 
-- `DATA_DIR` – directory where the server stores its data (`data` by default).
-- `DB_PATH` – path to the SQLite file used by `backend/main.py` (`data/db.sqlite` by default).
+- `DATA_DIR` – directory where the server stores its data (`datos` by default).
+- `DB_PATH` – path to the SQLite file used by `backend/main.py` (`datos/base_de_datos.sqlite` by default).
 - `ALLOWED_ORIGINS` – comma-separated list of origins allowed for CORS and
   WebSocket connections. Defaults to
   `http://desktop-14jg95b:8080,http://192.168.1.233:8080,http://localhost:8080`.

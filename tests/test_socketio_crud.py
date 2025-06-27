@@ -4,9 +4,9 @@ from pathlib import Path
 
 
 def test_socketio_events_on_crud(tmp_path, monkeypatch):
-    monkeypatch.setenv("DATA_DIR", str(tmp_path / "data"))
+    monkeypatch.setenv("DATA_DIR", str(tmp_path / "datos"))
     monkeypatch.setenv("BACKUP_DIR", str(tmp_path / "backups"))
-    monkeypatch.setenv("DB_PATH", str(tmp_path / "data/db.sqlite"))
+    monkeypatch.setenv("DB_PATH", str(tmp_path / "datos/base_de_datos.sqlite"))
     server = importlib.reload(importlib.import_module("server"))
 
     client = server.app.test_client()
